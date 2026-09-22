@@ -1,0 +1,11 @@
+packages:
+  unsalted_core:        { rank: 1 }
+  unsalted_experiments: { rank: 2 }
+  unsalted_sync:        { rank: 3 }
+  unsalted_media:       { rank: 4 }
+  unsalted_social:      { rank: 5 }
+  unsalted_assistant:   { rank: 6 }
+  unsalted_app:         { rank: 99 }   # darf alles
+forbidden_in_core:
+  - "package:flutter/"      # nur in lib/src/ui/ erlaubt
+  - "package:drift/"        # nur in lib/src/data/ erlaubt
