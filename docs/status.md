@@ -8,7 +8,7 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 |---|---|---|
 | 0.1 | Ordner, Git, PROJECT.md | fertig |
 | 0.2 | Pakete anlegen | fertig |
-| 0.3 | Abhängigkeiten | offen |
+| 0.3 | Abhängigkeiten | fertig |
 
 ## Phase 1 — Architekturtests
 | Schritt | Beschreibung | Status |
