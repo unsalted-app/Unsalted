@@ -14,7 +14,7 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 1.1 | Prüfwerkzeug (`check_architecture.dart`) | fertig |
-| 1.2 | Architekturtests AT-01 bis AT-11 | offen |
+| 1.2 | Architekturtests AT-01 bis AT-11 | fertig |
 
 ## Phase 2 — Rechenkern (reines Dart)
 | Schritt | Beschreibung | Status |

@@ -1,0 +1,9 @@
+# public_api_golden.txt
+#
+# Soll-Liste der export-Zeilen aus lib/unsalted_core.dart (AT-06).
+# Format je Zeile: <pfad> [show Name1, Name2, ...]
+# Zeilen mit '#' sind Kommentare und werden ignoriert.
+#
+# Startet leer (Schritt 1.2). Wächst additiv mit jedem Schritt, der etwas
+# Neues über die Tür exportiert. Ab Schritt 8.4 ("öffentliche Tür schließen")
+# ist diese Liste final (Kapitel 21.1).
