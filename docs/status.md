@@ -19,7 +19,7 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 ## Phase 2 — Rechenkern (reines Dart)
 | Schritt | Beschreibung | Status |
 |---|---|---|
-| 2.1 | DecimalMath | offen |
+| 2.1 | DecimalMath | fertig |
 | 2.2 | UnitCatalog | offen |
 | 2.3 | NutrientSet | offen |
 | 2.4 | NutritionResult | offen |
