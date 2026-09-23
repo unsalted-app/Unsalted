@@ -23,9 +23,9 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 | 2.2 | UnitCatalog | fertig |
 | 2.3 | NutrientSet | fertig |
 | 2.4 | NutritionResult | fertig |
-| 2.5 | NutritionEngine | offen |
-| 2.6 | Validator | offen |
-| 2.7 | Formatter | offen |
+| 2.5 | NutritionEngine | fertig |
+| 2.6 | Validator | fertig | -- ab hier evnetuell nochmals prüfen
+| 2.7 | Formatter | in Arbeit |
 
 ## Phase 3 — Fachmodelle
 | Schritt | Beschreibung | Status |
