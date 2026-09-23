@@ -6,7 +6,7 @@
 // "Speichern trotz Warnung erlaubt").
 
 import 'package:decimal/decimal.dart';
-import '../nutrition/decimal_math.dart';
+
 import '../contracts/core_exceptions.dart';
 import 'nutrient_set.dart';
 
@@ -86,9 +86,10 @@ abstract final class NutrientValidator {
 
       if (computedEnergy > Decimal.zero) {
         final deviation = (per100g.energyKcal! - computedEnergy).abs();
-        final rationalDeviation = deviation / computedEnergy;
-        final relativeDeviation = rationalDeviation.toFixedDecimal();
-        if (relativeDeviation > Decimal.parse('0.2')) {
+        // Statt deviation / computedEnergy > 0.2 (Division ergibt Rational,
+        // Kapitel 4.2) wird kreuzmultipliziert: deviation > computedEnergy * 0.2.
+        // Mathematisch identisch, bleibt aber vollständig in Decimal.
+        if (deviation > computedEnergy * Decimal.parse('0.2')) {
           warnings.add(const NutrientWarning(
             NutrientWarningKind.energyMismatch,
             'Angegebene Kalorien weichen um mehr als 20% vom errechneten Wert ab.',
