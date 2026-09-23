@@ -22,7 +22,7 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 | 2.1 | DecimalMath | fertig |
 | 2.2 | UnitCatalog | fertig |
 | 2.3 | NutrientSet | fertig |
-| 2.4 | NutritionResult | offen |
+| 2.4 | NutritionResult | fertig |
 | 2.5 | NutritionEngine | offen |
 | 2.6 | Validator | offen |
 | 2.7 | Formatter | offen |
