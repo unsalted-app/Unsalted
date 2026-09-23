@@ -20,8 +20,8 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 2.1 | DecimalMath | fertig |
-| 2.2 | UnitCatalog | offen |
-| 2.3 | NutrientSet | offen |
+| 2.2 | UnitCatalog | fertig |
+| 2.3 | NutrientSet | fertig |
 | 2.4 | NutritionResult | offen |
 | 2.5 | NutritionEngine | offen |
 | 2.6 | Validator | offen |
@@ -32,7 +32,7 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 |---|---|---|
 | 3.1 | Entitäten (Recipe, RecipeVersion, RecipeIngredient, RecipeStep, FoodVariant) | offen |
 | 3.2 | RecipeChange | offen |
-| 3.3 | Fehlerklassen | offen |
+| 3.3 | Fehlerklassen | fertig |
 
 ## Phase 4 — Snapshot-Format
 | Schritt | Beschreibung | Status |
