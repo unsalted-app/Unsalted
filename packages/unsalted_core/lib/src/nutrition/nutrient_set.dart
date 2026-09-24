@@ -6,7 +6,7 @@
 // 0 sind fachlich unterschiedliche Aussagen und bleiben es durch jede
 // Operation hindurch).
 //
-// Kein kJ-Feld — Energie ist ausschließlich energy_kcal (R7).
+// Keine Kilojoule — nur energy_kcal (R7).
 
 import 'package:decimal/decimal.dart';
 import 'package:rational/rational.dart';
