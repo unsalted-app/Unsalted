@@ -20,3 +20,45 @@ class ValidationException implements Exception {
   @override
   String toString() => 'ValidationException: $message';
 }
+
+class NotFoundException implements Exception {
+  final String message;
+  const NotFoundException(this.message);
+  @override
+  String toString() => 'NotFoundException: $message';
+}
+
+class SnapshotImmutableException implements Exception {
+  final String message;
+  const SnapshotImmutableException(this.message);
+  @override
+  String toString() => 'SnapshotImmutableException: $message';
+}
+
+class IllegalStateException implements Exception {
+  final String message;
+  const IllegalStateException(this.message);
+  @override
+  String toString() => 'IllegalStateException: $message';
+}
+
+class ImportFormatException implements Exception {
+  final String message;
+  const ImportFormatException(this.message);
+  @override
+  String toString() => 'ImportFormatException: $message';
+}
+
+class ImportVersionException implements Exception {
+  final String message;
+  const ImportVersionException(this.message);
+  @override
+  String toString() => 'ImportVersionException: $message';
+}
+
+class UnknownChangeException implements Exception {
+  final String message;
+  const UnknownChangeException(this.message);
+  @override
+  String toString() => 'UnknownChangeException: $message';
+}
