@@ -1,0 +1,109 @@
+{
+  "format": "unsalted_recipe_snapshot",
+  "format_version": 1,
+  "recipe": {
+    "id": "8b1f1e2a-0000-4000-8000-000000000001",
+    "title": "Pizzateig",
+    "description": "Klassischer Teig, kalt geführt."
+  },
+  "version": {
+    "id": "c92a1234-0000-4000-8000-000000000002",
+    "parent_version_id": "a11a1234-0000-4000-8000-000000000000",
+    "version_index": 3,
+    "label": "mit Vorteig",
+    "servings": 10,
+    "baking_loss_percent": "0",
+    "final_weight_override_g": null,
+    "notes": "24h kalt gegangen.",
+    "created_at": "2026-09-19T10:00:00.000Z",
+    "snapshotted_at": "2026-09-19T12:00:00.000Z"
+  },
+  "ingredients": [
+    {
+      "position": 1,
+      "name": "Weizenmehl Type 550",
+      "brand": null,
+      "barcode": "4001234567890",
+      "quantity": "600",
+      "unit": "g",
+      "grams": "600",
+      "note": null,
+      "density_g_per_ml": null,
+      "grams_per_piece": null,
+      "per100g": {
+        "energy_kcal": "343",
+        "fat_g": "1.2",
+        "saturated_fat_g": "0.2",
+        "carbs_g": "70",
+        "sugars_g": "1.5",
+        "fiber_g": "3.5",
+        "protein_g": "11",
+        "salt_g": "0.01",
+        "extra": { "sodium_mg": "4" }
+      }
+    },
+    {
+      "position": 2,
+      "name": "Olivenöl",
+      "brand": "Bio-Marke",
+      "barcode": null,
+      "quantity": "2",
+      "unit": "tbsp",
+      "grams": "27",
+      "note": "kaltgepresst",
+      "density_g_per_ml": "0.91",
+      "grams_per_piece": null,
+      "per100g": {
+        "energy_kcal": "884",
+        "fat_g": "100",
+        "saturated_fat_g": "14",
+        "carbs_g": "0",
+        "sugars_g": "0",
+        "fiber_g": "0",
+        "protein_g": "0",
+        "salt_g": "0",
+        "extra": {}
+      }
+    }
+  ],
+  "steps": [
+    {
+      "position": 1,
+      "instruction": "Alles 10 Minuten kneten.",
+      "timer_seconds": 600
+    },
+    {
+      "position": 2,
+      "instruction": "24 Stunden kalt gehen lassen.",
+      "timer_seconds": null
+    }
+  ],
+  "nutrition": {
+    "raw_weight_g": "627",
+    "final_weight_g": "627",
+    "total": {
+      "energy_kcal": "2298.08",
+      "fat_g": "34.29",
+      "saturated_fat_g": "4.98",
+      "carbs_g": "420",
+      "sugars_g": "9",
+      "fiber_g": "21",
+      "protein_g": "66",
+      "salt_g": "0.06",
+      "extra": { "sodium_mg": "24" }
+    },
+    "per100g": {
+      "energy_kcal": "366.5",
+      "fat_g": "5.47",
+      "saturated_fat_g": "0.79",
+      "carbs_g": "66.99",
+      "sugars_g": "1.44",
+      "fiber_g": "3.35",
+      "protein_g": "10.53",
+      "salt_g": "0.01",
+      "extra": { "sodium_mg": "3.83" }
+    },
+    "incomplete": [],
+    "not_calculable": []
+  }
+}

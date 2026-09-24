@@ -1,0 +1,75 @@
+{
+  "format": "unsalted_recipe_snapshot",
+  "format_version": 1,
+  "recipe": {
+    "id": "r3",
+    "title": "Mit Zusatznährwerten",
+    "description": null
+  },
+  "version": {
+    "id": "v3",
+    "parent_version_id": null,
+    "version_index": 1,
+    "label": null,
+    "servings": null,
+    "baking_loss_percent": "0",
+    "final_weight_override_g": null,
+    "notes": null,
+    "created_at": "2026-03-01T00:00:00.000Z",
+    "snapshotted_at": "2026-03-01T00:00:00.000Z"
+  },
+  "ingredients": [
+    {
+      "position": 1,
+      "name": "Bananenchips",
+      "brand": null,
+      "barcode": null,
+      "quantity": "100",
+      "unit": "g",
+      "grams": "100",
+      "note": null,
+      "density_g_per_ml": null,
+      "grams_per_piece": null,
+      "per100g": {
+        "energy_kcal": "519",
+        "fat_g": "33.6",
+        "saturated_fat_g": "29",
+        "carbs_g": "58.4",
+        "sugars_g": "35",
+        "fiber_g": "7.7",
+        "protein_g": "2.3",
+        "salt_g": "0.05",
+        "extra": { "sodium_mg": "20", "vitamin_c_mg": "12.5" }
+      }
+    }
+  ],
+  "steps": [],
+  "nutrition": {
+    "raw_weight_g": "100",
+    "final_weight_g": "100",
+    "total": {
+      "energy_kcal": "519",
+      "fat_g": "33.6",
+      "saturated_fat_g": "29",
+      "carbs_g": "58.4",
+      "sugars_g": "35",
+      "fiber_g": "7.7",
+      "protein_g": "2.3",
+      "salt_g": "0.05",
+      "extra": { "sodium_mg": "20", "vitamin_c_mg": "12.5" }
+    },
+    "per100g": {
+      "energy_kcal": "519",
+      "fat_g": "33.6",
+      "saturated_fat_g": "29",
+      "carbs_g": "58.4",
+      "sugars_g": "35",
+      "fiber_g": "7.7",
+      "protein_g": "2.3",
+      "salt_g": "0.05",
+      "extra": { "sodium_mg": "20", "vitamin_c_mg": "12.5" }
+    },
+    "incomplete": [],
+    "not_calculable": []
+  }
+}

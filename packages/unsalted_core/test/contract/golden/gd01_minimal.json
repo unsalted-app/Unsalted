@@ -1,0 +1,65 @@
+{
+  "format": "unsalted_recipe_snapshot",
+  "format_version": 1,
+  "recipe": {
+    "id": "r1",
+    "title": "Testrezept",
+    "description": null
+  },
+  "version": {
+    "id": "v1",
+    "parent_version_id": null,
+    "version_index": 1,
+    "label": null,
+    "servings": null,
+    "baking_loss_percent": "0",
+    "final_weight_override_g": null,
+    "notes": null,
+    "created_at": "2026-01-01T00:00:00.000Z",
+    "snapshotted_at": "2026-01-01T00:00:00.000Z"
+  },
+  "ingredients": [
+    {
+      "position": 1,
+      "name": "Salz",
+      "brand": null,
+      "barcode": null,
+      "quantity": "5",
+      "unit": "g",
+      "grams": "5",
+      "note": null,
+      "density_g_per_ml": null,
+      "grams_per_piece": null,
+      "per100g": null
+    }
+  ],
+  "steps": [],
+  "nutrition": {
+    "raw_weight_g": "5",
+    "final_weight_g": "5",
+    "total": {
+      "energy_kcal": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fiber_g": null,
+      "protein_g": null,
+      "salt_g": null,
+      "extra": {}
+    },
+    "per100g": {
+      "energy_kcal": null,
+      "fat_g": null,
+      "saturated_fat_g": null,
+      "carbs_g": null,
+      "sugars_g": null,
+      "fiber_g": null,
+      "protein_g": null,
+      "salt_g": null,
+      "extra": {}
+    },
+    "incomplete": ["energy_kcal", "fat_g", "saturated_fat_g", "carbs_g", "sugars_g", "fiber_g", "protein_g", "salt_g"],
+    "not_calculable": []
+  }
+}
