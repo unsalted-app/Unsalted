@@ -144,18 +144,22 @@ void main() {
     });
 
     test('DF-06 Zutat ersetzt -> ReplaceIngredient', () {
-      final a = _snapshot(ingredients: [_ing(1, 'Mehl', '500', 'g')]);
-      final b = _snapshot(
-        ingredients: [_ing(1, 'Dinkelmehl', '500', 'g')],
-      );
+  final a = _snapshot(
+    ingredients: [_ing(1, 'Mehl', '500', 'g', barcode: '4001234567890')],
+  );
+  final b = _snapshot(
+    ingredients: [
+      _ing(1, 'Dinkelmehl', '500', 'g', barcode: '4001234567890'),
+    ],
+  );
 
-      final changes = RecipeDiff.between(a, b);
+  final changes = RecipeDiff.between(a, b);
 
-      expect(changes, hasLength(1));
-      final change = changes.single as ReplaceIngredient;
-      expect(change.position, 1);
-      expect(change.displayName, 'Dinkelmehl');
-      expect(change.foodVariantId, isNull);
+    expect(changes, hasLength(1));
+    final change = changes.single as ReplaceIngredient;
+    expect(change.position, 1);
+    expect(change.displayName, 'Dinkelmehl');
+    expect(change.foodVariantId, isNull);
     });
 
     test('DF-07 nur verschoben -> MoveIngredient', () {
