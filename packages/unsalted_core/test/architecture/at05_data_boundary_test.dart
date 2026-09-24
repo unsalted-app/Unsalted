@@ -26,7 +26,7 @@ void main() {
 
       // Alles unter src/data/ ist ausgenommen -- dort ist Drift der Sinn
       // der Sache (Tabellen, DAOs, CoreDatabase, Mapper).
-      if (rel.startsWith('data/')) continue;
+      if (rel.startsWith('src/data/')) continue;
 
       for (final entry in importLines(file)) {
         final line = entry.value;
