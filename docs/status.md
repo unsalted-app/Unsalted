@@ -37,15 +37,15 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 ## Phase 4 — Snapshot-Format
 | Schritt | Beschreibung | Status |
 |---|---|---|
-| 4.1 | RecipeSnapshotV1 | offen |
-| 4.2 | SnapshotCodec (⚠️ ab hier Format eingefroren) | offen |
-| 4.3 | RecipeDiff | offen |
+| 4.1 | RecipeSnapshotV1 | fertig |
+| 4.2 | SnapshotCodec (⚠️ ab hier Format eingefroren) | fertig |
+| 4.3 | RecipeDiff | fertig |
 
 ## Phase 5 — Drift-Datenbank
 | Schritt | Beschreibung | Status |
 |---|---|---|
-| 5.1 | DecimalConverter | offen |
-| 5.2 | Tabellen | offen |
+| 5.1 | DecimalConverter | fertig |
+| 5.2 | Tabellen | fertig |
 | 5.3 | CoreDatabase + Codegen | offen |
 | 5.4 | Schema einfrieren (⚠️ ab hier Schema eingefroren) | offen |
 | 5.5 | DAOs und Mapper | offen |

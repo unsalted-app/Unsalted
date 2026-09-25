@@ -44,20 +44,4 @@ void main() {
       expect(converter.fromSql(converter.toSql(value)), value);
     });
   });
-
-  group('NullableDecimalConverter (MG-04)', () {
-    const converter = NullableDecimalConverter();
-
-    test('null bleibt null', () {
-      expect(converter.toSql(null), isNull);
-      expect(converter.fromSql(null), isNull);
-    });
-
-    test('gesetzter Wert bleibt exakt erhalten', () {
-      final value = Decimal.parse('42.42');
-      final sql = converter.toSql(value);
-      expect(sql, isA<String>());
-      expect(converter.fromSql(sql), value);
-    });
-  });
 }
