@@ -13,7 +13,7 @@ import 'package:drift/drift.dart';
 import 'tables/food_variants.dart';
 import 'tables/recipe_ingredients.dart';
 import 'tables/recipe_steps.dart';
-import 'tables/recipes_versions.dart';
+import 'tables/recipe_versions.dart';
 import 'tables/recipes.dart';
 import 'package:decimal/decimal.dart';
 import 'converters/decimal_converter.dart';
