@@ -45,7 +45,7 @@ class SnapshotCodec {
         'final_weight_override_g': v.finalWeightOverrideG?.toString(),
         'notes': v.notes,
         'created_at': v.createdAt.toIso8601String(),
-        'snapshotted_at': v.snapshottedAt?.toIso8601String(),
+        'snapshotted_at': v.snapshottedAt.toIso8601String(),
       };
 
   static Map<String, dynamic> _encodeIngredient(RecipeSnapshotIngredient i) => {

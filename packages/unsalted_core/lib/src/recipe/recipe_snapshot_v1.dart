@@ -49,19 +49,19 @@ class RecipeSnapshotVersion {
   final Decimal? finalWeightOverrideG;
   final String? notes;
   final DateTime createdAt;
-  final DateTime? snapshottedAt;
+  final DateTime snapshottedAt;
 
   RecipeSnapshotVersion({
     required this.id,
     required this.versionIndex,
     required this.bakingLossPercent,
     required this.createdAt,
+    required this.snapshottedAt,
     this.parentVersionId,
     this.label,
     this.servings,
     this.finalWeightOverrideG,
     this.notes,
-    this.snapshottedAt,
   });
 }
 
