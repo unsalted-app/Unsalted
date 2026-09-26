@@ -30,7 +30,7 @@ part 'core_database.g.dart';
   ],
 )
 class CoreDatabase extends _$CoreDatabase {
-  CoreDatabase(QueryExecutor executor) : super(executor);
+  CoreDatabase(super.executor);
 
   @override
   int get schemaVersion => 1;

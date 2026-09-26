@@ -59,7 +59,7 @@ class SnapshotCodec {
         'note': i.note,
         'density_g_per_ml': i.densityGPerMl?.toString(),
         'grams_per_piece': i.gramsPerPiece?.toString(),
-        'per100g': i.per100g == null ? null : i.per100g!.toJsonMap(),
+        'per100g': i.per100g?.toJsonMap(),
       };
 
   static Map<String, dynamic> _encodeStep(RecipeSnapshotStep s) => {
