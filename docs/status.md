@@ -46,9 +46,9 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 |---|---|---|
 | 5.1 | DecimalConverter | fertig |
 | 5.2 | Tabellen | fertig |
-| 5.3 | CoreDatabase + Codegen | offen |
-| 5.4 | Schema einfrieren (⚠️ ab hier Schema eingefroren) | offen |
-| 5.5 | DAOs und Mapper | offen |
+| 5.3 | CoreDatabase + Codegen | fertig |
+| 5.4 | Schema einfrieren (⚠️ ab hier Schema eingefroren) | fertig |
+| 5.5 | DAOs und Mapper | fertig |
 
 ## Phase 6 — Repositories
 | Schritt | Beschreibung | Status |
