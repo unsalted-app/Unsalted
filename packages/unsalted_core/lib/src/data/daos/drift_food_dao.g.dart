@@ -1,16 +1,16 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'food_dao.dart';
+part of 'drift_food_dao.dart';
 
 // ignore_for_file: type=lint
-mixin _$FoodDaoMixin on DatabaseAccessor<CoreDatabase> {
+mixin _$DriftFoodDaoMixin on DatabaseAccessor<CoreDatabase> {
   $FoodVariantsTable get foodVariants => attachedDatabase.foodVariants;
-  FoodDaoManager get managers => FoodDaoManager(this);
+  DriftFoodDaoManager get managers => DriftFoodDaoManager(this);
 }
 
-class FoodDaoManager {
-  final _$FoodDaoMixin _db;
-  FoodDaoManager(this._db);
+class DriftFoodDaoManager {
+  final _$DriftFoodDaoMixin _db;
+  DriftFoodDaoManager(this._db);
   $$FoodVariantsTableTableManager get foodVariants =>
       $$FoodVariantsTableTableManager(_db.attachedDatabase, _db.foodVariants);
 }
