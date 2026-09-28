@@ -23,15 +23,16 @@ Alle Architekturtests AT-01 bis **AT-12** grün, inkl. AT-12 „kein kJ".)
 |---|---|---|
 | 6.1 | Verträge und Input-Modelle (`input_models.dart`, `domain_events.dart`, `recipe_repository.dart`, `food_repository.dart`, `nutrition_service.dart`, `snapshot_service.dart`) | fertig |
 | 6.2 | DomainEventBus | fertig |
-| 6.3 | DriftRecipeRepository | offen |
+| 6.3 | DriftRecipeRepository | fertig |
 | 6.4 | DriftFoodRepository | offen |
 | 6.5 | DriftNutritionService | offen |
 | 6.6 | DriftSnapshotService | offen |
 
-**Vor 6.3/6.4:** Mapper (`lib/src/data/mappers/*.dart`) gegen die
-DAO-Signaturen aus Kapitel 16.8 prüfen — siehe CLAUDE.md Abschnitt 3
-(`food_mapper.dart` liefert noch `FoodVariantsCompanion`, `FoodDao`
-verlangt aber `FoodVariantRow`).
+**Vor 6.4:** `food_mapper.dart` gegen die DAO-Signaturen aus Kapitel 16.8
+prüfen — siehe CLAUDE.md Abschnitt 3 (`FoodDao.insertVariant`/
+`updateVariant` verlangen einen vollen `FoodVariantRow`, `food_mapper.dart`
+liefert bisher nur `FoodVariantsCompanion`). Für 6.3 war nur die Lesrichtung
+(`foodVariantFromRow`) nötig, die bereits korrekt ist.
 
 ## Phase 7 — Erweiterungssystem (Kapitel 24.4)
 | Schritt | Beschreibung | Status |

@@ -97,3 +97,41 @@ verworfen, weil die neue Spezifikation an vier Stellen eine begründetere,
 im Gesamtdokument konsistentere Lösung vorgibt (insbesondere die
 Trennung Fachmodell/Snapshot-Format bei `createdAt`, die im alten Bericht
 gar nicht auflösbar war).
+
+---
+
+## 2026-09-29 — Schritt 6.3: `drift_recipe_repository.dart` importiert `nutrition/*`
+
+**Betroffenes Kapitel:** 12.3 (`snapshotVersion`), 18.1 (Dateivertragstabelle)
+
+**Entscheidung:** `DriftRecipeRepository` (Schritt 6.3) importiert
+`nutrition/nutrition_engine.dart`, `nutrition/unit_catalog.dart` und
+`nutrition/decimal_math.dart` direkt, obwohl die Dateivertragstabelle in
+Kapitel 18.1 für `drift_recipe_repository.dart` `nutrition/*` unter "darf
+nicht importieren" listet.
+
+**Begründung:** Kapitel 12.3 ("`snapshotVersion(versionId)` — vollständiger
+Ablauf"), das die Arbeitskarte für Schritt 6.3 selbst als verbindlichen
+Contract nennt, schreibt in Punkt 3 ausdrücklich
+`NutritionEngine.calculate(...)` vor, um beim Einfrieren einer Version das
+`nutrition`-Objekt des Snapshots (Kapitel 13.1/13.2, Pflichtfeld) zu
+erzeugen. Der Dateiscope von Schritt 6.3 erlaubt das Anlegen genau einer
+Datei (`drift_recipe_repository.dart` + Test) — es gibt keine andere
+erlaubte Stelle, an der diese Berechnung stattdessen passieren könnte.
+`DriftSnapshotService` (Schritt 6.6, Kapitel 16.4) kommt dafür nicht in
+Frage: laut Kapitel 13.7 liefert `exportVersion` das bereits gespeicherte
+`snapshotJson` unverändert zurück und berechnet zum Exportzeitpunkt nichts
+neu — die Berechnung beim Einfrieren muss also bereits vorher, in
+`snapshotVersion`, geschehen sein. Kein Architekturtest verbietet diesen
+Import tatsächlich: AT-02 prüft nur, dass Dateien innerhalb von
+`nutrition/` nichts Unerlaubtes importieren (nicht die Gegenrichtung),
+AT-05 nur, dass Nicht-`data/`-Dateien kein `package:drift` importieren.
+
+**Alternativen verworfen:** Eine eigene Berechnungslogik innerhalb von
+`drift_recipe_repository.dart` duplizieren, ohne `NutritionEngine` zu
+importieren — verworfen, weil das die einzige-Berechnungsstelle-Regel
+(Kapitel 4.3/AT-08) unterlaufen und die Nährwertlogik dupliziert hätte.
+Die Berechnung stattdessen auf einen späteren Schritt verschieben —
+verworfen, weil `snapshotVersion` laut Kapitel 12.3 zwingend zum Zeitpunkt
+des Einfrierens ein vollständiges, korrektes `nutrition`-Objekt im
+Snapshot-JSON ablegen muss.
