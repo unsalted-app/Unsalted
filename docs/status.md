@@ -53,7 +53,7 @@ und Regel 9). Status ist immer eines von: `offen` · `in Arbeit` · `fertig`.
 ## Phase 6 — Repositories
 | Schritt | Beschreibung | Status |
 |---|---|---|
-| 6.1 | Verträge (⚠️ ab Abnahme eingefroren) | offen |
+| 6.1 | Verträge (⚠️ ab Abnahme eingefroren) | fertig |
 | 6.2 | DomainEventBus | offen |
 | 6.3 | DriftRecipeRepository | offen |
 | 6.4 | DriftFoodRepository | offen |
