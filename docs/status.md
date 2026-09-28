@@ -25,7 +25,7 @@ Alle Architekturtests AT-01 bis **AT-12** grün, inkl. AT-12 „kein kJ".)
 | 6.2 | DomainEventBus | fertig |
 | 6.3 | DriftRecipeRepository | fertig |
 | 6.4 | DriftFoodRepository | fertig |
-| 6.5 | DriftNutritionService | offen |
+| 6.5 | DriftNutritionService | fertig |
 | 6.6 | DriftSnapshotService | offen |
 
 **Erledigt in 6.4 (ohne food_mapper.dart zu ändern):** `FoodDao.insertVariant`/
