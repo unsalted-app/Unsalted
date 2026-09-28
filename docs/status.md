@@ -40,7 +40,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 |---|---|---|
 | 7.1 | Modultypen | fertig |
 | 7.2 | CoreModule | fertig |
-| 7.3 | Provider | offen |
+| 7.3 | Provider | fertig |
 | 7.4 | Öffentliche Tür schließen | offen |
 
 ## Phase 8 — Oberfläche (Kapitel 24.5)

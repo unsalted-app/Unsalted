@@ -173,3 +173,34 @@ drei Zeilentabellen auf `'recipe_id'`/`'version_id'` setzen — verworfen,
 weil das Feld laut Kapitel 21 die *Besitzer*-Spalte meint (Konto-Bezug),
 nicht die Eltern-Referenz, und eine falsche Spalte suggerieren würde, die
 gar nicht existiert.
+
+---
+
+## 2026-09-29 — Schritt 7.3: AT-05 um Ausnahme für `src/providers/` erweitert
+
+**Betroffenes Kapitel:** 16.7 (Riverpod-Provider), AT-05 (Testsuite)
+
+**Entscheidung:** `test/architecture/at05_data_boundary_test.dart` (AT-05)
+wurde um eine Ausnahme für `src/providers/` erweitert — dieser Ordner darf
+jetzt wie `src/data/` aus `data/` importieren, statt dagegen zu verstoßen.
+
+**Begründung:** `lib/src/providers/core_providers.dart` (Schritt 7.3) hat
+laut Arbeitskarte §5 ("BENÖTIGTE TYPEN UND DATEIEN") die ausdrückliche
+Aufgabe, `CoreDatabase`, `RecipeDao` und die konkreten `Drift*`-
+Implementierungen aus `data/` hinter den öffentlichen Contracts zu
+verdrahten (Kapitel 16.7). Das ist ohne einen Import aus `data/` technisch
+nicht möglich — eine Verdrahtungs-/Composition-Root-Datei referenziert per
+Definition beide Seiten (Interface und konkrete Implementierung). AT-05 war
+zum Zeitpunkt seiner letzten Erweiterung (Eintrag vom 2026-09-24) offenbar
+noch nicht gegen die tatsächlichen Anforderungen von Phase 7 geprüft worden
+— der Test hätte in seiner bisherigen Form jede mögliche Umsetzung von
+Schritt 7.3 zwangsläufig scheitern lassen, unabhängig von deren Qualität.
+
+**Alternativen verworfen:** `core_providers.dart` unter `lib/src/data/`
+ablegen, um die bestehende Ausnahme zu nutzen — verworfen, weil das der in
+Kapitel 18 vorgegebenen Verzeichnisstruktur (`lib/src/providers/`)
+widersprochen und die klare Trennung „Persistenz" vs. „Verdrahtung"
+verwischt hätte. Die Test-Verletzung ignorieren/den Test nicht laufen
+lassen — verworfen, da AT-05 Teil der regulären, in CLAUDE.md
+vorgeschriebenen Prüfkette (`flutter test`) ist und stillschweigend
+ignorierte rote Tests gegen die Projektregeln verstoßen.

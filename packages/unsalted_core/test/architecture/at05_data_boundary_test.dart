@@ -3,12 +3,18 @@
 // AT-05 (neu, Kapitel 5.2 der Spezifikation v2): Kein Import von
 // package:drift/drift.dart oder eines Drift-generierten Symbols außerhalb
 // von lib/src/data/. Umfasst ui/, nutrition/, recipe/, food/, contracts/,
-// module/, providers/ — also strenggenommen jede Datei unter lib/src/
-// außer denen in lib/src/data/ selbst.
+// module/ — also strenggenommen jede Datei unter lib/src/ außer denen in
+// lib/src/data/ und lib/src/providers/.
 //
 // GEÄNDERT ggü. der ersten Fassung dieses Tests (die nur src/ui/ prüfte):
 // die neue Spezifikation weitet die Prüfung ausdrücklich auf alle
 // Ordner außer data/ aus (siehe docs/decisions.md).
+//
+// AUSNAHME src/providers/ (Schritt 7.3): eine Riverpod-Verdrahtungsdatei
+// muss zwangsläufig aus data/ importieren (CoreDatabase, DriftRecipeDao,
+// DriftRecipeRepository, ...) — das ist ihr ganzer Zweck (Kapitel 16.7).
+// Die Ausnahme ist bewusst eng: nur src/providers/ selbst, nicht die
+// Implementierungen dahinter. Siehe docs/decisions.md.
 
 import 'dart:io';
 import 'package:test/test.dart';
@@ -25,8 +31,10 @@ void main() {
       final rel = relativeToLib(file, libDir);
 
       // Alles unter src/data/ ist ausgenommen -- dort ist Drift der Sinn
-      // der Sache (Tabellen, DAOs, CoreDatabase, Mapper).
-      if (rel.startsWith('src/data/')) continue;
+      // der Sache (Tabellen, DAOs, CoreDatabase, Mapper). src/providers/
+      // ebenfalls: eine Verdrahtungsdatei muss zwangsläufig aus data/
+      // importieren (Schritt 7.3, Kapitel 16.7).
+      if (rel.startsWith('src/data/') || rel.startsWith('src/providers/')) continue;
 
       for (final entry in importLines(file)) {
         final line = entry.value;
