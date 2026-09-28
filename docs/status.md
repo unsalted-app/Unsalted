@@ -18,7 +18,7 @@ bis 6.6); es gibt keine separate „Phase 7 — Nährwerte und Austausch" mehr.
 (Details/Teilschritte dieser sechs Phasen: Kapitel 24.2 der Spezifikation.
 Alle Architekturtests AT-01 bis **AT-12** grün, inkl. AT-12 „kein kJ".)
 
-## Phase 6 — Repositories und Services (Kapitel 24.3)
+## Phase 6 — Repositories und Services (Kapitel 24.3) — abgeschlossen
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 6.1 | Verträge und Input-Modelle (`input_models.dart`, `domain_events.dart`, `recipe_repository.dart`, `food_repository.dart`, `nutrition_service.dart`, `snapshot_service.dart`) | fertig |
@@ -26,7 +26,7 @@ Alle Architekturtests AT-01 bis **AT-12** grün, inkl. AT-12 „kein kJ".)
 | 6.3 | DriftRecipeRepository | fertig |
 | 6.4 | DriftFoodRepository | fertig |
 | 6.5 | DriftNutritionService | fertig |
-| 6.6 | DriftSnapshotService | offen |
+| 6.6 | DriftSnapshotService | fertig |
 
 **Erledigt in 6.4 (ohne food_mapper.dart zu ändern):** `FoodDao.insertVariant`/
 `updateVariant` verlangen einen vollen `FoodVariantRow`, `food_mapper.dart`
@@ -75,9 +75,16 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
   `food_mapper.dart` sind seit Schritt 6.4 toter Code (0 Aufrufer) —
   `drift_food_repository.dart` baut die Zeile stattdessen selbst
   (`_toRow`), weil `FoodDao.insertVariant`/`updateVariant` einen vollen
-  `FoodVariantRow` statt eines Companions erwarten. Aufräumen (Funktionen
-  entfernen oder Mapper korrigieren und Repository umstellen), sobald eine
-  Arbeitskarte `data/mappers/food_mapper.dart` in ihrem Dateiscope erlaubt.
+  `FoodVariantRow` statt eines Companions erwarten. `drift_snapshot_service.dart`
+  hat aus demselben Grund eine eigene, fast identische `_toFoodRow`-Kopie
+  (für neu angelegte Import-Varianten, Kapitel 13.6). `recipeVersionToSnapshotCompanion`
+  in `version_mapper.dart` ist ebenfalls toter Code (0 Aufrufer) —
+  `drift_snapshot_service.dart` baut die volle Insert-Companion für eine
+  direkt als Snapshot angelegte Version selbst, weil keine Mapper-Funktion
+  Basis- und Snapshot-Felder gleichzeitig setzt. Aufräumen (Funktionen
+  entfernen oder Mapper korrigieren und Repository/Service umstellen),
+  sobald eine Arbeitskarte `data/mappers/*.dart` in ihrem Dateiscope
+  erlaubt.
 - `test/recipe/recipe_step_test.dart` fehlt noch (RecipeStep selbst korrekt).
 - `lib/unsalted_core.dart` (öffentliche Tür) ist noch leer — wird erst in
   Schritt 7.4 geschlossen.
