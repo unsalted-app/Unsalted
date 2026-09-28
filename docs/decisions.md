@@ -135,3 +135,41 @@ Die Berechnung stattdessen auf einen späteren Schritt verschieben —
 verworfen, weil `snapshotVersion` laut Kapitel 12.3 zwingend zum Zeitpunkt
 des Einfrierens ein vollständiges, korrektes `nutrition`-Objekt im
 Snapshot-JSON ablegen muss.
+
+---
+
+## 2026-09-29 — Schritt 7.2: `CoreModule.routes` leer, `ownerColumn` einheitlich `'owner_id'`
+
+**Betroffenes Kapitel:** 21 (Modul-/Steckplatzsystem)
+
+**Entscheidung 1 (Routen):** `CoreModule.routes` liefert für Phase 1 eine
+leere Liste, obwohl Kapitel 21 "seine eigenen Routen" als Teil von
+`CoreModule` nennt. Begründung: Die zugehörigen Bildschirme (Kapitel 22,
+Bildschirm 1–13) sind erst Phase 8; ein `GoRoute` ohne existierendes
+Bildschirm-Widget lässt sich nicht sinnvoll bauen. Die Arbeitskarte für
+Schritt 7.2 verlangt in §10 (Tests) ausdrücklich nur die Prüfung von `id`,
+Tabellenliste und `immutableAfterCreate` — `routes` ist dort nicht
+genannt — und §12 (Stop-Bedingung) schließt Provider-/main.dart-
+Verdrahtung für diesen Schritt ausdrücklich aus. Phase 8 ergänzt die
+echten `GoRoute`-Einträge, sobald die Bildschirm-Widgets existieren.
+
+**Entscheidung 2 (ownerColumn):** Alle fünf `SyncTableSpec`-Einträge
+tragen `ownerColumn: 'owner_id'`, obwohl nur `recipes` und `food_variants`
+(Kapitel 11.2, 11.6) tatsächlich eine eigene `owner_id`-Spalte besitzen;
+`recipe_versions`/`recipe_ingredients`/`recipe_steps` (Kapitel 11.3–11.5)
+haben keine. Kapitel 21 gibt für `ownerColumn` nur ein Beispiel
+(`'owner_id'`), keine Tabelle mit Werten je Zeile, und die Arbeitskarte
+prüft dieses Feld nicht. Für die drei Zeilentabellen ohne eigene Spalte ist
+der Wert als Hinweis für die künftige Sync-Schicht (Teil 3) gedacht,
+Besitz über die Elternkette (`version_id` → `recipe_id` →
+`recipes.owner_id`) aufzulösen — keine Behauptung einer physisch
+vorhandenen Spalte. Endgültige Festlegung bleibt Sache von Teil 3.
+
+**Alternativen verworfen:** Bei Entscheidung 1 Platzhalter-Routen auf
+Dummy-Widgets bauen — verworfen, weil das totem Code in Phase 8 hinterlassen
+und suggerieren würde, die Routen seien bereits final, obwohl die
+eigentlichen Bildschirme fehlen. Bei Entscheidung 2 `ownerColumn` für die
+drei Zeilentabellen auf `'recipe_id'`/`'version_id'` setzen — verworfen,
+weil das Feld laut Kapitel 21 die *Besitzer*-Spalte meint (Konto-Bezug),
+nicht die Eltern-Referenz, und eine falsche Spalte suggerieren würde, die
+gar nicht existiert.
