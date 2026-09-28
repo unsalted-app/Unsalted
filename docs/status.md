@@ -24,15 +24,16 @@ Alle Architekturtests AT-01 bis **AT-12** grün, inkl. AT-12 „kein kJ".)
 | 6.1 | Verträge und Input-Modelle (`input_models.dart`, `domain_events.dart`, `recipe_repository.dart`, `food_repository.dart`, `nutrition_service.dart`, `snapshot_service.dart`) | fertig |
 | 6.2 | DomainEventBus | fertig |
 | 6.3 | DriftRecipeRepository | fertig |
-| 6.4 | DriftFoodRepository | offen |
+| 6.4 | DriftFoodRepository | fertig |
 | 6.5 | DriftNutritionService | offen |
 | 6.6 | DriftSnapshotService | offen |
 
-**Vor 6.4:** `food_mapper.dart` gegen die DAO-Signaturen aus Kapitel 16.8
-prüfen — siehe CLAUDE.md Abschnitt 3 (`FoodDao.insertVariant`/
+**Erledigt in 6.4 (ohne food_mapper.dart zu ändern):** `FoodDao.insertVariant`/
 `updateVariant` verlangen einen vollen `FoodVariantRow`, `food_mapper.dart`
-liefert bisher nur `FoodVariantsCompanion`). Für 6.3 war nur die Lesrichtung
-(`foodVariantFromRow`) nötig, die bereits korrekt ist.
+liefert aber nur `FoodVariantsCompanion` (CLAUDE.md Abschnitt 3). Der
+Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
+`drift_food_repository.dart` die Zeile für insert/update direkt selbst
+(`_toRow`), statt `food_mapper.dart` anzufassen.
 
 ## Phase 7 — Erweiterungssystem (Kapitel 24.4)
 | Schritt | Beschreibung | Status |
@@ -70,6 +71,13 @@ liefert bisher nur `FoodVariantsCompanion`). Für 6.3 war nur die Lesrichtung
 
 ## Bekannte offene Lücken (nicht blockierend)
 
+- `foodVariantToInsertCompanion`/`foodVariantToUpdateCompanion` in
+  `food_mapper.dart` sind seit Schritt 6.4 toter Code (0 Aufrufer) —
+  `drift_food_repository.dart` baut die Zeile stattdessen selbst
+  (`_toRow`), weil `FoodDao.insertVariant`/`updateVariant` einen vollen
+  `FoodVariantRow` statt eines Companions erwarten. Aufräumen (Funktionen
+  entfernen oder Mapper korrigieren und Repository umstellen), sobald eine
+  Arbeitskarte `data/mappers/food_mapper.dart` in ihrem Dateiscope erlaubt.
 - `test/recipe/recipe_step_test.dart` fehlt noch (RecipeStep selbst korrekt).
 - `lib/unsalted_core.dart` (öffentliche Tür) ist noch leer — wird erst in
   Schritt 7.4 geschlossen.
