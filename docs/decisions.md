@@ -204,3 +204,48 @@ verwischt hätte. Die Test-Verletzung ignorieren/den Test nicht laufen
 lassen — verworfen, da AT-05 Teil der regulären, in CLAUDE.md
 vorgeschriebenen Prüfkette (`flutter test`) ist und stillschweigend
 ignorierte rote Tests gegen die Projektregeln verstoßen.
+
+---
+
+## 2026-09-29 — Schritt 7.4: öffentliche Tür ohne `recipeDaoProvider`/`foodDaoProvider` und ohne Snapshot-/Unit-Detailtypen
+
+**Betroffenes Kapitel:** 16.7 (Riverpod-Provider), 16.8 (DAO-Contracts),
+17 (Rechenkern als öffentliche Schnittstelle), 18.1 (Regel für die Tür)
+
+**Entscheidung 1:** `lib/unsalted_core.dart` exportiert `coreDatabaseProvider`,
+`modulesProvider`, `recipeRepositoryProvider`, `foodRepositoryProvider`,
+`nutritionServiceProvider`, `snapshotServiceProvider`,
+`domainEventsProvider` — **nicht** `recipeDaoProvider`/`foodDaoProvider`,
+obwohl Kapitel 16.7 alle acht (inkl. `recipeDaoProvider`) im selben
+Codeblock als "Öffentlich exportiert" bezeichnet. Begründung: Kapitel 16.8
+sagt für DAO-Contracts unmissverständlich "keine externe Public API", und
+Kapitel 18.1s Regel für die Tür schließt DAOs ausdrücklich aus ("Niemals
+... DAOs ... exportieren"). Ein `Provider<RecipeDao>` öffentlich zu
+exportieren würde genau das unterlaufen, was diese Regel verhindern soll —
+UI-Code könnte sich dann direkt gegen `RecipeDao` statt gegen
+`RecipeRepository` verdrahten. Die speziellere, später im Dokument stehende
+Regel (18.1) hat Vorrang vor der allgemeineren Formulierung in 16.7.
+
+**Entscheidung 2:** Von `recipe_snapshot_v1.dart` wird nur `RecipeSnapshotV1`
+exportiert (nicht `RecipeSnapshotRecipe`/`RecipeSnapshotVersion`/
+`RecipeSnapshotIngredient`/`RecipeSnapshotStep`/`RecipeSnapshotNutrition`
+oder die Format-Konstanten). Von `unit_catalog.dart` wird nur `UnitCatalog`
+exportiert (nicht `Unit`/`UnitKind`). `NutrientValidator`/`NutrientWarning`/
+`NutrientWarningKind` werden gar nicht exportiert. Begründung: Kapitel 18.1
+nennt namentlich nur `RecipeSnapshotV1` bzw. `UnitCatalog`; Kapitel 17 sagt
+für die Nährwerttypen ausdrücklich, `NutritionResult`/`NutrientSet`/
+`UnitCatalog`/`NutritionFormatter` seien "die einzigen Typen, mit denen UI
+und spätere Teile über Nährwerte kommunizieren" — ein geschlossener
+Vier-Typen-Katalog ohne `NutrientValidator`. Die Tür wird ab diesem Schritt
+eingefroren (Kapitel 25.1); ein zu knapper Export lässt sich später gezielt
+und bewusst erweitern, ein zu großzügiger nicht ohne Bruch zurücknehmen —
+deshalb im Zweifel die engere, textlich exakt belegte Lesart gewählt.
+
+**Alternativen verworfen:** Bei Entscheidung 1 `recipeDaoProvider`/
+`foodDaoProvider` trotzdem exportieren, weil Kapitel 16.7 sie zeigt —
+verworfen als Widerspruch zu Kapitel 16.8s expliziter Aussage. Bei
+Entscheidung 2 vorsorglich alle Snapshot-Detailtypen und `Unit`/`UnitKind`
+mitexportieren, "falls Phase 8 sie braucht" — verworfen, weil das über den
+in Kapitel 17/18.1 wörtlich benannten Umfang hinausgeht und die Tür ab
+diesem Schritt als eingefroren gilt; ein späterer, dokumentierter
+Nachtrag ist der vorgesehene Weg, keine Vorratshaltung jetzt.

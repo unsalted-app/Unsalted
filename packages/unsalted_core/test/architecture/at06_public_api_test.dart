@@ -1,9 +1,12 @@
 // test/architecture/at06_public_api_test.dart
 //
 // AT-06: unsalted_core.dart (die öffentliche Tür) exportiert exakt die Liste
-// aus der Golden-Datei public_api_golden.txt. Diese Golden-Datei startet leer
-// (Schritt 1.2) und wächst mit jedem Schritt, der etwas Neues exportiert.
-// Erst ab Schritt 8.4 ("öffentliche Tür schließen") ist sie final.
+// aus der Golden-Datei public_api_golden.txt. lib/unsalted_core.dart blieb
+// bis Schritt 7.4 ("öffentliche Tür schließen", Kapitel 18.1 der aktuellen
+// Spezifikation -- vormals Schritt 8.4 einer älteren Berichtsfassung)
+// absichtlich leer und wurde dort auf einen Schlag befüllt, nicht additiv
+// über frühere Schritte hinweg. Ab Abnahme von Schritt 7.4 ist sie final
+// (Kapitel 25.1).
 
 import 'dart:io';
 import 'package:test/test.dart';

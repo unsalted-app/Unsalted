@@ -4,6 +4,44 @@
 # Format je Zeile: <pfad> [show Name1, Name2, ...]
 # Zeilen mit '#' sind Kommentare und werden ignoriert.
 #
-# Startet leer (Schritt 1.2). Wächst additiv mit jedem Schritt, der etwas
-# Neues über die Tür exportiert. Ab Schritt 8.4 ("öffentliche Tür schließen")
-# ist diese Liste final (Kapitel 21.1).
+# Wird in Schritt 7.4 ("öffentliche Tür schließen", Kapitel 18.1) auf
+# einen Schlag befüllt, nicht additiv über frühere Schritte hinweg -- siehe
+# CLAUDE.md/docs/status.md: lib/unsalted_core.dart blieb bis Schritt 7.4
+# absichtlich leer. Ab Abnahme dieses Schritts eingefroren (Kapitel 25.1).
+
+# Verträge (contracts/)
+src/contracts/core_exceptions.dart
+src/contracts/domain_events.dart
+src/contracts/food_repository.dart
+src/contracts/input_models.dart
+src/contracts/nutrition_service.dart
+src/contracts/recipe_repository.dart
+src/contracts/snapshot_service.dart
+
+# Fachmodelle (recipe/, food/)
+src/food/food_variant.dart
+src/recipe/recipe.dart
+src/recipe/recipe_change.dart
+src/recipe/recipe_diff.dart
+src/recipe/recipe_ingredient.dart
+src/recipe/recipe_snapshot_v1.dart show RecipeSnapshotV1
+src/recipe/recipe_step.dart
+src/recipe/recipe_version.dart
+
+# Nährwert-Typen (Kapitel 17: "die einzigen Typen ... über Nährwerte")
+src/nutrition/nutrient_set.dart
+src/nutrition/nutrition_formatter.dart
+src/nutrition/nutrition_result.dart
+src/nutrition/unit_catalog.dart show UnitCatalog
+
+# Modulsystem (module/)
+src/module/core_module.dart
+src/module/extension_types.dart
+src/module/unsalted_module.dart
+
+# Provider (providers/) -- ohne recipeDaoProvider/foodDaoProvider
+# (Kapitel 16.8: DAO-Contracts sind keine externe Public API)
+src/providers/core_providers.dart show coreDatabaseProvider, domainEventsProvider, foodRepositoryProvider, modulesProvider, nutritionServiceProvider, recipeRepositoryProvider, snapshotServiceProvider
+
+# Datenbank-Handle (Kapitel 18.1: explizit als Ausnahme genannt)
+src/data/core_database.dart show CoreDatabase

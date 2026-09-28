@@ -35,13 +35,13 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 `drift_food_repository.dart` die Zeile für insert/update direkt selbst
 (`_toRow`), statt `food_mapper.dart` anzufassen.
 
-## Phase 7 — Erweiterungssystem (Kapitel 24.4)
+## Phase 7 — Erweiterungssystem (Kapitel 24.4) — abgeschlossen
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 7.1 | Modultypen | fertig |
 | 7.2 | CoreModule | fertig |
 | 7.3 | Provider | fertig |
-| 7.4 | Öffentliche Tür schließen | offen |
+| 7.4 | Öffentliche Tür schließen | fertig |
 
 ## Phase 8 — Oberfläche (Kapitel 24.5)
 | Schritt | Beschreibung | Status |
@@ -86,8 +86,6 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
   sobald eine Arbeitskarte `data/mappers/*.dart` in ihrem Dateiscope
   erlaubt.
 - `test/recipe/recipe_step_test.dart` fehlt noch (RecipeStep selbst korrekt).
-- `lib/unsalted_core.dart` (öffentliche Tür) ist noch leer — wird erst in
-  Schritt 7.4 geschlossen.
 - Zwei kosmetische Analyzer-`info`-Hinweise akzeptiert, bewusst nicht
   behoben: `use_super_parameters` in `core_database.dart`.
 
