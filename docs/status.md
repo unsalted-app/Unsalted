@@ -38,7 +38,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 ## Phase 7 — Erweiterungssystem (Kapitel 24.4)
 | Schritt | Beschreibung | Status |
 |---|---|---|
-| 7.1 | Modultypen | offen |
+| 7.1 | Modultypen | fertig |
 | 7.2 | CoreModule | offen |
 | 7.3 | Provider | offen |
 | 7.4 | Öffentliche Tür schließen | offen |
