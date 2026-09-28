@@ -22,7 +22,7 @@ Alle Architekturtests AT-01 bis **AT-12** grün, inkl. AT-12 „kein kJ".)
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 6.1 | Verträge und Input-Modelle (`input_models.dart`, `domain_events.dart`, `recipe_repository.dart`, `food_repository.dart`, `nutrition_service.dart`, `snapshot_service.dart`) | fertig |
-| 6.2 | DomainEventBus | offen |
+| 6.2 | DomainEventBus | fertig |
 | 6.3 | DriftRecipeRepository | offen |
 | 6.4 | DriftFoodRepository | offen |
 | 6.5 | DriftNutritionService | offen |
