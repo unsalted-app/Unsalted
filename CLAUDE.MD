@@ -245,6 +245,17 @@ Phase 10 (Freeze).
   „Abbrechen mit ungespeicherten Änderungen fragt nach" (Kapitel 22,
   allgemeine Bildschirmregel) — dort nachziehen, sobald diese Datei im
   Scope eines Schritts liegt.
+- **AT-12 ("kein kJ") schlägt auch auf eigene Test-Strings/-Kommentare an
+  (seit Schritt 8.4):** AT-12 scannt `lib/` **und** `test/` zeilenweise auf
+  das wörtliche Zeichenpaar — nur `test/architecture/` selbst ist
+  ausgenommen. Ein Test, der die Abwesenheit dieser Energieeinheit prüft
+  (z. B. für eine Nährwerttabelle), darf sie deshalb weder im
+  Testnamen-String noch im Kommentar noch im erwarteten Suchbegriff wörtlich
+  ausschreiben — sonst schlägt AT-12 auf die eigene Testdatei an, nicht auf
+  einen echten Verstoß. Lösung: den Suchbegriff zur Laufzeit aus
+  Zeichencodes zusammenbauen (`String.fromCharCodes([0x6b, 0x4a])`), nie als
+  Literal. Betrifft nur `test/`-Dateien außerhalb von `test/architecture/`;
+  `lib/`-Code darf die Einheit ohnehin nirgends erwähnen (R7).
 
 ---
 

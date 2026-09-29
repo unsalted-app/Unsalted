@@ -49,7 +49,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 | 8.1 | Lebensmittel-Liste + Editor | fertig |
 | 8.2 | Rezeptliste + Erstellen | fertig |
 | 8.3 | Rezept-Editor | fertig |
-| 8.4 | Nährwertanzeige + Mengenrechner | offen |
+| 8.4 | Nährwertanzeige + Mengenrechner | fertig |
 | 8.5 | Rezeptdetail mit Steckplätzen | offen |
 | 8.6 | Versionen + Vergleich | offen |
 | 8.7 | Einstellungen, Export, Import | offen |
