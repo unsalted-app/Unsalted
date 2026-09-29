@@ -12,6 +12,7 @@ import 'package:unsalted_core/src/data/core_database.dart';
 import 'package:unsalted_core/src/data/daos/drift_recipe_dao.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_create_screen.dart';
+import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
 
 Future<CoreDatabase> _openDatabase(WidgetTester tester) async {
   final database = await tester.runAsync(() async => CoreDatabase(NativeDatabase.memory()));
@@ -113,7 +114,10 @@ void main() {
     await _disposeWidgetTree(tester);
   });
 
-  testWidgets('ohne onCreated-Callback wird nach dem Speichern zurücknavigiert', (tester) async {
+  testWidgets(
+      'ohne onCreated-Callback wird nach dem Speichern zum Draft-Editor '
+      'weitergeleitet (Arbeitskarte 8.2 §13, eingelöst in Schritt 8.3)',
+      (tester) async {
     final database = await _openDatabase(tester);
     addTearDown(() => tester.runAsync(database.close));
 
@@ -145,9 +149,14 @@ void main() {
     await tester.tap(find.byType(FloatingActionButton));
     await _settle(tester);
     await tester.pumpAndSettle();
+    // RecipeEditorScreen lädt die neue Version asynchron nach (echte
+    // DB-Arbeit) -- zusätzliche Wartezeit, damit der Ladezustand durch ist.
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pumpAndSettle();
 
     expect(find.byType(RecipeCreateScreen), findsNothing);
-    expect(find.text('Öffnen'), findsOneWidget);
+    expect(find.byType(RecipeEditorScreen), findsOneWidget);
+    expect(find.text('Rezept bearbeiten'), findsOneWidget);
 
     await _disposeWidgetTree(tester);
   });

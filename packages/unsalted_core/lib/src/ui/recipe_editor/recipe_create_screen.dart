@@ -4,16 +4,14 @@
 // Beschreibung). Speichert ausschließlich über
 // RecipeRepository.createRecipe (Kapitel 16.1); keine direkte DB-Abfrage.
 //
-// WEITERLEITUNG ZUM DRAFT-EDITOR: Der Editor selbst (`recipe_editor_screen.dart`)
-// ist erst Schritt 8.3 -- Arbeitskarte 8.2 §7/§12 verbieten Editor-Logik
-// in diesem Schritt ausdrücklich ("keine Editor-Logik außer dem
-// Erstellungsbildschirm"). Damit "ein neu angelegtes Rezept führt auf
-// seinen Draft-Editor" (Arbeitskarte 8.2 §13) trotzdem erfüllbar bleibt,
-// sobald 8.3 existiert, nimmt dieser Screen einen optionalen `onCreated`-
-// Callback entgegen. Ohne Callback (Standardfall in diesem Schritt) wird
-// nach dem Speichern einfach zurücknavigiert; ein späterer Schritt kann
-// beim Aufruf dieses Screens einen Callback übergeben, der stattdessen zum
-// Editor der neuen Draft-Version weiterleitet, ohne diese Datei zu ändern.
+// WEITERLEITUNG ZUM DRAFT-EDITOR (Arbeitskarte 8.2 §13, jetzt eingelöst
+// durch recipe_editor_screen.dart aus Schritt 8.3): ohne expliziten
+// `onCreated`-Callback ersetzt dieser Screen sich selbst durch
+// RecipeEditorScreen für die neu angelegte Draft-Version. Der Callback
+// bleibt als Erweiterungspunkt bestehen (z. B. für Tests, die recipeId/
+// versionId ohne echtes Editor-Rendering prüfen wollen), ohne dass
+// `recipe_list_screen.dart` (außerhalb des Dateiscopes von Schritt 8.3)
+// angefasst werden muss.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../contracts/core_exceptions.dart';
 import '../../contracts/input_models.dart';
 import '../../providers/core_providers.dart';
+import 'recipe_editor_screen.dart';
 
 class RecipeCreateScreen extends ConsumerStatefulWidget {
   /// Wird nach erfolgreichem Anlegen mit (recipeId, versionId der neuen
@@ -116,7 +115,9 @@ class _RecipeCreateScreenState extends ConsumerState<RecipeCreateScreen> {
         if (widget.onCreated != null) {
           widget.onCreated!(context, recipeId, versionId);
         } else {
-          Navigator.of(context).pop(recipeId);
+          Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
+            builder: (_) => RecipeEditorScreen(recipeId: recipeId, versionId: versionId),
+          ));
         }
       });
     } on ValidationException catch (e) {
