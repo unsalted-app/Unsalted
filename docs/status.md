@@ -52,7 +52,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 | 8.4 | Nährwertanzeige + Mengenrechner | fertig |
 | 8.5 | Rezeptdetail mit Steckplätzen | fertig |
 | 8.6 | Versionen + Vergleich | fertig |
-| 8.7 | Einstellungen, Export, Import | offen |
+| 8.7 | Einstellungen, Export, Import | fertig |
 | 8.8 | App-Hülle verdrahten | offen |
 
 ## Phase 9 — Integration und Spike (Kapitel 24.6)
@@ -86,17 +86,19 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
   sobald eine Arbeitskarte `data/mappers/*.dart` in ihrem Dateiscope
   erlaubt.
 - `test/recipe/recipe_step_test.dart` fehlt noch (RecipeStep selbst korrekt).
-- EX-03 ("ein SettingsEntry erscheint in den Einstellungen") ist mit
-  Schritt 8.5 noch nicht testbar, da der Einstellungen-Bildschirm erst
-  Schritt 8.7 ist. EX-01, EX-02, EX-04, EX-05 sind in
-  `test/ui/recipe_detail/recipe_detail_screen_test.dart` abgedeckt; EX-03
-  bei 8.7 nachholen.
 - `food_editor_screen.dart` (Schritt 8.1) hat kein `PopScope` für „Abbrechen
   mit ungespeicherten Änderungen fragt nach" (Kapitel 22, allgemeine
   Bildschirmregel) — bei Schritt 8.1 übersehen, erst bei Schritt 8.2s
   `recipe_create_screen.dart` nachgeholt. Nachziehen, sobald
   `food_editor_screen.dart` wieder im Dateiscope eines Schritts liegt.
   Siehe CLAUDE.md Abschnitt 4 für das PopScope+addPostFrameCallback-Muster.
+- `export_screen.dart` (Schritt 8.7) hat keinen nativen Teilen-Dialog
+  (nur "In Zwischenablage kopieren"), `import_screen.dart` keine
+  Datei-Auswahl (nur Text einfügen) — beides bräuchte ein zusätzliches
+  Paket (`share_plus`/`file_picker`) und damit eine pubspec.yaml-Änderung,
+  die außerhalb des Dateiscopes von Schritt 8.7 lag (nur
+  `lib/src/ui/settings/*`). Nachholen, sobald ein Schritt pubspec.yaml
+  ändern darf.
 - Zwei kosmetische Analyzer-`info`-Hinweise akzeptiert, bewusst nicht
   behoben: `use_super_parameters` in `core_database.dart`.
 
