@@ -50,7 +50,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 | 8.2 | Rezeptliste + Erstellen | fertig |
 | 8.3 | Rezept-Editor | fertig |
 | 8.4 | Nährwertanzeige + Mengenrechner | fertig |
-| 8.5 | Rezeptdetail mit Steckplätzen | offen |
+| 8.5 | Rezeptdetail mit Steckplätzen | fertig |
 | 8.6 | Versionen + Vergleich | offen |
 | 8.7 | Einstellungen, Export, Import | offen |
 | 8.8 | App-Hülle verdrahten | offen |
@@ -86,6 +86,11 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
   sobald eine Arbeitskarte `data/mappers/*.dart` in ihrem Dateiscope
   erlaubt.
 - `test/recipe/recipe_step_test.dart` fehlt noch (RecipeStep selbst korrekt).
+- EX-03 ("ein SettingsEntry erscheint in den Einstellungen") ist mit
+  Schritt 8.5 noch nicht testbar, da der Einstellungen-Bildschirm erst
+  Schritt 8.7 ist. EX-01, EX-02, EX-04, EX-05 sind in
+  `test/ui/recipe_detail/recipe_detail_screen_test.dart` abgedeckt; EX-03
+  bei 8.7 nachholen.
 - `food_editor_screen.dart` (Schritt 8.1) hat kein `PopScope` für „Abbrechen
   mit ungespeicherten Änderungen fragt nach" (Kapitel 22, allgemeine
   Bildschirmregel) — bei Schritt 8.1 übersehen, erst bei Schritt 8.2s

@@ -1,0 +1,302 @@
+// lib/src/ui/recipe_detail/recipe_detail_screen.dart
+//
+// Bildschirm 4 (Kapitel 22, Schritt 8.5): lesende Rezeptansicht.
+// Versionsumschalter, Zutaten/Schritte (aus getVersion -- Kapitel 16.1
+// liefert dort "inklusive Zutaten und Schritte", watchVersions selbst
+// nicht), Nährwertanzeige über NutritionService.forVersion (Draft-/
+// Snapshot-Weiche bereits in Schritt 6.5 gelöst -- hier keine erneute
+// Live-Auflösung von FoodVariants, auch nicht für Snapshots), darunter
+// recipeDetailSections und in der AppBar recipeActions aus allen
+// registrierten Modulen (Kapitel 21), generisch nach `order` sortiert.
+// Timer-Chips zeigen nur den gespeicherten timerSeconds-Wert, keine aktive
+// Timer-Engine.
+//
+// RecipeContext.ref (Kapitel 21) braucht ein echtes WidgetRef -- das gibt
+// es nur innerhalb eines ConsumerWidget/ConsumerState. Deshalb wird der
+// AppBar- und Sections-Teil (der RecipeContext baut) erst gerendert,
+// sobald Version + Nährwerte geladen sind (_DetailScaffold, ein eigenes
+// ConsumerWidget), statt zu versuchen, WidgetRef künstlich nachzubilden.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../module/extension_types.dart';
+import '../../module/unsalted_module.dart';
+import '../../nutrition/nutrition_result.dart';
+import '../../providers/core_providers.dart';
+import '../../recipe/recipe.dart';
+import '../../recipe/recipe_version.dart';
+import '../nutrition/nutrition_header.dart';
+import '../nutrition/nutrition_table.dart';
+import 'version_switcher.dart';
+
+class RecipeDetailScreen extends ConsumerStatefulWidget {
+  final String recipeId;
+
+  const RecipeDetailScreen({super.key, required this.recipeId});
+
+  @override
+  ConsumerState<RecipeDetailScreen> createState() => _RecipeDetailScreenState();
+}
+
+class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
+  String? _selectedVersionId;
+
+  void _ensureSelection(List<RecipeVersion> versions, Recipe recipe) {
+    if (versions.isEmpty) {
+      _selectedVersionId = null;
+      return;
+    }
+    if (_selectedVersionId != null && versions.any((v) => v.id == _selectedVersionId)) {
+      return;
+    }
+    final masterId = recipe.masterVersionId;
+    if (masterId != null && versions.any((v) => v.id == masterId)) {
+      _selectedVersionId = masterId;
+    } else {
+      _selectedVersionId = versions.first.id;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final repo = ref.watch(recipeRepositoryProvider);
+    final modules = ref.watch(modulesProvider);
+
+    return StreamBuilder<Recipe?>(
+      stream: repo.watchRecipe(widget.recipeId),
+      builder: (context, recipeSnapshot) {
+        if (recipeSnapshot.connectionState == ConnectionState.waiting && !recipeSnapshot.hasData) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        if (recipeSnapshot.hasError) {
+          return Scaffold(body: Center(child: Text(recipeSnapshot.error.toString())));
+        }
+        final recipe = recipeSnapshot.data;
+        if (recipe == null) {
+          return const Scaffold(body: Center(child: Text('Rezept nicht gefunden.')));
+        }
+
+        return StreamBuilder<List<RecipeVersion>>(
+          stream: repo.watchVersions(widget.recipeId),
+          builder: (context, versionsSnapshot) {
+            if (versionsSnapshot.connectionState == ConnectionState.waiting &&
+                !versionsSnapshot.hasData) {
+              return Scaffold(
+                appBar: AppBar(title: Text(recipe.title)),
+                body: const Center(child: CircularProgressIndicator()),
+              );
+            }
+            if (versionsSnapshot.hasError) {
+              return Scaffold(
+                appBar: AppBar(title: Text(recipe.title)),
+                body: Center(child: Text(versionsSnapshot.error.toString())),
+              );
+            }
+            final versions = versionsSnapshot.data ?? const <RecipeVersion>[];
+            _ensureSelection(versions, recipe);
+
+            if (versions.isEmpty) {
+              return Scaffold(
+                appBar: AppBar(title: Text(recipe.title)),
+                body: const Center(child: Text('Keine Version vorhanden.')),
+              );
+            }
+
+            return _VersionLoader(
+              recipe: recipe,
+              versions: versions,
+              selectedVersionId: _selectedVersionId!,
+              modules: modules,
+              onVersionSelected: (id) => setState(() => _selectedVersionId = id),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _VersionLoader extends ConsumerStatefulWidget {
+  final Recipe recipe;
+  final List<RecipeVersion> versions;
+  final String selectedVersionId;
+  final List<UnsaltedModule> modules;
+  final ValueChanged<String> onVersionSelected;
+
+  const _VersionLoader({
+    required this.recipe,
+    required this.versions,
+    required this.selectedVersionId,
+    required this.modules,
+    required this.onVersionSelected,
+  });
+
+  @override
+  ConsumerState<_VersionLoader> createState() => _VersionLoaderState();
+}
+
+class _VersionLoaderState extends ConsumerState<_VersionLoader> {
+  late Future<(RecipeVersion, NutritionResult)> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = _load(widget.selectedVersionId);
+  }
+
+  @override
+  void didUpdateWidget(covariant _VersionLoader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedVersionId != widget.selectedVersionId) {
+      _future = _load(widget.selectedVersionId);
+    }
+  }
+
+  Future<(RecipeVersion, NutritionResult)> _load(String versionId) async {
+    final version = await ref.read(recipeRepositoryProvider).getVersion(versionId);
+    final nutrition = await ref.read(nutritionServiceProvider).forVersion(versionId);
+    if (version == null) {
+      throw StateError('Version "$versionId" nicht gefunden.');
+    }
+    return (version, nutrition);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<(RecipeVersion, NutritionResult)>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return Scaffold(
+            appBar: AppBar(title: Text(widget.recipe.title)),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(title: Text(widget.recipe.title)),
+            body: Center(child: Text(snapshot.error.toString())),
+          );
+        }
+        final (version, nutrition) = snapshot.data!;
+        return _DetailScaffold(
+          recipe: widget.recipe,
+          versions: widget.versions,
+          version: version,
+          nutrition: nutrition,
+          modules: widget.modules,
+          onVersionSelected: widget.onVersionSelected,
+        );
+      },
+    );
+  }
+}
+
+class _DetailScaffold extends ConsumerWidget {
+  final Recipe recipe;
+  final List<RecipeVersion> versions;
+  final RecipeVersion version;
+  final NutritionResult nutrition;
+  final List<UnsaltedModule> modules;
+  final ValueChanged<String> onVersionSelected;
+
+  const _DetailScaffold({
+    required this.recipe,
+    required this.versions,
+    required this.version,
+    required this.nutrition,
+    required this.modules,
+    required this.onVersionSelected,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recipeContext = RecipeContext(
+      recipeId: recipe.id,
+      versionId: version.id,
+      version: version,
+      nutrition: nutrition,
+      ref: ref,
+    );
+
+    final sections = <RecipeDetailSection>[
+      for (final module in modules) ...module.recipeDetailSections,
+    ]..sort((a, b) => a.order.compareTo(b.order));
+    final actions = <RecipeAction>[
+      for (final module in modules) ...module.recipeActions,
+    ]..sort((a, b) => a.order.compareTo(b.order));
+    final appBarActions = actions.where((a) => a.placement == RecipeActionPlacement.appBar).toList();
+    final menuActions = actions.where((a) => a.placement == RecipeActionPlacement.menu).toList();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(recipe.title),
+        actions: [
+          for (final action in appBarActions)
+            IconButton(
+              icon: Icon(action.icon),
+              tooltip: action.label,
+              onPressed: (action.isEnabled?.call(recipeContext) ?? true)
+                  ? () => action.onPressed(context, recipeContext)
+                  : null,
+            ),
+          if (menuActions.isNotEmpty)
+            PopupMenuButton<RecipeAction>(
+              itemBuilder: (context) => [
+                for (final action in menuActions)
+                  PopupMenuItem(
+                    value: action,
+                    enabled: action.isEnabled?.call(recipeContext) ?? true,
+                    child: Text(action.label),
+                  ),
+              ],
+              onSelected: (action) => action.onPressed(context, recipeContext),
+            ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          VersionSwitcher(
+            versions: versions,
+            selectedVersionId: version.id,
+            onSelected: onVersionSelected,
+          ),
+          const SizedBox(height: 8),
+          if (recipe.description != null) Text(recipe.description!),
+          const SizedBox(height: 16),
+          NutritionHeader(result: nutrition),
+          const SizedBox(height: 8),
+          NutritionTable(result: nutrition),
+          const Divider(height: 32),
+          const Text('Zutaten', style: TextStyle(fontWeight: FontWeight.bold)),
+          for (final ingredient in version.ingredients)
+            ListTile(
+              title: Text(ingredient.displayName),
+              subtitle: Text(
+                '${ingredient.quantity} ${ingredient.unitCode}'
+                '${ingredient.note == null ? '' : ' · ${ingredient.note}'}',
+              ),
+            ),
+          const Divider(height: 32),
+          const Text('Schritte', style: TextStyle(fontWeight: FontWeight.bold)),
+          for (final step in version.steps)
+            ListTile(
+              title: Text(step.instruction),
+              trailing:
+                  step.timerSeconds == null ? null : Chip(label: Text(_formatTimer(step.timerSeconds!))),
+            ),
+          if (sections.isNotEmpty) const Divider(height: 32),
+          for (final section in sections) section.build(context, recipeContext),
+        ],
+      ),
+    );
+  }
+
+  static String _formatTimer(int totalSeconds) {
+    final minutes = totalSeconds ~/ 60;
+    final seconds = totalSeconds % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+}
