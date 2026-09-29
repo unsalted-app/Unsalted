@@ -223,6 +223,28 @@ Phase 10 (Freeze).
   ersten `pumpWidget` vergrößern (z. B. `Size(800, 3000)`) statt in jedem
   Test zu scrollen. Siehe `test/ui/foods/food_list_screen_test.dart` und
   `food_editor_screen_test.dart` für das vollständige Muster.
+- **`PopScope(canPop: ...)` + programmatischer Pop direkt nach `setState`
+  schlägt fehl (seit Schritt 8.2):** Wenn `canPop` von einem State-Feld
+  abhängt (z. B. „ungespeicherte Eingaben"), reicht `setState(() =>
+  feld = neuerWert)` gefolgt von einem sofortigen `Navigator.of(context).pop()`
+  **nicht** — Flutter liest `canPop` aus dem zuletzt gebauten `PopScope`-
+  Widget, nicht live aus dem State-Feld, und ein `setState`-Aufruf wird
+  erst zum nächsten Frame angewendet. Ein Pop unmittelbar danach sieht
+  deshalb noch den alten (blockierenden) Wert und wird kommentarlos zu
+  einem No-Op (`RoutePopDisposition.doNotPop`) — kein Fehler, kein Crash,
+  die Seite bleibt einfach sichtbar. Das ist ein echter Bug im
+  Anwendungscode, kein reines Testartefakt (in der echten App tritt er
+  identisch auf, weil Rebuilds auch dort erst zum nächsten Frame
+  angewendet werden). Fix: `setState(...)` gefolgt von
+  `WidgetsBinding.instance.addPostFrameCallback((_) { if (mounted) ...pop...; })`
+  statt direktem Pop. In Widget-Tests danach `pumpAndSettle()` statt einer
+  festen Dauer verwenden (die Standard-Transition dauert exakt 300 ms —
+  ein `pump(Duration(milliseconds: 300))` kann genau auf der Grenze
+  landen). Siehe `recipe_create_screen.dart`/`_save()`. **Bekannte Lücke:**
+  `food_editor_screen.dart` (Schritt 8.1) hat noch kein `PopScope` für
+  „Abbrechen mit ungespeicherten Änderungen fragt nach" (Kapitel 22,
+  allgemeine Bildschirmregel) — dort nachziehen, sobald diese Datei im
+  Scope eines Schritts liegt.
 
 ---
 

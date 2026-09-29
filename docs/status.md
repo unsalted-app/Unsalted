@@ -47,7 +47,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 8.1 | Lebensmittel-Liste + Editor | fertig |
-| 8.2 | Rezeptliste + Erstellen | offen |
+| 8.2 | Rezeptliste + Erstellen | fertig |
 | 8.3 | Rezept-Editor | offen |
 | 8.4 | Nährwertanzeige + Mengenrechner | offen |
 | 8.5 | Rezeptdetail mit Steckplätzen | offen |
@@ -86,6 +86,12 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
   sobald eine Arbeitskarte `data/mappers/*.dart` in ihrem Dateiscope
   erlaubt.
 - `test/recipe/recipe_step_test.dart` fehlt noch (RecipeStep selbst korrekt).
+- `food_editor_screen.dart` (Schritt 8.1) hat kein `PopScope` für „Abbrechen
+  mit ungespeicherten Änderungen fragt nach" (Kapitel 22, allgemeine
+  Bildschirmregel) — bei Schritt 8.1 übersehen, erst bei Schritt 8.2s
+  `recipe_create_screen.dart` nachgeholt. Nachziehen, sobald
+  `food_editor_screen.dart` wieder im Dateiscope eines Schritts liegt.
+  Siehe CLAUDE.md Abschnitt 4 für das PopScope+addPostFrameCallback-Muster.
 - Zwei kosmetische Analyzer-`info`-Hinweise akzeptiert, bewusst nicht
   behoben: `use_super_parameters` in `core_database.dart`.
 
