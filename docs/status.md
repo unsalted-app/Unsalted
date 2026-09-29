@@ -51,7 +51,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 | 8.3 | Rezept-Editor | fertig |
 | 8.4 | Nährwertanzeige + Mengenrechner | fertig |
 | 8.5 | Rezeptdetail mit Steckplätzen | fertig |
-| 8.6 | Versionen + Vergleich | offen |
+| 8.6 | Versionen + Vergleich | fertig |
 | 8.7 | Einstellungen, Export, Import | offen |
 | 8.8 | App-Hülle verdrahten | offen |
 
