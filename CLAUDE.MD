@@ -202,6 +202,27 @@ Phase 10 (Freeze).
   die alte generierte Datei liegen und erzeugt kryptische Fehler wie
   „Superinterfaces don't have a valid override for 'managers'". Immer
   manuell löschen vor `build_runner build --delete-conflicting-outputs`.
+- **`testWidgets()` + `NativeDatabase.memory()` hängt scheinbar (seit
+  Schritt 8.1):** `testWidgets`-Tests laufen in einer FakeAsync-Zone; echte
+  Async-Arbeit (Drift-FFI/Isolate-Kommunikation von `NativeDatabase`) muss
+  über `await tester.runAsync(() async { ... })` laufen, sonst wartet der
+  Test scheinbar endlos. **Wichtig beim Debuggen:** niemals `flutter test
+  ... | tail -N` verwenden, um das zu diagnostizieren — `tail` ohne `-f`
+  puffert alles bis zum Prozessende und zeigt bis dahin **gar nichts** an,
+  was wie ein echter Hänger aussieht, obwohl der Test in Wahrheit nur ein
+  paar Sekunden braucht und dann sauber fehlschlägt. Direkt ohne Pipe
+  laufen lassen. Zweite Falle derselben Ursache: am Testende „A Timer is
+  still pending even after the widget tree was disposed" — Drifts
+  `QueryStream` plant beim Abbestellen (StreamBuilder-Dispose) einen
+  echten Zero-Duration-Timer; vor Testende `await
+  tester.pumpWidget(const SizedBox.shrink()); await
+  tester.pump(Duration.zero);` einbauen, um ihn auszupumpen, solange noch
+  aktiv gepumpt werden kann. Dritte Falle: Formulare mit vielen Feldern
+  passen nicht in die Standard-Testfläche (800×600) — `ListView` baut dann
+  untere Felder gar nicht erst auf; `tester.view.physicalSize` vor dem
+  ersten `pumpWidget` vergrößern (z. B. `Size(800, 3000)`) statt in jedem
+  Test zu scrollen. Siehe `test/ui/foods/food_list_screen_test.dart` und
+  `food_editor_screen_test.dart` für das vollständige Muster.
 
 ---
 

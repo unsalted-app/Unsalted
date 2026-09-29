@@ -46,7 +46,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 ## Phase 8 — Oberfläche (Kapitel 24.5)
 | Schritt | Beschreibung | Status |
 |---|---|---|
-| 8.1 | Lebensmittel-Liste + Editor | offen |
+| 8.1 | Lebensmittel-Liste + Editor | fertig |
 | 8.2 | Rezeptliste + Erstellen | offen |
 | 8.3 | Rezept-Editor | offen |
 | 8.4 | Nährwertanzeige + Mengenrechner | offen |
