@@ -284,3 +284,25 @@ als eng begrenzter Nachtrag vor 8.8 freigegeben.
 von AT-09 zu Recht abgelehnt). 8.8 „teilweise" abschließen (App startet ohne
 Bildschirme) — verfehlt das Fertig-Kriterium von 8.8 („Core-Flows sind
 erreichbar").
+
+## 2026-09-30 — Schritt 8.8: `apps/unsalted_app/pubspec.yaml` ergänzt
+
+**Betroffenes Kapitel:** 21, Arbeitskarte 8.8 (Dateiscope: `lib/main.dart`
+plus App-Testdatei).
+
+**Entscheidung:** `pubspec.yaml` der App um `unsalted_core` (Pfad
+`../../packages/unsalted_core`), `flutter_riverpod`, `go_router` und
+`drift_flutter` ergänzt, dazu `drift` als Dev-Dependency für
+`NativeDatabase.memory()` im App-Start-Test. Versionen ausschließlich über
+`flutter pub add`. Ohne diese Einträge kompiliert die in §8 geforderte
+Verdrahtung nicht; der Dateiscope nennt das Manifest nicht, schließt es aber
+auch nicht aus. Vom Projektverantwortlichen vorab freigegeben.
+
+**Umsetzung:** `main.dart` importiert nur `package:unsalted_core/unsalted_core.dart`
+(AT-09). Der `GoRouter` bezieht seine Routen ausschließlich aus
+`modules.expand((m) => m.routes)`; ein `ShellRoute` der App-Hülle legt eine
+`NavigationBar` (Rezepte `/`, Lebensmittel `/foods`, Einstellungen
+`/settings`) um alle Modulrouten. Datenbank über
+`CoreDatabase(driftDatabase(name: 'unsalted'))` — `driftDatabase` liefert
+eine `DatabaseConnection`, die `QueryExecutor` implementiert (im Pub-Cache
+von drift_flutter 0.3.1/drift 2.35.0 verifiziert).

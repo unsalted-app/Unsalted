@@ -53,7 +53,10 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 | 8.5 | Rezeptdetail mit Steckplätzen | fertig |
 | 8.6 | Versionen + Vergleich | fertig |
 | 8.7 | Einstellungen, Export, Import | fertig |
-| 8.8 | App-Hülle verdrahten | offen |
+| 8.7a | Nachtrag: Core-Routen in `CoreModule.routes` (docs/decisions.md) | fertig |
+| 8.8 | App-Hülle verdrahten | fertig |
+
+Phase 8 — abgeschlossen.
 
 ## Phase 9 — Integration und Spike (Kapitel 24.6)
 | Schritt | Beschreibung | Status |
@@ -70,6 +73,24 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 | 10.3 | Tag `part1-v1.0.0` | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)
+
+- **`RecipeListScreen` öffnet beim Tippen auf eine Zeile kein `RecipeDetailScreen`**
+  (kein `onTap` auf dem `ListTile`, `lib/src/ui/recipe_list/recipe_list_screen.dart`).
+  Die Route `/recipes/:id` existiert seit 8.7a, aber die Liste navigiert
+  nicht dorthin. Bildschirm 4, 7 und 8 sind in der App daher nur über den
+  Import-Fluss erreichbar. Fix gehört in `recipe_list_screen.dart` und
+  braucht eine eigene Arbeitskarte — vermutlich Blocker für Schritt 9.2
+  (manueller Durchlauf).
+- `tool/check_architecture.dart` (Schritt 1.1) meldet (schon vor Schritt 8.8)
+  35 „VERBOTENER IMPORT"-Treffer
+  für `package:flutter/`/`package:drift/` innerhalb von `lib/src/ui/` bzw.
+  `lib/src/data/` — obwohl der Dateikommentar des Tools genau diese beiden
+  Ordner als Ausnahme nennt. Das Tool ist offenbar nie an die tatsächliche
+  Ordnerstruktur angepasst worden. Es wird von keinem Test und keiner CI
+  aufgerufen (nur manuell über `dart run tool/check_architecture.dart`);
+  die tatsächlich verbindliche Prüfung sind AT-01–AT-12 in
+  `test/architecture/`, die weiterhin alle grün sind. Die Treffer sind
+  bei 8.7a/8.8 unverändert geblieben (keiner aus `apps/unsalted_app`).
 
 - `foodVariantToInsertCompanion`/`foodVariantToUpdateCompanion` in
   `food_mapper.dart` sind seit Schritt 6.4 toter Code (0 Aufrufer) —

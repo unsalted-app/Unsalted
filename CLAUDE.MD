@@ -20,22 +20,40 @@ vermeiden.
    du Code schreibst.
 3. Arbeite **ausschließlich** im Dateiscope, den die Arbeitskarte des
    aktuellen Schritts nennt. Keine Datei außerhalb dieses Scopes anfassen,
-   auch nicht "kurz aufräumen".
+   auch nicht "kurz aufräumen" — auch keine "kleine" Ergänzung wie ein
+   einzelnes `onTap`. `docs/status.md`, `docs/decisions.md` und diese Datei
+   sind davon ausgenommen (Projekt-Meta-Dokumentation, nach jedem Schritt
+   zu pflegen, unabhängig vom Dateiscope des Schritts).
 4. Nach jeder Änderung: passenden Test ergänzen, `flutter analyze` und
    `flutter test` laufen lassen, `docs/status.md` aktualisieren.
-5. Bei Unsicherheit über eine Paket-API (Drift, Riverpod, etc.): über
-   `web_search`/offizielle Doku verifizieren, nicht raten. Diese Regel hat
-   uns in der Vorarbeit mehrfach vor kaputtem generiertem Code bewahrt
-   (siehe Abschnitt 4).
+5. Bei Unsicherheit über eine Paket-API (Drift, Riverpod, go_router,
+   drift_flutter etc.): über `web_search`/offizielle Doku bzw. den lokalen
+   Pub-Cache (`~/.pub-cache/hosted/pub.dev/<paket>-<version>/lib/...`)
+   verifizieren, nicht raten. Diese Regel hat uns in der Vorarbeit mehrfach
+   vor kaputtem generiertem Code bewahrt (siehe Abschnitt 4).
 6. Nach `dart run build_runner build --delete-conflicting-outputs`: prüfen,
    ob eine `.dart`-Quelldatei ihre `part`-Direktive verloren hat (z. B. weil
    sie von einer konkreten Klasse zu einem Interface wurde). In dem Fall
    bleibt die alte `.g.dart` als Leiche liegen und muss **manuell** gelöscht
    werden — `--delete-conflicting-outputs` erkennt das nicht automatisch.
+7. **Scope-Konflikt → stoppen und fragen, nicht selbst erweitern.** Wenn
+   eine Arbeitskarte nur erfüllbar ist, indem man eine Datei außerhalb
+   ihres Dateiscopes ändert oder gegen ein ausdrückliches Verbot
+   („VERBOTENE ÄNDERUNGEN") verstößt, nicht improvisieren, sondern den
+   Konflikt dem Projektverantwortlichen vorlegen. Präzedenzfall: Nachtrag
+   8.7a (`docs/decisions.md`) — freigegeben als eng begrenzter Nachtrag,
+   nicht vom Assistenten eigenmächtig.
+8. **Diese Datei tatsächlich schreiben, nicht nur planen:** Am Ende jedes
+   Schritts prüfen, ob Abschnitt 1 (Projektstruktur) und Abschnitt 2
+   (Aktueller Stand) noch stimmen, und editieren, falls nicht. Diese Datei
+   war zwischen Schritt 6.2 und Schritt 8.8 nicht aktuell gehalten worden
+   (sie zeigte noch „Nächster Schritt: 6.2", obwohl Phase 6–8 längst fertig
+   waren) — das führt dazu, dass eine neue Session mit falschem Kontext
+   startet. Nicht wiederholen.
 
 ---
 
-## 1. Projektstruktur (Stand: nach Schritt 6.1)
+## 1. Projektstruktur (Stand: nach Schritt 8.8 — Phase 0–8 abgeschlossen)
 
 ```text
 unsalted/
@@ -46,14 +64,22 @@ unsalted/
 │  ├─ status.md                    Phase/Schritt-Tracker
 │  └─ decisions.md                 Protokoll technischer Entscheidungen
 ├─ tool/
-│  └─ check_architecture.dart
+│  └─ check_architecture.dart      veraltet/ungenutzt, siehe Abschnitt 3
 ├─ drift_schemas/
 │  └─ drift_schema_v1.json         Schema v1, eingefroren (Kapitel 25.1)
+├─ apps/
+│  └─ unsalted_app/                App-Hülle (Schritt 8.8)
+│     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
+│     │                            flutter_riverpod, go_router
+│     ├─ lib/main.dart             ProviderScope-Overrides, GoRouter aus
+│     │                            modules.expand((m) => m.routes), ShellRoute
+│     │                            mit NavigationBar (/, /foods, /settings)
+│     └─ test/widget_test.dart     App-Start-Rauchtest
 └─ packages/
    └─ unsalted_core/
       ├─ pubspec.yaml
       ├─ lib/
-      │  ├─ unsalted_core.dart               öffentliche Tür — NOCH LEER (Schritt 8.4 offen)
+      │  ├─ unsalted_core.dart               öffentliche Tür — eingefroren seit Schritt 7.4
       │  └─ src/
       │     ├─ nutrition/                    Phase 2, fertig, reines Dart
       │     │  ├─ decimal_math.dart
@@ -83,9 +109,14 @@ unsalted/
       │     │  ├─ food_repository.dart       abstract FoodRepository
       │     │  ├─ nutrition_service.dart     abstract NutritionService
       │     │  └─ snapshot_service.dart      abstract SnapshotService
-      │     ├─ data/                         Phase 5, fertig
+      │     ├─ data/                         Phase 5+6, fertig
       │     │  ├─ core_database.dart         + Typedefs RecipeRow/RecipeVersionRow/
       │     │  │                             RecipeIngredientRow/RecipeStepRow/FoodVariantRow
+      │     │  ├─ domain_event_bus.dart      DomainEventBus (Schritt 6.2)
+      │     │  ├─ drift_recipe_repository.dart  (Schritt 6.3)
+      │     │  ├─ drift_food_repository.dart     (Schritt 6.4)
+      │     │  ├─ drift_nutrition_service.dart   (Schritt 6.5)
+      │     │  ├─ drift_snapshot_service.dart    (Schritt 6.6)
       │     │  ├─ converters/decimal_converter.dart
       │     │  ├─ tables/
       │     │  │  ├─ recipes.dart
@@ -98,15 +129,37 @@ unsalted/
       │     │  │  ├─ drift_recipe_dao.dart   class DriftRecipeDao implements RecipeDao
       │     │  │  ├─ food_dao.dart           abstract FoodDao
       │     │  │  └─ drift_food_dao.dart     class DriftFoodDao implements FoodDao
-      │     │  └─ mappers/                   ACHTUNG: siehe Abschnitt 3 — Review nötig vor Schritt 6.3
+      │     │  └─ mappers/                   ACHTUNG: siehe Abschnitt 3 — Review nötig vor Aufräum-Schritt
       │     │     ├─ recipe_mapper.dart
-      │     │     ├─ version_mapper.dart
+      │     │     ├─ version_mapper.dart     recipeVersionToSnapshotCompanion = toter Code
       │     │     ├─ ingredient_mapper.dart
       │     │     ├─ step_mapper.dart
-      │     │     └─ food_mapper.dart
-      │     ├─ module/                       NOCH NICHT ANGELEGT (Phase 7)
-      │     ├─ providers/                    NOCH NICHT ANGELEGT (Phase 7)
-      │     └─ ui/                           NOCH NICHT ANGELEGT (Phase 8)
+      │     │     └─ food_mapper.dart        Insert-/Update-Companion-Funktionen = toter Code
+      │     ├─ module/                       Phase 7, fertig
+      │     │  ├─ unsalted_module.dart       abstract UnsaltedModule
+      │     │  ├─ extension_types.dart       RecipeContext, RecipeDetailSection, RecipeAction,
+      │     │  │                             SettingsEntry, SyncTableSpec
+      │     │  └─ core_module.dart           class CoreModule — routes seit Nachtrag 8.7a gefüllt (Kapitel 22)
+      │     ├─ providers/                    Phase 7, fertig
+      │     │  └─ core_providers.dart        alle 8 Provider aus Kapitel 16.7
+      │     └─ ui/                           Phase 8, fertig (Bildschirm 1–13)
+      │        ├─ recipe_list/recipe_list_screen.dart        Bildschirm 1 — Lücke: kein onTap, siehe Abschnitt 3
+      │        ├─ recipe_editor/recipe_create_screen.dart    Bildschirm 2
+      │        ├─ recipe_editor/recipe_editor_screen.dart    Bildschirm 3
+      │        ├─ recipe_editor/ingredient_row.dart
+      │        ├─ recipe_detail/recipe_detail_screen.dart    Bildschirm 4
+      │        ├─ recipe_detail/version_switcher.dart
+      │        ├─ nutrition/nutrition_header.dart            Bildschirm 5
+      │        ├─ nutrition/nutrition_table.dart              Bildschirm 5
+      │        ├─ nutrition/amount_calculator.dart            Bildschirm 6
+      │        ├─ versions/version_list_screen.dart           Bildschirm 7
+      │        ├─ versions/version_compare_screen.dart        Bildschirm 8
+      │        ├─ foods/food_list_screen.dart                 Bildschirm 9
+      │        ├─ foods/food_editor_screen.dart               Bildschirm 10 — Lücke: kein PopScope, siehe Abschnitt 3
+      │        ├─ foods/package_form.dart
+      │        ├─ settings/export_screen.dart                 Bildschirm 11 — Lücke: kein Teilen-Dialog
+      │        ├─ settings/import_screen.dart                 Bildschirm 12 — Lücke: keine Datei-Auswahl
+      │        └─ settings/settings_screen.dart                Bildschirm 13
       └─ test/
          ├─ architecture/                    AT-01 bis AT-12, alle fertig und grün
          │  ├─ at01_no_upper_imports_test.dart … at12_no_kj_text_test.dart
@@ -125,58 +178,94 @@ unsalted/
          │  ├─ recipe_snapshot_v1_test.dart
          │  ├─ golden_test.dart
          │  └─ golden/gd01…gd04.json
-         └─ data/
-            ├─ decimal_converter_test.dart   MG-04
-            ├─ mg01_schema_dump_exists_test.dart
-            ├─ mg02_migration_test.dart
-            ├─ mg03_core_database_test.dart
-            └─ mg05_no_real_columns_test.dart
+         ├─ data/
+         │  ├─ decimal_converter_test.dart   MG-04
+         │  ├─ mg01_schema_dump_exists_test.dart
+         │  ├─ mg02_migration_test.dart
+         │  ├─ mg03_core_database_test.dart
+         │  ├─ mg05_no_real_columns_test.dart
+         │  ├─ event_bus_test.dart
+         │  ├─ recipe_repository_test.dart   RP-01…21
+         │  ├─ food_repository_test.dart     FD-01…05
+         │  ├─ nutrition_service_test.dart
+         │  └─ snapshot_service_test.dart    IT-01/03/05, GD-11/12
+         └─ ui/                              Phase 8, je Bildschirm eine Testdatei
+            ├─ recipe_list/, recipe_editor/, recipe_detail/, nutrition/,
+            │  versions/, foods/, settings/  — Testmuster siehe Abschnitt 4
 ```
 
 ---
 
 ## 2. Aktueller Stand
 
-**Abgeschlossen:** Phase 0 (Projektgrundlage), Phase 1 (Architektur, AT-01–AT-12),
-Phase 2 (Rechenkern), Phase 3 (Fachmodelle), Phase 4 (Snapshot-Format,
-`RecipeDiff`), Phase 5 (Drift-Datenbank: Tabellen, Converter, `CoreDatabase`,
-Schema v1 eingefroren, DAOs), **Schritt 6.1** (Verträge und Input-Modelle).
+**Abgeschlossen:** Phase 0 (Projektgrundlage), Phase 1 (Architektur,
+AT-01–AT-12), Phase 2 (Rechenkern), Phase 3 (Fachmodelle), Phase 4
+(Snapshot-Format, `RecipeDiff`), Phase 5 (Drift-Datenbank), **Phase 6**
+(Repositories und Services, Schritt 6.1–6.6), **Phase 7**
+(Modul-/Steckplatzsystem, Schritt 7.1–7.4: Modultypen, `CoreModule`,
+Provider, öffentliche Tür geschlossen und eingefroren), **Phase 8**
+(Oberfläche, Schritt 8.1–8.8 inkl. Nachtrag 8.7a: alle 13 Bildschirme aus Kapitel 22, ihre Routen in `CoreModule.routes` sowie die
+App-Hülle `apps/unsalted_app`).
 
-**Nächster Schritt: 6.2 — `DomainEventBus`.** In-Memory-Broadcast für
-`DomainEvent` (siehe `contracts/domain_events.dart`), Datei
-`lib/src/data/domain_event_bus.dart`. Details: `docs/spezifikation.md`,
-Kapitel 16.5 / Arbeitskarte Schritt 6.2.
+**Nächster Schritt: 9.1 — Integrationstests.** `test/integration/` gemäß
+Testplan (Kapitel 23.5), IT-01 bis IT-06 plus ergänzende Edge Cases für
+Diff/Apply, Snapshot-Import und Master-Integrität. Details:
+`docs/spezifikation.md`, Arbeitskarte Schritt 9.1 (Kapitel 24.6).
 
-Danach: 6.3 `DriftRecipeRepository`, 6.4 `DriftFoodRepository`,
-6.5 `DriftNutritionService`, 6.6 `DriftSnapshotService`, dann Phase 7
-(Modul-/Steckplatzsystem), Phase 8 (UI), Phase 9 (Integration/Spike),
-Phase 10 (Freeze).
+Danach: 9.2 (manueller Durchlauf — **Achtung**, der in Abschnitt 3
+dokumentierte Navigationsgap in `RecipeListScreen` blockiert vermutlich den
+vollständigen Durchlauf und braucht vorher eine eigene Arbeitskarte), 9.3
+(technischer Spike: mehrere Drift-Klassen auf einem `QueryExecutor`), dann
+Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
+`part1-v1.0.0`).
 
 ---
 
 ## 3. Offene Punkte, die beim Weiterbauen nicht vergessen werden dürfen
 
-- **Mapper vs. neue DAO-Signaturen (Kapitel 16.8):** `data/mappers/*.dart`
-  wurden für den *alten* DAO-Methodensatz aus Schritt 5.5 gebaut
-  (einzelne `insertRecipe`/`insertVersion`/`insertIngredients` usw.). Die
-  DAOs heißen jetzt anders und haben ein konsolidiertes Methodenset
-  (`saveDraftIngredients`/`saveDraftSteps` mit Upsert-/Soft-Delete-Delta,
-  `insertRecipe(recipe, version)` kombiniert beide Inserts). **Vor Schritt
-  6.3 prüfen, ob die Mapper-Funktionen noch zu den DAO-Signaturen passen,
-  insbesondere `food_mapper.dart`: `FoodDao.insertVariant`/`updateVariant`
-  nehmen einen vollen `FoodVariantRow` entgegen, kein
-  `FoodVariantsCompanion` — `food_mapper.dart` liefert aber bisher nur
-  Companions.**
-- **`recipe_step_test.dart` fehlt.** `RecipeStep` selbst ist korrekt gebaut
-  (Schritt 3.1), aber ungetestet. Nachholen, sobald ein Test dafür
-  ansteht — kein Blocker, aber Lücke.
+- **`RecipeListScreen` öffnet beim Tippen auf eine Zeile kein
+  `RecipeDetailScreen`** (kein `onTap` auf dem `ListTile`). Bildschirm 4
+  (Rezeptdetail) und damit auch 7 (Versionen) und 8 (Vergleich) sind in der
+  App aktuell nur über den Import-Fluss erreichbar (die Route
+  `/recipes/:id` existiert seit 8.7a, die Liste navigiert aber nicht
+  dorthin). Fix gehört in `lib/src/ui/recipe_list/recipe_list_screen.dart`.
+  **Wahrscheinlich ein Blocker für Schritt 9.2** (manueller Durchlauf) —
+  vorher klären, ob eine eigene kleine Arbeitskarte nötig ist.
+- **Mapper-Leichen (Kapitel 16.8):** `foodVariantToInsertCompanion`/
+  `foodVariantToUpdateCompanion` in `food_mapper.dart` und
+  `recipeVersionToSnapshotCompanion` in `version_mapper.dart` sind toter
+  Code (0 Aufrufer) — die zugehörigen Repositories/Services bauen die
+  Zeilen seit Schritt 6.4/6.6 direkt selbst, weil die DAO-Signaturen einen
+  vollen Row-Typ statt eines Companions erwarten. Aufräumen, sobald eine
+  Arbeitskarte `data/mappers/*.dart` in ihrem Dateiscope erlaubt.
+- **`test/recipe/recipe_step_test.dart` fehlt noch.** `RecipeStep` selbst
+  ist korrekt gebaut (Schritt 3.1), aber ungetestet. Kein Blocker, aber
+  Lücke — nachholen, sobald ein Schritt diese Datei berührt.
+- **`food_editor_screen.dart` hat kein `PopScope`** für „Abbrechen mit
+  ungespeicherten Änderungen fragt nach" (Kapitel 22, allgemeine
+  Bildschirmregel). Bei Schritt 8.1 übersehen, bei 8.2s
+  `recipe_create_screen.dart` nachgeholt (siehe Muster in Abschnitt 4).
+  Nachziehen, sobald `food_editor_screen.dart` wieder im Dateiscope eines
+  Schritts liegt.
+- **`export_screen.dart`/`import_screen.dart` ohne nativen Teilen-Dialog
+  bzw. Datei-Auswahl** (nur Zwischenablage/Text einfügen) — bräuchte
+  `share_plus`/`file_picker` und damit eine `pubspec.yaml`-Änderung von
+  `unsalted_core`, die außerhalb des Dateiscopes von Schritt 8.7 lag.
+- **`tool/check_architecture.dart` ist stale/ungenutzt.** Es meldet 35
+  „VERBOTENER IMPORT"-Treffer für `package:flutter/`/`package:drift/`
+  innerhalb von `lib/src/ui/` bzw. `lib/src/data/`, obwohl sein eigener
+  Dateikommentar genau diese Ordner als Ausnahme nennt — das Tool wurde
+  offenbar nie an die tatsächliche Ordnerstruktur angepasst. Es wird von
+  keinem Test/CI aufgerufen; verbindlich sind ausschließlich AT-01–AT-12 in
+  `test/architecture/` (alle grün). Nicht als Fehler werten, wenn es beim
+  manuellen Aufruf rot ist.
 - **Upsert-/Soft-Delete-Delta für `recipe_ingredients`/`recipe_steps`**
-  (Kapitel 10.7 der neuen Spezifikation) verlangt **stabile IDs** über
-  mehrere `saveDraft`-Aufrufe hinweg. Das ist ein Verhaltenswechsel
-  gegenüber der alten Spezifikation (dort: hart löschen + neu einfügen).
-  Die DAO-Implementierung (`drift_recipe_dao.dart`) setzt das bereits um;
-  darauf achten, dass Aufrufer (Repository, Schritt 6.3) tatsächlich
-  stabile IDs übergeben, nicht bei jedem Speichern neue erzeugen.
+  (Kapitel 10.7) verlangt **stabile IDs** über mehrere `saveDraft`-Aufrufe
+  hinweg. `drift_recipe_dao.dart` setzt das um; darauf achten, dass
+  Aufrufer tatsächlich stabile IDs übergeben (z. B. bei UI-Formularen: die
+  vom DAO zurückgegebene/kopierte ID weiterverwenden, nie bei jedem Save
+  neu generieren — siehe auch den Testfallstrick in Abschnitt 4 zu
+  `createDraftFrom`).
 
 ---
 
@@ -240,11 +329,7 @@ Phase 10 (Freeze).
   statt direktem Pop. In Widget-Tests danach `pumpAndSettle()` statt einer
   festen Dauer verwenden (die Standard-Transition dauert exakt 300 ms —
   ein `pump(Duration(milliseconds: 300))` kann genau auf der Grenze
-  landen). Siehe `recipe_create_screen.dart`/`_save()`. **Bekannte Lücke:**
-  `food_editor_screen.dart` (Schritt 8.1) hat noch kein `PopScope` für
-  „Abbrechen mit ungespeicherten Änderungen fragt nach" (Kapitel 22,
-  allgemeine Bildschirmregel) — dort nachziehen, sobald diese Datei im
-  Scope eines Schritts liegt.
+  landen). Siehe `recipe_create_screen.dart`/`_save()`.
 - **AT-12 ("kein kJ") schlägt auch auf eigene Test-Strings/-Kommentare an
   (seit Schritt 8.4):** AT-12 scannt `lib/` **und** `test/` zeilenweise auf
   das wörtliche Zeichenpaar — nur `test/architecture/` selbst ist
@@ -256,6 +341,30 @@ Phase 10 (Freeze).
   Zeichencodes zusammenbauen (`String.fromCharCodes([0x6b, 0x4a])`), nie als
   Literal. Betrifft nur `test/`-Dateien außerhalb von `test/architecture/`;
   `lib/`-Code darf die Einheit ohnehin nirgends erwähnen (R7).
+- **Dropdown-Einträge (`DropdownButtonFormField`) existieren erst im
+  Widget-Baum, während das Overlay-Menü offen ist** — `find.text(...)` auf
+  einen Menüpunkt schlägt fehl, wenn davor nicht per `tester.tap()` geöffnet
+  wurde. Erst öffnen, dann prüfen.
+- **Wiederverwendete, hartkodierte IDs in Test-Fixtures kollidieren mit
+  automatisch kopierten IDs:** `createDraftFrom(versionA)` kopiert
+  Zutaten/Schritte mit **neu generierten** IDs in die neue Version. Ein Test,
+  der für Version B einen `RecipeVersionDraft` mit einer wiederverwendeten
+  literalen ID aus Version A baut (z. B. `'i1'`), löst
+  `UNIQUE constraint failed: recipe_ingredients.id` aus, weil diese ID
+  bereits (mit neuer Zeile) existiert — IDs sind global pro Tabelle
+  eindeutig, nicht pro Version gescoped. Stattdessen die tatsächlich
+  kopierte ID über `getIngredientsForVersion`/`getStepsForVersion` holen,
+  bevor man den Update-Draft baut.
+- **AT-09 gilt projektweit, auch für `apps/unsalted_app` (seit Schritt
+  8.8):** Die App darf nur `package:unsalted_core/unsalted_core.dart`
+  importieren, niemals `package:unsalted_core/src/...` — auch wenn
+  `architecture.yaml` der App Rang 99 („darf alles") gibt (das betrifft nur
+  die Rangregel AT-01, nicht die Tür-Regel). Da die Tür keine Widgets
+  exportiert, erreicht die App Bildschirme ausschließlich über
+  `UnsaltedModule.routes`. Ein erster 8.8-Versuch mit direkten
+  `src/ui`-Importen wurde von AT-09 zu Recht abgelehnt.
+- **`tool/check_architecture.dart` ist rot, AT-01–AT-12 sind maßgeblich:**
+  siehe Abschnitt 3.
 
 ---
 
