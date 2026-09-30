@@ -8,6 +8,9 @@
 // Live-Auflösung von FoodVariants, auch nicht für Snapshots), darunter
 // recipeDetailSections und in der AppBar recipeActions aus allen
 // registrierten Modulen (Kapitel 21), generisch nach `order` sortiert.
+// Davor zwei feste Core-Aktionen (Nachtrag 8.8a): "Versionen" und
+// "Bearbeiten" (Editor der gewählten Version) -- CoreModule.recipeActions
+// bleibt bewusst leer (Entscheidung aus 7.2).
 // Timer-Chips zeigen nur den gespeicherten timerSeconds-Wert, keine aktive
 // Timer-Engine.
 //
@@ -28,6 +31,8 @@ import '../../recipe/recipe.dart';
 import '../../recipe/recipe_version.dart';
 import '../nutrition/nutrition_header.dart';
 import '../nutrition/nutrition_table.dart';
+import '../recipe_editor/recipe_editor_screen.dart';
+import '../versions/version_list_screen.dart';
 import 'version_switcher.dart';
 
 class RecipeDetailScreen extends ConsumerStatefulWidget {
@@ -233,6 +238,20 @@ class _DetailScaffold extends ConsumerWidget {
       appBar: AppBar(
         title: Text(recipe.title),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Versionen',
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
+              builder: (_) => VersionListScreen(recipeId: recipe.id),
+            )),
+          ),
+          IconButton(
+            icon: const Icon(Icons.edit),
+            tooltip: 'Bearbeiten',
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
+              builder: (_) => RecipeEditorScreen(recipeId: recipe.id, versionId: version.id),
+            )),
+          ),
           for (final action in appBarActions)
             IconButton(
               icon: Icon(action.icon),

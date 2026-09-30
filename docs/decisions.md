@@ -306,3 +306,31 @@ auch nicht aus. Vom Projektverantwortlichen vorab freigegeben.
 `CoreDatabase(driftDatabase(name: 'unsalted'))` — `driftDatabase` liefert
 eine `DatabaseConnection`, die `QueryExecutor` implementiert (im Pub-Cache
 von drift_flutter 0.3.1/drift 2.35.0 verifiziert).
+
+## 2026-09-30 — Nachtrag 8.8a: Navigation zwischen den Core-Bildschirmen geschlossen
+
+**Betroffenes Kapitel:** 22 (Bildschirm 1, 4, 7), Arbeitskarte 9.2 §8.
+
+**Befund:** Die Rezeptliste öffnete kein Rezept (`ListTile` ohne `onTap`),
+das Rezeptdetail hatte keinen Weg zum Editor oder zur Versionsliste, und die
+Versionsliste (und damit der Vergleich) wurde von keinem Bildschirm geöffnet.
+Der Ablauf aus 9.2 §8 („einfrieren → Draft kopieren → ändern → vergleichen")
+war damit in der App unmöglich.
+
+**Entscheidung:** `recipe_list_screen.dart`: `onTap` öffnet
+`RecipeDetailScreen(recipeId)`. `recipe_detail_screen.dart`: zwei feste
+Core-Aktionen in der AppBar vor den generisch gerenderten `recipeActions`:
+„Versionen" → `VersionListScreen(recipeId)`, „Bearbeiten" →
+`RecipeEditorScreen(recipeId, versionId der gewählten Version)`. Bei einer
+eingefrorenen Version zeigt der Editor seinen vorhandenen Schreibschutz mit
+„als neuen Entwurf kopieren". Navigation wie in allen anderen Bildschirmen
+per `Navigator.push(MaterialPageRoute)`, nicht per `context.go/push` — die
+Widget-Tests pumpen die Bildschirme ohne `GoRouter`. `CoreModule.recipeActions`
+bleibt leer (Entscheidung aus 7.2): Die beiden Aktionen gehören fest zu
+Bildschirm 4, sie sind kein Erweiterungspunkt. Vom Projektverantwortlichen
+als eng begrenzter Nachtrag vor 9.1 freigegeben.
+
+**Alternativen verworfen:** Die beiden Aktionen als `RecipeAction` in
+`CoreModule.recipeActions` — widerspricht der Entscheidung aus 7.2.
+Navigation über GoRouter-Pfade — würde die bestehenden Widget-Tests ohne
+Router brechen und wäre uneinheitlich zu allen übrigen Bildschirmen.

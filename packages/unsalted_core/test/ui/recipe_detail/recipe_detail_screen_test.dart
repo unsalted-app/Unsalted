@@ -4,7 +4,8 @@
 // EX-02 (RecipeAction erscheint in der AppBar), EX-04 (order-Reihenfolge
 // über mehrere Module hinweg), EX-05 (Seite funktioniert ohne registrierte
 // Module). EX-03 (SettingsEntry) ist erst mit dem Einstellungen-Bildschirm
-// (Schritt 8.7) testbar, siehe docs/status.md.
+// (Schritt 8.7) testbar, siehe docs/status.md. Nachtrag 8.8a: feste
+// Core-Aktionen "Versionen" und "Bearbeiten" in der AppBar.
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -24,6 +25,8 @@ import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/recipe/recipe_ingredient.dart';
 import 'package:unsalted_core/src/recipe/recipe_step.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/recipe_detail_screen.dart';
+import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
+import 'package:unsalted_core/src/ui/versions/version_list_screen.dart';
 
 class _FakeModule implements UnsaltedModule {
   final List<RecipeDetailSection> sections;
@@ -301,6 +304,51 @@ void main() {
     expect(find.text('Kneten'), findsOneWidget);
     expect(find.text('10:00'), findsOneWidget);
     expect(find.text('Ruhen lassen'), findsOneWidget);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('Aktion "Versionen" öffnet die Versionsliste (Nachtrag 8.8a)', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+
+    final (recipeId, _) = await _seedDraftRecipe(tester, database);
+    await _pumpDetail(tester, database, recipeId);
+
+    await tester.tap(find.byTooltip('Versionen'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await _settle(tester);
+
+    final list = tester.widget<VersionListScreen>(find.byType(VersionListScreen));
+    expect(list.recipeId, recipeId);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('Aktion "Bearbeiten" öffnet den Editor der gewählten Version (Nachtrag 8.8a)',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+
+    final recipeRepo = DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
+    final (recipeId, v1) = await _seedDraftRecipe(tester, database);
+    await tester.runAsync(() => recipeRepo.createDraftFrom(v1));
+
+    await _pumpDetail(tester, database, recipeId);
+    // Standardauswahl ist V2 -- bewusst auf V1 wechseln, damit geprüft wird,
+    // dass die gewählte (nicht irgendeine) Version geöffnet wird.
+    await tester.tap(find.text('V1'));
+    await _settle(tester);
+
+    await tester.tap(find.byTooltip('Bearbeiten'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await _settle(tester);
+
+    final editor = tester.widget<RecipeEditorScreen>(find.byType(RecipeEditorScreen));
+    expect(editor.recipeId, recipeId);
+    expect(editor.versionId, v1);
 
     await _disposeWidgetTree(tester);
   });

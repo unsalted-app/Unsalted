@@ -55,6 +55,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 | 8.7 | Einstellungen, Export, Import | fertig |
 | 8.7a | Nachtrag: Core-Routen in `CoreModule.routes` (docs/decisions.md) | fertig |
 | 8.8 | App-Hülle verdrahten | fertig |
+| 8.8a | Nachtrag: Navigation Rezeptliste → Detail → Editor/Versionen (docs/decisions.md) | fertig |
 
 Phase 8 — abgeschlossen.
 
@@ -74,13 +75,6 @@ Phase 8 — abgeschlossen.
 
 ## Bekannte offene Lücken (nicht blockierend)
 
-- **`RecipeListScreen` öffnet beim Tippen auf eine Zeile kein `RecipeDetailScreen`**
-  (kein `onTap` auf dem `ListTile`, `lib/src/ui/recipe_list/recipe_list_screen.dart`).
-  Die Route `/recipes/:id` existiert seit 8.7a, aber die Liste navigiert
-  nicht dorthin. Bildschirm 4, 7 und 8 sind in der App daher nur über den
-  Import-Fluss erreichbar. Fix gehört in `recipe_list_screen.dart` und
-  braucht eine eigene Arbeitskarte — vermutlich Blocker für Schritt 9.2
-  (manueller Durchlauf).
 - `tool/check_architecture.dart` (Schritt 1.1) meldet (schon vor Schritt 8.8)
   35 „VERBOTENER IMPORT"-Treffer
   für `package:flutter/`/`package:drift/` innerhalb von `lib/src/ui/` bzw.

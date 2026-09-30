@@ -143,7 +143,7 @@ unsalted/
       │     ├─ providers/                    Phase 7, fertig
       │     │  └─ core_providers.dart        alle 8 Provider aus Kapitel 16.7
       │     └─ ui/                           Phase 8, fertig (Bildschirm 1–13)
-      │        ├─ recipe_list/recipe_list_screen.dart        Bildschirm 1 — Lücke: kein onTap, siehe Abschnitt 3
+      │        ├─ recipe_list/recipe_list_screen.dart        Bildschirm 1
       │        ├─ recipe_editor/recipe_create_screen.dart    Bildschirm 2
       │        ├─ recipe_editor/recipe_editor_screen.dart    Bildschirm 3
       │        ├─ recipe_editor/ingredient_row.dart
@@ -212,9 +212,8 @@ Testplan (Kapitel 23.5), IT-01 bis IT-06 plus ergänzende Edge Cases für
 Diff/Apply, Snapshot-Import und Master-Integrität. Details:
 `docs/spezifikation.md`, Arbeitskarte Schritt 9.1 (Kapitel 24.6).
 
-Danach: 9.2 (manueller Durchlauf — **Achtung**, der in Abschnitt 3
-dokumentierte Navigationsgap in `RecipeListScreen` blockiert vermutlich den
-vollständigen Durchlauf und braucht vorher eine eigene Arbeitskarte), 9.3
+Danach: 9.2 (manueller Durchlauf; die Navigation dafür wurde mit
+Nachtrag 8.8a geschlossen), 9.3
 (technischer Spike: mehrere Drift-Klassen auf einem `QueryExecutor`), dann
 Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
 `part1-v1.0.0`).
@@ -223,14 +222,6 @@ Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
 
 ## 3. Offene Punkte, die beim Weiterbauen nicht vergessen werden dürfen
 
-- **`RecipeListScreen` öffnet beim Tippen auf eine Zeile kein
-  `RecipeDetailScreen`** (kein `onTap` auf dem `ListTile`). Bildschirm 4
-  (Rezeptdetail) und damit auch 7 (Versionen) und 8 (Vergleich) sind in der
-  App aktuell nur über den Import-Fluss erreichbar (die Route
-  `/recipes/:id` existiert seit 8.7a, die Liste navigiert aber nicht
-  dorthin). Fix gehört in `lib/src/ui/recipe_list/recipe_list_screen.dart`.
-  **Wahrscheinlich ein Blocker für Schritt 9.2** (manueller Durchlauf) —
-  vorher klären, ob eine eigene kleine Arbeitskarte nötig ist.
 - **Mapper-Leichen (Kapitel 16.8):** `foodVariantToInsertCompanion`/
   `foodVariantToUpdateCompanion` in `food_mapper.dart` und
   `recipeVersionToSnapshotCompanion` in `version_mapper.dart` sind toter

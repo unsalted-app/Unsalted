@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../recipe/recipe.dart';
 import '../../providers/core_providers.dart';
+import '../recipe_detail/recipe_detail_screen.dart';
 import '../recipe_editor/recipe_create_screen.dart';
 
 class RecipeListScreen extends ConsumerStatefulWidget {
@@ -110,6 +111,9 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
               return ListTile(
                 title: Text(recipe.title),
                 subtitle: recipe.description == null ? null : Text(recipe.description!),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
+                )),
               );
             },
           );
