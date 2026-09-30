@@ -4,13 +4,13 @@
 // Wird ausschließlich in apps/unsalted_app/lib/main.dart registriert
 // (Kapitel 21) -- diese Datei registriert sich nirgends selbst.
 //
-// ROUTEN: Kapitel 21 nennt "seine eigenen Routen" als Teil von CoreModule,
-// aber die zugehörigen Bildschirme (Kapitel 22, Bildschirm 1-13) sind erst
-// Phase 8. Da Schritt 7.2 laut Arbeitskarte ausdrücklich keine Provider-
-// oder main.dart-Verdrahtung vornimmt und die TESTS-Zeile der Arbeitskarte
-// nur id, Tabellenliste und immutableAfterCreate verlangt (nicht routes),
-// liefert `routes` hier bewusst eine leere Liste. Phase 8 ergänzt die
-// echten GoRoute-Einträge, sobald die Bildschirm-Widgets existieren.
+// ROUTEN (Nachtrag 8.7a, docs/decisions.md): `routes` liefert je Bildschirm
+// mit eigener Route aus Kapitel 22 einen GoRoute-Eintrag. Die App-Hülle
+// darf wegen AT-09 und der eingefrorenen öffentlichen Tür keine
+// Bildschirmklassen direkt importieren -- CoreModule.routes ist der einzige
+// legale Weg dorthin. Die Bildschirme selbst navigieren intern weiterhin per
+// Navigator.push; die Reihenfolge stellt '/recipes/new' bzw. '/foods/new'
+// vor die jeweilige ':id'-Route.
 //
 // recipeDetailSections/recipeActions/settingsEntries: Kapitel 21 nennt für
 // CoreModule ausdrücklich nur id, Routen und syncTables -- diese drei
@@ -32,6 +32,17 @@
 
 import 'package:go_router/go_router.dart';
 
+import '../ui/foods/food_editor_screen.dart';
+import '../ui/foods/food_list_screen.dart';
+import '../ui/recipe_detail/recipe_detail_screen.dart';
+import '../ui/recipe_editor/recipe_create_screen.dart';
+import '../ui/recipe_editor/recipe_editor_screen.dart';
+import '../ui/recipe_list/recipe_list_screen.dart';
+import '../ui/settings/export_screen.dart';
+import '../ui/settings/import_screen.dart';
+import '../ui/settings/settings_screen.dart';
+import '../ui/versions/version_compare_screen.dart';
+import '../ui/versions/version_list_screen.dart';
 import 'extension_types.dart';
 import 'unsalted_module.dart';
 
@@ -42,7 +53,42 @@ class CoreModule implements UnsaltedModule {
   String get id => 'core';
 
   @override
-  List<RouteBase> get routes => const [];
+  List<RouteBase> get routes => [
+        GoRoute(path: '/', builder: (context, state) => const RecipeListScreen()),
+        GoRoute(path: '/recipes/new', builder: (context, state) => const RecipeCreateScreen()),
+        GoRoute(
+          path: '/recipes/:id',
+          builder: (context, state) => RecipeDetailScreen(recipeId: state.pathParameters['id']!),
+        ),
+        GoRoute(
+          path: '/recipes/:id/versions',
+          builder: (context, state) => VersionListScreen(recipeId: state.pathParameters['id']!),
+        ),
+        GoRoute(
+          path: '/recipes/:id/versions/:vid/edit',
+          builder: (context, state) => RecipeEditorScreen(
+            recipeId: state.pathParameters['id']!,
+            versionId: state.pathParameters['vid']!,
+          ),
+        ),
+        GoRoute(
+          path: '/recipes/:id/compare',
+          builder: (context, state) => VersionCompareScreen(
+            recipeId: state.pathParameters['id']!,
+            versionAId: state.uri.queryParameters['a'] ?? '',
+            versionBId: state.uri.queryParameters['b'] ?? '',
+          ),
+        ),
+        GoRoute(path: '/foods', builder: (context, state) => const FoodListScreen()),
+        GoRoute(path: '/foods/new', builder: (context, state) => const FoodEditorScreen()),
+        GoRoute(
+          path: '/foods/:id',
+          builder: (context, state) => FoodEditorScreen(foodId: state.pathParameters['id']),
+        ),
+        GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
+        GoRoute(path: '/settings/export', builder: (context, state) => const ExportScreen()),
+        GoRoute(path: '/settings/import', builder: (context, state) => const ImportScreen()),
+      ];
 
   @override
   List<RecipeDetailSection> get recipeDetailSections => const [];

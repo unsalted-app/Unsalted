@@ -249,3 +249,38 @@ mitexportieren, "falls Phase 8 sie braucht" — verworfen, weil das über den
 in Kapitel 17/18.1 wörtlich benannten Umfang hinausgeht und die Tür ab
 diesem Schritt als eingefroren gilt; ein späterer, dokumentierter
 Nachtrag ist der vorgesehene Weg, keine Vorratshaltung jetzt.
+
+## 2026-09-30 — Nachtrag 8.7a: `CoreModule.routes` gefüllt
+
+**Betroffenes Kapitel:** 21 (Modul-/Steckplatzsystem), 22 (Routen-Tabelle),
+18.1 (öffentliche Tür), Arbeitskarten 7.2 und 8.8.
+
+**Entscheidung:** `core_module.dart` liefert in `routes` je einen `GoRoute`
+für alle Bildschirme mit eigener Route aus Kapitel 22: `/`, `/recipes/new`,
+`/recipes/:id`, `/recipes/:id/versions`, `/recipes/:id/versions/:vid/edit`,
+`/recipes/:id/compare` (Query `a`, `b`), `/foods`, `/foods/new`,
+`/foods/:id`, `/settings`, `/settings/export`, `/settings/import`. Die
+Bildschirme werden unverändert über ihre bestehenden Konstruktoren
+eingebunden; ihre interne Navigation per `Navigator.push` bleibt, wie sie
+ist. `core_module_test.dart` prüft jetzt genau diese Pfadmenge statt
+`routes isEmpty`.
+
+**Begründung:** Planungslücke. Schritt 7.2 hat die Routen ausdrücklich auf
+„Phase 8" verschoben (die Bildschirme existierten noch nicht), aber keine
+Arbeitskarte 8.1–8.7 hatte `core_module.dart` im Dateiscope, und 8.8
+verbietet Änderungen an `unsalted_core`. Gleichzeitig setzen Kapitel 21
+(„`CoreModule` liefert … seine eigenen Routen") und 8.8 §8 („Router
+verbindet die Core-Routen") gefüllte Routen voraus. Die App-Hülle kann
+Bildschirme auf keinem anderen legalen Weg erreichen: AT-09 verbietet
+`package:unsalted_core/src/...` außerhalb des Pakets, und die öffentliche
+Tür exportiert (eingefroren seit 7.4) keine Widgets. Weder die Freeze-Liste
+in Kapitel 25.1 (7.1 = nur Typen, 7.4 = nur Exportinhalt der Tür) noch
+AT-01/05/09 werden durch diesen Nachtrag verletzt. Vom Projektverantwortlichen
+als eng begrenzter Nachtrag vor 8.8 freigegeben.
+
+**Alternativen verworfen:** Bildschirme über die öffentliche Tür exportieren
+— verstößt gegen Kapitel 18.1 und die eingefrorene Tür aus 7.4.
+`src/`-Import in der App-Hülle — verstößt gegen AT-09 (so zunächst versucht,
+von AT-09 zu Recht abgelehnt). 8.8 „teilweise" abschließen (App startet ohne
+Bildschirme) — verfehlt das Fertig-Kriterium von 8.8 („Core-Flows sind
+erreichbar").
