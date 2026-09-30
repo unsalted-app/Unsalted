@@ -15,6 +15,9 @@ bis 6.6); es gibt keine separate „Phase 7 — Nährwerte und Austausch" mehr.
 ## Phase 4 — Snapshot-Format — abgeschlossen
 ## Phase 5 — Drift-Datenbank — abgeschlossen
 
+Nachtrag 1.1a (docs/decisions.md): `tool/check_architecture.dart` repariert,
+endet mit Exit 0 — fertig.
+
 (Details/Teilschritte dieser sechs Phasen: Kapitel 24.2 der Spezifikation.
 Alle Architekturtests AT-01 bis **AT-12** grün, inkl. AT-12 „kein kJ".)
 
@@ -74,17 +77,6 @@ Phase 8 — abgeschlossen.
 | 10.3 | Tag `part1-v1.0.0` | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)
-
-- `tool/check_architecture.dart` (Schritt 1.1) meldet (schon vor Schritt 8.8)
-  35 „VERBOTENER IMPORT"-Treffer
-  für `package:flutter/`/`package:drift/` innerhalb von `lib/src/ui/` bzw.
-  `lib/src/data/` — obwohl der Dateikommentar des Tools genau diese beiden
-  Ordner als Ausnahme nennt. Das Tool ist offenbar nie an die tatsächliche
-  Ordnerstruktur angepasst worden. Es wird von keinem Test und keiner CI
-  aufgerufen (nur manuell über `dart run tool/check_architecture.dart`);
-  die tatsächlich verbindliche Prüfung sind AT-01–AT-12 in
-  `test/architecture/`, die weiterhin alle grün sind. Die Treffer sind
-  bei 8.7a/8.8 unverändert geblieben (keiner aus `apps/unsalted_app`).
 
 - `foodVariantToInsertCompanion`/`foodVariantToUpdateCompanion` in
   `food_mapper.dart` sind seit Schritt 6.4 toter Code (0 Aufrufer) —

@@ -3,7 +3,9 @@
 // Prüft die Regeln aus PROJECT.md (R1) und architecture.yaml:
 //   - Kein Paket importiert ein Paket mit gleichem oder höherem Rang.
 //   - unsalted_core importiert nichts aus forbidden_in_core,
-//     außer in den erlaubten Ausnahmeordnern (lib/src/ui/, lib/src/data/).
+//     außer in den erlaubten Ausnahmeordnern: package:flutter/ in
+//     lib/src/ui/ und lib/src/module/ (Kapitel 27, Regel 14), package:drift/
+//     in lib/src/data/.
 //
 // Aufruf:  dart run tool/check_architecture.dart
 // Exit-Code 0 = keine Verstöße, 1 = mindestens ein Verstoß gefunden.
@@ -66,7 +68,7 @@ void main() {
     for (final file in libDir.listSync(recursive: true)) {
       if (file is! File || !file.path.endsWith('.dart')) continue;
 
-      final relativePath = file.path.substring(packageDir.path.length + 1);
+      final relativePath = file.path.substring(libDir.path.length + 1);
       final lines = file.readAsLinesSync();
 
       for (var i = 0; i < lines.length; i++) {
@@ -85,7 +87,7 @@ void main() {
             violations.add(
               '❌ RANGVERSTOSS: $packageName (Rang $ownRank) importiert '
               '$importedPackage (Rang $importedRank)\n'
-              '   in $packageName/$relativePath:${i + 1}\n'
+              '   in $packageName/lib/$relativePath:${i + 1}\n'
               '   → ${line.trim()}',
             );
           }
@@ -93,7 +95,8 @@ void main() {
 
         // forbidden_in_core — nur für unsalted_core, mit Ausnahmeordnern.
         if (packageName == 'unsalted_core') {
-          final isUiException = relativePath.startsWith('src/ui/');
+          final isFlutterException = relativePath.startsWith('src/ui/') ||
+              relativePath.startsWith('src/module/');
           final isDataException = relativePath.startsWith('src/data/');
 
           for (final forbidden in forbiddenInCore) {
@@ -102,11 +105,11 @@ void main() {
             final isFlutterImport = forbidden.contains('flutter');
             final isDriftImport = forbidden.contains('drift');
 
-            if (isFlutterImport && isUiException) continue;
+            if (isFlutterImport && isFlutterException) continue;
             if (isDriftImport && isDataException) continue;
 
             violations.add(
-              '❌ VERBOTENER IMPORT: unsalted_core/$relativePath:${i + 1} '
+              '❌ VERBOTENER IMPORT: unsalted_core/lib/$relativePath:${i + 1} '
               'importiert "$forbidden" außerhalb des erlaubten Ordners\n'
               '   → ${line.trim()}',
             );

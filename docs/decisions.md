@@ -334,3 +334,23 @@ als eng begrenzter Nachtrag vor 9.1 freigegeben.
 `CoreModule.recipeActions` — widerspricht der Entscheidung aus 7.2.
 Navigation über GoRouter-Pfade — würde die bestehenden Widget-Tests ohne
 Router brechen und wäre uneinheitlich zu allen übrigen Bildschirmen.
+
+## 2026-09-30 — Nachtrag 1.1a: `tool/check_architecture.dart` repariert
+
+**Betroffenes Kapitel:** 5.1 (Architektur-Prüfwerkzeug), Kapitel 27 Regel 14.
+
+**Befund:** `relativePath` wurde relativ zum Paketordner berechnet
+(`lib/src/ui/...`), die Ausnahmen prüften aber auf `src/ui/` bzw.
+`src/data/`. Dadurch wurden alle 35 Flutter-/Drift-Importe in
+`unsalted_core` fälschlich gemeldet, und das Tool endete immer mit Exit 1.
+AT-01–AT-12 waren davon nicht betroffen.
+
+**Entscheidung:** `relativePath` wird relativ zum `lib`-Ordner berechnet
+(Meldungen zeigen weiter den vollen Pfad mit `lib/`). `package:flutter/`
+ist zusätzlich in `src/module/` erlaubt (Kapitel 27, Regel 14 —
+`extension_types.dart` braucht `Widget`/`BuildContext`/`IconData`).
+Eine Ausnahme für `src/providers/` war nicht nötig, weil das Tool dort nach
+der Korrektur nichts meldet. Ergebnis: Exit 0. Gegenprobe: ein temporär
+eingefügter `package:flutter`-Import in `lib/src/nutrition/` wurde gemeldet
+(Exit 1) und danach wieder entfernt. Vom Projektverantwortlichen als eng
+begrenzter Nachtrag vor 9.1 freigegeben.

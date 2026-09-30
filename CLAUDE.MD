@@ -64,7 +64,7 @@ unsalted/
 │  ├─ status.md                    Phase/Schritt-Tracker
 │  └─ decisions.md                 Protokoll technischer Entscheidungen
 ├─ tool/
-│  └─ check_architecture.dart      veraltet/ungenutzt, siehe Abschnitt 3
+│  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
 ├─ drift_schemas/
 │  └─ drift_schema_v1.json         Schema v1, eingefroren (Kapitel 25.1)
 ├─ apps/
@@ -242,14 +242,6 @@ Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
   bzw. Datei-Auswahl** (nur Zwischenablage/Text einfügen) — bräuchte
   `share_plus`/`file_picker` und damit eine `pubspec.yaml`-Änderung von
   `unsalted_core`, die außerhalb des Dateiscopes von Schritt 8.7 lag.
-- **`tool/check_architecture.dart` ist stale/ungenutzt.** Es meldet 35
-  „VERBOTENER IMPORT"-Treffer für `package:flutter/`/`package:drift/`
-  innerhalb von `lib/src/ui/` bzw. `lib/src/data/`, obwohl sein eigener
-  Dateikommentar genau diese Ordner als Ausnahme nennt — das Tool wurde
-  offenbar nie an die tatsächliche Ordnerstruktur angepasst. Es wird von
-  keinem Test/CI aufgerufen; verbindlich sind ausschließlich AT-01–AT-12 in
-  `test/architecture/` (alle grün). Nicht als Fehler werten, wenn es beim
-  manuellen Aufruf rot ist.
 - **Upsert-/Soft-Delete-Delta für `recipe_ingredients`/`recipe_steps`**
   (Kapitel 10.7) verlangt **stabile IDs** über mehrere `saveDraft`-Aufrufe
   hinweg. `drift_recipe_dao.dart` setzt das um; darauf achten, dass
@@ -354,8 +346,10 @@ Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
   exportiert, erreicht die App Bildschirme ausschließlich über
   `UnsaltedModule.routes`. Ein erster 8.8-Versuch mit direkten
   `src/ui`-Importen wurde von AT-09 zu Recht abgelehnt.
-- **`tool/check_architecture.dart` ist rot, AT-01–AT-12 sind maßgeblich:**
-  siehe Abschnitt 3.
+- **`tool/check_architecture.dart` rechnete Pfade falsch (behoben mit
+  Nachtrag 1.1a):** Die Ausnahmen prüfen Pfade relativ zu `lib/`
+  (`src/ui/`, `src/module/`, `src/data/`). Das Tool ist seitdem grün und
+  sollte bei jedem Schritt zusätzlich zu AT-01–AT-12 mit Exit 0 enden.
 
 ---
 
