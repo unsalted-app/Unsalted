@@ -354,3 +354,19 @@ der Korrektur nichts meldet. Ergebnis: Exit 0. Gegenprobe: ein temporär
 eingefügter `package:flutter`-Import in `lib/src/nutrition/` wurde gemeldet
 (Exit 1) und danach wieder entfernt. Vom Projektverantwortlichen als eng
 begrenzter Nachtrag vor 9.1 freigegeben.
+
+## 2026-10-01 — Nachtrag 0.1a: CI über GitHub Actions
+
+**Betroffenes Kapitel:** 4/5 (Projektgrundlage, Architektur-Prüfwerkzeug).
+
+**Entscheidung:** `.github/workflows/ci.yml` läuft bei jedem Push und Pull
+Request auf `main` auf `ubuntu-latest` und führt aus:
+`dart run tool/check_architecture.dart` (Projektstamm), danach in
+`packages/unsalted_core` und `apps/unsalted_app` jeweils `flutter pub get`,
+`flutter analyze`, `flutter test`. Flutter wird über
+`subosito/flutter-action@v2` auf stable **3.47.5** fest eingetragen (die
+lokal laufende Version); SDK und Pub-Cache werden über `cache`/`pub-cache`
+der Action gecacht. Bei einem lokalen Flutter-Upgrade muss die Version in
+`ci.yml` mitgezogen werden. Kein Produktionscode geändert. SQLite kommt auf
+dem Runner über die Build-Hooks von `sqlite3` 3.x, kein `apt install` nötig.
+Vom Projektverantwortlichen als Nachtrag freigegeben.

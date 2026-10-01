@@ -15,6 +15,9 @@ bis 6.6); es gibt keine separate „Phase 7 — Nährwerte und Austausch" mehr.
 ## Phase 4 — Snapshot-Format — abgeschlossen
 ## Phase 5 — Drift-Datenbank — abgeschlossen
 
+Nachtrag 0.1a (docs/decisions.md): CI unter `.github/workflows/ci.yml`
+(Architekturprüfung, analyze + test in Core und App, Flutter 3.47.5) — fertig.
+
 Nachtrag 1.1a (docs/decisions.md): `tool/check_architecture.dart` repariert,
 endet mit Exit 0 — fertig.
 

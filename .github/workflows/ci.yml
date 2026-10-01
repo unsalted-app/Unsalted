@@ -1,0 +1,45 @@
+# Nachtrag 0.1a — CI (docs/decisions.md). Flutter-Version entspricht der
+# lokalen Entwicklungsumgebung; bei einem lokalen Upgrade hier mitziehen.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+          pub-cache: true
+
+      - name: Architekturprüfung
+        run: dart run tool/check_architecture.dart
+
+      - name: unsalted_core — pub get
+        working-directory: packages/unsalted_core
+        run: flutter pub get
+      - name: unsalted_core — analyze
+        working-directory: packages/unsalted_core
+        run: flutter analyze
+      - name: unsalted_core — test
+        working-directory: packages/unsalted_core
+        run: flutter test
+
+      - name: unsalted_app — pub get
+        working-directory: apps/unsalted_app
+        run: flutter pub get
+      - name: unsalted_app — analyze
+        working-directory: apps/unsalted_app
+        run: flutter analyze
+      - name: unsalted_app — test
+        working-directory: apps/unsalted_app
+        run: flutter test
