@@ -472,3 +472,39 @@ ein `ReplaceIngredient` mit identischem Namen auf beiden Seiten. Fachlich
 korrekt, aber für Nutzer nicht verständlich. Die Anzeige sollte benennen,
 was sich geändert hat (z. B. „Butter: anderes Lebensmittel verknüpft“).
 Gehört zum Design-Pass, nicht zu Teil 1.
+
+## 2026-10-05 — Fehlerbehebung 9.1b: Editor behält Lebensmittel-Verknüpfungen (E1)
+
+**Betroffenes Kapitel:** 10.7 (weich gelöschte Lebensmittel), 22 (Bildschirm
+3), Testplan 23.6.
+
+**Befund:** Der Rezept-Editor hielt die Verknüpfung einer Zutatenzeile nur
+als aufgelöstes Lebensmittel (`variant`). Lieferte `getById` für ein weich
+gelöschtes Lebensmittel `null`, ging die Verknüpfung beim Laden verloren und
+wurde beim nächsten Speichern als `null` geschrieben — auch für Zeilen, die
+der Nutzer nicht angefasst hatte. Kapitel 10.7 sieht dagegen ausdrücklich
+vor, dass eine Zeile auf ein gelöschtes Lebensmittel zeigen darf und nur wie
+unverknüpft gerechnet wird.
+
+**Entscheidung:** `IngredientRowData` führt die gespeicherte Verknüpfung
+(`foodVariantId`) getrennt vom aufgelösten Lebensmittel (`variant`).
+Gespeichert wird `foodVariantId`; Vorschau und Anzeige nutzen `variant`, ein
+gelöschtes Lebensmittel rechnet also wie unverknüpft (10.7). Die Verknüpfung
+ändert sich ausschließlich durch eine Lebensmittel-Auswahl (setzt sie neu)
+oder eine Namensänderung (löst sie, bestehendes Verhalten). Änderungen an
+Menge, Einheit, Notiz und Position derselben Zeile lassen sie unverändert.
+Zeilen mit gelöschtem Lebensmittel zeigen den Hinweis „Verknüpftes
+Lebensmittel wurde gelöscht – bitte neu auswählen.“; Farbe und Stil kommen
+ausschließlich aus `Theme.of(context)` (`textTheme.bodySmall`,
+`colorScheme.error`), kein `Colors.*` (Vorbereitung Design-Pass). Keine
+Methode, die gelöschte Lebensmittel liefert (10.7 „Sichtbarkeit“); keine
+Änderung an Daten-, Vertrags- oder Rechenschicht.
+
+**Neue Test-IDs (Erweiterung von Kapitel 23.6, `docs/spezifikation.md`
+bewusst unverändert):** UI-11 andere Zeile geändert → Verknüpfung zum
+gelöschten Lebensmittel bleibt · UI-12 Menge, Einheit, Notiz und Position
+derselben Zeile geändert → Verknüpfung bleibt · UI-13 Namensänderung löst die
+Verknüpfung · UI-14 Auswahl eines anderen Lebensmittels ersetzt sie · UI-15
+Hinweis erscheint, Vorschau rechnet die Zeile wie unverknüpft. Dazu ein
+Unit-Test für `IngredientRowData` in `ingredient_row_test.dart`. Vom
+Projektverantwortlichen als Karte 9.1b freigegeben.

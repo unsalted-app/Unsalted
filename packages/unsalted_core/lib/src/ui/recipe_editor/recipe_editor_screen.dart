@@ -111,6 +111,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
     _ingredients = version.ingredients
         .map((i) => IngredientRowData(
               id: i.id,
+              foodVariantId: i.foodVariantId,
               variant: i.foodVariantId == null ? null : resolved[i.foodVariantId],
               displayName: i.displayName,
               quantity: i.quantity,
@@ -171,7 +172,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
             id: _ingredients[i].id,
             versionId: widget.versionId,
             position: i + 1,
-            foodVariantId: _ingredients[i].variant?.id,
+            foodVariantId: _ingredients[i].foodVariantId,
             displayName: _ingredients[i].displayName,
             quantity: _ingredients[i].quantity,
             unitCode: _ingredients[i].unitCode,

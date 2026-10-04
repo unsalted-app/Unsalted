@@ -70,16 +70,17 @@ Phase 8 — abgeschlossen.
 |---|---|---|
 | 9.1 | Integrationstests (IT-01–IT-06 + Edge Cases DA/SI/MI, `test/integration/`) | fertig |
 | 9.1a | Fehlerbehebung Draft-Kopie und Diff/Apply, F1–F5 (docs/decisions.md) | fertig |
-| 9.1b | Fehlerbehebung E1: Editor verliert beim Speichern die Verknüpfung zu weich gelöschten Lebensmitteln — **blockiert 9.2** | offen |
-| 9.2 | Manueller Durchlauf | offen (blockiert durch 9.1b) |
+| 9.1b | Fehlerbehebung E1: Editor behält Lebensmittel-Verknüpfungen, auch zu weich gelöschten Lebensmitteln (UI-11–UI-15, docs/decisions.md) | fertig |
+| 9.2 | Manueller Durchlauf (durch den Projektverantwortlichen) | offen |
 | 9.3 | Technischer Spike (mehrere Drift-Klassen auf einer Sync-DB) | offen |
 
-**Offene Karte 9.1b (E1):** `recipe_editor_screen.dart` löst beim Laden
-jede `foodVariantId` über `FoodRepository.getById` auf. Ist das Lebensmittel
-weich gelöscht, liefert das `null`, die Zeile verliert ihre Verknüpfung, und
-beim nächsten Speichern wird `foodVariantId: null` geschrieben — auch für
-Zeilen, die der Nutzer gar nicht angefasst hat. Karte wird vorgelegt, noch
-nicht umgesetzt.
+**Beobachtungen für 9.2:**
+- Einfrieren einer Version mit gelöschtem Lebensmittel erzeugt einen
+  Snapshot ohne Nährwerte für diese Zutat (`per100g: null`), ohne Warnung.
+  Spezifikationskonform nach Kapitel 10.7; im manuellen Durchlauf prüfen, ob
+  das stört. Im Editor zeigt die Zeile vorher den Hinweis „Verknüpftes
+  Lebensmittel wurde gelöscht – bitte neu auswählen.“ (9.1b), beim
+  Einfrieren selbst gibt es keinen.
 
 **Bekannte Grenze (spezifikationskonform, nicht behoben):** E2 — beim
 Anwenden eines `ReplaceIngredient` geht die Notiz der Zutat verloren

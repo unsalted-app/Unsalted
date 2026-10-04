@@ -2,7 +2,7 @@
 //
 // Schritt 8.3: IngredientRow -- Name/Menge/Einheit/Notiz-Änderungen, sowie
 // die Lebensmittel-Verknüpfung über FoodRepository.search ("Autocomplete",
-// Bildschirm 3).
+// Bildschirm 3). Fehlerbehebung 9.1b: foodVariantId wird mitgeführt.
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -120,5 +120,34 @@ void main() {
     expect(latest!.variant?.name, 'Zucker');
 
     await _disposeWidgetTree(tester);
+  });
+
+  test('IngredientRowData: Verknüpfung ändert sich nur über variant (9.1b)', () {
+    final mehl = FoodVariant(id: 'v-mehl', name: 'Mehl', source: FoodSource.custom);
+    expect(
+      IngredientRowData(id: 'i1', variant: mehl, displayName: 'Mehl', quantity: Decimal.one, unitCode: 'g')
+          .foodVariantId,
+      'v-mehl',
+      reason: 'ohne foodVariantId gilt die ID von variant',
+    );
+
+    final deleted = IngredientRowData(
+      id: 'i2',
+      foodVariantId: 'v-geloescht',
+      displayName: 'Butter',
+      quantity: Decimal.one,
+      unitCode: 'g',
+    );
+    expect(deleted.hasUnresolvedVariant, isTrue);
+
+    final edited = deleted.copyWith(quantity: Decimal.ten, unitCode: 'kg', note: () => 'kalt');
+    expect(edited.foodVariantId, 'v-geloescht');
+    expect(edited.hasUnresolvedVariant, isTrue);
+
+    final relinked = edited.copyWith(variant: () => mehl);
+    expect((relinked.foodVariantId, relinked.hasUnresolvedVariant), ('v-mehl', false));
+
+    final unlinked = edited.copyWith(variant: () => null, displayName: 'Pflanzenfett');
+    expect((unlinked.foodVariantId, unlinked.hasUnresolvedVariant), (null, false));
   });
 }

@@ -53,7 +53,7 @@ vermeiden.
 
 ---
 
-## 1. Projektstruktur (Stand: nach Schritt 9.1/9.1a)
+## 1. Projektstruktur (Stand: nach Schritt 9.1b)
 
 ```text
 unsalted/
@@ -211,14 +211,14 @@ AT-01–AT-12), Phase 2 (Rechenkern), Phase 3 (Fachmodelle), Phase 4
 Provider, öffentliche Tür geschlossen und eingefroren), **Phase 8**
 (Oberfläche, Schritt 8.1–8.8 inkl. Nachtrag 8.7a: alle 13 Bildschirme aus Kapitel 22, ihre Routen in `CoreModule.routes` sowie die
 App-Hülle `apps/unsalted_app`), **Schritt 9.1** (Integrationstests) und
-**Fehlerbehebung 9.1a** (Draft-Kopie und Diff/Apply, F1–F5).
+**Fehlerbehebung 9.1a** (Draft-Kopie und Diff/Apply, F1–F5) und
+**Fehlerbehebung 9.1b** (Editor behält Lebensmittel-Verknüpfungen).
 
-**Nächster Schritt: Karte 9.1b (E1) vorlegen und nach Freigabe umsetzen** —
-der Editor verliert beim Speichern die Verknüpfung zu weich gelöschten
-Lebensmitteln (`docs/status.md`). 9.1b blockiert 9.2.
+**Nächster Schritt: 9.2 — manueller Durchlauf, durchgeführt vom
+Projektverantwortlichen selbst, nicht vom Assistenten.** Der Assistent
+wartet auf dessen Befunde (Beobachtungen dafür: `docs/status.md`).
 
-Danach: 9.2 (manueller Durchlauf; die Navigation dafür wurde mit
-Nachtrag 8.8a geschlossen), 9.3
+Danach: 9.3
 (technischer Spike: mehrere Drift-Klassen auf einem `QueryExecutor`), dann
 Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
 `part1-v1.0.0`).
@@ -365,6 +365,18 @@ Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
   Rundreise prüft zusätzlich die Nährwerte — ein leerer Rest-Diff allein
   beweist nichts, wenn der Diff eine Änderung übersieht (so wurde F5
   gefunden).
+- **Im Rezept-Editor ist `IngredientRowData.foodVariantId` die gespeicherte
+  Verknüpfung, `variant` nur das aufgelöste Lebensmittel** (seit 9.1b).
+  Gespeichert wird immer `foodVariantId`, nie `variant?.id` — sonst verliert
+  jede Zeile mit weich gelöschtem Lebensmittel beim Speichern ihre
+  Verknüpfung. Die Verknüpfung ändert sich nur über `copyWith(variant: …)`
+  (Auswahl oder Namensänderung).
+- **Long-Press-Drag in `ReorderableListView`-Widget-Tests** (seit 9.1b):
+  Ein einzelnes `gesture.moveTo` auf das Ziel löst kein Umsortieren aus.
+  Muster: `startGesture` auf den Drag-Handle, `pump(Duration(seconds: 1))`
+  für den Long-Press, dann in ~10 Schritten mit `Offset.lerp` und kurzem
+  `pump` je Schritt bis knapp über das Ziel bewegen, `up()`,
+  `pumpAndSettle()`. Siehe UI-12 in `recipe_editor_screen_test.dart`.
 - **`tool/check_architecture.dart` rechnete Pfade falsch (behoben mit
   Nachtrag 1.1a):** Die Ausnahmen prüfen Pfade relativ zu `lib/`
   (`src/ui/`, `src/module/`, `src/data/`). Das Tool ist seitdem grün und

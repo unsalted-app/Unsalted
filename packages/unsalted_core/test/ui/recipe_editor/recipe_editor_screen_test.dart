@@ -2,6 +2,9 @@
 //
 // Schritt 8.3, Bildschirm 3: UI-03 (Editor speichert und zeigt Live-
 // Nährwerte), UI-04 (Editor verweigert Bearbeiten einer Snapshot-Version).
+// UI-11 bis UI-15 (Fehlerbehebung 9.1b, Erweiterung von 23.6): die
+// Lebensmittel-Verknüpfung einer Zeile ändert sich nur durch Auswahl oder
+// Namensänderung, auch wenn das Lebensmittel weich gelöscht ist.
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -19,6 +22,7 @@ import 'package:unsalted_core/src/food/food_variant.dart';
 import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/recipe/recipe_ingredient.dart';
+import 'package:unsalted_core/src/ui/recipe_editor/ingredient_row.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
 
 Future<db.CoreDatabase> _openDatabase(WidgetTester tester) async {
@@ -216,6 +220,192 @@ void main() {
     final versions = await tester.runAsync(() => recipeDao.watchVersions(recipeId).first);
     expect(versions!, hasLength(2));
     expect(versions.any((v) => v.state == 'draft'), isTrue);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  // -------------------------------------------------------------------------
+  // 9.1b: "Mehl" ist mit einem aktiven Lebensmittel verknüpft, "Butter" mit
+  // einem danach weich gelöschten. "Margarine" steht zur Auswahl bereit.
+  // -------------------------------------------------------------------------
+  Future<({String recipeId, String versionId, String mehl, String butter, String margarine})> seedDeletedLink(
+    WidgetTester tester,
+    db.CoreDatabase database,
+  ) async {
+    final recipeDao = DriftRecipeDao(database);
+    final foodDao = DriftFoodDao(database);
+    final recipeRepo = DriftRecipeRepository(recipeDao, foodDao, database);
+    final foodRepo = DriftFoodRepository(foodDao);
+
+    Future<String> variant(String name, int kcal) => foodRepo.createVariant(NewFoodVariant(
+          name: name,
+          brand: null,
+          barcode: null,
+          source: FoodSource.custom,
+          sourceRef: null,
+          densityGPerMl: null,
+          gramsPerPiece: null,
+          servingSizeG: null,
+          nutrients: NutrientSet(energyKcal: Decimal.fromInt(kcal)),
+        ));
+
+    return (await tester.runAsync(() async {
+      final mehl = await variant('Mehl', 343);
+      final butter = await variant('Butter', 741);
+      final margarine = await variant('Margarine', 720);
+      final recipeId = await recipeRepo.createRecipe(const NewRecipe(title: 'Mürbeteig'));
+      final versionId = (await recipeDao.watchVersions(recipeId).first).first.id;
+      await recipeRepo.saveDraft(RecipeVersionDraft(
+        id: versionId,
+        recipeId: recipeId,
+        parentVersionId: null,
+        versionIndex: 1,
+        label: null,
+        servings: null,
+        bakingLossPercent: Decimal.zero,
+        finalWeightOverrideG: null,
+        notes: null,
+        ingredients: [
+          RecipeIngredient(id: 'i1', versionId: versionId, position: 1, foodVariantId: mehl,
+              displayName: 'Mehl', quantity: Decimal.fromInt(200), unitCode: 'g'),
+          RecipeIngredient(id: 'i2', versionId: versionId, position: 2, foodVariantId: butter,
+              displayName: 'Butter', quantity: Decimal.fromInt(50), unitCode: 'g'),
+        ],
+        steps: const [],
+      ));
+      await foodRepo.softDeleteVariant(butter);
+      return (recipeId: recipeId, versionId: versionId, mehl: mehl, butter: butter, margarine: margarine);
+    }))!;
+  }
+
+  Future<Map<String, RecipeIngredient>> saveAndReadRows(WidgetTester tester, db.CoreDatabase database, String versionId) async {
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Speichern'));
+    await _settle(tester);
+    final rows = await tester.runAsync(() => DriftRecipeDao(database).getIngredientsForVersion(versionId));
+    return {
+      for (final r in rows!)
+        r.id: RecipeIngredient(
+          id: r.id,
+          versionId: r.versionId,
+          position: r.position,
+          foodVariantId: r.foodVariantId,
+          displayName: r.displayName,
+          quantity: r.quantity,
+          unitCode: r.unitCode,
+          note: r.note,
+        ),
+    };
+  }
+
+  testWidgets('UI-11: Speichern nach Änderung an einer anderen Zeile behält die Verknüpfung zum gelöschten Lebensmittel',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final seed = await seedDeletedLink(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
+    await tester.enterText(find.widgetWithText(TextField, 'Menge').first, '250');
+    await tester.pump();
+    final rows = await saveAndReadRows(tester, database, seed.versionId);
+
+    expect(rows['i1']!.quantity, Decimal.fromInt(250));
+    expect(rows['i1']!.foodVariantId, seed.mehl);
+    expect(rows['i2']!.foodVariantId, seed.butter);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-12: Menge, Einheit, Notiz und Position derselben Zeile ändern die Verknüpfung nicht',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final seed = await seedDeletedLink(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
+    await tester.enterText(find.widgetWithText(TextField, 'Menge').at(1), '60');
+    await tester.enterText(find.widgetWithText(TextField, 'Notiz').at(1), 'kalt');
+    await tester.pump();
+    await tester.tap(find.byType(DropdownButton<String>).at(1));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('kg').last);
+    await tester.pumpAndSettle();
+
+    // "Butter" per Long-Press-Drag an Position 1 ziehen.
+    final from = tester.getCenter(find.byIcon(Icons.drag_handle).at(1));
+    final to = tester.getCenter(find.byIcon(Icons.drag_handle).first);
+    final gesture = await tester.startGesture(from);
+    await tester.pump(const Duration(seconds: 1));
+    for (var i = 1; i <= 10; i++) {
+      await gesture.moveTo(Offset.lerp(from, to - const Offset(0, 30), i / 10)!);
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(TextField, 'Butter').evaluate().isNotEmpty, isTrue);
+    expect(tester.getCenter(find.widgetWithText(TextField, 'Butter')).dy,
+        lessThan(tester.getCenter(find.widgetWithText(TextField, 'Mehl')).dy),
+        reason: 'Drag hat die Reihenfolge nicht geändert');
+
+    final butter = (await saveAndReadRows(tester, database, seed.versionId))['i2']!;
+
+    expect(butter.position, 1);
+    expect(butter.quantity, Decimal.fromInt(60));
+    expect(butter.unitCode, 'kg');
+    expect(butter.note, 'kalt');
+    expect(butter.foodVariantId, seed.butter);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-13: Namensänderung löst die Verknüpfung weiterhin', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final seed = await seedDeletedLink(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
+    await tester.enterText(find.widgetWithText(TextField, 'Name').at(1), 'Pflanzenfett');
+    await tester.pump();
+    final butter = (await saveAndReadRows(tester, database, seed.versionId))['i2']!;
+
+    expect(butter.displayName, 'Pflanzenfett');
+    expect(butter.foodVariantId, isNull);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-14: Auswahl eines anderen Lebensmittels ersetzt die Verknüpfung', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final seed = await seedDeletedLink(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
+    await tester.tap(find.byIcon(Icons.search).at(1));
+    await tester.pump();
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await tester.pump();
+    await tester.tap(find.text('Margarine'));
+    await tester.pump();
+    final butter = (await saveAndReadRows(tester, database, seed.versionId))['i2']!;
+
+    expect(butter.displayName, 'Margarine');
+    expect(butter.foodVariantId, seed.margarine);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-15: Hinweis bei gelöschtem Lebensmittel; Vorschau rechnet die Zeile wie unverknüpft',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final seed = await seedDeletedLink(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
+
+    expect(find.text(deletedVariantHint), findsOneWidget);
+    expect(deletedVariantHint, 'Verknüpftes Lebensmittel wurde gelöscht – bitte neu auswählen.');
+    // Nur Mehl rechnet: 200 g × 343 kcal/100 g = 686 kcal.
+    expect(find.textContaining('686'), findsWidgets);
+    expect(tester.takeException(), isNull);
 
     await _disposeWidgetTree(tester);
   });

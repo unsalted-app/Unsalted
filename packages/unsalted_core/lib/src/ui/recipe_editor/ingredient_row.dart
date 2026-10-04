@@ -20,23 +20,36 @@ import '../../providers/core_providers.dart';
 /// Upsert-/Soft-Delete-Delta braucht stabile IDs über mehrere saveDraft-
 /// Aufrufe hinweg) -- neue Zeilen bekommen ihre ID beim Anlegen in
 /// recipe_editor_screen.dart, nicht hier.
+///
+/// [foodVariantId] ist die gespeicherte Verknüpfung, [variant] das dazu
+/// aufgelöste Lebensmittel für Vorschau und Anzeige. Ist das Lebensmittel
+/// weich gelöscht, bleibt [foodVariantId] erhalten und [variant] ist `null`
+/// (Kapitel 10.7; Fehlerbehebung 9.1b).
 class IngredientRowData {
   final String id;
+  final String? foodVariantId;
   final FoodVariant? variant;
   final String displayName;
   final Decimal quantity;
   final String unitCode;
   final String? note;
 
-  const IngredientRowData({
+  /// Ohne [foodVariantId] gilt die ID von [variant].
+  IngredientRowData({
     required this.id,
+    String? foodVariantId,
     this.variant,
     required this.displayName,
     required this.quantity,
     required this.unitCode,
     this.note,
-  });
+  }) : foodVariantId = foodVariantId ?? variant?.id;
 
+  /// Verknüpft, aber das Lebensmittel ist nicht mehr auflösbar (gelöscht).
+  bool get hasUnresolvedVariant => foodVariantId != null && variant == null;
+
+  /// [variant] ändert die Verknüpfung: [foodVariantId] folgt immer mit.
+  /// Alle anderen Felder lassen die Verknüpfung unverändert.
   IngredientRowData copyWith({
     FoodVariant? Function()? variant,
     String? displayName,
@@ -44,9 +57,11 @@ class IngredientRowData {
     String? unitCode,
     String? Function()? note,
   }) {
+    final newVariant = variant != null ? variant() : this.variant;
     return IngredientRowData(
       id: id,
-      variant: variant != null ? variant() : this.variant,
+      foodVariantId: variant != null ? newVariant?.id : foodVariantId,
+      variant: newVariant,
       displayName: displayName ?? this.displayName,
       quantity: quantity ?? this.quantity,
       unitCode: unitCode ?? this.unitCode,
@@ -54,6 +69,8 @@ class IngredientRowData {
     );
   }
 }
+
+const deletedVariantHint = 'Verknüpftes Lebensmittel wurde gelöscht – bitte neu auswählen.';
 
 class IngredientRow extends ConsumerStatefulWidget {
   final IngredientRowData data;
@@ -127,6 +144,12 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
               enabled: !widget.readOnly,
               decoration: InputDecoration(
                 labelText: 'Name',
+                helperText: widget.data.hasUnresolvedVariant ? deletedVariantHint : null,
+                helperMaxLines: 2,
+                helperStyle: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: Theme.of(context).colorScheme.error),
                 suffixIcon: widget.readOnly
                     ? null
                     : IconButton(
