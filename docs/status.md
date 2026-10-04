@@ -68,9 +68,24 @@ Phase 8 — abgeschlossen.
 ## Phase 9 — Integration und Spike (Kapitel 24.6)
 | Schritt | Beschreibung | Status |
 |---|---|---|
-| 9.1 | Integrationstests | offen |
-| 9.2 | Manueller Durchlauf | offen |
+| 9.1 | Integrationstests (IT-01–IT-06 + Edge Cases DA/SI/MI, `test/integration/`) | fertig |
+| 9.1a | Fehlerbehebung Draft-Kopie und Diff/Apply, F1–F5 (docs/decisions.md) | fertig |
+| 9.1b | Fehlerbehebung E1: Editor verliert beim Speichern die Verknüpfung zu weich gelöschten Lebensmitteln — **blockiert 9.2** | offen |
+| 9.2 | Manueller Durchlauf | offen (blockiert durch 9.1b) |
 | 9.3 | Technischer Spike (mehrere Drift-Klassen auf einer Sync-DB) | offen |
+
+**Offene Karte 9.1b (E1):** `recipe_editor_screen.dart` löst beim Laden
+jede `foodVariantId` über `FoodRepository.getById` auf. Ist das Lebensmittel
+weich gelöscht, liefert das `null`, die Zeile verliert ihre Verknüpfung, und
+beim nächsten Speichern wird `foodVariantId: null` geschrieben — auch für
+Zeilen, die der Nutzer gar nicht angefasst hat. Karte wird vorgelegt, noch
+nicht umgesetzt.
+
+**Bekannte Grenze (spezifikationskonform, nicht behoben):** E2 — beim
+Anwenden eines `ReplaceIngredient` geht die Notiz der Zutat verloren
+(Kapitel 14.1), siehe docs/decisions.md. **Offen für den Design-Pass:**
+„Butter → Butter“-Anzeige im Vergleich, wenn sich nur die Verknüpfung
+ändert.
 
 ## Phase 10 — Freeze (Kapitel 24.7)
 | Schritt | Beschreibung | Status |

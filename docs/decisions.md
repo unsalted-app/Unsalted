@@ -370,3 +370,105 @@ der Action gecacht. Bei einem lokalen Flutter-Upgrade muss die Version in
 `ci.yml` mitgezogen werden. Kein Produktionscode geändert. SQLite kommt auf
 dem Runner über die Build-Hooks von `sqlite3` 3.x, kein `apt install` nötig.
 Vom Projektverantwortlichen als Nachtrag freigegeben.
+
+## 2026-10-05 — Fehlerbehebung 9.1a: Draft-Kopie und Diff/Apply (F1–F5)
+
+**Anlass:** Die Integrationstests aus Schritt 9.1 (IT-06 und die Edge Cases
+DA/SI in `test/integration/`) waren gegen den Produktionscode rot. Vom
+Projektverantwortlichen als Fehlerbehebungskarte 9.1a freigegeben; Tests und
+Fix liegen in einem Commit, damit die CI nie rot ist.
+
+### Spezifikationslücke 12.4 / Variant-ID im Format (F1, ursprünglich Schritt 6.3)
+
+Kapitel 12.4 verlangt, beim Kopieren eines Snapshots Zutaten aus
+`snapshotJson` zu lesen; das Format (13.1) führt aber keine Variant-ID, und
+nirgends war geregelt, wie die Verknüpfung wiederhergestellt wird. Die
+bisherige Umsetzung (`foodVariantId: null`) war eine undokumentierte
+Entscheidung und hat die Nährwerte jeder Kopie zerstört (Milch in ml und
+Ei in Stück wurden nicht mehr berechenbar, Barcode und Marke fehlten im
+nächsten Snapshot). **Klarstellung:** Der Inhalt kommt weiterhin aus dem
+JSON; die `foodVariantId` kommt aus der Zeile derselben Snapshot-Version an
+gleicher Position (Kapitel 10.8: diese Zeilen bleiben unverändert und sind
+beim Einfrieren bzw. Import, 13.6 Punkt 7, verknüpft angelegt). Übernommen
+wird sie nur, wenn Name, Menge (Decimal-Wert) und Einheit der Zeile mit dem
+JSON übereinstimmen, sonst `null` (`lib/src/recipe/snapshot_row_match.dart`,
+nicht über die Tür exportiert). Die Variant-ID kommt bewusst **nicht** ins
+Format: Sie wäre geräte-lokal, und das Format bleibt unverändert (25.2 würde
+ein optionales Feld erlauben, ist hier aber nicht gewollt). Tests: RP-22,
+RP-23, IT-06, DA-2, SI-6.
+
+### F2 — `MoveIngredient` auch neben Add/Remove (ursprünglich Schritt 4.2)
+
+`RecipeDiff` erzeugte Verschiebungen nur, wenn weder hinzugefügt noch
+entfernt wurde. Kapitel 15.4 und DF-13 verlangen sie aber auch daneben. Jetzt
+werden sie auf der virtuellen Liste berechnet: zugeordnete Zutaten in
+a-Reihenfolge, nach allen Remove (absteigend) und Add (aufsteigend an der
+b-Position); Ziel ist die vollständige Reihenfolge von b. DF-13 hatte in
+Phase 4 keinen Unit-Test; nachgeholt (DF-13, DF-13b). Tests: DA-1, DA-6,
+DA-6b.
+
+### F3 — Lebensmittel-Verknüpfung aus einem Diff (Variante V1)
+
+`RecipeDiff.between(a, b, {List<RecipeIngredient>? targetRows})`: Mit den
+Zeilen der Zielversion (über `RecipeRepository.getVersion`, bestehender
+Vertrag) tragen erzeugte `AddIngredient`/`ReplaceIngredient` die
+`foodVariantId` von b, mit derselben Sicherheitsregel wie F1. Ohne
+`targetRows` bleibt sie `null` (bisheriges Verhalten). Der
+Vergleichsbildschirm lädt die Zeilen und übergibt sie; die angezeigte Liste
+ist weiterhin exakt die angewendete (15.5, 8.6 §8), die UI enthält keine
+Diff-Logik. **Abweichungen:** Die Signatur weicht additiv vom Text in
+Kapitel 15 ab (`RecipeDiff` steht nicht in der Freeze-Liste 25.1, die
+Exportliste der Tür bleibt gleich), und `recipe_diff.dart` importiert
+zusätzlich `recipe_ingredient` und `snapshot_row_match` (Tabelle 18.1 nennt
+nur `recipe_snapshot_v1`/`recipe_change`); beides bleibt reines Dart (AT-03).
+`RecipeChange`, Snapshot-Format und Repository-Signaturen sind unverändert.
+**Verworfen:** V2 (eigene Funktion `linkVariants` nach `between`) — die
+Position von `ReplaceIngredient` ist die a-Position, die Funktion müsste die
+Zuordnung aus 15.1/15.2 neu berechnen. V3 (Repository verknüpft beim
+Anwenden über den Namen) — reine Heuristik, verknüpft absichtlich
+unverknüpfte Zutaten, angezeigte und angewendete Liste fielen auseinander.
+UI-seitiges Nachtragen — Diff-Logik in der UI (8.6). Tests: DF-14, DF-15,
+UI-08b, DA-5. **Pflicht für Aufrufer:** siehe CLAUDE.md Abschnitt 4.
+
+### F4 + F5 — Zutaten-Identität (15.1) und Variantenvergleich (15.3)
+
+F4: Zuordnung zweistufig, jeweils greedy nach Position (15.2) — erst gleicher,
+nicht leerer Barcode, danach normalisierter Name (getrimmt, Kleinschreibung).
+Bisher galt nur der Barcode, sobald einer vorhanden war; „Mehl“ ohne Barcode
+in a und mit Barcode in b wurde zu Remove+Add. **Bewusste
+Verhaltensänderung (bestätigt):** gleicher Name mit verschiedenen Barcodes
+ergibt jetzt `ReplaceIngredient` statt Remove+Add.
+
+F5: Kapitel 15.3 verlangt `ReplaceIngredient`, wenn sich die verknüpfte
+Variante unterscheidet; `RecipeDiff` verglich nur Name und Marke. Da die
+Variante nicht im Format steht, werden ihre eingebetteten Daten verglichen:
+`barcode`, `brand`, `per100g` (inklusive `extra`), `densityGPerMl`,
+`gramsPerPiece` — alle Zahlen als Decimal-Wert (600 == 600.0), nie als
+String. **F4 nur zusammen mit F5:** F4 allein hätte Fälle wie DA-8 von einem
+sichtbaren Remove+Add in einen leeren Diff verwandelt, obwohl a und b
+unterschiedlich rechnen.
+
+Auswirkung auf bestehende Tests: keine. DF-01 bis DF-12 unverändert grün
+(nur DF-06 nutzt Barcodes, auf beiden Seiten denselben), GD-01 bis GD-12
+rufen `RecipeDiff` nicht auf, UI-08 hat Testdaten ohne Barcodes. Tests:
+DF-16 bis DF-21, DA-7, DA-8.
+
+### Bekannte, spezifikationskonforme Grenze von Teil 1 (E2)
+
+Beim Anwenden eines `ReplaceIngredient` wird die Notiz der Zutat auf `null`
+gesetzt, weil `ReplaceIngredient` die Zutat laut Kapitel 14.1 „vollständig
+ersetzt“ und kein `note`-Feld trägt. Durch F4/F5 entstehen mehr Ersetzungen,
+damit gehen in übernommenen Diffs häufiger Notizen verloren; `RecipeDiff`
+kann Notiz-Änderungen grundsätzlich nicht erkennen. Bewusst nicht behoben:
+eine Lösung bräuchte ein neues Feld in `RecipeChange` (eingefroren seit 3.2)
+oder eine neue `RecipeChange`-Klasse (nach 25.2 additiv möglich, aber
+eigene Entscheidung).
+
+### Offener Punkt für den Design-Pass: „Butter → Butter“
+
+Ändert sich bei einer zugeordneten Zutat nur die Verknüpfung (Marke,
+Barcode, Nährwerte, Dichte, Stückgewicht), zeigt der Vergleichsbildschirm
+ein `ReplaceIngredient` mit identischem Namen auf beiden Seiten. Fachlich
+korrekt, aber für Nutzer nicht verständlich. Die Anzeige sollte benennen,
+was sich geändert hat (z. B. „Butter: anderes Lebensmittel verknüpft“).
+Gehört zum Design-Pass, nicht zu Teil 1.

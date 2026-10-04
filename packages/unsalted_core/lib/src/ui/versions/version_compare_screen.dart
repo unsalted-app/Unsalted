@@ -8,7 +8,9 @@
 // Parameter, dann Schritte, dann Zutaten -- exakt die Reihenfolge, in der
 // RecipeDiff.between sie bereits liefert). „Als neuen Entwurf übernehmen"
 // reicht exakt dieselbe Liste an applyChangesAsNewDraft weiter (Kapitel
-// 15.5), mit versionAId als Basis.
+// 15.5), mit versionAId als Basis. Die Zutatenzeilen von B gehen als
+// targetRows mit, sonst verlieren Add/Replace die Lebensmittel-Verknüpfung
+// (Fehlerbehebung 9.1a, F3).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -92,7 +94,8 @@ class _VersionCompareScreenState extends ConsumerState<VersionCompareScreen> {
     final service = ref.read(snapshotServiceProvider);
     final a = await service.exportVersion(widget.versionAId);
     final b = await service.exportVersion(widget.versionBId);
-    final changes = RecipeDiff.between(a, b);
+    final targetRows = (await ref.read(recipeRepositoryProvider).getVersion(widget.versionBId))?.ingredients;
+    final changes = RecipeDiff.between(a, b, targetRows: targetRows);
     return (a, b, changes);
   }
 

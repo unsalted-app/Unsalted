@@ -2,7 +2,8 @@
 //
 // Schritt 8.6, Bildschirm 8: UI-08 (Vergleichsbildschirm zeigt die
 // gruppierte Änderungsliste), Übernehmen ruft applyChangesAsNewDraft mit
-// derselben Liste auf.
+// derselben Liste auf. UI-08b (Fehlerbehebung 9.1a, F3): der übernommene
+// Draft trägt die Lebensmittel-Verknüpfung der Zielversion.
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -14,8 +15,11 @@ import 'package:unsalted_core/src/contracts/input_models.dart';
 import 'package:unsalted_core/src/data/core_database.dart' as db;
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
 import 'package:unsalted_core/src/data/daos/drift_recipe_dao.dart';
+import 'package:unsalted_core/src/data/drift_food_repository.dart';
 import 'package:unsalted_core/src/data/drift_recipe_repository.dart';
 import 'package:unsalted_core/src/data/drift_snapshot_service.dart';
+import 'package:unsalted_core/src/food/food_variant.dart';
+import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/recipe/recipe_ingredient.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
@@ -233,6 +237,80 @@ void main() {
     expect(find.text('Keine Unterschiede.'), findsOneWidget);
     final button = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Als neuen Entwurf übernehmen'));
     expect(button.onPressed, isNull);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-08b: übernommener Draft trägt die Lebensmittel-Verknüpfung von B (9.1a, F3)',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+
+    final recipeDao = DriftRecipeDao(database);
+    final foodDao = DriftFoodDao(database);
+    final recipeRepo = DriftRecipeRepository(recipeDao, foodDao, database);
+
+    final (recipeId, versionAId, versionBId, eiId) = (await tester.runAsync(() async {
+      final eiId = await DriftFoodRepository(foodDao).createVariant(NewFoodVariant(
+        name: 'Ei',
+        brand: null,
+        barcode: null,
+        source: FoodSource.custom,
+        sourceRef: null,
+        densityGPerMl: null,
+        gramsPerPiece: Decimal.fromInt(58),
+        servingSizeG: null,
+        nutrients: NutrientSet(energyKcal: Decimal.fromInt(137)),
+      ));
+      final recipeId = await recipeRepo.createRecipe(const NewRecipe(title: 'Teig'));
+      final versionAId = (await recipeDao.watchVersions(recipeId).first).first.id;
+      RecipeVersionDraft draftFor(String versionId, int index, List<RecipeIngredient> ingredients) =>
+          RecipeVersionDraft(
+            id: versionId,
+            recipeId: recipeId,
+            parentVersionId: null,
+            versionIndex: index,
+            label: null,
+            servings: null,
+            bakingLossPercent: Decimal.zero,
+            finalWeightOverrideG: null,
+            notes: null,
+            ingredients: ingredients,
+            steps: const [],
+          );
+      await recipeRepo.saveDraft(draftFor(versionAId, 1, [
+        RecipeIngredient(id: 'a-mehl', versionId: versionAId, position: 1, displayName: 'Mehl',
+            quantity: Decimal.fromInt(100), unitCode: 'g'),
+      ]));
+      await recipeRepo.snapshotVersion(versionAId);
+      final versionBId = await recipeRepo.createDraftFrom(versionAId);
+      final copiedMehlId = (await recipeDao.getIngredientsForVersion(versionBId)).single.id;
+      await recipeRepo.saveDraft(draftFor(versionBId, 2, [
+        RecipeIngredient(id: copiedMehlId, versionId: versionBId, position: 1, displayName: 'Mehl',
+            quantity: Decimal.fromInt(100), unitCode: 'g'),
+        RecipeIngredient(id: 'b-ei', versionId: versionBId, position: 2, foodVariantId: eiId,
+            displayName: 'Ei', quantity: Decimal.fromInt(2), unitCode: 'piece'),
+      ]));
+      await recipeRepo.snapshotVersion(versionBId);
+      return (recipeId, versionAId, versionBId, eiId);
+    }))!;
+
+    await tester.pumpWidget(ProviderScope(
+      overrides: [coreDatabaseProvider.overrideWithValue(database)],
+      child: MaterialApp(
+        home: VersionCompareScreen(recipeId: recipeId, versionAId: versionAId, versionBId: versionBId),
+      ),
+    ));
+    await _settle(tester);
+
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Als neuen Entwurf übernehmen'));
+    await _settle(tester);
+    await tester.pumpAndSettle();
+
+    final versions = await tester.runAsync(() => recipeDao.watchVersions(recipeId).first);
+    final newDraft = versions!.firstWhere((v) => v.id != versionAId && v.id != versionBId);
+    final rows = await tester.runAsync(() => recipeDao.getIngredientsForVersion(newDraft.id));
+    expect(rows!.singleWhere((r) => r.displayName == 'Ei').foodVariantId, eiId);
 
     await _disposeWidgetTree(tester);
   });

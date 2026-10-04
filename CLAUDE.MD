@@ -53,7 +53,7 @@ vermeiden.
 
 ---
 
-## 1. Projektstruktur (Stand: nach Schritt 8.8 — Phase 0–8 abgeschlossen)
+## 1. Projektstruktur (Stand: nach Schritt 9.1/9.1a)
 
 ```text
 unsalted/
@@ -67,6 +67,7 @@ unsalted/
 │  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
 ├─ drift_schemas/
 │  └─ drift_schema_v1.json         Schema v1, eingefroren (Kapitel 25.1)
+├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Core und App (Nachtrag 0.1a)
 ├─ apps/
 │  └─ unsalted_app/                App-Hülle (Schritt 8.8)
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
@@ -95,7 +96,8 @@ unsalted/
       │     │  ├─ recipe_ingredient.dart
       │     │  ├─ recipe_step.dart
       │     │  ├─ recipe_change.dart
-      │     │  ├─ recipe_diff.dart
+      │     │  ├─ recipe_diff.dart           between(a, b, {targetRows}) — siehe Abschnitt 4
+      │     │  ├─ snapshot_row_match.dart    Sicherheitsregel Zeile ↔ Snapshot-Zutat (9.1a), nicht exportiert
       │     │  ├─ recipe_snapshot_v1.dart
       │     │  └─ snapshot_codec.dart
       │     ├─ food/
@@ -185,10 +187,13 @@ unsalted/
          │  ├─ mg03_core_database_test.dart
          │  ├─ mg05_no_real_columns_test.dart
          │  ├─ event_bus_test.dart
-         │  ├─ recipe_repository_test.dart   RP-01…21
+         │  ├─ recipe_repository_test.dart   RP-01…23
          │  ├─ food_repository_test.dart     FD-01…05
          │  ├─ nutrition_service_test.dart
          │  └─ snapshot_service_test.dart    IT-01/03/05, GD-11/12
+         ├─ integration/                     Schritt 9.1: IT-01…IT-06 + Edge Cases DA/SI/MI,
+         │                                   echte Systemkette über die Provider, Gerät A/B
+         │                                   = getrennte In-Memory-Datenbanken (support/)
          └─ ui/                              Phase 8, je Bildschirm eine Testdatei
             ├─ recipe_list/, recipe_editor/, recipe_detail/, nutrition/,
             │  versions/, foods/, settings/  — Testmuster siehe Abschnitt 4
@@ -205,12 +210,12 @@ AT-01–AT-12), Phase 2 (Rechenkern), Phase 3 (Fachmodelle), Phase 4
 (Modul-/Steckplatzsystem, Schritt 7.1–7.4: Modultypen, `CoreModule`,
 Provider, öffentliche Tür geschlossen und eingefroren), **Phase 8**
 (Oberfläche, Schritt 8.1–8.8 inkl. Nachtrag 8.7a: alle 13 Bildschirme aus Kapitel 22, ihre Routen in `CoreModule.routes` sowie die
-App-Hülle `apps/unsalted_app`).
+App-Hülle `apps/unsalted_app`), **Schritt 9.1** (Integrationstests) und
+**Fehlerbehebung 9.1a** (Draft-Kopie und Diff/Apply, F1–F5).
 
-**Nächster Schritt: 9.1 — Integrationstests.** `test/integration/` gemäß
-Testplan (Kapitel 23.5), IT-01 bis IT-06 plus ergänzende Edge Cases für
-Diff/Apply, Snapshot-Import und Master-Integrität. Details:
-`docs/spezifikation.md`, Arbeitskarte Schritt 9.1 (Kapitel 24.6).
+**Nächster Schritt: Karte 9.1b (E1) vorlegen und nach Freigabe umsetzen** —
+der Editor verliert beim Speichern die Verknüpfung zu weich gelöschten
+Lebensmitteln (`docs/status.md`). 9.1b blockiert 9.2.
 
 Danach: 9.2 (manueller Durchlauf; die Navigation dafür wurde mit
 Nachtrag 8.8a geschlossen), 9.3
@@ -346,6 +351,20 @@ Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
   exportiert, erreicht die App Bildschirme ausschließlich über
   `UnsaltedModule.routes`. Ein erster 8.8-Versuch mit direkten
   `src/ui`-Importen wurde von AT-09 zu Recht abgelehnt.
+- **Wer `RecipeDiff.between` für eine anzuwendende Änderungsliste aufruft,
+  MUSS `targetRows` der Zielversion übergeben, sonst gehen
+  Lebensmittel-Verknüpfungen verloren** (seit 9.1a). Das Snapshot-Format
+  führt keine Variant-ID; ohne `targetRows` tragen `AddIngredient`/
+  `ReplaceIngredient` immer `foodVariantId: null`, und der übernommene Draft
+  rechnet anders als die Zielversion. Die Zeilen kommen über
+  `RecipeRepository.getVersion(versionB)` (auch für Snapshots), siehe
+  `version_compare_screen.dart`. Nur für reine Anzeige- oder Prüf-Diffs, die
+  nie angewendet werden, darf `targetRows` fehlen.
+- **Integrationstests vergleichen exakt, ohne Toleranz** (seit 9.1): Nährwerte
+  als Decimal über `expectSameNutrition`, Snapshot-JSON byte-genau. Jede
+  Rundreise prüft zusätzlich die Nährwerte — ein leerer Rest-Diff allein
+  beweist nichts, wenn der Diff eine Änderung übersieht (so wurde F5
+  gefunden).
 - **`tool/check_architecture.dart` rechnete Pfade falsch (behoben mit
   Nachtrag 1.1a):** Die Ausnahmen prüfen Pfade relativ zu `lib/`
   (`src/ui/`, `src/module/`, `src/data/`). Das Tool ist seitdem grün und

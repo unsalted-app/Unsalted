@@ -52,6 +52,7 @@ import '../recipe/recipe_snapshot_v1.dart';
 import '../recipe/recipe_step.dart';
 import '../recipe/recipe_version.dart';
 import '../recipe/snapshot_codec.dart';
+import '../recipe/snapshot_row_match.dart';
 import 'core_database.dart' as db;
 import 'daos/food_dao.dart';
 import 'daos/recipe_dao.dart';
@@ -704,21 +705,22 @@ class DriftRecipeRepository implements RecipeRepository {
     List<RecipeStep> steps;
 
     if (sourceRow.state == VersionState.snapshot.code) {
-      // Kapitel 12.4 Punkt 3: aus snapshotJson lesen, nicht aus den Zeilen.
-      // Das Snapshot-Format (Kapitel 13.1/13.2) trägt keine food_variant_id
-      // — eine Zutat aus einem Snapshot wird daher ohne Varianten-Verweis
-      // kopiert (self-contained: die Nährwerte stehen bereits als per100g
-      // im Snapshot, ein Re-Linking ist für 12.4 nicht spezifiziert, anders
-      // als beim Import, Kapitel 13.6 Punkt 5).
+      // Kapitel 12.4 Punkt 3: Inhalt aus snapshotJson, nicht aus den Zeilen.
+      // Das Format trägt keine Variant-ID; die Verknüpfung kommt aus den
+      // unveränderten Zeilen derselben Snapshot-Version (Kapitel 10.8),
+      // abgesichert über linkedVariantIdFor (Fehlerbehebung 9.1a, F1).
       final decoded = SnapshotCodec.decode(
         jsonDecode(sourceRow.snapshotJson!) as Map<String, dynamic>,
       );
+      final sourceRows = (await _recipeDao.getIngredientsForVersion(sourceVersionId))
+          .map(recipeIngredientFromRow)
+          .toList();
       ingredients = decoded.ingredients
           .map((si) => RecipeIngredient(
                 id: _newId(),
                 versionId: newVersionId,
                 position: si.position,
-                foodVariantId: null,
+                foodVariantId: linkedVariantIdFor(si, sourceRows),
                 displayName: si.name,
                 quantity: si.quantity,
                 unitCode: si.unit,

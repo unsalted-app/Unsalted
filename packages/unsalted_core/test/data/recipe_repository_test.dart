@@ -1,6 +1,7 @@
 // test/data/recipe_repository_test.dart
 //
-// RP-01 bis RP-21 (Kapitel 23.4, Schritt 6.3): DriftRecipeRepository gegen
+// RP-01 bis RP-21 (Kapitel 23.4, Schritt 6.3), RP-22/RP-23 (Fehlerbehebung
+// 9.1a, F1): DriftRecipeRepository gegen
 // eine In-Memory-SQLite-Instanz. Jeder Test bekommt eine frische
 // CoreDatabase + einen frischen DomainEventBus (Kapitel 16.5), damit Events
 // aus einem Test keinen anderen beeinflussen.
@@ -22,7 +23,10 @@ import 'package:unsalted_core/src/data/core_database.dart' as db;
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
 import 'package:unsalted_core/src/data/daos/drift_recipe_dao.dart';
 import 'package:unsalted_core/src/data/domain_event_bus.dart';
+import 'package:unsalted_core/src/data/drift_food_repository.dart';
 import 'package:unsalted_core/src/data/drift_recipe_repository.dart';
+import 'package:unsalted_core/src/food/food_variant.dart';
+import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/recipe/recipe_change.dart';
 import 'package:unsalted_core/src/recipe/recipe_ingredient.dart';
 import 'package:unsalted_core/src/recipe/recipe_step.dart';
@@ -421,5 +425,52 @@ void main() {
       repo.saveDraft(draft(versionId, recipeId, ingredients: [ing1])),
       throwsA(anything),
     );
+  });
+
+  Future<String> createMehlVariant() => DriftFoodRepository(foodDao).createVariant(NewFoodVariant(
+        name: 'Mehl',
+        brand: null,
+        barcode: '4000000000017',
+        source: FoodSource.custom,
+        sourceRef: null,
+        densityGPerMl: null,
+        gramsPerPiece: null,
+        servingSizeG: null,
+        nutrients: NutrientSet(energyKcal: Decimal.fromInt(343)),
+      ));
+
+  test('RP-22: Kopie eines Snapshots behält die foodVariantId der Zeilen (9.1a, F1)', () async {
+    final (recipeId, versionId) = await createRecipeWithDraft();
+    final variantId = await createMehlVariant();
+    await repo.saveDraft(draft(versionId, recipeId, ingredients: [
+      ingredient('i1', versionId).copyWith(foodVariantId: variantId),
+      ingredient('i2', versionId, position: 2, displayName: 'Salz'),
+    ]));
+    await repo.snapshotVersion(versionId);
+
+    final copy = await repo.createDraftFrom(versionId);
+    final applied = await repo.applyChangesAsNewDraft(versionId, const []);
+
+    for (final newVersionId in [copy, applied]) {
+      final rows = await recipeDao.getIngredientsForVersion(newVersionId);
+      expect(rows.map((r) => r.foodVariantId).toList(), [variantId, null], reason: newVersionId);
+    }
+  });
+
+  test('RP-23: weicht die Zeile vom snapshotJson ab, bleibt foodVariantId null (9.1a, F1)', () async {
+    final (recipeId, versionId) = await createRecipeWithDraft();
+    final variantId = await createMehlVariant();
+    await repo.saveDraft(draft(versionId, recipeId, ingredients: [
+      ingredient('i1', versionId).copyWith(foodVariantId: variantId),
+    ]));
+    await repo.snapshotVersion(versionId);
+    // Zeile an der DAO-Sperre vorbei verändern, um eine Abweichung zu erzwingen.
+    await database.customStatement("UPDATE recipe_ingredients SET quantity = '999' WHERE id = 'i1'");
+
+    final copy = await repo.createDraftFrom(versionId);
+    final row = (await recipeDao.getIngredientsForVersion(copy)).single;
+
+    expect(row.quantity, Decimal.fromInt(100), reason: 'Inhalt kommt aus snapshotJson');
+    expect(row.foodVariantId, isNull);
   });
 }
