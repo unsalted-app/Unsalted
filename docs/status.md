@@ -104,9 +104,57 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 10.0 | Nachtrag: PopScope im Lebensmittel-Editor (UI-29–UI-32, docs/decisions.md) | fertig |
-| 10.1 | Abnahmeliste vollständig abhaken | offen |
+| 10.1 | Abnahmeliste vollständig abhaken | Nachweis erbracht (siehe unten) — 4 Befunde, Entscheidung des Projektverantwortlichen offen |
 | 10.2 | Öffentliche API dokumentieren | offen |
 | 10.3 | Tag `part1-v1.0.0` | offen |
+
+### 10.1 Freeze-Abnahme — Nachweis (Stand 2026-10-05, nach Nachtrag 10.0)
+
+Ausgeführt mit Flutter 3.47.5, alle Befehle im jeweiligen Paketordner.
+Testergebnisse aus `flutter test --reporter json` (Core und App), IDs gegen
+die Testnamen geprüft. Alle 165 IDs aus Kapitel 23.1–23.6 (ohne das bewusst
+fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
+
+| Kriterium (Kapitel 25) | Nachweis | Ergebnis |
+|---|---|---|
+| Alle Tests grün (Ziel > 140) | `flutter test --reporter json`: Core 357 Tests, App 1 Test; 0 fehlgeschlagen, 0 übersprungen | erfüllt (358) |
+| AT-01 bis AT-12 grün | `test/architecture/at01_…` bis `at12_…`, je ein Test | erfüllt |
+| Kein double in lib/ (AT-07) | AT-07 grün; `grep -rnwE "double\|num" lib` außerhalb `src/ui/`: 0, `.toDouble()`: 0. In `src/ui/` eine Layout-Stelle (`double.infinity`), nach 5.2 zulässig | erfüllt |
+| Kein toDecimal außerhalb decimal_math.dart (AT-08) | AT-08 grün; `grep -rn "toDecimal(" lib` außerhalb `decimal_math.dart`: 0 | erfüllt |
+| Kein „kJ“ in lib/ und test/ (AT-12) | AT-12 grün; `grep -rn "kJ" lib test` außerhalb `test/architecture/`: 0; Treffer nur im AT-12-Test selbst | erfüllt, Befund B2 |
+| Schema-Dump eingecheckt, Migrationstest läuft | `packages/unsalted_core/drift_schemas/drift_schema_v1.json` (in Git); MG-01, MG-02 grün; frischer `dart run drift_dev schema dump` identisch mit dem eingecheckten (ohne `_meta`) | erfüllt |
+| GD-01 bis GD-12 grün | `test/contract/golden_test.dart` (GD-01–GD-10), `test/data/snapshot_service_test.dart` (GD-11, GD-12) | erfüllt, Befunde B1, B4 |
+| Export → Import → identische Nährwerte (IT-01) | `test/integration/it01_export_import_test.dart` (+ `test/data/snapshot_service_test.dart`) | erfüllt |
+| Snapshot-Sperre (RP-03, RP-05) | `test/data/recipe_repository_test.dart` | erfüllt |
+| Historische Stabilität (IT-02) | `test/integration/it02_historical_stability_test.dart` (+ `test/data/nutrition_service_test.dart`) | erfüllt |
+| Snapshot-Wahrheit (IT-04) | `test/integration/it04_snapshot_truth_test.dart` (+ `test/data/nutrition_service_test.dart`) | erfüllt |
+| UI-01 bis UI-10 grün | `test/ui/…`: UI-01/02 recipe_list, UI-03/04 recipe_editor, UI-05/07 nutrition_table, UI-06 amount_calculator, UI-08 version_compare, UI-09 package_form, UI-10 import_screen | erfüllt |
+| EX-01 bis EX-05 | `test/ui/recipe_detail/recipe_detail_screen_test.dart` (EX-01, 02, 04, 05), `test/ui/settings/settings_screen_test.dart` (EX-03, EX-05) | erfüllt |
+| Öffentliche Tür = Golden-Liste (AT-06) | AT-06 grün gegen `test/architecture/public_api_golden.txt` | erfüllt |
+| Öffentliche API dokumentiert, dart doc ohne Warnung | Schritt 10.2. Aktuell `dart doc --dry-run .`: 0 Warnungen, 0 Fehler. Fehlende Doc-Kommentare erzeugen dabei keine Warnung, die Abdeckung ist nicht geprüft | offen (10.2) |
+| Spike 20.1 protokolliert | `docs/decisions.md`, „Spike 20.1“ | erfüllt |
+| docs/status.md zeigt Phase 0 bis 10 fertig | Phase 0–9 abgeschlossen, Phase 10 offen | offen (nach 10.3) |
+| Git-Tag `part1-v1.0.0` | `git tag -l`: keine Tags | offen (10.3) |
+
+**Befunde (nicht stillschweigend gleichgesetzt):**
+- **B1 — GD-05 prüft schwächer als 23.3.** 23.3 verlangt „Decodieren + erneutes Encodieren ergibt byteweise identisches JSON“. GD-05 kodiert dasselbe dekodierte Objekt zweimal und vergleicht die beiden Ausgaben (nur Determinismus). Der geforderte Sachverhalt wird von GD-01 bis GD-04 geprüft (`jsonEncode(encode(decode(golden))) == jsonEncode(golden)`), zusätzlich von SI-1 für den gespeicherten Export-String. Der Kopfkommentar von `golden_test.dart` beschreibt GD-05 unzutreffend als Vergleich mit dem Original.
+- **B2 — AT-12-Ausnahme nicht spezifiziert.** 5.2 und 25 verlangen „kein kJ in lib/ oder test/“ ohne Ausnahme. Der AT-12-Test nimmt `test/architecture/` aus (er muss den Suchbegriff selbst enthalten); diese Ausnahme steht seit Phase 1 nur im Testcode, weder in der Spezifikation noch in `docs/decisions.md`.
+- **B3 — Testvertrag 18.1 für `recipe_step.dart` nicht erfüllt.** Laut Dateivertrag deckt `recipe/recipe_ingredient_test.dart` auch `recipe_step.dart` ab; `RecipeStep` wird in `test/recipe/` nirgends getestet (bekannte Lücke seit Schritt 3.1). Indirekt über RP-, UI- und Integrationstests ausgeführt, aber ohne eigenen Unit-Test.
+- **B4 — Testorte weichen von 23.3/23.5 ab.** GD-11 und GD-12 liegen in `test/data/` statt `test/contract/`; IT-01 bis IT-05 existieren zusätzlich (aus Schritt 6.5/6.6) in `test/data/`. Inhaltlich korrekt, nur die Zuordnung Datei ↔ Kapitel weicht ab.
+- Hinweis, kein Befund: Kapitel 25 nennt AT-07 verkürzt („kein double in lib/“); maßgeblich ist 5.2 mit der Layout-Ausnahme in `src/ui/`.
+- Korrigiert (nur Meta-Doku): CLAUDE.md zeigte `drift_schemas/` im Projektstamm; laut Spezifikation (Verzeichnisbaum vor 18.1) und tatsächlich liegt es in `packages/unsalted_core/`.
+
+### Bekannte Grenzen von part1-v1.0.0 (für Teil 1.1 / Design-Pass)
+
+- Kein nativer Teilen-Dialog beim Export und keine Dateiauswahl beim Import (Bildschirm 11/12); nur Zwischenablage bzw. eingefügter Text.
+- E2: Beim Anwenden eines `ReplaceIngredient` geht die Notiz der Zutat verloren (spezifikationskonform nach 14.1).
+- 15 `Colors.*`-Stellen in 8 UI-Dateien (Nährwertkopf, Rezept-Editor, Rezept erstellen, Vergleich, Export, Import, Lebensmittel-Editor, Verpackungsformular); neue Stile seit 9.1b nur über `Theme.of(context)`.
+- Einheiten erscheinen außerhalb der Vergleichstexte als Codes (`piece`, `pinch`, `tbsp` …).
+- Kein Löschen von Rezepten oder Lebensmitteln in der UI (`softDeleteRecipe`/`softDeleteVariant` existieren, werden von keinem Bildschirm aufgerufen; nur Versionen sind löschbar).
+- Einfrieren einer Version mit gelöschtem Lebensmittel erzeugt ohne Warnung einen Snapshot ohne Nährwerte für diese Zutat (spezifikationskonform nach 10.7).
+- Der Editor zeigt live nur die Gesamt-kcal; pro Portion und pro 100 g fehlen.
+- Kein Hinweis bei doppeltem Lebensmittelnamen.
+- Kein eigener Unit-Test für `RecipeStep` (Befund B3).
 
 ## Bekannte offene Lücken (nicht blockierend)
 

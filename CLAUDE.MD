@@ -53,7 +53,7 @@ vermeiden.
 
 ---
 
-## 1. Projektstruktur (Stand: nach Schritt 9.3 — Phase 0–9 abgeschlossen)
+## 1. Projektstruktur (Stand: nach Schritt 10.1 — Phase 0–9 abgeschlossen)
 
 ```text
 unsalted/
@@ -65,8 +65,6 @@ unsalted/
 │  └─ decisions.md                 Protokoll technischer Entscheidungen
 ├─ tool/
 │  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
-├─ drift_schemas/
-│  └─ drift_schema_v1.json         Schema v1, eingefroren (Kapitel 25.1)
 ├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Core und App (Nachtrag 0.1a)
 ├─ apps/
 │  └─ unsalted_app/                App-Hülle (Schritt 8.8)
@@ -79,6 +77,8 @@ unsalted/
 └─ packages/
    └─ unsalted_core/
       ├─ pubspec.yaml
+      ├─ drift_schemas/
+      │  └─ drift_schema_v1.json      Schema v1, eingefroren (Kapitel 25.1)
       ├─ lib/
       │  ├─ unsalted_core.dart               öffentliche Tür — eingefroren seit Schritt 7.4
       │  └─ src/
@@ -225,8 +225,14 @@ Vergleichstexte, Master markieren, Mengenrechner).
 (Nachtest 9.2a vom Projektverantwortlichen bestätigt). **Nachtrag 10.0**
 (PopScope im Lebensmittel-Editor).
 
-**Nächster Schritt: 10.1 — Freeze-Abnahme (Nachweis)**, danach 10.2
-(öffentliche API dokumentieren) und 10.3 (Tag `part1-v1.0.0`).
+**Schritt 10.1** (Freeze-Abnahme): Nachweis in `docs/status.md`, 4 Befunde
+(B1–B4) liegen beim Projektverantwortlichen. Entwurf „Kapitel 28 –
+Nachträge und Klarstellungen zu Teil 1“ vorgelegt, noch nicht in
+`docs/spezifikation.md` übernommen.
+
+**Nächster Schritt:** Entscheidung des Projektverantwortlichen zu B1–B4 und
+Kapitel 28; danach 10.2 (öffentliche API dokumentieren) und 10.3 (Tag
+`part1-v1.0.0`).
 
 ---
 
