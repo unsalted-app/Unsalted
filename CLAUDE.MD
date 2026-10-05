@@ -230,7 +230,8 @@ und Klarstellungen in Kapitel 28 der Spezifikation.
 
 **Teil 1.1 (in Arbeit, `docs/status.md`):** 1.1a fertig (kein Flackern beim
 Versionswechsel im Rezeptdetail), 1.1b fertig (Rezepte und Lebensmittel
-löschen mit 5 s „Rückgängig“, Test-IDs bis UI-44). Kein neuer Tag pro
+löschen mit 5 s „Rückgängig“), 1.1c fertig (Ladebalken im Rezeptdetail erst
+nach 300 ms); Test-IDs bis UI-46. Kein neuer Tag pro
 Schritt — Teil 1.1 wird nach dem Design-Pass gesammelt als `part1-v1.1.0`
 getaggt. Design-Notizen für den Design-Pass sammelt `docs/status.md`.
 
@@ -422,6 +423,13 @@ Teil 2 (`unsalted_experiments`) nach Vorgabe des Projektverantwortlichen.
   Wer `expect(await tester.runAsync(...), isNull)` prüft (z. B. „gelöscht“),
   muss danach `expect(tester.takeException(), isNull)` prüfen, sonst gilt eine
   Ausnahme als Erfolg.
+- **Ein roter Widget-Test kann `flutter test` hängen lassen** (beobachtet in
+  den Gegenproben zu 1.1b/1.1c): Nach dem Fehlschlag beendet sich der Lauf der
+  Datei nicht; grüne Läufe sind nicht betroffen, einzeln gestartet endet
+  derselbe Test sauber mit Exit 1. Bei Gegenproben (absichtlich rote Tests)
+  deshalb mit Zeitlimit starten (`perl -e 'alarm 180; exec @ARGV' flutter
+  test …`) und die Ergebnisse aus den `[E]`-Zeilen lesen. `ci.yml` hat kein
+  `timeout-minutes`.
 - **`dart doc` meldet fehlende Doku-Kommentare nicht** (seit 10.2): Lücken
   findet man nur mit vorübergehend aktiviertem Lint `public_member_api_docs`
   (nicht committen) und Filter auf die über `lib/unsalted_core.dart`

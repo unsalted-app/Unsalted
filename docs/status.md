@@ -174,12 +174,13 @@ gesammelt als `part1-v1.1.0` getaggt.
 |---|---|---|
 | 1.1a | Fehlerbehebung: kein Flackern beim Versionswechsel im Rezeptdetail — alter Inhalt bleibt mit Ladebalken stehen, veraltete Antworten werden verworfen (UI-33, UI-34, docs/decisions.md) | fertig |
 | 1.1b | Rezepte und Lebensmittel löschen: Wischen in beiden Listen, Menüpunkt im Rezeptdetail und im Lebensmittel-Editor; 5 s „Rückgängig“ statt Bestätigungsdialog, erst danach Soft-Delete (UI-35–UI-44, docs/decisions.md) | fertig |
+| 1.1c | Ladebalken im Rezeptdetail erst nach 300 ms, bei schnellem Laden nie (UI-45, UI-46, docs/decisions.md) | fertig |
 
-Stand nach 1.1b: Core 378 Tests, App 1 Test, alle grün; `tool/check_architecture.dart` Exit 0.
+Stand nach 1.1c: Core 380 Tests, App 1 Test, alle grün; `tool/check_architecture.dart` Exit 0.
 
 ### Design-Notizen (für den Design-Pass)
 
-- Ladebalken im Rezeptdetail erst nach ~300 ms Verzögerung zeigen (blitzt bei schnellem Laden kurz auf).
+- ~~Ladebalken im Rezeptdetail erst nach ~300 ms Verzögerung zeigen (blitzt bei schnellem Laden kurz auf).~~ → umgesetzt in Teil 1.1c.
 
 ## Bekannte offene Lücken (nicht blockierend)
 

@@ -25,11 +25,14 @@
 //
 // Versionswechsel (Teil 1.1a): Der zuletzt geladene Inhalt bleibt samt
 // AppBar und Versionsleiste stehen, bis die gewählte Version geladen ist;
-// solange zeigt ein LinearProgressIndicator unter der AppBar das Laden, und
-// die Versionsleiste markiert schon die neue Wahl. Der zentrierte Ladekreis
-// erscheint nur beim allerersten Laden. Antworten älterer Ladevorgänge
-// werden verworfen (Zähler `_request`), damit bei V1 → V3 → V2 eine späte
-// Antwort für V3 nicht V2 überschreibt.
+// die Versionsleiste markiert schon die neue Wahl. Dauert das Laden länger
+// als 300 ms, zeigt ein LinearProgressIndicator unter der AppBar das Laden
+// (Verzögerung seit Teil 1.1c, damit er bei schnellem Laden nicht
+// aufblitzt). Der zentrierte Ladekreis erscheint nur beim allerersten Laden.
+// Antworten älterer Ladevorgänge werden verworfen (Zähler `_request`), damit
+// bei V1 → V3 → V2 eine späte Antwort für V3 nicht V2 überschreibt.
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -160,6 +163,12 @@ class _VersionLoaderState extends ConsumerState<_VersionLoader> {
   Object? _error;
   bool _loading = false;
 
+  /// Ladebalken erst zeigen, wenn das Laden länger dauert -- sonst blitzt er
+  /// bei jedem schnellen Wechsel kurz auf (Teil 1.1c).
+  static const _progressDelay = Duration(milliseconds: 300);
+  Timer? _progressTimer;
+  bool _showProgress = false;
+
   /// Zählt die Ladevorgänge; nur die Antwort des jüngsten wird übernommen.
   int _request = 0;
 
@@ -177,10 +186,24 @@ class _VersionLoaderState extends ConsumerState<_VersionLoader> {
     }
   }
 
+  @override
+  void dispose() {
+    _progressTimer?.cancel();
+    super.dispose();
+  }
+
   /// Wird aus initState/didUpdateWidget aufgerufen, also vor dem nächsten
   /// build -- deshalb ohne setState.
   void _start(String versionId) {
     final request = ++_request;
+    // Nur beim Übergang von „ruhend“ zu „lädt“ die Verzögerung starten; ein
+    // Wechsel während des Ladens lässt einen schon sichtbaren Ladebalken
+    // stehen, statt ihn kurz aus- und wieder einzublenden.
+    if (!_loading) {
+      _progressTimer = Timer(_progressDelay, () {
+        if (mounted) setState(() => _showProgress = true);
+      });
+    }
     _loading = true;
     _load(versionId).then<void>(
       (result) {
@@ -188,17 +211,24 @@ class _VersionLoaderState extends ConsumerState<_VersionLoader> {
         setState(() {
           _shown = result;
           _error = null;
-          _loading = false;
+          _finishLoading();
         });
       },
       onError: (Object error) {
         if (!mounted || request != _request) return;
         setState(() {
           _error = error;
-          _loading = false;
+          _finishLoading();
         });
       },
     );
+  }
+
+  void _finishLoading() {
+    _loading = false;
+    _progressTimer?.cancel();
+    _progressTimer = null;
+    _showProgress = false;
   }
 
   Future<(RecipeVersion, NutritionResult)> _load(String versionId) async {
@@ -234,7 +264,7 @@ class _VersionLoaderState extends ConsumerState<_VersionLoader> {
       version: version,
       nutrition: nutrition,
       selectedVersionId: widget.selectedVersionId,
-      loading: _loading,
+      showProgress: _showProgress,
       modules: widget.modules,
       onVersionSelected: widget.onVersionSelected,
     );
@@ -250,8 +280,9 @@ class _DetailScaffold extends ConsumerWidget {
   /// Gewählte Version; weicht während eines Wechsels von [version] ab.
   final String selectedVersionId;
 
-  /// `true`, solange die gewählte Version noch geladen wird.
-  final bool loading;
+  /// `true`, wenn die gewählte Version länger als 300 ms lädt; dann zeigt der
+  /// Body den Ladebalken.
+  final bool showProgress;
   final List<UnsaltedModule> modules;
   final ValueChanged<String> onVersionSelected;
 
@@ -261,7 +292,7 @@ class _DetailScaffold extends ConsumerWidget {
     required this.version,
     required this.nutrition,
     required this.selectedVersionId,
-    required this.loading,
+    required this.showProgress,
     required this.modules,
     required this.onVersionSelected,
   });
@@ -369,7 +400,7 @@ class _DetailScaffold extends ConsumerWidget {
               for (final section in sections) section.build(context, recipeContext),
             ],
           ),
-          if (loading) const Positioned(top: 0, left: 0, right: 0, child: LinearProgressIndicator()),
+          if (showProgress) const Positioned(top: 0, left: 0, right: 0, child: LinearProgressIndicator()),
         ],
       ),
     );

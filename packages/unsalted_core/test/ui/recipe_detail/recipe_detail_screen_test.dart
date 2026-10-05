@@ -12,7 +12,8 @@
 // _GatedNutritionService `forVersion` je Version zurück, bis der Test sie
 // freigibt -- so ist der Zwischenzustand deterministisch prüfbar.
 // UI-40 (Teil 1.1b): „Rezept löschen“ im AppBar-Menü kehrt zur Rezeptliste
-// zurück und zeigt dort die SnackBar mit „Rückgängig“.
+// zurück und zeigt dort die SnackBar mit „Rückgängig“. UI-45/UI-46
+// (Teil 1.1c): Ladebalken erst nach 300 ms, bei schnellem Laden nie.
 
 import 'dart:async';
 
@@ -678,6 +679,101 @@ void main() {
     expect(await tester.runAsync(() => repo.getVersion(v2)), isNull);
     // runAsync liefert auch bei einer Ausnahme null -- die darf es nicht geben.
     expect(tester.takeException(), isNull);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-45: schneller Versionswechsel zeigt keinen Ladebalken (Teil 1.1c)', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, v1) = await _seedDraftRecipe(
+      tester,
+      database,
+      ingredients: (vid) => [
+        RecipeIngredient(
+          id: 'i1',
+          versionId: vid,
+          position: 1,
+          displayName: 'Mehl V1',
+          quantity: Decimal.fromInt(100),
+          unitCode: 'g',
+        ),
+      ],
+    );
+    await _addVersion(tester, database, recipeId, v1, versionIndex: 2, ingredientName: 'Zucker V2');
+    await _pumpDetail(tester, database, recipeId);
+    expect(find.text('Zucker V2'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(ChoiceChip, 'V1'));
+    await tester.pump();
+    // Der Wechsel läuft schon, der Ladebalken bleibt verborgen.
+    expect(_selectedVersionLabel(tester), 'V1');
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    await _settle(tester);
+    expect(find.text('Mehl V1'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    // Die Verzögerung endet mit der Antwort -- auch danach kein Strich.
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-46: Ladebalken erst nach 300 ms; ein weiterer Wechsel lässt ihn stehen (Teil 1.1c)',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, v1) = await _seedDraftRecipe(
+      tester,
+      database,
+      ingredients: (vid) => [
+        RecipeIngredient(
+          id: 'i1',
+          versionId: vid,
+          position: 1,
+          displayName: 'Mehl V1',
+          quantity: Decimal.fromInt(100),
+          unitCode: 'g',
+        ),
+      ],
+    );
+    final v2 = await _addVersion(tester, database, recipeId, v1, versionIndex: 2, ingredientName: 'Zucker V2');
+    await _addVersion(tester, database, recipeId, v2, versionIndex: 3, ingredientName: 'Butter V3');
+    final nutrition = _gatedNutrition(database);
+    await _pumpDetail(tester, database, recipeId, nutritionService: nutrition);
+    expect(find.text('Butter V3'), findsOneWidget);
+
+    // V1 lädt langsam: erst nach 300 ms erscheint der Strich.
+    final slowV1 = nutrition.hold(v1);
+    await tester.tap(find.widgetWithText(ChoiceChip, 'V1'));
+    await _settle(tester);
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.text('Butter V3'), findsOneWidget);
+
+    // Wechsel auf V2, während noch geladen wird: der Strich bleibt sofort stehen.
+    final slowV2 = nutrition.hold(v2);
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.tap(find.widgetWithText(ChoiceChip, 'V2'));
+    await tester.pump();
+    expect(_selectedVersionLabel(tester), 'V2');
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+
+    slowV2.complete();
+    await _settle(tester);
+    expect(find.text('Zucker V2'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    // Die späte V1-Antwort ändert nichts mehr.
+    slowV1.complete();
+    await _settle(tester);
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('Zucker V2'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
 
     await _disposeWidgetTree(tester);
   });

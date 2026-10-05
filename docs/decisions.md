@@ -1039,3 +1039,59 @@ UI-Tests gegen den neuen Code grün.
 2. Timer überleben das Ende des `ProviderScope`: UI-39 rot.
 3. Sofort löschen (Frist 0): UI-35 bis UI-43 rot. UI-44 prüft kein Timing.
 4. „Rückgängig“ ohne Wirkung auf den Timer: UI-36, UI-38 und UI-42 rot.
+
+## 2026-10-05 — Teil 1.1c: Ladebalken im Rezeptdetail erst nach 300 ms
+
+Nach Kapitel 25.2, freigegeben vom Projektverantwortlichen nach seinem Befund
+„der Strich kommt immer noch, wenn ich Versionen wechsle“. Setzt die
+Design-Notiz aus 1.1b um. Kein Tag.
+
+**Befund.** Der Ladebalken aus 1.1a erschien bei jedem Versionswechsel sofort
+und verschwand mit der Antwort wieder. Auf dem Gerät dauert das Laden nur
+Sekundenbruchteile, der Strich blitzte deshalb bei fast jedem Wechsel kurz auf.
+
+**Fix (nur `recipe_detail_screen.dart`).**
+- Beim Übergang von „ruhend“ zu „lädt“ startet `_VersionLoaderState` einen
+  Timer über 300 ms; erst wenn er abläuft, wird der Ladebalken gezeigt
+  (`_showProgress`). Kommt die Antwort des jüngsten Ladevorgangs vorher, wird
+  der Timer abgebrochen — bei schnellem Laden erscheint der Strich nie.
+- Ein Wechsel während des Ladens startet keine neue Verzögerung. Ein schon
+  sichtbarer Strich bleibt stehen, statt kurz aus- und wieder einzublenden;
+  die Verzögerung gilt nur für den Beginn einer Ladephase.
+- Mit der jüngsten Antwort (Erfolg oder Fehler) endet die Ladephase: Timer
+  abgebrochen, Strich aus. `dispose` bricht den Timer ebenfalls ab.
+- `_DetailScaffold.loading` heißt jetzt `showProgress`: Es steuert nur noch die
+  Anzeige, nicht den Ladezustand.
+- Unverändert: Inhalt, Versionsleiste und Aktionen aus 1.1a, der zentrierte
+  Ladekreis beim allerersten Laden, der Fehlerfall und der Schutz gegen
+  veraltete Antworten.
+
+**Tests (neue IDs, Erweiterung von 23.6).** UI-45: Ein schneller Wechsel zeigt
+weder während des Ladens noch nach Ablauf der 300 ms einen Strich. UI-46: Bei
+langsamem Laden fehlt der Strich nach 250 ms und erscheint nach 350 ms; ein
+weiterer Wechsel lässt ihn sofort stehen; nach der jüngsten Antwort ist er
+weg, eine späte, veraltete Antwort ändert nichts.
+UI-33 und UI-34 bleiben unverändert grün, weil ihr Helfer `_tapVersion` nach
+jedem Wechsel 500 ms vorspult; damit ist der verzögerte Strich zum
+Prüfzeitpunkt sichtbar.
+
+**Gegenprobe.**
+1. Bildschirm aus 1.1b (ohne Verzögerung): UI-45 und UI-46 rot. UI-46 musste
+   einzeln laufen, siehe Beobachtung.
+2. Timer wird bei der Antwort nicht abgebrochen: UI-45 rot, der Strich
+   erscheint nach der Antwort doch noch. Ebenso rot ist UI-40: Der Timer des
+   ersten Ladens läuft nach dem Laden ab und blendet den Strich bei fertigem
+   Inhalt ein. Weil er dauerhaft animiert, läuft `pumpAndSettle` beim Öffnen
+   des Menüs in den Timeout (einzeln geprüft).
+3. Jeder Wechsel setzt die Verzögerung neu: UI-46 rot, der sichtbare Strich
+   verschwindet beim zweiten Wechsel.
+
+**Beobachtung, nicht geändert.** In mehreren Gegenproben (1.1b, 1.1c) blieb
+`flutter test` nach einem roten Widget-Test in derselben Datei hängen, statt
+sich zu beenden. Grüne Läufe sind nicht betroffen, und einzeln gestartet endet
+derselbe rote Test sauber mit Exit 1. Die Ursache ist nicht untersucht;
+vermutlich bleiben der Widget-Baum und Drift-Streams nach dem Abbruch offen,
+und der Teardown wartet. `.github/workflows/ci.yml` hat kein
+`timeout-minutes`, ein solcher Hänger würde die CI bis zum GitHub-Standardlimit
+von 6 Stunden blockieren. Ein Zeitlimit wäre eine eigene Arbeitskarte
+(`ci.yml`).
