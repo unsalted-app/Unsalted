@@ -14,9 +14,13 @@ import '../nutrition/nutrient_set.dart';
 
 const Object _unset = Object();
 
+/// Herkunft eines Lebensmittels (Kapitel 11.6).
 enum FoodSource {
+  /// Vom Nutzer angelegt.
   custom,
+  /// Beim Import eines Snapshots neu angelegt (Kapitel 13.6); Code `import`.
   imported,
+  /// Aus der USDA-Datenbank übernommen.
   usda;
 
   /// Der DB-/JSON-Code ist "import", nicht "imported" — "import" ist zwar
@@ -29,6 +33,8 @@ enum FoodSource {
         FoodSource.usda => 'usda',
       };
 
+  /// Liest einen gespeicherten Code (`custom`, `import`, `usda`); wirft
+  /// [ArgumentError] bei einem unbekannten Code.
   static FoodSource fromCode(String code) => switch (code) {
         'custom' => FoodSource.custom,
         'import' => FoodSource.imported,
@@ -37,14 +43,20 @@ enum FoodSource {
       };
 }
 
+/// Ein Lebensmittel bzw. eine Verpackungsvariante mit Nährwerten pro 100 g
+/// (Kapitel 10.6).
 class FoodVariant {
+  /// Eindeutige Text-UUID (Kapitel 10.9).
   final String id;
+  /// Name des Lebensmittels.
   final String name;
+  /// Marke oder `null`.
   final String? brand;
 
   /// EAN, für Duplikaterkennung (Kapitel 11.6, Kapitel 13.6).
   final String? barcode;
 
+  /// Herkunft des Lebensmittels.
   final FoodSource source;
 
   /// Fremd-ID der Quelle (Kapitel 11.6).
@@ -62,6 +74,7 @@ class FoodVariant {
   /// Die 8 Nährwertfelder + extra, alle pro 100 g (Kapitel 8, 11.6).
   final NutrientSet nutrients;
 
+  /// Erzeugt ein Lebensmittel; ohne [nutrients] sind alle Nährwerte unbekannt.
   const FoodVariant({
     required this.id,
     required this.name,
@@ -75,6 +88,8 @@ class FoodVariant {
     this.nutrients = const NutrientSet(),
   });
 
+  /// Kopie mit geänderten Feldern; nullable Felder lassen sich ausdrücklich auf
+  /// `null` setzen, nicht angegebene bleiben unverändert.
   FoodVariant copyWith({
     String? id,
     String? name,

@@ -67,6 +67,8 @@ final foodDaoProvider = Provider<FoodDao>(
   (ref) => DriftFoodDao(ref.watch(coreDatabaseProvider)),
 );
 
+/// Liefert das `RecipeRepository` auf der Datenbank aus [coreDatabaseProvider]
+/// (Kapitel 16.7).
 final recipeRepositoryProvider = Provider<RecipeRepository>(
   (ref) => DriftRecipeRepository(
     ref.watch(recipeDaoProvider),
@@ -75,10 +77,14 @@ final recipeRepositoryProvider = Provider<RecipeRepository>(
   ),
 );
 
+/// Liefert das `FoodRepository` auf der Datenbank aus [coreDatabaseProvider]
+/// (Kapitel 16.7).
 final foodRepositoryProvider = Provider<FoodRepository>(
   (ref) => DriftFoodRepository(ref.watch(foodDaoProvider)),
 );
 
+/// Liefert den `NutritionService` auf der Datenbank aus [coreDatabaseProvider]
+/// (Kapitel 16.7).
 final nutritionServiceProvider = Provider<NutritionService>(
   (ref) => DriftNutritionService(
     ref.watch(recipeDaoProvider),
@@ -86,6 +92,8 @@ final nutritionServiceProvider = Provider<NutritionService>(
   ),
 );
 
+/// Liefert den `SnapshotService` auf der Datenbank aus [coreDatabaseProvider]
+/// (Kapitel 16.7).
 final snapshotServiceProvider = Provider<SnapshotService>(
   (ref) => DriftSnapshotService(
     ref.watch(recipeDaoProvider),
@@ -94,6 +102,8 @@ final snapshotServiceProvider = Provider<SnapshotService>(
   ),
 );
 
+/// Stream aller `DomainEvent`s des laufenden App-Prozesses (Kapitel 16.5);
+/// frühere Events werden nicht nachgeliefert.
 final domainEventsProvider = StreamProvider<DomainEvent>(
   (ref) => DomainEventBus.instance.events,
 );

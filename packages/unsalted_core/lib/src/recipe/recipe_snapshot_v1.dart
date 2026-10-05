@@ -9,14 +9,23 @@ import '../nutrition/nutrient_set.dart';
 const String kSnapshotFormat = 'unsalted_recipe_snapshot';
 const int kSnapshotFormatVersion = 1;
 
+/// Eingefrorener Inhalt einer Version im Snapshot-Format v1 (Kapitel 13);
+/// wird über `SnapshotService` exportiert und importiert.
 class RecipeSnapshotV1 {
+  /// Formatversion, aktuell `1` (Kapitel 13.5).
   final int formatVersion;
+  /// Rezeptdaten zum Zeitpunkt des Einfrierens.
   final RecipeSnapshotRecipe recipe;
+  /// Versionsdaten zum Zeitpunkt des Einfrierens.
   final RecipeSnapshotVersion version;
+  /// Zutaten mit eingebetteter Kopie der Nährwerte pro 100 g (Kapitel 12.3).
   final List<RecipeSnapshotIngredient> ingredients;
+  /// Schritte in Positionsreihenfolge.
   final List<RecipeSnapshotStep> steps;
+  /// Berechnungsergebnis zum Zeitpunkt des Einfrierens.
   final RecipeSnapshotNutrition nutrition;
 
+  /// Erzeugt einen Snapshot-Wert; [formatVersion] ist standardmäßig `1`.
   const RecipeSnapshotV1({
     required this.recipe,
     required this.version,

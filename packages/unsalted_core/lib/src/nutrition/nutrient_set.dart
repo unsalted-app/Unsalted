@@ -17,20 +17,33 @@ import 'decimal_math.dart';
 /// "Parameter bewusst auf null gesetzt" unterscheiden zu können.
 const Object _unset = Object();
 
+/// Die acht festen Nährwertfelder plus Zusatzwerte in [extra] (Kapitel 8.1).
+///
+/// `null` bedeutet „unbekannt“ und ist von `0` verschieden; der Bezug (pro
+/// 100 g, Summe, pro Portion) ergibt sich aus dem Verwendungsort.
 class NutrientSet {
+  /// Energie in kcal oder `null`; die einzige Energieeinheit (R7).
   final Decimal? energyKcal;
+  /// Fett in Gramm oder `null`.
   final Decimal? fatG;
+  /// Davon gesättigte Fettsäuren in Gramm oder `null`.
   final Decimal? saturatedFatG;
+  /// Kohlenhydrate in Gramm oder `null`.
   final Decimal? carbsG;
+  /// Davon Zucker in Gramm oder `null`.
   final Decimal? sugarsG;
+  /// Ballaststoffe in Gramm oder `null`.
   final Decimal? fiberG;
+  /// Eiweiß in Gramm oder `null`.
   final Decimal? proteinG;
+  /// Salz in Gramm oder `null`; ungerundet gespeichert (Kapitel 8.2, EN-19).
   final Decimal? saltG;
 
   /// Zusätzliche Werte, Schlüssel im Format `<name>_<einheit>`,
   /// z. B. `sodium_mg`, `vitamin_c_mg` (Kapitel 5.1).
   final Map<String, Decimal> extra;
 
+  /// Erzeugt einen Satz; nicht angegebene Felder sind unbekannt, [extra] ist leer.
   const NutrientSet({
     this.energyKcal,
     this.fatG,
@@ -143,6 +156,8 @@ class NutrientSet {
     return (set: result, incomplete: incomplete);
   }
 
+  /// Kopie mit geänderten Feldern; jedes Feld lässt sich ausdrücklich auf `null`
+  /// setzen, nicht angegebene bleiben unverändert.
   NutrientSet copyWith({
     Object? energyKcal = _unset,
     Object? fatG = _unset,
@@ -186,6 +201,8 @@ class NutrientSet {
     };
   }
 
+  /// Liest die JSON-Form aus [toJsonMap]: Zahlen als Strings, `null` bleibt
+  /// `null` (Kapitel 7.4).
   factory NutrientSet.fromJsonMap(Map<String, dynamic> json) {
     Decimal? parseField(String key) {
       final raw = json[key];

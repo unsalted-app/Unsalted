@@ -7,18 +7,24 @@
 
 const Object _unset = Object();
 
+/// Ein Zubereitungsschritt einer Version (Kapitel 10.5).
 class RecipeStep {
+  /// Stabile Text-UUID; bleibt über mehrere `saveDraft`-Aufrufe erhalten
+  /// (Kapitel 10.7).
   final String id;
+  /// ID der Version, zu der der Schritt gehört.
   final String versionId;
 
   /// 1-basiert, lückenlos innerhalb einer Version (Kapitel 11.5).
   final int position;
 
+  /// Anweisungstext.
   final String instruction;
 
   /// Optionaler Timer in Sekunden (Kapitel 11.5).
   final int? timerSeconds;
 
+  /// Erzeugt einen Schritt; ohne [timerSeconds] hat er keinen Timer.
   const RecipeStep({
     required this.id,
     required this.versionId,
@@ -27,6 +33,8 @@ class RecipeStep {
     this.timerSeconds,
   });
 
+  /// Kopie mit geänderten Feldern; [timerSeconds] lässt sich ausdrücklich auf
+  /// `null` setzen, nicht angegebene Felder bleiben unverändert.
   RecipeStep copyWith({
     String? id,
     String? versionId,

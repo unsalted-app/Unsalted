@@ -21,17 +21,25 @@ import 'recipe_step.dart';
 
 const Object _unset = Object();
 
+/// Zustand einer Version (Kapitel 12.1).
 enum VersionState {
+  /// Veränderbare Arbeitsversion.
   draft,
+  /// Eingefrorene, unveränderliche Version (Kapitel 12.2).
   snapshot;
 
+  /// Liest den gespeicherten Code (`draft` oder `snapshot`).
   static VersionState fromCode(String code) => VersionState.values.byName(code);
 
+  /// Gespeicherter Code (`draft` oder `snapshot`, Kapitel 11.3).
   String get code => name;
 }
 
+/// Eine Version eines Rezepts samt Zutaten und Schritten (Kapitel 10.4, 12).
 class RecipeVersion {
+  /// Eindeutige Text-UUID (Kapitel 10.9).
   final String id;
+  /// ID des Rezepts, zu dem die Version gehört.
   final String recipeId;
 
   /// Herkunft; darf lokal unbekannt sein (Fork, Kapitel 12.1).
@@ -44,6 +52,7 @@ class RecipeVersion {
   /// Freier Zusatztext, rein informativ, keine Ordnungsfunktion.
   final String? label;
 
+  /// Draft oder Snapshot.
   final VersionState state;
 
   /// null oder >= 1, niemals 0 (Kapitel 11.3).
@@ -55,6 +64,7 @@ class RecipeVersion {
   /// > 0, hat Vorrang vor Backverlust (Kapitel 11.3).
   final Decimal? finalWeightOverrideG;
 
+  /// Notizen zur Version oder `null`.
   final String? notes;
 
   /// Zeitpunkt des Einfrierens. Ausdrücklich fachlich relevant (UI zeigt
@@ -62,9 +72,12 @@ class RecipeVersion {
   /// im Fachmodell enthalten (Kapitel 10.4, Ausnahme).
   final DateTime? snapshottedAt;
 
+  /// Zutaten in Positionsreihenfolge (`RecipeRepository.getVersion`, Kapitel 16.1).
   final List<RecipeIngredient> ingredients;
+  /// Schritte in Positionsreihenfolge (`RecipeRepository.getVersion`, Kapitel 16.1).
   final List<RecipeStep> steps;
 
+  /// Erzeugt eine Version; ohne Listen sind Zutaten und Schritte leer.
   const RecipeVersion({
     required this.id,
     required this.recipeId,
@@ -81,6 +94,8 @@ class RecipeVersion {
     this.steps = const [],
   });
 
+  /// Kopie mit geänderten Feldern; nullable Felder lassen sich ausdrücklich auf
+  /// `null` setzen, nicht angegebene bleiben unverändert.
   RecipeVersion copyWith({
     String? id,
     String? recipeId,

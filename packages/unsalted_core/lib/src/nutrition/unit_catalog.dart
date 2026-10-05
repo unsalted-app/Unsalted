@@ -37,6 +37,8 @@ class Unit {
 /// Die neun Einheiten aus Kapitel 6, wörtlich mit den dort festgelegten
 /// Faktoren. Diese Liste ist ab dem Freeze unveränderlich (Kapitel 21.1).
 abstract final class UnitCatalog {
+  /// Alle neun Einheiten aus Kapitel 9 mit ihren Umrechnungsfaktoren;
+  /// eingefroren (Kapitel 25.1).
   static final List<Unit> all = [
     Unit(code: 'g', name: 'Gramm', kind: UnitKind.mass, factor: Decimal.one),
     Unit(code: 'kg', name: 'Kilogramm', kind: UnitKind.mass, factor: Decimal.fromInt(1000)),

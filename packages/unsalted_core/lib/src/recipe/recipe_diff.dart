@@ -21,6 +21,9 @@ import 'snapshot_row_match.dart';
 class RecipeDiff {
   const RecipeDiff._();
 
+  /// Liefert die Änderungen von [a] nach [b] in der festen Reihenfolge aus
+  /// Kapitel 15.4. Für eine Liste, die angewendet werden soll, ist [targetRows]
+  /// Pflicht (Kapitel 28.3.2).
   static List<RecipeChange> between(
     RecipeSnapshotV1 a,
     RecipeSnapshotV1 b, {

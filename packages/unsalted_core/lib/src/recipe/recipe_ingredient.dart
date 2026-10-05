@@ -11,8 +11,12 @@ import 'package:decimal/decimal.dart';
 
 const Object _unset = Object();
 
+/// Eine Zutatenzeile einer Version (Kapitel 10.5).
 class RecipeIngredient {
+  /// Stabile Text-UUID; bleibt über mehrere `saveDraft`-Aufrufe erhalten
+  /// (Kapitel 10.7).
   final String id;
+  /// ID der Version, zu der die Zutat gehört.
   final String versionId;
 
   /// 1-basiert, lückenlos innerhalb einer Version (Kapitel 11.4).
@@ -34,6 +38,8 @@ class RecipeIngredient {
   /// z. B. "zimmerwarm" (Kapitel 11.4).
   final String? note;
 
+  /// Erzeugt eine Zutat; ohne [foodVariantId] ist sie nicht mit einem
+  /// Lebensmittel verknüpft.
   const RecipeIngredient({
     required this.id,
     required this.versionId,
@@ -45,6 +51,8 @@ class RecipeIngredient {
     this.note,
   });
 
+  /// Kopie mit geänderten Feldern; nullable Felder lassen sich ausdrücklich auf
+  /// `null` setzen, nicht angegebene bleiben unverändert.
   RecipeIngredient copyWith({
     String? id,
     String? versionId,

@@ -46,7 +46,11 @@ import '../ui/versions/version_list_screen.dart';
 import 'extension_types.dart';
 import 'unsalted_module.dart';
 
+/// Das Modul von Teil 1 (Kapitel 21): liefert die Routen der Core-Bildschirme
+/// und die fünf synchronisierbaren Tabellen; die Steckplatzlisten bleiben leer
+/// (Kapitel 28.2.3).
 class CoreModule implements UnsaltedModule {
+  /// Erzeugt das Modul; registriert wird es nur in der App-Hülle.
   const CoreModule();
 
   @override

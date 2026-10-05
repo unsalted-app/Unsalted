@@ -780,3 +780,36 @@ die Tests in `test/integration/` (IT-01 bis IT-06) bzw. in
 von IT-01 bis IT-05 in `test/data/` sind zusätzliche Absicherung. Kein
 Verschieben, weil sich dadurch nur Pfade, nicht die Prüfung ändern würden.
 Übernahme als Klarstellung in Kapitel 28.
+
+## 2026-10-05 — Schritt 10.2: API-Dokumentation
+
+**Betroffenes Kapitel:** 18, 25 („Öffentliche API dokumentiert, dart doc ohne
+Warnung“), Arbeitskarte 10.2.
+
+**Vorgehen:** `dart doc` meldet fehlende Kommentare nicht. Die Lücken wurden
+deshalb mit vorübergehend aktiviertem Lint `public_member_api_docs` ermittelt
+(nicht committet, `analysis_options.yaml` danach unverändert) und auf das
+gefiltert, was `lib/unsalted_core.dart` exportiert — bei `show`-Exporten nur
+die genannte Deklaration mit ihren Mitgliedern (`RecipeSnapshotV1`,
+`UnitCatalog`, `CoreDatabase`, die sieben exportierten Provider).
+Überschriebene Mitglieder (`==`, `hashCode`, `toString`, Implementierungen
+von Interface-Gettern) erben ihre Doku und zählen nicht.
+
+**Ergebnis:** 280 Lücken vorher, 0 nachher, in 21 Dateien. Ausschließlich
+`///`-Kommentare hinzugefügt; jeder beschreibt bestehendes Verhalten (am Code
+geprüft, z. B. welche Methode welches Event mit welcher `versionId` auslöst)
+und verweist auf das Kapitel der Spezifikation. `dart doc --dry-run`: 0
+Warnungen, 0 Fehler. Die verbotene Energieeinheit kommt in keinem Kommentar
+vor (AT-12).
+
+**Einzige Formatierungsänderung (freigegeben):** Die einzeiligen Enums
+`FoodChangeKind` und `RecipeActionPlacement` wurden umgebrochen, damit jeder
+Wert einen eigenen Kommentar bekommt. Per Tokenvergleich geprüft: keine
+Code-Änderung, auch kein zusätzliches Komma.
+
+**Beobachtung, nicht behoben:** Einige bereits vorhandene `///`-Kommentare
+verweisen auf Kapitelnummern einer älteren Berichtsfassung (z. B.
+`NutritionResult.perServing` „Kapitel 13.2“, `UnitCatalog` „Kapitel 21.1“,
+`NutrientSet` „Kapitel 5.1“). Laut Arbeitskarte wurden nur fehlende
+Kommentare ergänzt, bestehende nicht geändert. Korrektur wäre ein eigener
+kleiner Nachtrag.

@@ -9,10 +9,18 @@ import 'package:decimal/decimal.dart';
 import 'decimal_math.dart';
 import 'nutrient_set.dart';
 
+/// Ergebnis einer Nährwertberechnung (Kapitel 8.4); die Form, in der UI und
+/// spätere Teile Nährwerte erhalten (Kapitel 17).
 class NutritionResult {
+  /// Summe der Gewichte aller in Gramm umrechenbaren Zutaten.
   final Decimal rawWeightG;
+  /// Fertiggewicht in Gramm: die Übersteuerung, sonst das Rohgewicht abzüglich
+  /// des Backverlusts (Kapitel 8.4).
   final Decimal finalWeightG;
+  /// Nährwerte des ganzen Rezepts.
   final NutrientSet total;
+  /// Nährwerte pro 100 g Fertiggewicht; alle unbekannt, wenn das
+  /// Fertiggewicht `0` ist (Kapitel 8.5).
   final NutrientSet per100g;
 
   /// null, wenn servings == null (Kapitel 13.2, Randfall-Tabelle).
@@ -26,8 +34,10 @@ class NutritionResult {
   /// konnten (fehlende Dichte oder fehlendes Stückgewicht, Kapitel 6).
   final List<String> notCalculable;
 
+  /// `true`, wenn [total] mindestens einen bekannten Wert enthält.
   final bool hasAnyNutrition;
 
+  /// Erzeugt ein Ergebnis; im Betrieb über `NutritionService` berechnet.
   const NutritionResult({
     required this.rawWeightG,
     required this.finalWeightG,

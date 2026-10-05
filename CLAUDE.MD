@@ -232,8 +232,11 @@ Vergleichstexte, Master markieren, Mengenrechner).
 Nachträgen 10.1a (GD-05, RecipeStep-Tests) und 10.1b (SnapshotCodec sortiert
 Schlüssel nach 13.4). **Kapitel 28** in `docs/spezifikation.md` übernommen.
 
-**Nächster Schritt: 10.2 — öffentliche API dokumentieren**, danach 10.3
-(Tag `part1-v1.0.0`) erst nach Freigabe durch den Projektverantwortlichen.
+**Schritt 10.2** (API-Dokumentation): exportierte API vollständig mit `///`
+dokumentiert, `dart doc` ohne Warnungen.
+
+**Nächster Schritt: 10.3 — Tag `part1-v1.0.0`, erst nach ausdrücklicher
+Freigabe durch den Projektverantwortlichen.**
 
 ---
 
@@ -398,6 +401,12 @@ Schlüssel nach 13.4). **Kapitel 28** in `docs/spezifikation.md` übernommen.
   für den Long-Press, dann in ~10 Schritten mit `Offset.lerp` und kurzem
   `pump` je Schritt bis knapp über das Ziel bewegen, `up()`,
   `pumpAndSettle()`. Siehe UI-12 in `recipe_editor_screen_test.dart`.
+- **`dart doc` meldet fehlende Doku-Kommentare nicht** (seit 10.2): Lücken
+  findet man nur mit vorübergehend aktiviertem Lint `public_member_api_docs`
+  (nicht committen) und Filter auf die über `lib/unsalted_core.dart`
+  exportierten Deklarationen. Neue öffentliche API immer mit `///` anlegen;
+  in `lib/` nie die verbotene Energieeinheit schreiben, auch nicht in
+  Kommentaren (AT-12).
 - **`tool/check_architecture.dart` rechnete Pfade falsch (behoben mit
   Nachtrag 1.1a):** Die Ausnahmen prüfen Pfade relativ zu `lib/`
   (`src/ui/`, `src/module/`, `src/data/`). Das Tool ist seitdem grün und

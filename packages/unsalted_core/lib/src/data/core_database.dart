@@ -27,7 +27,13 @@ part 'core_database.g.dart';
     FoodVariants,
   ],
 )
+/// Drift-Datenbank von Teil 1 mit den fünf Tabellen aus Kapitel 11;
+/// Schema-Version `1`, eingefroren (Kapitel 25.1). Den `QueryExecutor` gibt die
+/// App-Hülle vor (Kapitel 16.7); mehrere Datenbankklassen auf einer Datei
+/// regelt Kapitel 28.6.
 class CoreDatabase extends _$CoreDatabase {
+    /// Erzeugt die Datenbank auf dem übergebenen Executor. Gelesen und geschrieben
+    /// wird über die Repositories und Services, nicht direkt.
     CoreDatabase(super.executor);
 
 

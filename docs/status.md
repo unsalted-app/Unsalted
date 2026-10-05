@@ -107,8 +107,8 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
 | 10.1 | Abnahmeliste vollständig abhaken | fertig — Nachweis siehe unten, Befunde B1–B4 erledigt (10.1a/10.1b) |
 | 10.1a | Nachtrag: GD-05 nach 23.3, GD-05b, RecipeStep-Tests; B2/B4 dokumentiert (docs/decisions.md) | fertig |
 | 10.1b | Nachtrag: SnapshotCodec sortiert Schlüssel nach 13.4 (GD-13, docs/decisions.md) | fertig |
-| 10.2 | Öffentliche API dokumentieren | offen |
-| 10.3 | Tag `part1-v1.0.0` | offen |
+| 10.2 | Öffentliche API dokumentieren — 280 Lücken in der exportierten API geschlossen, `dart doc` 0 Warnungen/0 Fehler (docs/decisions.md) | fertig |
+| 10.3 | Tag `part1-v1.0.0` | offen — erst nach Freigabe durch den Projektverantwortlichen |
 
 Kapitel 28 „Nachträge und Klarstellungen zu Teil 1“ ist in `docs/spezifikation.md` übernommen (2026-10-05); es gilt vor Kapitel 1–27 und ist Teil des Freeze von `part1-v1.0.0`.
 
@@ -135,7 +135,7 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 | UI-01 bis UI-10 grün | `test/ui/…`: UI-01/02 recipe_list, UI-03/04 recipe_editor, UI-05/07 nutrition_table, UI-06 amount_calculator, UI-08 version_compare, UI-09 package_form, UI-10 import_screen | erfüllt |
 | EX-01 bis EX-05 | `test/ui/recipe_detail/recipe_detail_screen_test.dart` (EX-01, 02, 04, 05), `test/ui/settings/settings_screen_test.dart` (EX-03, EX-05) | erfüllt |
 | Öffentliche Tür = Golden-Liste (AT-06) | AT-06 grün gegen `test/architecture/public_api_golden.txt` | erfüllt |
-| Öffentliche API dokumentiert, dart doc ohne Warnung | Schritt 10.2. Aktuell `dart doc --dry-run .`: 0 Warnungen, 0 Fehler. Fehlende Doc-Kommentare erzeugen dabei keine Warnung, die Abdeckung ist nicht geprüft | offen (10.2) |
+| Öffentliche API dokumentiert, dart doc ohne Warnung | Schritt 10.2: `public_member_api_docs` (vorübergehend) auf die exportierte API gefiltert: 280 → 0 Lücken; `dart doc --dry-run .`: 0 Warnungen, 0 Fehler | erfüllt |
 | Spike 20.1 protokolliert | `docs/decisions.md`, „Spike 20.1“ | erfüllt |
 | docs/status.md zeigt Phase 0 bis 10 fertig | Phase 0–9 abgeschlossen, Phase 10 offen | offen (nach 10.3) |
 | Git-Tag `part1-v1.0.0` | `git tag -l`: keine Tags | offen (10.3) |
@@ -158,6 +158,10 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 - Einfrieren einer Version mit gelöschtem Lebensmittel erzeugt ohne Warnung einen Snapshot ohne Nährwerte für diese Zutat (spezifikationskonform nach 10.7).
 - Der Editor zeigt live nur die Gesamt-kcal; pro Portion und pro 100 g fehlen.
 - Kein Hinweis bei doppeltem Lebensmittelnamen.
+
+**Offene Beobachtungen nach 10.2 (nicht blockierend):**
+- Bestehende `///`-Kommentare verweisen teils auf Kapitelnummern einer älteren Berichtsfassung (z. B. „Kapitel 13.2“, „21.1“, „5.1“); siehe docs/decisions.md, Schritt 10.2.
+- AT-05 überspringt `src/providers/` vollständig, also auch die Prüfung auf `package:drift`. Kapitel 28.1.3 sagt, `providers/` importiere `package:drift` nicht — das stimmt heute, wird von AT-05 aber nicht erzwungen.
 
 ## Bekannte offene Lücken (nicht blockierend)
 

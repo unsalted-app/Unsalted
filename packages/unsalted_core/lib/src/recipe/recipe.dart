@@ -8,15 +8,21 @@
 
 const Object _unset = Object();
 
+/// Ein Rezept mit Titel und optionaler Beschreibung (Kapitel 10.3); die
+/// Inhalte stecken in seinen Versionen.
 class Recipe {
+  /// Eindeutige Text-UUID (Kapitel 10.9).
   final String id;
+  /// Titel, 1–200 Zeichen.
   final String title;
+  /// Beschreibung oder `null`.
   final String? description;
 
   /// Weicher Verweis auf die vom Nutzer gekürte "Sieger"-Version. Nur
   /// Snapshots dürfen Master werden (Kapitel 12.1).
   final String? masterVersionId;
 
+  /// Erzeugt ein Rezept.
   const Recipe({
     required this.id,
     required this.title,
@@ -24,6 +30,8 @@ class Recipe {
     this.masterVersionId,
   });
 
+  /// Kopie mit geänderten Feldern; nullable Felder lassen sich ausdrücklich auf
+  /// `null` setzen, nicht angegebene bleiben unverändert.
   Recipe copyWith({
     String? id,
     String? title,
