@@ -2,6 +2,7 @@
 //
 // Schritt 8.6, Bildschirm 7: Liste absteigend, Badge Entwurf/Eingefroren,
 // Master-Stern, Kopie-als-Entwurf-Aktion, Löschen mit Rückfrage.
+// UI-26/UI-27 (Fehlerbehebung 9.2a, Befund 3): Master markieren.
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -185,6 +186,88 @@ void main() {
     final compareButton =
         tester.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.compare_arrows));
     expect(compareButton.onPressed, isNull, reason: 'Draft ist nicht vergleichbar (Kapitel 13.7)');
+
+    await _disposeWidgetTree(tester);
+  });
+
+  /// V1 eingefroren, V2 eingefroren, V3 Entwurf (watchVersions: V3, V2, V1).
+  Future<(String, String, String, String)> seedThreeVersions(WidgetTester tester, db.CoreDatabase database) async {
+    final recipeDao = DriftRecipeDao(database);
+    final recipeRepo = DriftRecipeRepository(recipeDao, DriftFoodDao(database), database);
+    return (await tester.runAsync(() async {
+      final recipeId = await recipeRepo.createRecipe(const NewRecipe(title: 'Test'));
+      final v1 = (await recipeDao.watchVersions(recipeId).first).first.id;
+      await recipeRepo.saveDraft(RecipeVersionDraft(
+        id: v1,
+        recipeId: recipeId,
+        parentVersionId: null,
+        versionIndex: 1,
+        label: null,
+        servings: null,
+        bakingLossPercent: Decimal.zero,
+        finalWeightOverrideG: null,
+        notes: null,
+        ingredients: [
+          RecipeIngredient(id: 'i1', versionId: v1, position: 1, displayName: 'Salz', quantity: Decimal.one, unitCode: 'g'),
+        ],
+        steps: const [],
+      ));
+      await recipeRepo.snapshotVersion(v1);
+      final v2 = await recipeRepo.createDraftFrom(v1);
+      await recipeRepo.snapshotVersion(v2);
+      final v3 = await recipeRepo.createDraftFrom(v2);
+      return (recipeId, v1, v2, v3);
+    }))!;
+  }
+
+  Finder tileOf(String label) => find.ancestor(of: find.text(label), matching: find.byType(ListTile));
+  Finder markAction(String label) =>
+      find.descendant(of: tileOf(label), matching: find.byTooltip('Als Master markieren'));
+
+  testWidgets('UI-26: „Als Master markieren“ nur bei eingefrorenen Versionen; Stern erscheint sofort',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, v1, _, _) = await seedThreeVersions(tester, database);
+
+    await _pumpList(tester, database, recipeId);
+
+    expect(markAction('V1'), findsOneWidget);
+    expect(markAction('V2'), findsOneWidget);
+    expect(markAction('V3'), findsNothing, reason: 'Entwurf');
+    expect(find.byIcon(Icons.star), findsNothing);
+
+    await tester.tap(markAction('V1'));
+    await _settle(tester);
+
+    expect(find.descendant(of: tileOf('V1'), matching: find.byIcon(Icons.star)), findsOneWidget);
+    expect(markAction('V1'), findsNothing, reason: 'schon Master');
+    expect(markAction('V2'), findsOneWidget);
+    final recipe = await tester.runAsync(() => DriftRecipeDao(database).getRecipe(recipeId));
+    expect(recipe!.masterVersionId, v1);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-27: Löschen der Master-Version wird mit der Meldung des Repositorys abgelehnt',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, _, _, _) = await seedThreeVersions(tester, database);
+
+    await _pumpList(tester, database, recipeId);
+    await tester.tap(markAction('V2'));
+    await _settle(tester);
+
+    await tester.tap(find.descendant(of: tileOf('V2'), matching: find.byTooltip('Löschen')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(TextButton, 'Löschen'));
+    await _settle(tester);
+    await tester.pump();
+
+    expect(find.text('Die Master-Version kann nicht gelöscht werden.'), findsOneWidget);
+    expect(tileOf('V2'), findsOneWidget);
+    expect(find.descendant(of: tileOf('V2'), matching: find.byIcon(Icons.star)), findsOneWidget);
 
     await _disposeWidgetTree(tester);
   });

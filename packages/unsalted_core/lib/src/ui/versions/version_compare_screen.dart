@@ -10,7 +10,8 @@
 // reicht exakt dieselbe Liste an applyChangesAsNewDraft weiter (Kapitel
 // 15.5), mit versionAId als Basis. Die Zutatenzeilen von B gehen als
 // targetRows mit, sonst verlieren Add/Replace die Lebensmittel-Verknüpfung
-// (Fehlerbehebung 9.1a, F3).
+// (Fehlerbehebung 9.1a, F3). Die Texte der Liste kommen aus
+// change_descriptions.dart (Fehlerbehebung 9.2a) und ändern die Liste nicht.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +21,7 @@ import '../../recipe/recipe_change.dart';
 import '../../recipe/recipe_diff.dart';
 import '../../recipe/recipe_snapshot_v1.dart';
 import '../recipe_editor/recipe_editor_screen.dart';
+import 'change_descriptions.dart';
 
 enum _ChangeCategory { parameter, steps, ingredients }
 
@@ -42,26 +44,6 @@ String _categoryLabel(_ChangeCategory category) => switch (category) {
       _ChangeCategory.steps => 'Schritte',
       _ChangeCategory.ingredients => 'Zutaten',
     };
-
-String _describe(RecipeChange change) {
-  return switch (change) {
-    AddIngredient c => 'Zutat "${c.displayName}" hinzugefügt (Position ${c.position})',
-    RemoveIngredient c => 'Zutat an Position ${c.position} entfernt',
-    SetIngredientQuantity c => 'Menge an Position ${c.position} geändert: ${c.quantity} ${c.unitCode ?? ''}',
-    ReplaceIngredient c => 'Zutat an Position ${c.position} ersetzt durch "${c.displayName}"',
-    MoveIngredient c => 'Zutat von Position ${c.from} nach ${c.to} verschoben',
-    AddStep c => 'Schritt hinzugefügt (Position ${c.position})',
-    RemoveStep c => 'Schritt an Position ${c.position} entfernt',
-    SetStep c => 'Schritt an Position ${c.position} geändert',
-    SetBakingLoss c => 'Backverlust geändert auf ${c.percent} %',
-    SetFinalWeightOverride c => c.grams == null
-        ? 'Fertiggewicht-Override entfernt'
-        : 'Fertiggewicht-Override geändert auf ${c.grams} g',
-    SetServings c => 'Portionen geändert auf ${c.servings?.toString() ?? '—'}',
-    SetTitle c => 'Titel geändert auf "${c.title}"',
-    SetNotes() => 'Notizen geändert',
-  };
-}
 
 class VersionCompareScreen extends ConsumerStatefulWidget {
   final String recipeId;
@@ -160,7 +142,7 @@ class _VersionCompareScreenState extends ConsumerState<VersionCompareScreen> {
               Expanded(
                 child: changes.isEmpty
                     ? const Center(child: Text('Keine Unterschiede.'))
-                    : _ChangeList(changes: changes),
+                    : _ChangeList(changes: changes, descriptions: describeChanges(a, changes)),
               ),
               if (_error != null)
                 Padding(
@@ -212,15 +194,16 @@ class _SnapshotColumn extends StatelessWidget {
 
 class _ChangeList extends StatelessWidget {
   final List<RecipeChange> changes;
+  final List<String> descriptions;
 
-  const _ChangeList({required this.changes});
+  const _ChangeList({required this.changes, required this.descriptions});
 
   @override
   Widget build(BuildContext context) {
     final items = <Widget>[];
     _ChangeCategory? currentCategory;
-    for (final change in changes) {
-      final category = _categoryOf(change);
+    for (var i = 0; i < changes.length; i++) {
+      final category = _categoryOf(changes[i]);
       if (category != currentCategory) {
         currentCategory = category;
         items.add(Padding(
@@ -228,7 +211,7 @@ class _ChangeList extends StatelessWidget {
           child: Text(_categoryLabel(category), style: const TextStyle(fontWeight: FontWeight.bold)),
         ));
       }
-      items.add(ListTile(dense: true, title: Text(_describe(change))));
+      items.add(ListTile(dense: true, title: Text(descriptions[i])));
     }
     return ListView(children: items);
   }

@@ -138,8 +138,8 @@ void main() {
     await _settle(tester);
 
     expect(find.text('Zutaten'), findsOneWidget);
-    expect(find.textContaining('Menge an Position 1 geändert'), findsOneWidget);
-    expect(find.textContaining('Zutat "Salz" hinzugefügt'), findsOneWidget);
+    expect(find.textContaining('Mehl: 100 g → 200 g'), findsOneWidget);
+    expect(find.textContaining('Salz hinzugefügt (5 g)'), findsOneWidget);
 
     await _disposeWidgetTree(tester);
   });

@@ -508,3 +508,86 @@ Verknüpfung · UI-14 Auswahl eines anderen Lebensmittels ersetzt sie · UI-15
 Hinweis erscheint, Vorschau rechnet die Zeile wie unverknüpft. Dazu ein
 Unit-Test für `IngredientRowData` in `ingredient_row_test.dart`. Vom
 Projektverantwortlichen als Karte 9.1b freigegeben.
+
+## 2026-10-05 — Fehlerbehebung 9.2a: Timer, Vergleichstexte, Master, Mengenrechner
+
+**Anlass:** Manueller Durchlauf 9.2 durch den Projektverantwortlichen —
+Schritte A–G bestanden, vier Befunde. Umsetzung ausschließlich in
+`lib/src/ui/` plus Tests und Doku; keine Änderung an `contracts/`, `data/`,
+`recipe/`, `nutrition/`, `module/`, Snapshot-Format, Datenbank oder Tür.
+
+### Befund 1 — Schritt-Timer nicht eingebbar (Spezifikationslücke Kapitel 22, Bildschirm 3)
+
+Kapitel 22 beschreibt für Bildschirm 3 nur Zutatenzeilen; ein Eingabefeld für
+`RecipeStep.timerSeconds` (Kapitel 10.5) fehlt, obwohl Bildschirm 4
+Timer-Chips zeigen soll. `timerSeconds` wurde geladen und gespeichert, war
+aber nicht editierbar. **Entscheidung:** Pro Schritt ein optionales Feld
+„Timer (Min.)“. Ganze Minuten > 0 ergeben `timerSeconds = Minuten × 60`, ein
+leeres Feld ergibt `null`; 0, negative Werte, Nachkommastellen und
+Nicht-Zahlen markieren das Feld („Ganze Minuten > 0“, Fehlerfarbe aus dem
+Theme) und sperren „Speichern“. Ein geladener Wert wird nur durch eine
+Eingabe überschrieben: Er erscheint als Minuten („10“) bzw. als m:ss, wenn
+er keine ganzen Minuten ergibt (importierte 90 s → „1:30“), und bleibt
+sekundengenau erhalten, solange der Feldinhalt dem Ausgangstext entspricht —
+auch nach Bearbeiten und Zurücktippen. Nur `int.tryParse`, keine
+Gleitkommazahlen (AT-07).
+
+### Befund 2 — Vergleichstexte unverständlich
+
+Die Texte der Änderungsliste (Bildschirm 8) nannten Positionen statt
+Zutaten. **Entscheidung:** Neue Datei
+`lib/src/ui/versions/change_descriptions.dart` (`describeChanges`) erzeugt
+die Texte, indem sie die Änderungsliste nur für die Anzeige der Reihe nach
+auf eine Namens-/Mengenliste aus Version A anwendet (Positionen beziehen sich
+auf den Stand unmittelbar davor, Kapitel 14.4). Die Änderungsliste selbst
+bleibt exakt unverändert und wird so übernommen (8.6, 15.5); es gibt keine
+eigene Diff-Logik. Beispiele: „Milch: 500 ml → 400 ml“, „Butter entfernt“,
+„Ei hinzugefügt (3 Stück)“, „Butter ersetzt durch Margarine“, „Mehl
+verschoben (Position 1 → 3)“, „Schritt 2 geändert: …“ (bei Timer-Änderung
+„Timer 10:00 → 8:00“), Parameter mit alt → neu. Ersetzen bei gleichem Namen
+(nur die Verknüpfung ändert sich, offener Punkt „Butter → Butter“ aus 9.1a):
+„Butter: anderes Lebensmittel verknüpft“, bei geänderter Menge zusätzlich
+„(alt → neu)“. Zahlen erscheinen ungerundet als Decimal-Ausgabe (Rundung nur
+im `NutritionFormatter`). Einheiten: g/kg/ml/l als Kurzzeichen, alle anderen
+mit dem Namen aus `UnitCatalog` („Stück“, „Prise“, „Esslöffel“ …).
+Anweisungen werden am letzten Wortende vor 40 Zeichen gekürzt („…“).
+
+**Bestehender Test geändert (vom Projektverantwortlichen freigegeben):** UI-08
+prüfte wörtlich die alten Texte. Geändert wurden ausschließlich die zwei
+Text-Erwartungen in `test/ui/versions/version_compare_screen_test.dart`
+(„Menge an Position 1 geändert“ → „Mehl: 100 g → 200 g“, „Zutat "Salz"
+hinzugefügt“ → „Salz hinzugefügt (5 g)“); Testdaten, Gruppenüberschrift und
+alle übrigen Assertions sind unverändert.
+
+### Befund 3 — Master-Version nicht setzbar (Spezifikationslücke Kapitel 22, Bildschirm 7)
+
+`setMasterVersion` existiert (Kapitel 16.1), wurde aber von keinem Bildschirm
+aufgerufen; Kapitel 22 nennt für Bildschirm 7 nur „Kopie als Entwurf,
+Vergleichen, Löschen“, obwohl Kapitel 12.1 eine „vom Nutzer gekürte“
+Master-Version vorsieht. **Entscheidung:** Aktion „Als Master markieren“ nur
+bei eingefrorenen Versionen, die nicht schon Master sind. Der Stern erscheint
+sofort (über `watchRecipe`), Farbe aus `colorScheme.primary` statt
+`Colors.amber`. Ein `IllegalStateException` erscheint als Klartext-SnackBar;
+das Löschen der Master-Version zeigt die bestehende Meldung des Repositorys
+(RP-18).
+
+### Befund 4 — Mengenrechner nicht eingebaut
+
+`AmountCalculator` (Schritt 8.4, Bildschirm 6) war gebaut und getestet, wurde
+aber nirgends verwendet. **Entscheidung:** Eingebaut im Rezeptdetail direkt
+unter der Nährwerttabelle, mit demselben `NutritionResult` wie die Tabelle
+(bei Snapshots also aus `snapshotJson`). `ValueKey(version.id)` setzt den
+Rechner beim Versionswechsel zurück, damit keine Werte der vorherigen Version
+stehen bleiben.
+
+### Neue Test-IDs (Erweiterung von Kapitel 23.6, `docs/spezifikation.md` bewusst unverändert)
+
+UI-16 Timer setzen · UI-17 Timer ändern · UI-18 Timer leeren · UI-19
+ungültiger Timer markiert das Feld und sperrt Speichern · UI-20 unangefasster
+Sekundenwert bleibt erhalten · UI-21 Timer-Chip im Rezeptdetail · UI-22
+Zutaten-Texte (inkl. UI-22b Ersetzen mit Mengenänderung) · UI-23
+Schritt-Texte · UI-24 Parameter-Texte · UI-25 Remove + Move, Name nur über
+sequenzielle Anwendung korrekt · UI-26 „Als Master markieren“ nur bei
+Snapshots, Stern erscheint sofort · UI-27 Löschen der Master-Version wird
+abgelehnt · UI-28 Mengenrechner unter der Tabelle, Gramm ↔ kcal gekoppelt,
+auch für Snapshots.

@@ -12,7 +12,8 @@
 // "Bearbeiten" (Editor der gewählten Version) -- CoreModule.recipeActions
 // bleibt bewusst leer (Entscheidung aus 7.2).
 // Timer-Chips zeigen nur den gespeicherten timerSeconds-Wert, keine aktive
-// Timer-Engine.
+// Timer-Engine. Unter der Nährwerttabelle der Mengenrechner (Bildschirm 6),
+// mit demselben NutritionResult wie die Tabelle (Fehlerbehebung 9.2a).
 //
 // RecipeContext.ref (Kapitel 21) braucht ein echtes WidgetRef -- das gibt
 // es nur innerhalb eines ConsumerWidget/ConsumerState. Deshalb wird der
@@ -29,6 +30,7 @@ import '../../nutrition/nutrition_result.dart';
 import '../../providers/core_providers.dart';
 import '../../recipe/recipe.dart';
 import '../../recipe/recipe_version.dart';
+import '../nutrition/amount_calculator.dart';
 import '../nutrition/nutrition_header.dart';
 import '../nutrition/nutrition_table.dart';
 import '../recipe_editor/recipe_editor_screen.dart';
@@ -288,6 +290,8 @@ class _DetailScaffold extends ConsumerWidget {
           NutritionHeader(result: nutrition),
           const SizedBox(height: 8),
           NutritionTable(result: nutrition),
+          const SizedBox(height: 8),
+          AmountCalculator(key: ValueKey(version.id), result: nutrition),
           const Divider(height: 32),
           const Text('Zutaten', style: TextStyle(fontWeight: FontWeight.bold)),
           for (final ingredient in version.ingredients)

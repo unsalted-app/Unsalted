@@ -53,7 +53,7 @@ vermeiden.
 
 ---
 
-## 1. Projektstruktur (Stand: nach Schritt 9.1b)
+## 1. Projektstruktur (Stand: nach Schritt 9.2a)
 
 ```text
 unsalted/
@@ -156,6 +156,7 @@ unsalted/
       │        ├─ nutrition/amount_calculator.dart            Bildschirm 6
       │        ├─ versions/version_list_screen.dart           Bildschirm 7
       │        ├─ versions/version_compare_screen.dart        Bildschirm 8
+      │        ├─ versions/change_descriptions.dart           Texte der Änderungsliste (9.2a)
       │        ├─ foods/food_list_screen.dart                 Bildschirm 9
       │        ├─ foods/food_editor_screen.dart               Bildschirm 10 — Lücke: kein PopScope, siehe Abschnitt 3
       │        ├─ foods/package_form.dart
@@ -212,11 +213,13 @@ Provider, öffentliche Tür geschlossen und eingefroren), **Phase 8**
 (Oberfläche, Schritt 8.1–8.8 inkl. Nachtrag 8.7a: alle 13 Bildschirme aus Kapitel 22, ihre Routen in `CoreModule.routes` sowie die
 App-Hülle `apps/unsalted_app`), **Schritt 9.1** (Integrationstests) und
 **Fehlerbehebung 9.1a** (Draft-Kopie und Diff/Apply, F1–F5) und
-**Fehlerbehebung 9.1b** (Editor behält Lebensmittel-Verknüpfungen).
+**Fehlerbehebung 9.1b** (Editor behält Lebensmittel-Verknüpfungen),
+**Schritt 9.2** (manueller Durchlauf durch den Projektverantwortlichen,
+bestanden mit 4 Befunden) und **Fehlerbehebung 9.2a** (Schritt-Timer,
+Vergleichstexte, Master markieren, Mengenrechner).
 
-**Nächster Schritt: 9.2 — manueller Durchlauf, durchgeführt vom
-Projektverantwortlichen selbst, nicht vom Assistenten.** Der Assistent
-wartet auf dessen Befunde (Beobachtungen dafür: `docs/status.md`).
+**Nächster Schritt: Nachtest der vier 9.2a-Punkte von Hand durch den
+Projektverantwortlichen.** Der Assistent wartet auf dessen Ergebnis.
 
 Danach: 9.3
 (technischer Spike: mehrere Drift-Klassen auf einem `QueryExecutor`), dann
@@ -371,6 +374,11 @@ Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
   jede Zeile mit weich gelöschtem Lebensmittel beim Speichern ihre
   Verknüpfung. Die Verknüpfung ändert sich nur über `copyWith(variant: …)`
   (Auswahl oder Namensänderung).
+- **Texte im Versionsvergleich nie durch Nachschlagen in Version A bilden**
+  (seit 9.2a): Positionen einer `RecipeChange` beziehen sich auf die Liste
+  unmittelbar vor dieser Änderung (Kapitel 14.4). `describeChanges` wendet
+  die Liste deshalb nur für die Anzeige der Reihe nach an; die Liste selbst
+  bleibt unverändert und wird exakt so übernommen.
 - **Long-Press-Drag in `ReorderableListView`-Widget-Tests** (seit 9.1b):
   Ein einzelnes `gesture.moveTo` auf das Ziel löst kein Umsortieren aus.
   Muster: `startGesture` auf den Drag-Handle, `pump(Duration(seconds: 1))`

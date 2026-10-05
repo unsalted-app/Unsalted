@@ -7,7 +7,9 @@
 // (createDraftFrom), Vergleichen (öffnet version_compare_screen.dart für
 // zwei Snapshot-Versionen -- Kapitel 13.7: nur Snapshots sind exportierbar,
 // daher auch nur diese vergleichbar), Löschen (deleteVersion, mit
-// Rückfrage, da destruktiv).
+// Rückfrage, da destruktiv). „Als Master markieren“ für eingefrorene
+// Versionen (Fehlerbehebung 9.2a: Kapitel 22 nennt die Aktion nicht, obwohl
+// Kapitel 12.1 eine vom Nutzer gekürte Master-Version vorsieht).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,6 +57,15 @@ class _VersionListScreenState extends ConsumerState<VersionListScreen> {
     if (confirmed != true || !mounted) return;
     try {
       await ref.read(recipeRepositoryProvider).deleteVersion(version.id);
+    } on IllegalStateException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
+  Future<void> _markAsMaster(RecipeVersion version) async {
+    try {
+      await ref.read(recipeRepositoryProvider).setMasterVersion(widget.recipeId, version.id);
     } on IllegalStateException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
@@ -127,7 +138,9 @@ class _VersionListScreenState extends ConsumerState<VersionListScreen> {
                   final isSnapshot = version.state == VersionState.snapshot;
 
                   return ListTile(
-                    leading: isMaster ? const Icon(Icons.star, color: Colors.amber) : null,
+                    leading: isMaster
+                        ? Icon(Icons.star, color: Theme.of(context).colorScheme.primary, semanticLabel: 'Master')
+                        : null,
                     title: Text(
                       version.label == null ? 'V${version.versionIndex}' : 'V${version.versionIndex} · ${version.label}',
                     ),
@@ -138,6 +151,12 @@ class _VersionListScreenState extends ConsumerState<VersionListScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        if (isSnapshot && !isMaster)
+                          IconButton(
+                            icon: const Icon(Icons.star_outline),
+                            tooltip: 'Als Master markieren',
+                            onPressed: () => _markAsMaster(version),
+                          ),
                         IconButton(
                           icon: const Icon(Icons.copy),
                           tooltip: 'Kopie als Entwurf',

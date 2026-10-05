@@ -71,7 +71,8 @@ Phase 8 — abgeschlossen.
 | 9.1 | Integrationstests (IT-01–IT-06 + Edge Cases DA/SI/MI, `test/integration/`) | fertig |
 | 9.1a | Fehlerbehebung Draft-Kopie und Diff/Apply, F1–F5 (docs/decisions.md) | fertig |
 | 9.1b | Fehlerbehebung E1: Editor behält Lebensmittel-Verknüpfungen, auch zu weich gelöschten Lebensmitteln (UI-11–UI-15, docs/decisions.md) | fertig |
-| 9.2 | Manueller Durchlauf (durch den Projektverantwortlichen) | offen |
+| 9.2 | Manueller Durchlauf (durch den Projektverantwortlichen) | bestanden mit 4 Befunden, behoben in 9.2a |
+| 9.2a | Fehlerbehebung: Schritt-Timer, Vergleichstexte, Master markieren, Mengenrechner (UI-16–UI-28, docs/decisions.md) | fertig — Nachtest der 4 Punkte von Hand offen |
 | 9.3 | Technischer Spike (mehrere Drift-Klassen auf einer Sync-DB) | offen |
 
 **Beobachtungen für 9.2:**
@@ -84,9 +85,20 @@ Phase 8 — abgeschlossen.
 
 **Bekannte Grenze (spezifikationskonform, nicht behoben):** E2 — beim
 Anwenden eines `ReplaceIngredient` geht die Notiz der Zutat verloren
-(Kapitel 14.1), siehe docs/decisions.md. **Offen für den Design-Pass:**
-„Butter → Butter“-Anzeige im Vergleich, wenn sich nur die Verknüpfung
-ändert.
+(Kapitel 14.1), siehe docs/decisions.md. Die „Butter → Butter“-Anzeige ist
+mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
+
+**Design-Notizen (für den Design-Pass, nicht Teil 1):**
+- Der Editor zeigt live nur die Gesamt-kcal; pro Portion und pro 100 g wären
+  hilfreich.
+- Hinweis bei doppeltem Lebensmittelnamen (später).
+- Ältere Bildschirme färben noch über `Colors.*` (15 Stellen in
+  Nährwertkopf, Rezept-Editor, Rezept erstellen, Vergleich, Export, Import,
+  Lebensmittel-Editor und Verpackungsformular); neue Stile seit 9.1b/9.2a
+  kommen ausschließlich aus `Theme.of(context)`.
+- Einheiten erscheinen nur in den Vergleichstexten mit deutschem Namen
+  („Stück“, „Prise“); Editor, Rezeptdetail und Vergleichsspalten zeigen
+  noch die Codes (`piece`, `pinch`).
 
 ## Phase 10 — Freeze (Kapitel 24.7)
 | Schritt | Beschreibung | Status |

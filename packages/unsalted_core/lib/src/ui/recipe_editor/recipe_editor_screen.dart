@@ -29,18 +29,62 @@ import '../../recipe/recipe_step.dart';
 import '../../recipe/recipe_version.dart';
 import 'ingredient_row.dart';
 
+/// Anzeige eines gespeicherten Timers im Eingabefeld: ganze Minuten als
+/// Zahl, sonst m:ss (z. B. importierte 90 s → "1:30").
+String _timerInputText(int? seconds) {
+  if (seconds == null) return '';
+  if (seconds % 60 == 0) return '${seconds ~/ 60}';
+  return '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
+}
+
+/// Fehlerbehebung 9.2a, Befund 1: [timerSeconds] wird nur durch eine
+/// Eingabe überschrieben. Steht im Feld wieder der Ausgangstext, gilt der
+/// geladene Wert sekundengenau.
 class _StepRowData {
   final String id;
   final String instruction;
   final int? timerSeconds;
+  final int? loadedTimerSeconds;
+  final bool timerInvalid;
 
-  const _StepRowData({required this.id, required this.instruction, this.timerSeconds});
+  const _StepRowData({
+    required this.id,
+    required this.instruction,
+    this.timerSeconds,
+    this.loadedTimerSeconds,
+    this.timerInvalid = false,
+  });
 
-  _StepRowData copyWith({String? instruction, int? Function()? timerSeconds}) {
+  _StepRowData copyWith({String? instruction}) => _StepRowData(
+        id: id,
+        instruction: instruction ?? this.instruction,
+        timerSeconds: timerSeconds,
+        loadedTimerSeconds: loadedTimerSeconds,
+        timerInvalid: timerInvalid,
+      );
+
+  /// Ganze Minuten > 0 → Minuten × 60; leer → kein Timer; sonst ungültig.
+  _StepRowData withTimerInput(String input) {
+    final text = input.trim();
+    int? seconds;
+    var invalid = false;
+    if (text == _timerInputText(loadedTimerSeconds)) {
+      seconds = loadedTimerSeconds;
+    } else if (text.isNotEmpty) {
+      final minutes = int.tryParse(text);
+      if (minutes == null || minutes <= 0) {
+        invalid = true;
+        seconds = timerSeconds;
+      } else {
+        seconds = minutes * 60;
+      }
+    }
     return _StepRowData(
       id: id,
-      instruction: instruction ?? this.instruction,
-      timerSeconds: timerSeconds != null ? timerSeconds() : this.timerSeconds,
+      instruction: instruction,
+      timerSeconds: seconds,
+      loadedTimerSeconds: loadedTimerSeconds,
+      timerInvalid: invalid,
     );
   }
 }
@@ -120,7 +164,12 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
             ))
         .toList();
     _steps = version.steps
-        .map((s) => _StepRowData(id: s.id, instruction: s.instruction, timerSeconds: s.timerSeconds))
+        .map((s) => _StepRowData(
+              id: s.id,
+              instruction: s.instruction,
+              timerSeconds: s.timerSeconds,
+              loadedTimerSeconds: s.timerSeconds,
+            ))
         .toList();
     _servingsController.text = version.servings?.toString() ?? '';
     _bakingLossController.text = version.bakingLossPercent.toString();
@@ -431,6 +480,24 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                               },
                             ),
                           ),
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            width: 120,
+                            child: TextFormField(
+                              initialValue: _timerInputText(step.loadedTimerSeconds),
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Timer (Min.)',
+                                errorText: step.timerInvalid ? 'Ganze Minuten > 0' : null,
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  final index = _steps.indexWhere((s) => s.id == step.id);
+                                  _steps[index] = _steps[index].withTimerInput(value);
+                                });
+                              },
+                            ),
+                          ),
                           IconButton(
                             icon: const Icon(Icons.delete_outline),
                             onPressed: () {
@@ -464,7 +531,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _saving ? null : _save,
+                    onPressed: _saving || _steps.any((s) => s.timerInvalid) ? null : _save,
                     child: const Text('Speichern'),
                   ),
                 ),

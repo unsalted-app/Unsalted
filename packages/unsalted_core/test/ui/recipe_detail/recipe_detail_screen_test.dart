@@ -5,7 +5,8 @@
 // über mehrere Module hinweg), EX-05 (Seite funktioniert ohne registrierte
 // Module). EX-03 (SettingsEntry) ist erst mit dem Einstellungen-Bildschirm
 // (Schritt 8.7) testbar, siehe docs/status.md. Nachtrag 8.8a: feste
-// Core-Aktionen "Versionen" und "Bearbeiten" in der AppBar.
+// Core-Aktionen "Versionen" und "Bearbeiten" in der AppBar. UI-28
+// (Fehlerbehebung 9.2a, Befund 4): Mengenrechner unter der Nährwerttabelle.
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -18,12 +19,17 @@ import 'package:unsalted_core/src/contracts/input_models.dart';
 import 'package:unsalted_core/src/data/core_database.dart' as db;
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
 import 'package:unsalted_core/src/data/daos/drift_recipe_dao.dart';
+import 'package:unsalted_core/src/data/drift_food_repository.dart';
 import 'package:unsalted_core/src/data/drift_recipe_repository.dart';
+import 'package:unsalted_core/src/food/food_variant.dart';
 import 'package:unsalted_core/src/module/extension_types.dart';
+import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/module/unsalted_module.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/recipe/recipe_ingredient.dart';
 import 'package:unsalted_core/src/recipe/recipe_step.dart';
+import 'package:unsalted_core/src/ui/nutrition/amount_calculator.dart';
+import 'package:unsalted_core/src/ui/nutrition/nutrition_table.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/recipe_detail_screen.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
 import 'package:unsalted_core/src/ui/versions/version_list_screen.dart';
@@ -350,6 +356,58 @@ void main() {
     expect(editor.recipeId, recipeId);
     expect(editor.versionId, v1);
 
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-28: Mengenrechner unter der Tabelle, Gramm ↔ kcal gekoppelt, auch für Snapshots',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+
+    final mehl = await tester.runAsync(() => DriftFoodRepository(DriftFoodDao(database)).createVariant(NewFoodVariant(
+          name: 'Mehl',
+          brand: null,
+          barcode: null,
+          source: FoodSource.custom,
+          sourceRef: null,
+          densityGPerMl: null,
+          gramsPerPiece: null,
+          servingSizeG: null,
+          nutrients: NutrientSet(energyKcal: Decimal.fromInt(300)),
+        )));
+    // 200 g Mehl bei 300 kcal/100 g: 600 kcal auf 200 g.
+    final (recipeId, versionId) = await _seedDraftRecipe(
+      tester,
+      database,
+      ingredients: (vid) => [
+        RecipeIngredient(id: 'i1', versionId: vid, position: 1, foodVariantId: mehl,
+            displayName: 'Mehl', quantity: Decimal.fromInt(200), unitCode: 'g'),
+      ],
+    );
+
+    Future<void> expectCoupled() async {
+      expect(find.byType(AmountCalculator), findsOneWidget);
+      expect(tester.getTopLeft(find.byType(AmountCalculator)).dy,
+          greaterThan(tester.getTopLeft(find.byType(NutritionTable)).dy));
+
+      final grams = find.widgetWithText(TextField, 'Gramm');
+      final kcal = find.widgetWithText(TextField, 'kcal');
+      await tester.enterText(grams, '100');
+      await tester.pump();
+      expect(tester.widget<TextField>(kcal).controller!.text, '300');
+      await tester.enterText(kcal, '150');
+      await tester.pump();
+      expect(tester.widget<TextField>(grams).controller!.text, '50');
+    }
+
+    await _pumpDetail(tester, database, recipeId);
+    await expectCoupled();
+    await _disposeWidgetTree(tester);
+
+    final recipeRepo = DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
+    await tester.runAsync(() => recipeRepo.snapshotVersion(versionId));
+    await _pumpDetail(tester, database, recipeId);
+    await expectCoupled();
     await _disposeWidgetTree(tester);
   });
 }

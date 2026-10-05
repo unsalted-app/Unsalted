@@ -5,6 +5,7 @@
 // UI-11 bis UI-15 (Fehlerbehebung 9.1b, Erweiterung von 23.6): die
 // Lebensmittel-Verknüpfung einer Zeile ändert sich nur durch Auswahl oder
 // Namensänderung, auch wenn das Lebensmittel weich gelöscht ist.
+// UI-16 bis UI-21 (Fehlerbehebung 9.2a, Befund 1): Schritt-Timer eingeben.
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -22,6 +23,8 @@ import 'package:unsalted_core/src/food/food_variant.dart';
 import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/recipe/recipe_ingredient.dart';
+import 'package:unsalted_core/src/recipe/recipe_step.dart';
+import 'package:unsalted_core/src/ui/recipe_detail/recipe_detail_screen.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/ingredient_row.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
 
@@ -407,6 +410,159 @@ void main() {
     expect(find.textContaining('686'), findsWidgets);
     expect(tester.takeException(), isNull);
 
+    await _disposeWidgetTree(tester);
+  });
+
+  // -------------------------------------------------------------------------
+  // 9.2a, Befund 1: Schritt 1 ohne Timer, Schritt 2 mit 600 s, Schritt 3 mit
+  // importierten 90 s (keine ganzen Minuten).
+  // -------------------------------------------------------------------------
+  Future<(String, String)> seedTimerRecipe(WidgetTester tester, db.CoreDatabase database) async {
+    final recipeDao = DriftRecipeDao(database);
+    final recipeRepo = DriftRecipeRepository(recipeDao, DriftFoodDao(database), database);
+    return (await tester.runAsync(() async {
+      final recipeId = await recipeRepo.createRecipe(const NewRecipe(title: 'Brot'));
+      final versionId = (await recipeDao.watchVersions(recipeId).first).first.id;
+      await recipeRepo.saveDraft(RecipeVersionDraft(
+        id: versionId,
+        recipeId: recipeId,
+        parentVersionId: null,
+        versionIndex: 1,
+        label: null,
+        servings: null,
+        bakingLossPercent: Decimal.zero,
+        finalWeightOverrideG: null,
+        notes: null,
+        ingredients: [
+          RecipeIngredient(id: 'i1', versionId: versionId, position: 1, displayName: 'Mehl',
+              quantity: Decimal.fromInt(500), unitCode: 'g'),
+        ],
+        steps: [
+          RecipeStep(id: 's1', versionId: versionId, position: 1, instruction: 'Kneten'),
+          RecipeStep(id: 's2', versionId: versionId, position: 2, instruction: 'Gehen lassen', timerSeconds: 600),
+          RecipeStep(id: 's3', versionId: versionId, position: 3, instruction: 'Ruhen', timerSeconds: 90),
+        ],
+      ));
+      return (recipeId, versionId);
+    }))!;
+  }
+
+  Finder timerField(int index) => find.widgetWithText(TextFormField, 'Timer (Min.)').at(index);
+
+  String timerText(WidgetTester tester, int index) =>
+      tester.widget<EditableText>(find.descendant(of: timerField(index), matching: find.byType(EditableText))).controller.text;
+
+  Future<List<int?>> saveAndReadTimers(WidgetTester tester, db.CoreDatabase database, String versionId) async {
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Speichern'));
+    await _settle(tester);
+    final steps = await tester.runAsync(() => DriftRecipeDao(database).getStepsForVersion(versionId));
+    return [for (final s in steps!..sort((a, b) => a.position.compareTo(b.position))) s.timerSeconds];
+  }
+
+  testWidgets('UI-16: Timer setzen speichert Minuten × 60', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, versionId) = await seedTimerRecipe(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
+    expect(timerText(tester, 0), '');
+    await tester.enterText(timerField(0), '8');
+    await tester.pump();
+
+    expect(await saveAndReadTimers(tester, database, versionId), [480, 600, 90]);
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-17: Timer ändern überschreibt den geladenen Wert', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, versionId) = await seedTimerRecipe(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
+    expect(timerText(tester, 1), '10');
+    await tester.enterText(timerField(1), '5');
+    await tester.pump();
+
+    expect(await saveAndReadTimers(tester, database, versionId), [null, 300, 90]);
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-18: Timer leeren entfernt ihn', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, versionId) = await seedTimerRecipe(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
+    await tester.enterText(timerField(1), '');
+    await tester.pump();
+
+    expect(await saveAndReadTimers(tester, database, versionId), [null, null, 90]);
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-19: ungültiger Timer markiert das Feld und blockiert Speichern', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, versionId) = await seedTimerRecipe(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
+    for (final invalid in ['0', '-3', 'abc', '2.5']) {
+      await tester.enterText(timerField(0), invalid);
+      await tester.pump();
+      expect(find.text('Ganze Minuten > 0'), findsOneWidget, reason: invalid);
+      expect(tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Speichern')).onPressed, isNull,
+          reason: invalid);
+    }
+
+    await tester.enterText(timerField(0), '3');
+    await tester.pump();
+    expect(find.text('Ganze Minuten > 0'), findsNothing);
+    expect(await saveAndReadTimers(tester, database, versionId), [180, 600, 90]);
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-20: unangefasster Sekundenwert bleibt sekundengenau erhalten', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, versionId) = await seedTimerRecipe(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
+    expect(timerText(tester, 2), '1:30');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Anweisung').at(2), 'Ruhen lassen');
+    await tester.pump();
+    expect(await saveAndReadTimers(tester, database, versionId), [null, 600, 90]);
+
+    // Steht nach einer Bearbeitung wieder der Ausgangstext im Feld, gilt der
+    // geladene Wert.
+    await tester.enterText(timerField(2), '1:3');
+    await tester.pump();
+    await tester.enterText(timerField(2), '1:30');
+    await tester.pump();
+    expect(await saveAndReadTimers(tester, database, versionId), [null, 600, 90]);
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-21: gesetzter Timer erscheint als Chip im Rezeptdetail', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, versionId) = await seedTimerRecipe(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
+    await tester.enterText(timerField(0), '8');
+    await tester.pump();
+    await saveAndReadTimers(tester, database, versionId);
+
+    await tester.pumpWidget(ProviderScope(
+      overrides: [coreDatabaseProvider.overrideWithValue(database)],
+      child: MaterialApp(home: RecipeDetailScreen(recipeId: recipeId)),
+    ));
+    for (var i = 0; i < 4; i++) {
+      await _settle(tester, millis: 150);
+    }
+
+    expect(find.widgetWithText(Chip, '8:00'), findsOneWidget);
+    expect(find.widgetWithText(Chip, '10:00'), findsOneWidget);
+    expect(find.widgetWithText(Chip, '1:30'), findsOneWidget);
     await _disposeWidgetTree(tester);
   });
 }
