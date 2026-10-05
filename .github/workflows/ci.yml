@@ -11,6 +11,9 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    # Teil 1.1d: ein hängender Testlauf bricht nach 20 min ab statt erst nach
+    # dem GitHub-Standardlimit von 6 h (docs/decisions.md).
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
 

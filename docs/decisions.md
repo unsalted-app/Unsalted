@@ -1095,3 +1095,12 @@ und der Teardown wartet. `.github/workflows/ci.yml` hat kein
 `timeout-minutes`, ein solcher Hänger würde die CI bis zum GitHub-Standardlimit
 von 6 Stunden blockieren. Ein Zeitlimit wäre eine eigene Arbeitskarte
 (`ci.yml`).
+
+## 2026-10-05 — Teil 1.1d: CI-Zeitlimit und Test-Hänger
+
+**Teil A — CI-Zeitlimit.** `.github/workflows/ci.yml` setzt für den Job `check`
+jetzt `timeout-minutes: 20`. Vorher galt das GitHub-Standardlimit von 6 h: Ein
+hängender Testlauf (beobachtet in den Gegenproben zu 1.1b/1.1c) hätte die CI so
+lange blockiert. Die letzten fünf Läufe auf `main` dauerten 145–172 s, 20 min
+lassen also reichlich Luft. Geändert ist nur der Job-Kopf; die Schritte sind
+unverändert.

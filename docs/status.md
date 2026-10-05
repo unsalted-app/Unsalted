@@ -175,6 +175,7 @@ gesammelt als `part1-v1.1.0` getaggt.
 | 1.1a | Fehlerbehebung: kein Flackern beim Versionswechsel im Rezeptdetail — alter Inhalt bleibt mit Ladebalken stehen, veraltete Antworten werden verworfen (UI-33, UI-34, docs/decisions.md) | fertig |
 | 1.1b | Rezepte und Lebensmittel löschen: Wischen in beiden Listen, Menüpunkt im Rezeptdetail und im Lebensmittel-Editor; 5 s „Rückgängig“ statt Bestätigungsdialog, erst danach Soft-Delete (UI-35–UI-44, docs/decisions.md) | fertig |
 | 1.1c | Ladebalken im Rezeptdetail erst nach 300 ms, bei schnellem Laden nie (UI-45, UI-46, docs/decisions.md) | fertig |
+| 1.1d | CI-Zeitlimit (`timeout-minutes: 20`) und Ursache der Test-Hänger nach fehlgeschlagenen Tests (docs/decisions.md) | in Arbeit — Teil A (CI-Zeitlimit) fertig |
 
 Stand nach 1.1c: Core 380 Tests, App 1 Test, alle grün; `tool/check_architecture.dart` Exit 0.
 
