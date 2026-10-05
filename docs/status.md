@@ -72,7 +72,7 @@ Phase 8 — abgeschlossen.
 | 9.1a | Fehlerbehebung Draft-Kopie und Diff/Apply, F1–F5 (docs/decisions.md) | fertig |
 | 9.1b | Fehlerbehebung E1: Editor behält Lebensmittel-Verknüpfungen, auch zu weich gelöschten Lebensmitteln (UI-11–UI-15, docs/decisions.md) | fertig |
 | 9.2 | Manueller Durchlauf (durch den Projektverantwortlichen) | bestanden mit 4 Befunden, behoben in 9.2a |
-| 9.2a | Fehlerbehebung: Schritt-Timer, Vergleichstexte, Master markieren, Mengenrechner (UI-16–UI-28, docs/decisions.md) | fertig — Nachtest der 4 Punkte von Hand offen |
+| 9.2a | Fehlerbehebung: Schritt-Timer, Vergleichstexte, Master markieren, Mengenrechner (UI-16–UI-28, docs/decisions.md) | fertig — Nachtest durch den Projektverantwortlichen bestätigt („alle 4 Punkte ok“) |
 | 9.3 | Technischer Spike (mehrere Drift-Klassen auf einer Sync-DB, `test/spike/`) — Ergebnis: A eingeschränkt, B nicht unterstützt, C unterstützt; Empfehlung C mit geteilter `DatabaseConnection` (docs/decisions.md, „Spike 20.1“) | fertig |
 
 **Beobachtungen für 9.2:**
@@ -103,6 +103,7 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
 ## Phase 10 — Freeze (Kapitel 24.7)
 | Schritt | Beschreibung | Status |
 |---|---|---|
+| 10.0 | Nachtrag: PopScope im Lebensmittel-Editor (UI-29–UI-32, docs/decisions.md) | fertig |
 | 10.1 | Abnahmeliste vollständig abhaken | offen |
 | 10.2 | Öffentliche API dokumentieren | offen |
 | 10.3 | Tag `part1-v1.0.0` | offen |
@@ -124,12 +125,6 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
   sobald eine Arbeitskarte `data/mappers/*.dart` in ihrem Dateiscope
   erlaubt.
 - `test/recipe/recipe_step_test.dart` fehlt noch (RecipeStep selbst korrekt).
-- `food_editor_screen.dart` (Schritt 8.1) hat kein `PopScope` für „Abbrechen
-  mit ungespeicherten Änderungen fragt nach" (Kapitel 22, allgemeine
-  Bildschirmregel) — bei Schritt 8.1 übersehen, erst bei Schritt 8.2s
-  `recipe_create_screen.dart` nachgeholt. Nachziehen, sobald
-  `food_editor_screen.dart` wieder im Dateiscope eines Schritts liegt.
-  Siehe CLAUDE.md Abschnitt 4 für das PopScope+addPostFrameCallback-Muster.
 - `export_screen.dart` (Schritt 8.7) hat keinen nativen Teilen-Dialog
   (nur "In Zwischenablage kopieren"), `import_screen.dart` keine
   Datei-Auswahl (nur Text einfügen) — beides bräuchte ein zusätzliches

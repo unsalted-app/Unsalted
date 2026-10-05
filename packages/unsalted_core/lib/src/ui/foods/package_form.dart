@@ -91,9 +91,23 @@ class PackageFormState extends State<PackageForm> {
     _saltController = TextEditingController(text: _decimalText(n.saltG));
     _sodiumController = TextEditingController();
 
+    _initialTexts = [for (final controller in _allControllers) controller.text];
     for (final controller in _allControllers) {
       controller.addListener(_handleChanged);
     }
+  }
+
+  late final List<String> _initialTexts;
+
+  /// `true`, sobald der Text eines Feldes vom Ausgangszustand abweicht.
+  /// Reine Cursor-/Auswahländerungen zählen nicht (Nachtrag 10.0: Abfrage
+  /// vor dem Verwerfen im Lebensmittel-Editor).
+  bool get hasChanges {
+    final controllers = _allControllers;
+    for (var i = 0; i < controllers.length; i++) {
+      if (controllers[i].text != _initialTexts[i]) return true;
+    }
+    return false;
   }
 
   List<TextEditingController> get _allControllers => [

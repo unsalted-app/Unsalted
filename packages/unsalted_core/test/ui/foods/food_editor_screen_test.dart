@@ -2,7 +2,8 @@
 //
 // Schritt 8.1, Bildschirm 10: Erstellen, Bearbeiten, Speichern über
 // FoodRepository. NativeDatabase.memory() braucht WidgetTester.runAsync()
-// (siehe food_list_screen_test.dart).
+// (siehe food_list_screen_test.dart). UI-29 bis UI-32 (Nachtrag 10.0,
+// Erweiterung von 23.6): Zurück mit ungespeicherten Änderungen fragt nach.
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -126,6 +127,130 @@ void main() {
 
     final fab = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
     expect(fab.onPressed, isNull);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  /// Öffnet den Editor über einen Startbildschirm, damit "Zurück" eine Route
+  /// schließen kann.
+  Future<void> openEditorFromLauncher(WidgetTester tester, CoreDatabase database, {String? foodId}) async {
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(ProviderScope(
+      overrides: [coreDatabaseProvider.overrideWithValue(database)],
+      child: MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: ElevatedButton(
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                builder: (_) => FoodEditorScreen(foodId: foodId),
+              )),
+              child: const Text('Öffnen'),
+            ),
+          ),
+        ),
+      ),
+    ));
+    await tester.tap(find.text('Öffnen'));
+    await tester.pumpAndSettle();
+    await _settle(tester);
+  }
+
+  Future<String> createZucker(WidgetTester tester, CoreDatabase database) async =>
+      (await tester.runAsync(() => DriftFoodRepository(DriftFoodDao(database)).createVariant(NewFoodVariant(
+            name: 'Zucker',
+            brand: null,
+            barcode: null,
+            source: FoodSource.custom,
+            sourceRef: null,
+            densityGPerMl: null,
+            gramsPerPiece: null,
+            servingSizeG: null,
+            nutrients: NutrientSet(energyKcal: Decimal.fromInt(400)),
+          ))))!;
+
+  testWidgets('UI-29: ohne Änderung (nur Feld angetippt) schließt Zurück ohne Nachfrage', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+
+    await openEditorFromLauncher(tester, database);
+    await tester.tap(find.widgetWithText(TextField, 'Marke'));
+    await tester.pump();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Änderungen verwerfen?'), findsNothing);
+    expect(find.byType(FoodEditorScreen), findsNothing);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-30: Eingabe ohne Namen fragt nach; Abbrechen bleibt, Verwerfen schließt ohne Speichern',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+
+    await openEditorFromLauncher(tester, database);
+    await tester.enterText(find.widgetWithText(TextField, 'Marke'), 'Alpenhof');
+    await tester.pump();
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Änderungen verwerfen?'), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Abbrechen'));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoodEditorScreen), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(TextButton, 'Verwerfen'));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoodEditorScreen), findsNothing);
+
+    final variants = await tester.runAsync(() => DriftFoodDao(database).watchAll().first);
+    expect(variants, isEmpty);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-31: Speichern nach Änderung schließt ohne Nachfrage', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final id = await createZucker(tester, database);
+
+    await openEditorFromLauncher(tester, database, foodId: id);
+    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Rohrzucker');
+    await tester.pump();
+    await tester.tap(find.byType(FloatingActionButton));
+    await _settle(tester);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Änderungen verwerfen?'), findsNothing);
+    expect(find.byType(FoodEditorScreen), findsNothing);
+    final updated = await tester.runAsync(() => DriftFoodRepository(DriftFoodDao(database)).getById(id));
+    expect(updated!.name, 'Rohrzucker');
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-32: auf den Ausgangswert zurückgesetzter Text gilt nicht als Änderung', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final id = await createZucker(tester, database);
+
+    await openEditorFromLauncher(tester, database, foodId: id);
+    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Zuckerl');
+    await tester.pump();
+    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Zucker');
+    await tester.pump();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Änderungen verwerfen?'), findsNothing);
+    expect(find.byType(FoodEditorScreen), findsNothing);
 
     await _disposeWidgetTree(tester);
   });

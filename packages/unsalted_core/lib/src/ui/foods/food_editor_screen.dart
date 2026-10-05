@@ -5,6 +5,9 @@
 // (Kapitel 16.2) -- kein Datenbankzugriff, keine eigene Nährwertberechnung.
 // Natrium -> Salz-Umrechnung (Kapitel 8.2) geschieht bereits in
 // package_form.dart; hier wird nur der fertige Wert übernommen.
+// Zurück mit ungespeicherten Änderungen fragt vor dem Verwerfen nach
+// (Kapitel 22, allgemeine Regel; Nachtrag 10.0) -- gleiches Muster wie
+// recipe_create_screen.dart.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,9 +34,27 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
   late Future<FoodVariant?> _loadFuture;
   FoodVariant? _existing;
   bool _saving = false;
+  bool _leaving = false;
   String? _saveError;
 
   bool get _isEditing => widget.foodId != null;
+
+  bool get _hasUnsavedChanges => !_leaving && (_formKey.currentState?.hasChanges ?? false);
+
+  Future<bool> _confirmDiscard() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Änderungen verwerfen?'),
+        content: const Text('Deine Eingaben sind noch nicht gespeichert.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Abbrechen')),
+          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Verwerfen')),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
 
   @override
   void initState() {
@@ -84,7 +105,13 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
           nutrients: value.nutrients,
         ));
       }
-      if (mounted) Navigator.of(context).pop();
+      if (!mounted) return;
+      // canPop kommt aus dem zuletzt gebauten PopScope: erst den Frame mit
+      // _leaving = true bauen, dann schließen (CLAUDE.md Abschnitt 4).
+      setState(() => _leaving = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.of(context).pop();
+      });
     } on ValidationException catch (e) {
       setState(() => _saveError = e.message);
     } on NotFoundException catch (e) {
@@ -95,7 +122,25 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext buildContext) {
+    return PopScope(
+      canPop: !_hasUnsavedChanges,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final shouldDiscard = await _confirmDiscard();
+        if (!mounted) return;
+        if (shouldDiscard) {
+          setState(() => _leaving = true);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) Navigator.of(context).pop();
+          });
+        }
+      },
+      child: _buildScaffold(buildContext),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(_isEditing ? 'Lebensmittel bearbeiten' : 'Lebensmittel anlegen')),
       body: FutureBuilder<FoodVariant?>(

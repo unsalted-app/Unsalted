@@ -645,3 +645,33 @@ statt zu hängen.
 - Quelltext drift 2.35.0 (die Migrationsseite der Doku beschreibt den `user_version`-Mechanismus nicht, daher maßgeblich): `lib/src/runtime/executor/helpers/engines.dart` (`DelegatedDatabase.ensureOpen`: ist der Executor schon offen, laufen keine Migrationen; `_runMigrations` vergleicht `user_version` mit dem `schemaVersion` der öffnenden Klasse; `close` schließt für alle), `lib/src/runtime/api/connection_user.dart` (Konstruktor übernimmt eine übergebene `DatabaseConnection` samt Stream-Store; `resolvedEngine` nutzt den Transaktions-Executor nur bei gleicher `attachedDatabase`), `lib/src/runtime/api/db_base.dart` (Mehrfach-Warnung „race conditions“ nur je `runtimeType`; `beforeOpen` ruft `onUpgrade` auch bei sinkender Version), `lib/src/runtime/query_builder/migration.dart` (Standard-`onUpgrade` wirft eine Exception). Kein `busy_timeout` im Drift-Quelltext.
 
 **Nebenbefund Werkzeug:** `dart run build_runner build --build-filter="test/spike/**"` hat bei einem zweiten Lauf drei generierte Produktionsdateien gelöscht (`core_database.g.dart`, `drift_food_dao.g.dart`, `drift_recipe_dao.g.dart`). Sie wurden unverändert aus Git wiederhergestellt; `lib/` ist identisch mit dem vorherigen Commit. Siehe CLAUDE.md Abschnitt 4.
+
+## 2026-10-05 — Nachtrag 10.0: PopScope im Lebensmittel-Editor
+
+**Betroffenes Kapitel:** 22 (allgemeine Bildschirmregel „Abbrechen mit
+ungespeicherten Änderungen fragt vor Verwerfen nach“), Bildschirm 10.
+
+**Befund:** Seit Schritt 8.1 fehlte im Lebensmittel-Editor die Abfrage vor
+dem Verwerfen (in Schritt 8.2 für `recipe_create_screen.dart` nachgeholt,
+für `food_editor_screen.dart` als offene Lücke geführt).
+
+**Entscheidung:** `food_editor_screen.dart` bekommt dasselbe Muster wie
+`recipe_create_screen.dart`: `PopScope(canPop: …)` mit Dialog „Änderungen
+verwerfen?“, und nach dem Speichern bzw. Verwerfen wird erst der Frame mit
+gelöster Sperre gebaut und dann per `addPostFrameCallback` geschlossen
+(CLAUDE.md Abschnitt 4). Als „ungespeicherte Änderung“ gilt jede Abweichung
+eines Feldtextes vom Ausgangszustand. Dafür bekommt `PackageFormState` einen
+lesenden Getter `hasChanges` (vergleicht die Texte aller Felder mit den beim
+Öffnen geladenen). **Scope-Erweiterung um `package_form.dart`, vom
+Projektverantwortlichen freigegeben:** `PackageForm` gab die Feldtexte nicht
+heraus; `value` ist `null`, solange der Name fehlt (Eingaben nur bei Marke
+oder kcal wären unbemerkt verworfen worden), und `onChanged` feuert auch bei
+reinen Cursor-/Auswahländerungen (bloßes Antippen eines Feldes hätte eine
+Abfrage ausgelöst). Keine neuen Farben; die bestehenden `Colors.*` der Datei
+bleiben (Design-Pass).
+
+**Neue Test-IDs (Erweiterung von Kapitel 23.6):** UI-29 ohne Änderung (nur
+Feld angetippt) schließt Zurück ohne Nachfrage · UI-30 Eingabe ohne Namen
+fragt nach, „Abbrechen“ bleibt, „Verwerfen“ schließt ohne Speichern · UI-31
+Speichern nach Änderung schließt ohne Nachfrage · UI-32 auf den
+Ausgangswert zurückgesetzter Text gilt nicht als Änderung.

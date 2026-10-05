@@ -158,7 +158,7 @@ unsalted/
       │        ├─ versions/version_compare_screen.dart        Bildschirm 8
       │        ├─ versions/change_descriptions.dart           Texte der Änderungsliste (9.2a)
       │        ├─ foods/food_list_screen.dart                 Bildschirm 9
-      │        ├─ foods/food_editor_screen.dart               Bildschirm 10 — Lücke: kein PopScope, siehe Abschnitt 3
+      │        ├─ foods/food_editor_screen.dart               Bildschirm 10 (PopScope seit Nachtrag 10.0)
       │        ├─ foods/package_form.dart
       │        ├─ settings/export_screen.dart                 Bildschirm 11 — Lücke: kein Teilen-Dialog
       │        ├─ settings/import_screen.dart                 Bildschirm 12 — Lücke: keine Datei-Auswahl
@@ -221,11 +221,12 @@ App-Hülle `apps/unsalted_app`), **Schritt 9.1** (Integrationstests) und
 bestanden mit 4 Befunden) und **Fehlerbehebung 9.2a** (Schritt-Timer,
 Vergleichstexte, Master markieren, Mengenrechner).
 
-**Schritt 9.3** (technischer Spike, Kapitel 20.1) — Phase 9 abgeschlossen.
+**Schritt 9.3** (technischer Spike, Kapitel 20.1) — Phase 9 abgeschlossen
+(Nachtest 9.2a vom Projektverantwortlichen bestätigt). **Nachtrag 10.0**
+(PopScope im Lebensmittel-Editor).
 
-**Nächster Schritt: Phase 10 — Freeze** (Abnahmeliste 10.1, öffentliche API
-dokumentieren 10.2, Tag `part1-v1.0.0` 10.3), sobald der
-Projektverantwortliche den Nachtest der 9.2a-Punkte bestätigt hat.
+**Nächster Schritt: 10.1 — Freeze-Abnahme (Nachweis)**, danach 10.2
+(öffentliche API dokumentieren) und 10.3 (Tag `part1-v1.0.0`).
 
 ---
 
@@ -241,12 +242,6 @@ Projektverantwortliche den Nachtest der 9.2a-Punkte bestätigt hat.
 - **`test/recipe/recipe_step_test.dart` fehlt noch.** `RecipeStep` selbst
   ist korrekt gebaut (Schritt 3.1), aber ungetestet. Kein Blocker, aber
   Lücke — nachholen, sobald ein Schritt diese Datei berührt.
-- **`food_editor_screen.dart` hat kein `PopScope`** für „Abbrechen mit
-  ungespeicherten Änderungen fragt nach" (Kapitel 22, allgemeine
-  Bildschirmregel). Bei Schritt 8.1 übersehen, bei 8.2s
-  `recipe_create_screen.dart` nachgeholt (siehe Muster in Abschnitt 4).
-  Nachziehen, sobald `food_editor_screen.dart` wieder im Dateiscope eines
-  Schritts liegt.
 - **`export_screen.dart`/`import_screen.dart` ohne nativen Teilen-Dialog
   bzw. Datei-Auswahl** (nur Zwischenablage/Text einfügen) — bräuchte
   `share_plus`/`file_picker` und damit eine `pubspec.yaml`-Änderung von
