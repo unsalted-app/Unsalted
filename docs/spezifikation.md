@@ -51,6 +51,7 @@ Diese vier Regeln bilden die globale Ausführungsregel für KI-Agenten. Fachlich
 25. Freeze-Kriterien
 26. Fehlersuche
 27. Regeln für die KI
+28. Nachträge und Klarstellungen zu Teil 1
 
 ---
 
@@ -2769,3 +2770,69 @@ Diese Regeln sind Bestandteil von `PROJECT.md` und gelten für jede Bearbeitung 
 18. **Unsicherheit:** Bei nicht dokumentierten oder versionsabhängigen Schnittstellen wird nicht geraten. Die Unsicherheit wird gemeldet.
 19. **Keine Scope-Erweiterung:** Sobald die Fertig-Kriterien erfüllt sind, gilt die Stop-Bedingung der Arbeitskarte.
 20. **Schrittnachweis:** Nach Abschluss werden `docs/status.md` und der Schrittnachweis gemäß Arbeitskarte aktualisiert.
+
+---
+
+# 28 Nachträge und Klarstellungen zu Teil 1
+
+## 28.0 Geltung
+
+Dieses Kapitel ergänzt Kapitel 1–27. Es hält Nachträge, Klarstellungen und Abweichungen fest, die während der Umsetzung von Teil 1 entschieden wurden; die bestehenden Kapitel bleiben unverändert. Bei Widerspruch zwischen diesem Kapitel und Kapitel 1–27 gilt dieses Kapitel. Kapitel 28 ist Teil des Freeze von `part1-v1.0.0`. Begründungen, Nachweise und verworfene Alternativen stehen in `docs/decisions.md` unter dem jeweils genannten Eintrag.
+
+## 28.1 Werkzeuge und Architekturprüfung
+
+1. **Kapitel 4/5 — CI (Nachtrag 0.1a).** Jeder Push und Pull Request auf `main` führt in GitHub Actions `dart run tool/check_architecture.dart` sowie `flutter analyze` und `flutter test` für `unsalted_core` und `unsalted_app` aus. Die Flutter-Version ist fest eingetragen und wird bei einem lokalen Upgrade mitgezogen. → `decisions.md` „Nachtrag 0.1a“
+2. **Kapitel 5.1 — `check_architecture.dart` (Nachtrag 1.1a).** Die Ausnahmeordner werden relativ zu `lib/` geprüft: `package:flutter/` ist in `src/ui/` und `src/module/` erlaubt (Kapitel 27, Regel 14), `package:drift/` in `src/data/`. Das Werkzeug muss mit Exit 0 enden. → „Nachtrag 1.1a“
+3. **Kapitel 5.2, AT-05 (Schritt 7.3).** Die Ausnahme erlaubt `src/providers/`, aus `src/data/` zu importieren (`CoreDatabase`, DAO-Interfaces und Drift-Implementierungen), um sie hinter den Verträgen zu verdrahten (Kapitel 16.7). `package:drift` selbst bleibt auf `src/data/` beschränkt; `src/providers/` importiert es nicht. → „Schritt 7.3“
+4. **Kapitel 5.2/25, AT-12.** `test/architecture/` ist von AT-12 ausgenommen, weil der Prüftest den gesuchten Begriff selbst enthalten muss. Alle übrigen Testdateien bauen den Begriff zur Laufzeit aus Zeichencodes zusammen; in `lib/` gilt das Verbot ohne Ausnahme. → „Nachtrag 10.1a“, Abschnitt B2
+5. **Kapitel 21, AT-09 (Schritt 8.8).** AT-09 gilt auch für `apps/unsalted_app`: Die App importiert ausschließlich die öffentliche Tür und erreicht Bildschirme nur über `UnsaltedModule.routes`. Rang 99 in `architecture.yaml` betrifft nur die Rangregel (AT-01). → „Schritt 8.8“, „Nachtrag 8.7a“
+
+## 28.2 Verträge, öffentliche Tür und Module
+
+1. **Kapitel 18.1 — Importe von `drift_recipe_repository.dart` (Schritt 6.3).** Die Datei importiert `nutrition/*`, weil `snapshotVersion` laut 12.3 `NutritionEngine.calculate` ausführt. → „Schritt 6.3“
+2. **Kapitel 16.7/16.8/18.1 — Inhalt der Tür (Schritt 7.4).** `recipeDaoProvider` und `foodDaoProvider` werden nicht exportiert, weil DAOs keine externe Public API sind (16.8). Aus `recipe_snapshot_v1.dart` wird nur `RecipeSnapshotV1`, aus `unit_catalog.dart` nur `UnitCatalog` exportiert. → „Schritt 7.4“
+3. **Kapitel 21 — `CoreModule` (Schritt 7.2, Nachtrag 8.7a).** `CoreModule.routes` liefert je einen `GoRoute` für die zwölf Routen aus Kapitel 22. `recipeDetailSections`, `recipeActions` und `settingsEntries` bleiben leer, weil sie Erweiterungspunkte für andere Module sind. `ownerColumn` ist einheitlich `'owner_id'`; für Tabellen ohne eigene Spalte wird der Besitz über die Elternkette aufgelöst (Teil 3). → „Schritt 7.2“, „Nachtrag 8.7a“
+4. **Kapitel 21 — App-Hülle (Schritt 8.8).** Die App-Hülle legt eine `ShellRoute` mit `NavigationBar` (Rezepte, Lebensmittel, Einstellungen) um alle Modulrouten. Ihre `pubspec.yaml` nennt `unsalted_core`, `flutter_riverpod`, `go_router` und `drift_flutter` als direkte Abhängigkeiten. → „Schritt 8.8“
+
+## 28.3 Fachliche Klarstellungen
+
+1. **Kapitel 12.4 — Draft-Kopie eines Snapshots (Fehlerbehebung 9.1a, F1).** Zutaten und Schritte kommen aus `snapshotJson`. Die `foodVariantId` jeder Zutat kommt aus der Zeile derselben Snapshot-Version an gleicher Position (Kapitel 10.8), sofern Name, Menge und Einheit übereinstimmen, sonst ist sie `null`. Das Snapshot-Format bekommt bewusst keine Variant-ID. → „Fehlerbehebung 9.1a“
+2. **Kapitel 15 — Signatur von `RecipeDiff.between` (9.1a, F3).** Die Signatur lautet `RecipeDiff.between(a, b, {List<RecipeIngredient>? targetRows})`. Mit den Zutatenzeilen der Zielversion (`RecipeRepository.getVersion`) tragen erzeugte `AddIngredient`/`ReplaceIngredient` deren `foodVariantId`; wer eine Änderungsliste anwenden will, muss `targetRows` übergeben, ohne sie bleibt die ID `null`. `recipe_diff.dart` importiert dafür zusätzlich `recipe_ingredient.dart` und `snapshot_row_match.dart`. → „Fehlerbehebung 9.1a“
+3. **Kapitel 15.4 — Verschiebungen (9.1a, F2).** `MoveIngredient` entsteht auch neben Hinzufügen und Entfernen. Berechnet wird es auf der virtuellen Liste nach allen Remove- und Add-Änderungen; Ziel ist die vollständige Reihenfolge von b (DF-13). → „Fehlerbehebung 9.1a“
+4. **Kapitel 15.1 — Zutaten-Identität (9.1a, F4).** Die Zuordnung erfolgt zweistufig, jeweils greedy in Positionsreihenfolge (15.2): zuerst über gleichen, nicht leeren Barcode, danach über den normalisierten Namen. Gleicher Name mit verschiedenen Barcodes ergibt `ReplaceIngredient`. → „Fehlerbehebung 9.1a“
+5. **Kapitel 15.3 — „verknüpfte Variante unterscheidet sich“ (9.1a, F5).** Erkannt wird das über die im Snapshot eingebetteten Variantendaten `barcode`, `brand`, `per100g` (einschließlich `extra`), `densityGPerMl` und `gramsPerPiece`; Zahlen werden als Decimal-Wert verglichen (600 == 600.0). → „Fehlerbehebung 9.1a“
+6. **Kapitel 14.1 — bekannte Grenze E2.** Beim Anwenden eines `ReplaceIngredient` geht die Notiz der Zutat verloren, weil die Klasse die Zutat vollständig ersetzt und kein `note`-Feld trägt. Notiz-Änderungen erkennt `RecipeDiff` nicht. → „Fehlerbehebung 9.1a“, Abschnitt E2
+7. **Kapitel 13.4 — Schlüsselreihenfolge (Nachtrag 10.1b).** `SnapshotCodec.encode` sortiert die Schlüssel jedes Objekts rekursiv alphabetisch, auch in `recipe`, `version`, `nutrition`, `per100g` und `extra`; Listen behalten ihre Reihenfolge. Snapshots, die vor 10.1b gespeichert wurden, behalten ihre alte Reihenfolge und bleiben gültig, weil `decode` jede Reihenfolge liest und der Export den gespeicherten String unverändert liefert (13.7). → „Nachtrag 10.1b“
+
+## 28.4 Oberfläche (Kapitel 22)
+
+1. **Bildschirm 1 und 4 (Nachtrag 8.8a).** Die Rezeptliste öffnet das Rezeptdetail. Das Rezeptdetail hat zwei feste Core-Aktionen „Versionen“ und „Bearbeiten“, die keine `RecipeAction` sind. Navigiert wird per `Navigator.push`. → „Nachtrag 8.8a“
+2. **Bildschirm 3 — Spezifikationslücke (Fehlerbehebung 9.2a, 9.1b).** Je Schritt gibt es ein Feld „Timer (Min.)“ (ganze Minuten > 0 oder leer); ein geladener, nicht angefasster Wert bleibt sekundengenau erhalten. Die Lebensmittel-Verknüpfung einer Zutatenzeile ändert sich nur durch Auswahl oder Umbenennen, auch bei weich gelöschtem Lebensmittel, das dann mit einem Hinweis angezeigt wird. → „Fehlerbehebung 9.2a“, „Fehlerbehebung 9.1b“
+3. **Bildschirm 4/6 (9.2a).** Der Mengenrechner steht direkt unter der Nährwerttabelle und nutzt dasselbe `NutritionResult`. → „Fehlerbehebung 9.2a“
+4. **Bildschirm 7 — Spezifikationslücke (9.2a).** „Als Master markieren“ gibt es für eingefrorene Versionen, die noch nicht Master sind. Das Löschen der Master-Version zeigt die Meldung des Repositorys. → „Fehlerbehebung 9.2a“
+5. **Bildschirm 8 (9.2a).** Die Texte der Änderungsliste nennen Zutatennamen und alte → neue Werte. Sie entstehen, indem die Liste nur für die Anzeige der Reihe nach angewendet wird; die übernommene Liste bleibt unverändert (15.5). → „Fehlerbehebung 9.2a“
+6. **Bildschirm 10 (Nachtrag 10.0).** Zurück mit ungespeicherten Änderungen fragt vor dem Verwerfen nach. Als Änderung gilt jede Abweichung eines Feldtextes vom Ausgangszustand (`PackageFormState.hasChanges`). → „Nachtrag 10.0“
+
+## 28.5 Testplan (Kapitel 23)
+
+1. **Neue Tests und Test-IDs.** Hinzugekommen sind GD-05b und GD-13 (23.3), DF-13b und DF-14 bis DF-21 (23.2), RP-22 und RP-23 sowie MG-03b (23.4), UI-08b und UI-11 bis UI-32 (23.6) und die Gruppe „RecipeStep“ in `test/recipe/recipe_ingredient_test.dart` (Testvertrag 18.1). Dazu kommen die ergänzenden Integrationsfälle DA-1 bis DA-8 (mit DA-6b), SI-1 bis SI-6 und MI-1 bis MI-4 in `test/integration/` sowie die Spike-Tests A1 bis C7 in `test/spike/`. → „Fehlerbehebung 9.1a“, „9.1b“, „9.2a“, „Nachtrag 10.0“, „Nachtrag 10.1a“, „Nachtrag 10.1b“, „Spike 20.1“
+2. **GD-05.** GD-05 prüft gemäß 23.3 für alle Golden-Dateien die byteidentische Rundreise; GD-05b zusätzlich deterministisches Encodieren (Nachtrag 10.1a). → „Nachtrag 10.1a“, Abschnitt B1
+3. **Testorte.** GD-11 und GD-12 liegen in `test/data/snapshot_service_test.dart`, weil sie den `DriftSnapshotService` gegen eine Datenbank prüfen. IT-01 bis IT-05 gibt es zusätzlich zu `test/integration/` auch auf Service-Ebene in `test/data/`; maßgeblich für die Abnahme sind die Tests in `test/integration/`. → „Nachtrag 10.1a“, Abschnitt B4
+
+## 28.6 Hinweis für Teil 3 (Kapitel 20.1, Spike 9.3)
+
+Getrennte Verbindungen auf dieselbe Datenbankdatei werden nicht unterstützt: Das gemeinsame `user_version` kann Teil 1 aussperren, und Schreibzugriffe scheitern mit „database is locked“. Empfohlen ist eine gemeinsame Datenbankklasse mit allen Tabellen als alleinige Eigentümerin von Schema, Migrationen und `user_version`, die vor allen anderen Klassen geöffnet wird; `CoreDatabase` und alle Paketklassen laufen auf derselben `DatabaseConnection`-Instanz. Paketübergreifend atomare Schreibzugriffe laufen ausschließlich über die gemeinsame Klasse, und Schema-Änderungen von Teil 1 werden zu Migrationsschritten dieser Klasse. → „Spike 20.1“
+
+## 28.7 Projekt- und Verzeichnisstruktur (Ergänzung zu Kapitel 2 und zum Baum vor 18.1)
+
+1. **Neue Dateien.** `lib/src/recipe/snapshot_row_match.dart` (nicht über die Tür exportiert), `lib/src/ui/versions/change_descriptions.dart`, `test/integration/` (mit `support/`), `test/spike/` und `.github/workflows/ci.yml` im Projektstamm.
+2. **`PROJECT.md` (Kapitel 2, 27).** `PROJECT.md` ist durch `CLAUDE.md` im Projektstamm ersetzt. Die Grundregeln (Kapitel 1) und die Regeln für die KI (Kapitel 27) gelten unverändert aus dieser Spezifikation; `CLAUDE.md` fasst sie zusammen und verweist darauf.
+3. **Keine Workspace-`pubspec.yaml`.** Im Projektstamm gibt es keine Workspace-Wurzel; die Pakete sind per Pfad-Abhängigkeit eingebunden (`apps/unsalted_app` → `../../packages/unsalted_core`). Das ist nach Kapitel 2 zulässig.
+
+## 28.8 Bekannte Abweichungen und Grenzen von part1-v1.0.0
+
+1. **Bildschirm 11 ohne Teilen-Dialog.** Der Export bietet nur „In Zwischenablage kopieren“.
+2. **Bildschirm 12 ohne Dateiauswahl.** Der Import nimmt nur eingefügten Text. Beides braucht zusätzliche Pakete und Plattform-Berechtigungen und ist für Teil 1.1 vorgesehen.
+3. **E2.** Siehe 28.3.6.
+4. **Snapshot mit weich gelöschtem Lebensmittel.** Das Einfrieren einer Version, deren Zutat auf ein weich gelöschtes Lebensmittel zeigt, erzeugt ohne Warnung einen Snapshot ohne Nährwerte für diese Zutat; das ist spezifikationskonform nach Kapitel 10.7.
+5. **Design- und Komfortpunkte.** Reine Design- und Komfortpunkte stehen in `docs/status.md` unter „Bekannte Grenzen von part1-v1.0.0“.

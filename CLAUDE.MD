@@ -3,7 +3,10 @@
 Diese Datei wird von Claude Code automatisch zu Beginn jeder Session gelesen.
 Sie ist die Kurzfassung; die **verbindliche technische Spezifikation** ist
 `docs/spezifikation.md` — bei jedem Widerspruch zwischen dieser Datei und
-`docs/spezifikation.md` gilt `docs/spezifikation.md`.
+`docs/spezifikation.md` gilt `docs/spezifikation.md`. **Innerhalb der
+Spezifikation gilt Kapitel 28 („Nachträge und Klarstellungen zu Teil 1“) vor
+Kapitel 1–27** — vor dem Lesen eines Kapitels prüfen, ob Kapitel 28 dazu
+etwas festlegt.
 
 `PROJECT.md` (falls noch vorhanden) ist **veraltet** und wurde durch diese
 Datei ersetzt — nicht mehr verwenden, ggf. löschen, um Widersprüche zu
@@ -225,14 +228,12 @@ Vergleichstexte, Master markieren, Mengenrechner).
 (Nachtest 9.2a vom Projektverantwortlichen bestätigt). **Nachtrag 10.0**
 (PopScope im Lebensmittel-Editor).
 
-**Schritt 10.1** (Freeze-Abnahme): Nachweis in `docs/status.md`, 4 Befunde
-(B1–B4) liegen beim Projektverantwortlichen. Entwurf „Kapitel 28 –
-Nachträge und Klarstellungen zu Teil 1“ vorgelegt, noch nicht in
-`docs/spezifikation.md` übernommen.
+**Schritt 10.1** (Freeze-Abnahme, Nachweis in `docs/status.md`) mit den
+Nachträgen 10.1a (GD-05, RecipeStep-Tests) und 10.1b (SnapshotCodec sortiert
+Schlüssel nach 13.4). **Kapitel 28** in `docs/spezifikation.md` übernommen.
 
-**Nächster Schritt:** Entscheidung des Projektverantwortlichen zu B1–B4 und
-Kapitel 28; danach 10.2 (öffentliche API dokumentieren) und 10.3 (Tag
-`part1-v1.0.0`).
+**Nächster Schritt: 10.2 — öffentliche API dokumentieren**, danach 10.3
+(Tag `part1-v1.0.0`) erst nach Freigabe durch den Projektverantwortlichen.
 
 ---
 

@@ -110,6 +110,8 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
 | 10.2 | Öffentliche API dokumentieren | offen |
 | 10.3 | Tag `part1-v1.0.0` | offen |
 
+Kapitel 28 „Nachträge und Klarstellungen zu Teil 1“ ist in `docs/spezifikation.md` übernommen (2026-10-05); es gilt vor Kapitel 1–27 und ist Teil des Freeze von `part1-v1.0.0`.
+
 ### 10.1 Freeze-Abnahme — Nachweis (Stand 2026-10-05, nach Nachtrag 10.0)
 
 Ausgeführt mit Flutter 3.47.5, alle Befehle im jeweiligen Paketordner.
