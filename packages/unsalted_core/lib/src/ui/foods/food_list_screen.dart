@@ -2,12 +2,16 @@
 //
 // Bildschirm 9 (Kapitel 22, Schritt 8.1): Lebensmittel-Liste mit Suche.
 // Datenquelle ausschließlich FoodRepository.search (Kapitel 16.2).
+// Nach links wischen löscht ein Lebensmittel mit 5 s „Rückgängig“
+// (Teil 1.1b, shared/undoable_deletion.dart); ausstehende Löschungen sind
+// sofort ausgeblendet.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../food/food_variant.dart';
 import '../../providers/core_providers.dart';
+import '../shared/undoable_deletion.dart';
 import 'food_editor_screen.dart';
 
 class FoodListScreen extends ConsumerStatefulWidget {
@@ -36,6 +40,7 @@ class _FoodListScreenState extends ConsumerState<FoodListScreen> {
   @override
   Widget build(BuildContext context) {
     final repo = ref.watch(foodRepositoryProvider);
+    final hidden = ref.watch(pendingFoodDeletionsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -76,7 +81,8 @@ class _FoodListScreenState extends ConsumerState<FoodListScreen> {
             );
           }
 
-          final variants = snapshot.data ?? const <FoodVariant>[];
+          final variants =
+              (snapshot.data ?? const <FoodVariant>[]).where((v) => !hidden.contains(v.id)).toList();
           if (variants.isEmpty) {
             return Center(
               child: Column(
@@ -99,10 +105,16 @@ class _FoodListScreenState extends ConsumerState<FoodListScreen> {
             itemCount: variants.length,
             itemBuilder: (context, index) {
               final variant = variants[index];
-              return ListTile(
-                title: Text(variant.name),
-                subtitle: variant.brand == null ? null : Text(variant.brand!),
-                onTap: () => _openEditor(foodId: variant.id),
+              return Dismissible(
+                key: ValueKey('food-${variant.id}'),
+                direction: DismissDirection.endToStart,
+                background: const DeleteSwipeBackground(),
+                onDismissed: (_) => deleteFoodWithUndo(context, ref, variant),
+                child: ListTile(
+                  title: Text(variant.name),
+                  subtitle: variant.brand == null ? null : Text(variant.brand!),
+                  onTap: () => _openEditor(foodId: variant.id),
+                ),
               );
             },
           );

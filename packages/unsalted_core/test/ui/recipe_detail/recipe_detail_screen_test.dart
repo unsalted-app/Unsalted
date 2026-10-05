@@ -11,6 +11,8 @@
 // Antworten älterer Wechsel werden verworfen. Dafür hält
 // _GatedNutritionService `forVersion` je Version zurück, bis der Test sie
 // freigibt -- so ist der Zwischenzustand deterministisch prüfbar.
+// UI-40 (Teil 1.1b): „Rezept löschen“ im AppBar-Menü kehrt zur Rezeptliste
+// zurück und zeigt dort die SnackBar mit „Rückgängig“.
 
 import 'dart:async';
 
@@ -42,6 +44,8 @@ import 'package:unsalted_core/src/ui/nutrition/nutrition_table.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/recipe_detail_screen.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/version_switcher.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
+import 'package:unsalted_core/src/ui/recipe_list/recipe_list_screen.dart';
+import 'package:unsalted_core/src/ui/shared/undoable_deletion.dart';
 import 'package:unsalted_core/src/ui/versions/version_list_screen.dart';
 
 class _FakeModule implements UnsaltedModule {
@@ -624,6 +628,56 @@ void main() {
     expect(find.text('Mehl V1'), findsNothing);
     expect(_selectedVersionLabel(tester), 'V2');
     expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-40: „Rezept löschen“ im Detail kehrt zur Liste zurück, SnackBar dort, nach 5 s gelöscht',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final (recipeId, v1) = await _seedDraftRecipe(tester, database, title: 'Pizzateig');
+    final v2 = await _addVersion(tester, database, recipeId, v1, versionIndex: 2, ingredientName: 'Hefe');
+    await _seedDraftRecipe(tester, database, title: 'Apfelkuchen');
+
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [coreDatabaseProvider.overrideWithValue(database)],
+      child: const MaterialApp(home: RecipeListScreen()),
+    ));
+    await _settle(tester);
+
+    await tester.tap(find.text('Pizzateig'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await _settle(tester);
+    expect(find.byType(RecipeDetailScreen), findsOneWidget);
+
+    await tester.tap(find.byType(PopupMenuButton<VoidCallback>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Rezept löschen'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(RecipeDetailScreen), findsNothing);
+    expect(find.byType(RecipeListScreen), findsOneWidget);
+    expect(find.text('Pizzateig'), findsNothing);
+    expect(find.text('Apfelkuchen'), findsOneWidget);
+    expect(find.text('„Pizzateig“ gelöscht'), findsOneWidget);
+    expect(find.widgetWithText(SnackBarAction, 'Rückgängig'), findsOneWidget);
+
+    final repo = DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
+    expect(await tester.runAsync(() => repo.getVersion(v2)), isNotNull);
+
+    await tester.pump(undoableDeletionDelay);
+    await _settle(tester);
+    expect(await tester.runAsync(() => repo.watchRecipe(recipeId).first), isNull);
+    expect(await tester.runAsync(() => repo.getVersion(v1)), isNull);
+    expect(await tester.runAsync(() => repo.getVersion(v2)), isNull);
+    // runAsync liefert auch bei einer Ausnahme null -- die darf es nicht geben.
+    expect(tester.takeException(), isNull);
 
     await _disposeWidgetTree(tester);
   });

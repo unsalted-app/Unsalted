@@ -165,7 +165,9 @@ unsalted/
       │        ├─ foods/package_form.dart
       │        ├─ settings/export_screen.dart                 Bildschirm 11 — Lücke: kein Teilen-Dialog
       │        ├─ settings/import_screen.dart                 Bildschirm 12 — Lücke: keine Datei-Auswahl
-      │        └─ settings/settings_screen.dart                Bildschirm 13
+      │        ├─ settings/settings_screen.dart                Bildschirm 13
+      │        └─ shared/undoable_deletion.dart                Löschen mit 5 s „Rückgängig“ (Teil 1.1b),
+      │                                                        UI-interne Provider, nicht exportiert
       └─ test/
          ├─ architecture/                    AT-01 bis AT-12, alle fertig und grün
          │  ├─ at01_no_upper_imports_test.dart … at12_no_kj_text_test.dart
@@ -227,8 +229,10 @@ und Klarstellungen in Kapitel 28 der Spezifikation.
   Design-Punkte): Kapitel 28.8 und `docs/status.md`.
 
 **Teil 1.1 (in Arbeit, `docs/status.md`):** 1.1a fertig (kein Flackern beim
-Versionswechsel im Rezeptdetail). Kein neuer Tag pro Schritt — Teil 1.1 wird
-nach dem Design-Pass gesammelt als `part1-v1.1.0` getaggt.
+Versionswechsel im Rezeptdetail), 1.1b fertig (Rezepte und Lebensmittel
+löschen mit 5 s „Rückgängig“, Test-IDs bis UI-44). Kein neuer Tag pro
+Schritt — Teil 1.1 wird nach dem Design-Pass gesammelt als `part1-v1.1.0`
+getaggt. Design-Notizen für den Design-Pass sammelt `docs/status.md`.
 
 **Nächster Schritt:** weitere Arbeitskarten zu Teil 1.1 (Design-Pass) oder
 Teil 2 (`unsalted_experiments`) nach Vorgabe des Projektverantwortlichen.
@@ -406,6 +410,18 @@ Teil 2 (`unsalted_experiments`) nach Vorgabe des Projektverantwortlichen.
   direkt nach jedem Tap seine Wirkung prüfen (z. B. gewählter Chip), nicht
   erst das Endergebnis. Siehe `_tapVersion` in
   `recipe_detail_screen_test.dart`.
+- **`SnackBar` mit `action` schließt in Flutter 3.47.5 nie von selbst**
+  (seit Teil 1.1b): `persist` ist standardmäßig `action != null`, `duration`
+  wird dann ignoriert. Für eine zeitlich begrenzte SnackBar mit Aktion
+  `persist: false` setzen. `controller.close()` setzt voraus, dass die SnackBar
+  noch vorne in der Warteschlange steht (Assert) — nur aufrufen, solange
+  `controller.closed` nicht abgeschlossen ist. Siehe
+  `ui/shared/undoable_deletion.dart`.
+- **`tester.runAsync` liefert bei einer Ausnahme still `null`** (seit Teil
+  1.1b): Der Fehler landet in `takeException`, der Rückgabewert ist `null`.
+  Wer `expect(await tester.runAsync(...), isNull)` prüft (z. B. „gelöscht“),
+  muss danach `expect(tester.takeException(), isNull)` prüfen, sonst gilt eine
+  Ausnahme als Erfolg.
 - **`dart doc` meldet fehlende Doku-Kommentare nicht** (seit 10.2): Lücken
   findet man nur mit vorübergehend aktiviertem Lint `public_member_api_docs`
   (nicht committen) und Filter auf die über `lib/unsalted_core.dart`

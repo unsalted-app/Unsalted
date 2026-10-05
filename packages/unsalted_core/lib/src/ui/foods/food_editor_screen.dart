@@ -8,6 +8,9 @@
 // Zurück mit ungespeicherten Änderungen fragt vor dem Verwerfen nach
 // (Kapitel 22, allgemeine Regel; Nachtrag 10.0) -- gleiches Muster wie
 // recipe_create_screen.dart.
+// Beim Bearbeiten im AppBar-Menü „Löschen“ (Teil 1.1b): zurück zur Liste,
+// dort 5 s „Rückgängig“, erst dann softDeleteVariant; ungespeicherte
+// Änderungen sind damit hinfällig, deshalb ohne Verwerfen-Dialog.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +19,7 @@ import '../../contracts/core_exceptions.dart';
 import '../../contracts/input_models.dart';
 import '../../food/food_variant.dart';
 import '../../providers/core_providers.dart';
+import '../shared/undoable_deletion.dart';
 import 'package_form.dart';
 
 class FoodEditorScreen extends ConsumerStatefulWidget {
@@ -121,6 +125,20 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
     }
   }
 
+  void _delete() {
+    final existing = _existing;
+    if (existing == null) return;
+    // Wie beim Speichern: erst den Frame mit _leaving = true bauen, dann
+    // schließen (CLAUDE.md Abschnitt 4).
+    setState(() => _leaving = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) navigator.pop();
+      deleteFoodWithUndo(context, ref, existing);
+    });
+  }
+
   @override
   Widget build(BuildContext buildContext) {
     return PopScope(
@@ -142,7 +160,18 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
 
   Widget _buildScaffold(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_isEditing ? 'Lebensmittel bearbeiten' : 'Lebensmittel anlegen')),
+      appBar: AppBar(
+        title: Text(_isEditing ? 'Lebensmittel bearbeiten' : 'Lebensmittel anlegen'),
+        actions: [
+          if (_isEditing)
+            PopupMenuButton<VoidCallback>(
+              itemBuilder: (context) => [
+                PopupMenuItem(value: _delete, enabled: _existing != null, child: const Text('Löschen')),
+              ],
+              onSelected: (callback) => callback(),
+            ),
+        ],
+      ),
       body: FutureBuilder<FoodVariant?>(
         future: _loadFuture,
         builder: (context, snapshot) {

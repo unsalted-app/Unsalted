@@ -930,3 +930,112 @@ lassen) und einer Prüfung direkt nach dem Tap, dass V3 gewählt ist und lädt.
 **Nicht geändert:** Kapitel 28 (Liste der neuen Test-IDs bis UI-32) bleibt,
 wie es ist; die Arbeitskarte nennt nur `docs/decisions.md` und
 `docs/status.md`.
+
+## 2026-10-05 — Teil 1.1b: Rezepte und Lebensmittel löschen (mit Rückgängig)
+
+Nach Kapitel 25.2, ohne Vertragsänderung. Kein Tag; Teil 1.1 wird gesammelt
+als `part1-v1.1.0` getaggt.
+
+**Spezifikationslücke.** `softDeleteRecipe` (RP-12, kaskadiert auf alle
+Versionen) und `softDeleteVariant` gibt es seit Phase 6 (Kapitel 16.1, 16.2).
+Kapitel 22 sieht aber auf Bildschirm 1, 4 und 9/10 keinen Weg zum Löschen
+vor, und kein Bildschirm rief die Methoden auf; nur Versionen waren löschbar
+(bekannte Grenze von `part1-v1.0.0`, Kapitel 28.8). Geschlossen nur mit
+Dateien unter `lib/src/ui/` und Tests; `contracts/`, `data/`, `module/`, Tür
+und Datenbank sind unverändert, eine Wiederherstellen-Methode gibt es weiter
+nicht.
+
+**Entscheidung: „Rückgängig“ statt Bestätigungsdialog** (Vorgabe der
+Arbeitskarte). Der Vertrag kennt kein Wiederherstellen; umkehrbar wird das
+Löschen deshalb nur, indem es verzögert wird. Der Eintrag verschwindet
+sofort, eine SnackBar („„<Titel>“ gelöscht“ bzw. „„<Name>“ gelöscht.
+Eingefrorene Versionen behalten ihre Nährwerte.“) bietet 5 s lang
+„Rückgängig“ an, erst danach ruft ein Timer `softDeleteRecipe` bzw.
+`softDeleteVariant` auf. „Rückgängig“ bricht den Timer ab — gelöscht wurde
+dann nie etwas.
+
+**Umsetzung.**
+- Neue Datei `lib/src/ui/shared/undoable_deletion.dart`: `PendingDeletions`
+  (Riverpod-`Notifier` mit den ausgeblendeten IDs und je einem Timer pro
+  Löschung), `pendingRecipeDeletionsProvider`, `pendingFoodDeletionsProvider`,
+  `deleteRecipeWithUndo`, `deleteFoodWithUndo` und der Wisch-Hintergrund
+  `DeleteSwipeBackground` (Farben aus `colorScheme.errorContainer`/
+  `onErrorContainer`).
+- Warum ein Provider: Das Rezeptdetail startet die Löschung und schließt sich
+  sofort; die Liste muss den Eintrag trotzdem ausblenden, und der Timer muss
+  das Schließen des Bildschirms überleben. Der Provider lebt so lange wie der
+  `ProviderScope` der App. Wird die App beendet, bricht `ref.onDispose` alle
+  Timer ab: Nichts wird gelöscht (der sichere Fall). Er ist reiner UI-Zustand,
+  wird nicht über die Tür exportiert und erweitert die Provider-Liste aus
+  Kapitel 16.7 nicht.
+- Gelöschte IDs bleiben ausgeblendet. Würden sie nach dem Löschen sofort
+  wieder freigegeben, tauchte der Eintrag für einen Frame wieder auf, bis der
+  Stream der Liste die Löschung meldet. IDs werden nie wiederverwendet.
+- Mehrere Löschungen kurz hintereinander: Jede hat ihren eigenen Timer und
+  ihre eigene SnackBar. Eine neue SnackBar ersetzt eine noch sichtbare
+  (`hideCurrentSnackBar`; Material zeigt immer nur eine). Die frühere Löschung
+  läuft weiter und wird zu ihrem eigenen Zeitpunkt ausgeführt, ihr
+  „Rückgängig“ ist dann aber nicht mehr erreichbar. „Rückgängig“ wirkt immer
+  nur auf die eigene Löschung.
+- `persist: false`: In Flutter 3.47.5 bleibt eine SnackBar mit Aktion
+  standardmäßig stehen (`persist = persist ?? action != null`) und würde nie
+  von selbst schließen. Zusätzlich schließt der Timer die SnackBar beim Ablauf
+  selbst, weil „Rückgängig“ danach wirkungslos wäre; der Messenger würde sie
+  erst 5 s nach der Einblend-Animation schließen.
+- Rezeptliste und Lebensmittel-Liste: `Dismissible` nur nach links
+  (`endToStart`). Rezeptdetail: Das AppBar-Menü ist jetzt immer da (vorher nur
+  mit Menü-Aktionen von Modulen), „Rezept löschen“ steht als letzter Eintrag
+  nach den Modul-Aktionen. Der Menütyp ist von
+  `PopupMenuButton<RecipeAction>` auf `PopupMenuButton<VoidCallback>`
+  umgestellt; Modul-Aktionen verhalten sich unverändert (EX-01 bis EX-05
+  grün). Danach geht es zurück zur Liste, die SnackBar erscheint dort. Ist das
+  Detail die erste Seite (z. B. über einen Deep Link), gibt es nichts zu
+  schließen: Die Löschung läuft trotzdem, nach 5 s zeigt die Seite „Rezept
+  nicht gefunden.“.
+- Lebensmittel-Editor: Das Menü „Löschen“ erscheint nur beim Bearbeiten und
+  ist aktiv, sobald das Lebensmittel geladen ist. Ungespeicherte Änderungen
+  sind beim Löschen hinfällig. Deshalb setzt der Editor wie beim Speichern
+  `_leaving`, damit der Verwerfen-Dialog aus 10.0 nicht erscheint, und
+  schließt sich erst im nächsten Frame (Muster aus CLAUDE.md Abschnitt 4).
+- Fehler beim Ablauf: Eine `NotFoundException` heißt „schon gelöscht“ und wird
+  ignoriert. Bei jedem anderen Fehler erscheint der Eintrag wieder, und der
+  Fehler wird weitergeworfen, nicht verschluckt.
+- Unverändert aus 9.1b: Entwürfe mit einem gelöschten Lebensmittel zeigen
+  „Verknüpftes Lebensmittel wurde gelöscht – bitte neu auswählen.“, Snapshots
+  rechnen mit ihren eingebetteten Nährwerten weiter (Kapitel 12.3).
+
+**Bewusst nicht abgedeckt:** Ausgeblendet werden ausstehende Löschungen nur in
+den beiden Listen. Die Lebensmittelsuche im Rezept-Editor
+(`FoodRepository.search`) zeigt ein Lebensmittel bis zum Ablauf der 5 s
+weiter an.
+
+**Tests (neue IDs UI-35 bis UI-44, Erweiterung von 23.6).** Die Karte nannte
+„UI-33 ff.“; UI-33 und UI-34 sind seit 1.1a vergeben, deshalb geht es bei
+UI-35 weiter.
+- UI-35: Wischen blendet sofort aus, nach 3 s ist noch nichts gelöscht, nach
+  5 s sind Rezept und beide Versionen gelöscht.
+- UI-36: „Rückgängig“ löscht nichts, auch nach 10 s nicht.
+- UI-37: Zwei Löschungen 2 s nacheinander: Die zweite SnackBar ersetzt die
+  erste, jede wird zu ihrem eigenen Zeitpunkt gelöscht.
+- UI-38: „Rückgängig“ der zweiten Löschung lässt die erste weiterlaufen.
+- UI-39: Wird der `ProviderScope` vor Ablauf abgebaut (App-Ende), ist nichts
+  gelöscht.
+- UI-40: „Rezept löschen“ im Detail kehrt zur Liste zurück, SnackBar dort,
+  nach 5 s sind Rezept und Versionen gelöscht.
+- UI-41 und UI-42: Lebensmittel-Liste, Wischen bzw. „Rückgängig“.
+- UI-43: „Löschen“ im Lebensmittel-Editor mit ungespeicherter Änderung kehrt
+  ohne Verwerfen-Dialog zur Liste zurück, nach 5 s gelöscht; beim Anlegen gibt
+  es kein Menü.
+- UI-44: Ein gelöschtes Lebensmittel lässt einen Snapshot bei 600 kcal, der
+  Entwurf daraus zeigt den Hinweis aus 9.1b.
+
+Die bestehenden Tests der vier Testdateien sind unverändert (ergänzt wurden
+nur Importe, Helfer und neue Tests); vor den neuen Tests liefen alle 94
+UI-Tests gegen den neuen Code grün.
+
+**Gegenprobe** (je ein absichtlich eingebauter Fehler in
+`undoable_deletion.dart`, danach zurückgesetzt):
+1. Ein gemeinsamer Timer für alle Löschungen: UI-37 und UI-38 rot.
+2. Timer überleben das Ende des `ProviderScope`: UI-39 rot.
+3. Sofort löschen (Frist 0): UI-35 bis UI-43 rot. UI-44 prüft kein Timing.
+4. „Rückgängig“ ohne Wirkung auf den Timer: UI-36, UI-38 und UI-42 rot.

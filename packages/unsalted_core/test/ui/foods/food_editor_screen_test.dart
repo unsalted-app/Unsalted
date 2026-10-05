@@ -4,6 +4,8 @@
 // FoodRepository. NativeDatabase.memory() braucht WidgetTester.runAsync()
 // (siehe food_list_screen_test.dart). UI-29 bis UI-32 (Nachtrag 10.0,
 // Erweiterung von 23.6): Zurück mit ungespeicherten Änderungen fragt nach.
+// UI-43 (Teil 1.1b): „Löschen“ im AppBar-Menü kehrt ohne Verwerfen-Dialog
+// zur Liste zurück und löscht dort nach 5 s „Rückgängig“.
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -19,6 +21,8 @@ import 'package:unsalted_core/src/food/food_variant.dart';
 import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/ui/foods/food_editor_screen.dart';
+import 'package:unsalted_core/src/ui/foods/food_list_screen.dart';
+import 'package:unsalted_core/src/ui/shared/undoable_deletion.dart';
 
 Future<CoreDatabase> _openDatabase(WidgetTester tester) async {
   final database = await tester.runAsync(() async => CoreDatabase(NativeDatabase.memory()));
@@ -251,6 +255,72 @@ void main() {
 
     expect(find.text('Änderungen verwerfen?'), findsNothing);
     expect(find.byType(FoodEditorScreen), findsNothing);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-43: „Löschen“ im Editor kehrt ohne Verwerfen-Dialog zur Liste zurück, nach 5 s gelöscht',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+    final repo = DriftFoodRepository(DriftFoodDao(database));
+    final apfel = (await tester.runAsync(() => repo.createVariant(NewFoodVariant(
+          name: 'Apfel',
+          brand: null,
+          barcode: null,
+          source: FoodSource.custom,
+          sourceRef: null,
+          densityGPerMl: null,
+          gramsPerPiece: null,
+          servingSizeG: null,
+          nutrients: NutrientSet(energyKcal: Decimal.fromInt(52)),
+        ))))!;
+
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [coreDatabaseProvider.overrideWithValue(database)],
+      child: const MaterialApp(home: FoodListScreen()),
+    ));
+    await _settle(tester);
+
+    await tester.tap(find.text('Apfel'));
+    await tester.pumpAndSettle();
+    await _settle(tester);
+    expect(find.byType(FoodEditorScreen), findsOneWidget);
+
+    // Ungespeicherte Änderung: Löschen fragt trotzdem nicht nach.
+    await tester.enterText(find.widgetWithText(TextField, 'Marke'), 'Alpenhof');
+    await tester.pump();
+
+    await tester.tap(find.byType(PopupMenuButton<VoidCallback>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Löschen'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Änderungen verwerfen?'), findsNothing);
+    expect(find.byType(FoodEditorScreen), findsNothing);
+    expect(find.byType(FoodListScreen), findsOneWidget);
+    expect(find.text('Apfel'), findsNothing);
+    expect(find.text('„Apfel“ gelöscht. Eingefrorene Versionen behalten ihre Nährwerte.'), findsOneWidget);
+    await _settle(tester);
+    expect(await tester.runAsync(() => repo.getById(apfel)), isNotNull);
+
+    await tester.pump(undoableDeletionDelay);
+    await _settle(tester);
+    await _settle(tester);
+    expect(await tester.runAsync(() => repo.getById(apfel)), isNull);
+    // runAsync liefert auch bei einer Ausnahme null -- die darf es nicht geben.
+    expect(tester.takeException(), isNull);
+
+    // Beim Anlegen gibt es nichts zu löschen, also kein Menü.
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoodEditorScreen), findsOneWidget);
+    expect(find.byType(PopupMenuButton<VoidCallback>), findsNothing);
 
     await _disposeWidgetTree(tester);
   });

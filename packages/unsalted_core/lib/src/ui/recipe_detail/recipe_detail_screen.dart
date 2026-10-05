@@ -10,7 +10,9 @@
 // registrierten Modulen (Kapitel 21), generisch nach `order` sortiert.
 // Davor zwei feste Core-Aktionen (Nachtrag 8.8a): "Versionen" und
 // "Bearbeiten" (Editor der gewählten Version) -- CoreModule.recipeActions
-// bleibt bewusst leer (Entscheidung aus 7.2).
+// bleibt bewusst leer (Entscheidung aus 7.2). Im AppBar-Menü nach den
+// Modul-Aktionen fest „Rezept löschen“ (Teil 1.1b): zurück zur Liste, dort
+// 5 s „Rückgängig“, erst dann softDeleteRecipe.
 // Timer-Chips zeigen nur den gespeicherten timerSeconds-Wert, keine aktive
 // Timer-Engine. Unter der Nährwerttabelle der Mengenrechner (Bildschirm 6),
 // mit demselben NutritionResult wie die Tabelle (Fehlerbehebung 9.2a).
@@ -42,6 +44,7 @@ import '../nutrition/amount_calculator.dart';
 import '../nutrition/nutrition_header.dart';
 import '../nutrition/nutrition_table.dart';
 import '../recipe_editor/recipe_editor_screen.dart';
+import '../shared/undoable_deletion.dart';
 import '../versions/version_list_screen.dart';
 import 'version_switcher.dart';
 
@@ -308,18 +311,21 @@ class _DetailScaffold extends ConsumerWidget {
                   ? () => action.onPressed(context, recipeContext)
                   : null,
             ),
-          if (menuActions.isNotEmpty)
-            PopupMenuButton<RecipeAction>(
-              itemBuilder: (context) => [
-                for (final action in menuActions)
-                  PopupMenuItem(
-                    value: action,
-                    enabled: action.isEnabled?.call(recipeContext) ?? true,
-                    child: Text(action.label),
-                  ),
-              ],
-              onSelected: (action) => action.onPressed(context, recipeContext),
-            ),
+          PopupMenuButton<VoidCallback>(
+            itemBuilder: (context) => [
+              for (final action in menuActions)
+                PopupMenuItem(
+                  value: () => action.onPressed(context, recipeContext),
+                  enabled: action.isEnabled?.call(recipeContext) ?? true,
+                  child: Text(action.label),
+                ),
+              PopupMenuItem(
+                value: () => _deleteRecipe(context, ref),
+                child: const Text('Rezept löschen'),
+              ),
+            ],
+            onSelected: (callback) => callback(),
+          ),
         ],
       ),
       body: Stack(
@@ -367,6 +373,13 @@ class _DetailScaffold extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// Teil 1.1b: zurück zur Rezeptliste, dort Löschen mit „Rückgängig“.
+  void _deleteRecipe(BuildContext context, WidgetRef ref) {
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) navigator.pop();
+    deleteRecipeWithUndo(context, ref, recipe);
   }
 
   static String _formatTimer(int totalSeconds) {

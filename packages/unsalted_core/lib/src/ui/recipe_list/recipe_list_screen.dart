@@ -4,6 +4,9 @@
 // client-seitig, da RecipeRepository.watchRecipes() keinen Suchparameter
 // kennt (anders als FoodRepository.search, Kapitel 16.1). Keine
 // Steckplätze auf diesem Bildschirm (die rendert erst Bildschirm 4).
+// Nach links wischen löscht ein Rezept samt aller Versionen, mit 5 s
+// „Rückgängig“ (Teil 1.1b, shared/undoable_deletion.dart); ausstehende
+// Löschungen sind sofort ausgeblendet.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +15,7 @@ import '../../recipe/recipe.dart';
 import '../../providers/core_providers.dart';
 import '../recipe_detail/recipe_detail_screen.dart';
 import '../recipe_editor/recipe_create_screen.dart';
+import '../shared/undoable_deletion.dart';
 
 class RecipeListScreen extends ConsumerStatefulWidget {
   const RecipeListScreen({super.key});
@@ -39,6 +43,7 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
   @override
   Widget build(BuildContext context) {
     final repo = ref.watch(recipeRepositoryProvider);
+    final hidden = ref.watch(pendingRecipeDeletionsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -79,7 +84,7 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
             );
           }
 
-          final all = snapshot.data ?? const <Recipe>[];
+          final all = (snapshot.data ?? const <Recipe>[]).where((r) => !hidden.contains(r.id)).toList();
           final normalizedQuery = _query.trim().toLowerCase();
           final recipes = normalizedQuery.isEmpty
               ? all
@@ -108,12 +113,18 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
             itemCount: recipes.length,
             itemBuilder: (context, index) {
               final recipe = recipes[index];
-              return ListTile(
-                title: Text(recipe.title),
-                subtitle: recipe.description == null ? null : Text(recipe.description!),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
-                  builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
-                )),
+              return Dismissible(
+                key: ValueKey('recipe-${recipe.id}'),
+                direction: DismissDirection.endToStart,
+                background: const DeleteSwipeBackground(),
+                onDismissed: (_) => deleteRecipeWithUndo(context, ref, recipe),
+                child: ListTile(
+                  title: Text(recipe.title),
+                  subtitle: recipe.description == null ? null : Text(recipe.description!),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
+                  )),
+                ),
               );
             },
           );
