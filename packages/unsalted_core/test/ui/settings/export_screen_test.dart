@@ -36,12 +36,22 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 void main() {
   testWidgets(
       'Versionsauswahl zeigt nur eingefrorene Versionen, Export liefert das '
       'gespeicherte JSON', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -106,7 +116,7 @@ void main() {
   testWidgets('ohne eingefrorene Version erscheint ein Hinweis statt einer Auswahl',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);

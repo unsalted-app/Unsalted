@@ -43,6 +43,16 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 DriftRecipeRepository _repo(CoreDatabase database) =>
     DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
 
@@ -102,7 +112,7 @@ Future<void> _swipeAway(WidgetTester tester, String title) async {
 void main() {
   testWidgets('UI-01: leerer Zustand zeigt "Erstes Rezept anlegen"', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await _pumpRecipeList(tester, database);
 
@@ -114,7 +124,7 @@ void main() {
 
   testWidgets('UI-02: vorhandene Rezepte werden gelistet', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.runAsync(() async {
       final repo = DriftRecipeRepository(
@@ -137,7 +147,7 @@ void main() {
 
   testWidgets('Titel-Suche filtert client-seitig', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.runAsync(() async {
       final repo = DriftRecipeRepository(
@@ -166,7 +176,7 @@ void main() {
 
   testWidgets('FAB öffnet den Erstellen-Bildschirm', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await _pumpRecipeList(tester, database);
 
@@ -182,7 +192,7 @@ void main() {
 
   testWidgets('Tippen auf ein Rezept öffnet das Rezeptdetail (Nachtrag 8.8a)', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeId = await tester.runAsync(() => DriftRecipeRepository(
           DriftRecipeDao(database),
@@ -205,7 +215,7 @@ void main() {
   testWidgets('UI-35: Wischen blendet sofort aus; erst nach 5 s ist das Rezept samt aller Versionen gelöscht',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (pizzaId, pizzaVersions) = await _seedRecipe(tester, database, 'Pizzateig', versions: 2);
     await _seedRecipe(tester, database, 'Apfelkuchen');
     await _pumpRecipeList(tester, database);
@@ -236,7 +246,7 @@ void main() {
 
   testWidgets('UI-36: „Rückgängig“ innerhalb von 5 s löscht nichts, der Eintrag ist wieder da', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (pizzaId, pizzaVersions) = await _seedRecipe(tester, database, 'Pizzateig', versions: 2);
     await _pumpRecipeList(tester, database);
 
@@ -259,7 +269,7 @@ void main() {
   testWidgets('UI-37: zwei Löschungen kurz nacheinander -- je eigene SnackBar und eigener Ablauf',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (pizzaId, pizzaVersions) = await _seedRecipe(tester, database, 'Pizzateig');
     final (apfelId, apfelVersions) = await _seedRecipe(tester, database, 'Apfelkuchen');
     await _pumpRecipeList(tester, database);
@@ -290,7 +300,7 @@ void main() {
 
   testWidgets('UI-38: „Rückgängig“ der zweiten Löschung lässt die erste weiterlaufen', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (pizzaId, pizzaVersions) = await _seedRecipe(tester, database, 'Pizzateig');
     final (apfelId, apfelVersions) = await _seedRecipe(tester, database, 'Apfelkuchen');
     await _pumpRecipeList(tester, database);
@@ -313,7 +323,7 @@ void main() {
 
   testWidgets('UI-39: App-Ende innerhalb der 5 s löscht nichts', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (pizzaId, pizzaVersions) = await _seedRecipe(tester, database, 'Pizzateig', versions: 2);
     await _pumpRecipeList(tester, database);
 

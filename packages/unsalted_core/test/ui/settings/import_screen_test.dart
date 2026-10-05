@@ -33,6 +33,16 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 Map<String, dynamic> _emptyNutrients() => {
       'energy_kcal': null,
       'fat_g': null,
@@ -112,7 +122,7 @@ void main() {
   testWidgets('UI-10: ungültiges JSON zeigt einen Fehlertext statt zu importieren',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await _pumpImportScreen(tester, database);
 
@@ -129,7 +139,7 @@ void main() {
 
   testWidgets('falsches Format zeigt die ImportFormatException-Nachricht', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await _pumpImportScreen(tester, database);
 
@@ -146,7 +156,7 @@ void main() {
 
   testWidgets('gültiges JSON zeigt die Vorschau vor dem Schreiben', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await _pumpImportScreen(tester, database);
 
@@ -165,7 +175,7 @@ void main() {
 
   testWidgets('Importieren schreibt das Rezept und öffnet das Rezeptdetail', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await _pumpImportScreen(tester, database);
 

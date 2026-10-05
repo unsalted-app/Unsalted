@@ -47,11 +47,21 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 void main() {
   testWidgets('EX-03: ein SettingsEntry eines Test-Moduls erscheint in den Einstellungen',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     var tapped = false;
     final module = _FakeModule(entries: [
@@ -85,7 +95,7 @@ void main() {
 
   testWidgets('Export-Eintrag öffnet ExportScreen', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.pumpWidget(ProviderScope(
       overrides: [coreDatabaseProvider.overrideWithValue(database)],
@@ -103,7 +113,7 @@ void main() {
 
   testWidgets('Import-Eintrag öffnet ImportScreen', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.pumpWidget(ProviderScope(
       overrides: [coreDatabaseProvider.overrideWithValue(database)],
@@ -121,7 +131,7 @@ void main() {
 
   testWidgets('ohne registrierte Module bleibt die Seite funktionsfähig (EX-05)', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.pumpWidget(ProviderScope(
       overrides: [coreDatabaseProvider.overrideWithValue(database)],

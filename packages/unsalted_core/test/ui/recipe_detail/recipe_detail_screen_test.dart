@@ -120,6 +120,16 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 Future<(String recipeId, String versionId)> _seedDraftRecipe(
   WidgetTester tester,
   db.CoreDatabase database, {
@@ -234,7 +244,7 @@ _GatedNutritionService _gatedNutrition(db.CoreDatabase database) =>
 void main() {
   testWidgets('EX-05: Seite funktioniert ohne registrierte Module', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final (recipeId, versionId) = await _seedDraftRecipe(
       tester,
@@ -264,7 +274,7 @@ void main() {
   testWidgets('EX-01: eine RecipeDetailSection eines Test-Moduls erscheint auf der Seite',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final (recipeId, _) = await _seedDraftRecipe(tester, database);
 
@@ -286,7 +296,7 @@ void main() {
   testWidgets('EX-02: eine RecipeAction eines Test-Moduls erscheint in der AppBar',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final (recipeId, _) = await _seedDraftRecipe(tester, database);
 
@@ -316,7 +326,7 @@ void main() {
   testWidgets('EX-04: order bestimmt die Reihenfolge über mehrere Module hinweg',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final (recipeId, _) = await _seedDraftRecipe(tester, database);
 
@@ -341,7 +351,7 @@ void main() {
 
   testWidgets('Versionsumschalter wechselt die angezeigte Version', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -402,7 +412,7 @@ void main() {
 
   testWidgets('Timer-Chip zeigt nur den gespeicherten timerSeconds-Wert', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final (recipeId, _) = await _seedDraftRecipe(
       tester,
@@ -424,7 +434,7 @@ void main() {
 
   testWidgets('Aktion "Versionen" öffnet die Versionsliste (Nachtrag 8.8a)', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final (recipeId, _) = await _seedDraftRecipe(tester, database);
     await _pumpDetail(tester, database, recipeId);
@@ -443,7 +453,7 @@ void main() {
   testWidgets('Aktion "Bearbeiten" öffnet den Editor der gewählten Version (Nachtrag 8.8a)',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeRepo = DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
     final (recipeId, v1) = await _seedDraftRecipe(tester, database);
@@ -470,7 +480,7 @@ void main() {
   testWidgets('UI-28: Mengenrechner unter der Tabelle, Gramm ↔ kcal gekoppelt, auch für Snapshots',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final mehl = await tester.runAsync(() => DriftFoodRepository(DriftFoodDao(database)).createVariant(NewFoodVariant(
           name: 'Mehl',
@@ -522,7 +532,7 @@ void main() {
   testWidgets('UI-33: beim Versionswechsel bleiben Titel, Aktionen und Versionsleiste stehen (Teil 1.1a)',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final (recipeId, v1) = await _seedDraftRecipe(
       tester,
@@ -582,7 +592,7 @@ void main() {
   testWidgets('UI-34: schneller Wechsel V1 → V3 → V2 endet auf V2, späte V3-Antwort wird verworfen',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final (recipeId, v1) = await _seedDraftRecipe(
       tester,
@@ -636,7 +646,7 @@ void main() {
   testWidgets('UI-40: „Rezept löschen“ im Detail kehrt zur Liste zurück, SnackBar dort, nach 5 s gelöscht',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, v1) = await _seedDraftRecipe(tester, database, title: 'Pizzateig');
     final v2 = await _addVersion(tester, database, recipeId, v1, versionIndex: 2, ingredientName: 'Hefe');
     await _seedDraftRecipe(tester, database, title: 'Apfelkuchen');
@@ -685,7 +695,7 @@ void main() {
 
   testWidgets('UI-45: schneller Versionswechsel zeigt keinen Ladebalken (Teil 1.1c)', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, v1) = await _seedDraftRecipe(
       tester,
       database,
@@ -724,7 +734,7 @@ void main() {
   testWidgets('UI-46: Ladebalken erst nach 300 ms; ein weiterer Wechsel lässt ihn stehen (Teil 1.1c)',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, v1) = await _seedDraftRecipe(
       tester,
       database,

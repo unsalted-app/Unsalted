@@ -44,6 +44,16 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 Future<void> _pumpEditor(
   WidgetTester tester,
   db.CoreDatabase database, {
@@ -69,7 +79,7 @@ void main() {
       'UI-03: Editor zeigt Live-Nährwerte und speichert über saveDraft',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -141,7 +151,7 @@ void main() {
 
   testWidgets('Zutat hinzufügen und entfernen aktualisiert die Liste', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -173,7 +183,7 @@ void main() {
       'UI-04: Editor ist bei state = snapshot schreibgeschützt und bietet '
       'createDraftFrom an', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -303,7 +313,7 @@ void main() {
   testWidgets('UI-11: Speichern nach Änderung an einer anderen Zeile behält die Verknüpfung zum gelöschten Lebensmittel',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final seed = await seedDeletedLink(tester, database);
 
     await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
@@ -321,7 +331,7 @@ void main() {
   testWidgets('UI-12: Menge, Einheit, Notiz und Position derselben Zeile ändern die Verknüpfung nicht',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final seed = await seedDeletedLink(tester, database);
 
     await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
@@ -362,7 +372,7 @@ void main() {
 
   testWidgets('UI-13: Namensänderung löst die Verknüpfung weiterhin', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final seed = await seedDeletedLink(tester, database);
 
     await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
@@ -378,7 +388,7 @@ void main() {
 
   testWidgets('UI-14: Auswahl eines anderen Lebensmittels ersetzt die Verknüpfung', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final seed = await seedDeletedLink(tester, database);
 
     await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
@@ -399,7 +409,7 @@ void main() {
   testWidgets('UI-15: Hinweis bei gelöschtem Lebensmittel; Vorschau rechnet die Zeile wie unverknüpft',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final seed = await seedDeletedLink(tester, database);
 
     await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
@@ -461,7 +471,7 @@ void main() {
 
   testWidgets('UI-16: Timer setzen speichert Minuten × 60', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, versionId) = await seedTimerRecipe(tester, database);
 
     await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
@@ -475,7 +485,7 @@ void main() {
 
   testWidgets('UI-17: Timer ändern überschreibt den geladenen Wert', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, versionId) = await seedTimerRecipe(tester, database);
 
     await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
@@ -489,7 +499,7 @@ void main() {
 
   testWidgets('UI-18: Timer leeren entfernt ihn', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, versionId) = await seedTimerRecipe(tester, database);
 
     await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
@@ -502,7 +512,7 @@ void main() {
 
   testWidgets('UI-19: ungültiger Timer markiert das Feld und blockiert Speichern', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, versionId) = await seedTimerRecipe(tester, database);
 
     await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
@@ -523,7 +533,7 @@ void main() {
 
   testWidgets('UI-20: unangefasster Sekundenwert bleibt sekundengenau erhalten', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, versionId) = await seedTimerRecipe(tester, database);
 
     await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
@@ -544,7 +554,7 @@ void main() {
 
   testWidgets('UI-21: gesetzter Timer erscheint als Chip im Rezeptdetail', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, versionId) = await seedTimerRecipe(tester, database);
 
     await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);

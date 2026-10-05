@@ -29,10 +29,20 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 void main() {
   testWidgets('FAB ist ohne Titel deaktiviert, mit gültigem Titel aktiv', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.pumpWidget(ProviderScope(
       overrides: [coreDatabaseProvider.overrideWithValue(database)],
@@ -54,7 +64,7 @@ void main() {
 
   testWidgets('zu langer Titel (> 200 Zeichen) deaktiviert das Speichern', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.pumpWidget(ProviderScope(
       overrides: [coreDatabaseProvider.overrideWithValue(database)],
@@ -75,7 +85,7 @@ void main() {
   testWidgets('Speichern ruft createRecipe auf und ruft onCreated mit recipeId/versionId auf',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final recipeDao = DriftRecipeDao(database);
 
     String? createdRecipeId;
@@ -119,7 +129,7 @@ void main() {
       'weitergeleitet (Arbeitskarte 8.2 §13, eingelöst in Schritt 8.3)',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.pumpWidget(ProviderScope(
       overrides: [coreDatabaseProvider.overrideWithValue(database)],
@@ -163,7 +173,7 @@ void main() {
 
   testWidgets('Zurück mit ungespeicherten Eingaben fragt vor dem Verwerfen nach', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.pumpWidget(ProviderScope(
       overrides: [coreDatabaseProvider.overrideWithValue(database)],

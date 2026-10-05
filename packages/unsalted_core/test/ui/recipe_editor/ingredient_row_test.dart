@@ -29,10 +29,20 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 void main() {
   testWidgets('Namensänderung löst eine zuvor verknüpfte Variante', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     IngredientRowData? latest;
     final initialVariant = FoodVariant(id: 'v1', name: 'Mehl', source: FoodSource.custom);
@@ -70,7 +80,7 @@ void main() {
   testWidgets('Verknüpfen-Dialog sucht über FoodRepository.search und übernimmt die Auswahl',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final foodRepo = DriftFoodRepository(DriftFoodDao(database));
     await tester.runAsync(() => foodRepo.createVariant(NewFoodVariant(

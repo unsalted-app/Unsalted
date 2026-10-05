@@ -42,6 +42,16 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 /// Baut zwei Snapshot-Versionen desselben Rezepts: A mit 100 g Mehl, B mit
 /// 200 g Mehl UND einer zusätzlichen Zutat "Salz" -- erzeugt sowohl eine
 /// SetIngredientQuantity- als auch eine AddIngredient-Änderung.
@@ -125,7 +135,7 @@ Future<(String recipeId, String versionAId, String versionBId)> _seedTwoSnapshot
 void main() {
   testWidgets('UI-08: zeigt die gruppierte Änderungsliste (Zutaten-Kategorie)', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final (recipeId, versionAId, versionBId) = await _seedTwoSnapshots(tester, database);
 
@@ -147,7 +157,7 @@ void main() {
   testWidgets('Übernehmen ruft applyChangesAsNewDraft auf und öffnet den neuen Draft',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final (recipeId, versionAId, versionBId) = await _seedTwoSnapshots(tester, database);
@@ -181,7 +191,7 @@ void main() {
   testWidgets('ohne Unterschiede bleibt die Änderungsliste leer und Übernehmen ist deaktiviert',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -244,7 +254,7 @@ void main() {
   testWidgets('UI-08b: übernommener Draft trägt die Lebensmittel-Verknüpfung von B (9.1a, F3)',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);

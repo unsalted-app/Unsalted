@@ -59,6 +59,16 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 Future<String> _createFood(WidgetTester tester, CoreDatabase database, String name, int kcal) async {
   return (await tester.runAsync(() => DriftFoodRepository(DriftFoodDao(database)).createVariant(NewFoodVariant(
         name: name,
@@ -97,7 +107,7 @@ Future<void> _swipeAway(WidgetTester tester, String name) async {
 void main() {
   testWidgets('leerer Zustand zeigt "Eigenes Produkt anlegen"', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await _pumpFoodList(tester, database);
 
@@ -109,7 +119,7 @@ void main() {
 
   testWidgets('vorhandene Lebensmittel werden gelistet', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.runAsync(() async {
       final repo = DriftFoodRepository(DriftFoodDao(database));
@@ -136,7 +146,7 @@ void main() {
 
   testWidgets('Suche filtert die Liste', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await tester.runAsync(() async {
       final repo = DriftFoodRepository(DriftFoodDao(database));
@@ -172,7 +182,7 @@ void main() {
 
   testWidgets('FAB öffnet den Editor im Erstellen-Modus', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await _pumpFoodList(tester, database);
 
@@ -188,7 +198,7 @@ void main() {
 
   testWidgets('UI-41: Wischen blendet ein Lebensmittel sofort aus; erst nach 5 s ist es gelöscht', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final apfel = await _createFood(tester, database, 'Apfel', 52);
     await _createFood(tester, database, 'Birne', 57);
     await _pumpFoodList(tester, database);
@@ -217,7 +227,7 @@ void main() {
 
   testWidgets('UI-42: „Rückgängig“ innerhalb von 5 s löscht kein Lebensmittel', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final apfel = await _createFood(tester, database, 'Apfel', 52);
     await _pumpFoodList(tester, database);
 
@@ -237,7 +247,7 @@ void main() {
   testWidgets('UI-44: gelöschtes Lebensmittel -- Entwurf zeigt den Hinweis aus 9.1b, Snapshot behält Nährwerte',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final mehl = await _createFood(tester, database, 'Mehl', 300);
 
     // V1 (200 g Mehl, verknüpft) eingefroren, V2 als Entwurf daraus.

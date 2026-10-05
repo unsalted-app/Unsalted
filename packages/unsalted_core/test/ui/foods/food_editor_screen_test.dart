@@ -55,11 +55,21 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 void main() {
   testWidgets('Erstellen: FAB ist erst nach gültigem Namen aktiv, createVariant wird aufgerufen',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final dao = DriftFoodDao(database);
 
     await _pumpEditor(tester, database);
@@ -85,7 +95,7 @@ void main() {
   testWidgets('Bearbeiten: lädt bestehende Variante vor und ruft updateVariant auf',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final id = await tester.runAsync(() async {
       final repo = DriftFoodRepository(DriftFoodDao(database));
@@ -121,7 +131,7 @@ void main() {
 
   testWidgets('Formularfehler blockiert die Speichern-Aktion (FAB deaktiviert)', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await _pumpEditor(tester, database);
 
@@ -178,7 +188,7 @@ void main() {
 
   testWidgets('UI-29: ohne Änderung (nur Feld angetippt) schließt Zurück ohne Nachfrage', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await openEditorFromLauncher(tester, database);
     await tester.tap(find.widgetWithText(TextField, 'Marke'));
@@ -195,7 +205,7 @@ void main() {
   testWidgets('UI-30: Eingabe ohne Namen fragt nach; Abbrechen bleibt, Verwerfen schließt ohne Speichern',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     await openEditorFromLauncher(tester, database);
     await tester.enterText(find.widgetWithText(TextField, 'Marke'), 'Alpenhof');
@@ -222,7 +232,7 @@ void main() {
 
   testWidgets('UI-31: Speichern nach Änderung schließt ohne Nachfrage', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final id = await createZucker(tester, database);
 
     await openEditorFromLauncher(tester, database, foodId: id);
@@ -242,7 +252,7 @@ void main() {
 
   testWidgets('UI-32: auf den Ausgangswert zurückgesetzter Text gilt nicht als Änderung', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final id = await createZucker(tester, database);
 
     await openEditorFromLauncher(tester, database, foodId: id);
@@ -262,7 +272,7 @@ void main() {
   testWidgets('UI-43: „Löschen“ im Editor kehrt ohne Verwerfen-Dialog zur Liste zurück, nach 5 s gelöscht',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final repo = DriftFoodRepository(DriftFoodDao(database));
     final apfel = (await tester.runAsync(() => repo.createVariant(NewFoodVariant(
           name: 'Apfel',

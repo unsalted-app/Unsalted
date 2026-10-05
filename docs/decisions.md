@@ -1104,3 +1104,69 @@ hängender Testlauf (beobachtet in den Gegenproben zu 1.1b/1.1c) hätte die CI s
 lange blockiert. Die letzten fünf Läufe auf `main` dauerten 145–172 s, 20 min
 lassen also reichlich Luft. Geändert ist nur der Job-Kopf; die Schritte sind
 unverändert.
+
+**Teil B — Ursache der Hänger nach fehlgeschlagenen Tests.**
+
+*Reproduktion.* Ein einfacher roter Test hängt nicht: Erwartet der
+Timer-Chip-Test `10:01` statt `10:00`, endet die ganze Datei nach 27 s mit
+Exit 1. Es hängt dagegen, wenn der Test direkt nach einem Tap mit `pump()`
+ohne Dauer scheitert. Fester Nachweis, nur im Test erzeugt: UI-45 erwartet
+nach dem Wechsel `V9` statt `V1`. Der Lauf hing, bis er nach 938 s von Hand
+abgebrochen wurde.
+
+*Ursache (nur in Testdateien).* Drei Dinge greifen ineinander:
+1. Nach einem Fehlschlag lässt `flutter_test` den Widget-Baum absichtlich
+   stehen und räumt nicht auf (`binding.dart`, `_runTestBody`: „If we got an
+   exception already, then we instead leave everything alone“). Der
+   Abschluss-Aufruf `_disposeWidgetTree` am Ende des Testkörpers wird beim
+   Fehlschlag übersprungen.
+2. Drift plant beim Abbestellen eines Query-Streams einen Zero-Duration-Timer
+   (`Timer.run` in `StreamQueryStore`) und wartet in `close()`, bis alle diese
+   Timer gelaufen sind (`while (_pendingTimers.isNotEmpty) await …`). In einem
+   Widget-Test liegt dieser Timer in der FakeAsync-Zone; `tester.pump()` ohne
+   Dauer feuert ihn nicht. Ausgelöst wird das Abbestellen hier durch einen
+   Neuaufbau des Rezeptdetails, der `watchRecipe`/`watchVersions` neu
+   abonniert.
+3. Der Teardown `tester.runAsync(database.close)` wartet in der echten Zone
+   auf diesen Timer, den niemand mehr auspumpt.
+
+Mit Markierungen im Teardown bestätigt: `database.streamQueries.close()`
+kehrt nicht zurück, `executor.close()` wird nie erreicht. Ein
+`pump(Duration.zero)` vor dem Schließen genügt: Derselbe rote Test endet dann
+nach 3 s mit Exit 1. Im echten Betrieb laufen Drifts Timer normal ab; die
+Ursache liegt nicht in `lib/`, `lib/` bleibt unverändert.
+
+*Fix.* In den 12 Widget-Testdateien mit Datenbank gibt es einen neuen Helfer
+`_closeDatabase(tester, database)`: Er baut erst den Widget-Baum ab und pumpt
+aus (`_disposeWidgetTree`), dann schließt er die Datenbank. Die Teardown-Zeile
+direkt nach dem Öffnen (80 Stellen) ruft jetzt ihn auf statt
+`tester.runAsync(database.close)`. Das Aufräumen läuft damit auch bei einem
+Fehlschlag. Es läuft vor `binding.postTest`, weil `testWidgets` diesen als
+ersten Teardown registriert und Teardowns in umgekehrter Reihenfolge laufen;
+die Fake-Zone darf dort also noch gepumpt werden. Der Aufruf von
+`_disposeWidgetTree` am Ende der Testkörper bleibt: Ohne ihn meldet
+`flutter_test` bei grünen Tests „A Timer is still pending“, bevor die
+Teardowns laufen. Keine Assertion ist geändert, kein Test übersprungen;
+entfernt wurden nur die 80 alten Teardown-Zeilen.
+
+*Nicht betroffen.* Tests ohne FakeAsync-Zone (`test/data/`, `test/integration/`,
+`test/spike/`, `test/providers/`): Ein roter MG-03 vor seinem `db.close()` am
+Körperende endet nach 3 s mit Exit 1. Diese Tests sind unverändert. Die
+Widget-Tests ohne Datenbank (`package_form`, `amount_calculator`,
+`nutrition_header`, `nutrition_table`) haben keine Drift-Streams.
+
+*Gegenprobe.*
+1. UI-45 rot (`V9`), ganze Datei: endet nach 25 s mit Exit 1 (vorher Hänger).
+2. Bildschirm aus 1.1b, ganze Datei (Fall aus der 1.1c-Gegenprobe): UI-45 und
+   UI-46 rot nach 23 s. Vorher hing der Lauf nach UI-45, und UI-46 lief nie.
+3. Sofort löschen (Mutante aus 1.1b) über Rezeptliste, Lebensmittel und
+   Rezeptdetail: UI-35 bis UI-43 rot, der Lauf endet selbst mit Exit 1 (294 s,
+   weil mehrere rote Tests in das Zeitlimit von `pumpAndSettle` laufen).
+Danach ist alles zurückgesetzt und grün: Core 380, App 1,
+`check_architecture` Exit 0.
+
+*Nebenbefund zum Werkzeug.* `perl -e 'alarm N; exec …' flutter test` beendet nur
+das Startskript; die `flutter_tester`-Kindprozesse liefen als Waisen weiter, ein
+Lauf ignorierte das Signal ganz. Die Waisen aus den Gegenproben zu 1.1b/1.1c
+sind beendet; für Gegenproben ein Skript verwenden, das nach Ablauf auch die
+Kindprozesse beendet.

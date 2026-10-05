@@ -37,6 +37,16 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
   await tester.pump(Duration.zero);
 }
 
+/// Schließt [database] im Teardown, auch wenn der Test vorher scheitert
+/// (Teil 1.1d). Nach einem roten Test lässt flutter_test den Widget-Baum stehen,
+/// und Drift wartet beim Schließen auf seine Abbestell-Timer in der Fake-Zone,
+/// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
+/// abbauen und auspumpen, dann schließen.
+Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
+  await _disposeWidgetTree(tester);
+  await tester.runAsync(database.close);
+}
+
 Future<void> _pumpList(WidgetTester tester, db.CoreDatabase database, String recipeId) async {
   await tester.pumpWidget(ProviderScope(
     overrides: [coreDatabaseProvider.overrideWithValue(database)],
@@ -48,7 +58,7 @@ Future<void> _pumpList(WidgetTester tester, db.CoreDatabase database, String rec
 void main() {
   testWidgets('zeigt Entwurf- und Eingefroren-Badges sowie den Master-Stern', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -89,7 +99,7 @@ void main() {
 
   testWidgets('Kopie als Entwurf öffnet den Editor für die neue Version', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -134,7 +144,7 @@ void main() {
   testWidgets('Löschen fragt nach und ruft erst nach Bestätigung deleteVersion auf',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -171,7 +181,7 @@ void main() {
 
   testWidgets('Vergleichen ist nur für eingefrorene Versionen aktiv', (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
 
     final recipeDao = DriftRecipeDao(database);
     final foodDao = DriftFoodDao(database);
@@ -227,7 +237,7 @@ void main() {
   testWidgets('UI-26: „Als Master markieren“ nur bei eingefrorenen Versionen; Stern erscheint sofort',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, v1, _, _) = await seedThreeVersions(tester, database);
 
     await _pumpList(tester, database, recipeId);
@@ -252,7 +262,7 @@ void main() {
   testWidgets('UI-27: Löschen der Master-Version wird mit der Meldung des Repositorys abgelehnt',
       (tester) async {
     final database = await _openDatabase(tester);
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => _closeDatabase(tester, database));
     final (recipeId, _, _, _) = await seedThreeVersions(tester, database);
 
     await _pumpList(tester, database, recipeId);
