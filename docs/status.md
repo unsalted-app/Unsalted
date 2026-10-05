@@ -105,6 +105,7 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
 |---|---|---|
 | 10.0 | Nachtrag: PopScope im Lebensmittel-Editor (UI-29–UI-32, docs/decisions.md) | fertig |
 | 10.1 | Abnahmeliste vollständig abhaken | Nachweis erbracht (siehe unten) — 4 Befunde, Entscheidung des Projektverantwortlichen offen |
+| 10.1b | Nachtrag: SnapshotCodec sortiert Schlüssel nach 13.4 (GD-13, docs/decisions.md) | fertig |
 | 10.2 | Öffentliche API dokumentieren | offen |
 | 10.3 | Tag `part1-v1.0.0` | offen |
 

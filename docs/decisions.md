@@ -675,3 +675,45 @@ Feld angetippt) schließt Zurück ohne Nachfrage · UI-30 Eingabe ohne Namen
 fragt nach, „Abbrechen“ bleibt, „Verwerfen“ schließt ohne Speichern · UI-31
 Speichern nach Änderung schließt ohne Nachfrage · UI-32 auf den
 Ausgangswert zurückgesetzter Text gilt nicht als Änderung.
+
+## 2026-10-05 — Nachtrag 10.1b: SnapshotCodec sortiert Schlüssel nach 13.4
+
+**Betroffenes Kapitel:** 13.1, 13.4 (Snapshot-Format), 23.3 (GD-Tests).
+
+**Befund (bei der Arbeit an Befund B1 der Freeze-Abnahme):** Kapitel 13.1
+nennt das JSON-Beispiel ausdrücklich „strukturell“ und erklärt 13.4 für
+normativ; 13.4 verlangt: „In jedem JSON-Objekt werden die Schlüssel in
+alphabetisch aufsteigender Reihenfolge erzeugt.“ `SnapshotCodec.encode`
+erzeugte die Schlüssel dagegen in der Reihenfolge des Beispiels (`format`,
+`format_version`, `recipe`, `version`, … ; `recipe`: `id`, `title`,
+`description`). Die Golden-Dateien folgten derselben Reihenfolge, deshalb
+fiel es nicht auf. Deterministisch war die Ausgabe trotzdem.
+
+**Entscheidung (vom Projektverantwortlichen freigegeben):**
+`SnapshotCodec.encode` sortiert die Schlüssel jedes Objekts rekursiv
+alphabetisch (Code-Unit-Reihenfolge), auch in verschachtelten Objekten
+(`recipe`, `version`, `nutrition`, `per100g`, `total`, `extra` …). Listen
+(`ingredients`, `steps`, `incomplete`, `not_calculable`) behalten ihre
+Reihenfolge. Keine Änderung an Struktur, Typen oder Werten des Formats
+(Freeze 4.1 bleibt gewahrt), `decode` ist unverändert und war schon
+reihenfolgeunabhängig.
+
+**Bestehende Daten:** Snapshots, die vor 10.1b gespeichert wurden, behalten
+ihre alte Schlüsselreihenfolge in `snapshot_json` und bleiben gültig:
+`decode` liest jede Reihenfolge, und `exportVersionAsJsonString` liefert den
+gespeicherten String unverändert (13.7). Neu eingefrorene oder per
+`importSnapshot` importierte Snapshots werden kanonisch gespeichert;
+`importJsonString` speichert weiterhin den eingelesenen Originaltext (13.6,
+GD-12 unverändert grün).
+
+**Golden-Dateien:** `gd01_minimal.json` bis `gd04_extra.json` inhaltlich
+unverändert alphabetisch umsortiert. Nachweis: alte Fassung (aus Git) und
+neue Fassung als JSON geparst und auf tiefe Gleichheit geprüft — bei allen
+vier gleich. Vorher waren 7/12/8/8 Objekte je Datei unsortiert, nachher 0.
+Einrückung (zwei Leerzeichen) und fehlender Schluss-Zeilenumbruch bleiben.
+
+**Tests:** Neuer GD-13 (Erweiterung von 23.3) prüft für jedes Objekt eines
+kodierten Snapshots — direkt aus `encode` und nach `jsonEncode`/`jsonDecode`
+wie gespeichert —, dass die Schlüssel alphabetisch sortiert sind (über 70
+Objekte). Gegenprobe: Mit dem alten Codec werden GD-13 und GD-01 bis GD-04
+rot.

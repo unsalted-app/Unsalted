@@ -18,7 +18,7 @@ class SnapshotCodec {
   // ---------------------------------------------------------------------
 
   static Map<String, dynamic> encode(RecipeSnapshotV1 s) {
-    return {
+    return _sortedKeys({
       'format': kSnapshotFormat,
       'format_version': s.formatVersion,
       'recipe': _encodeRecipe(s.recipe),
@@ -26,8 +26,21 @@ class SnapshotCodec {
       'ingredients': s.ingredients.map(_encodeIngredient).toList(),
       'steps': s.steps.map(_encodeStep).toList(),
       'nutrition': _encodeNutrition(s.nutrition),
-    };
+    });
   }
+
+  /// Kapitel 13.4: In jedem JSON-Objekt stehen die Schlüssel alphabetisch
+  /// aufsteigend, auch in verschachtelten Objekten (`per100g`, `extra` …).
+  /// Listen behalten ihre Reihenfolge (Nachtrag 10.1b).
+  static Map<String, dynamic> _sortedKeys(Map<String, dynamic> map) => {
+        for (final key in map.keys.toList()..sort()) key: _sortedValue(map[key]),
+      };
+
+  static Object? _sortedValue(Object? value) => switch (value) {
+        Map<String, dynamic> map => _sortedKeys(map),
+        List<dynamic> list => [for (final element in list) _sortedValue(element)],
+        _ => value,
+      };
 
   static Map<String, dynamic> _encodeRecipe(RecipeSnapshotRecipe r) => {
         'id': r.id,

@@ -17,6 +17,13 @@ import 'package:unsalted_core/src/recipe/snapshot_codec.dart';
 /// denselben Sachverhalt (keine Datenverluste, deterministisches Encoding)
 /// robuster gegen harmlose Whitespace-Unterschiede in der Testdatei.
 
+const _goldenFiles = [
+  'gd01_minimal.json',
+  'gd02_full.json',
+  'gd03_null_nutrients.json',
+  'gd04_extra.json',
+];
+
 Map<String, dynamic> _loadGolden(String name) {
   final file = File('test/contract/golden/$name');
   return jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -164,6 +171,30 @@ void main() {
           );
         }
       }
+    });
+
+    test('GD-13 jedes Objekt eines kodierten Snapshots hat alphabetisch sortierte Schlüssel (13.4)', () {
+      var checkedObjects = 0;
+      void expectSorted(Object? value, String path) {
+        if (value is Map<String, dynamic>) {
+          checkedObjects++;
+          final keys = value.keys.toList();
+          expect(keys, [...keys]..sort(), reason: path);
+          value.forEach((key, child) => expectSorted(child, '$path.$key'));
+        } else if (value is List) {
+          for (var i = 0; i < value.length; i++) {
+            expectSorted(value[i], '$path[$i]');
+          }
+        }
+      }
+
+      for (final name in _goldenFiles) {
+        final encoded = SnapshotCodec.encode(SnapshotCodec.decode(_loadGolden(name)));
+        expectSorted(encoded, name);
+        // So, wie snapshotVersion/importSnapshot den String speichern.
+        expectSorted(jsonDecode(jsonEncode(encoded)), '$name (gespeichert)');
+      }
+      expect(checkedObjects, greaterThan(70), reason: 'alle verschachtelten Objekte geprüft');
     });
   });
 }
