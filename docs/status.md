@@ -65,7 +65,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 
 Phase 8 — abgeschlossen.
 
-## Phase 9 — Integration und Spike (Kapitel 24.6)
+## Phase 9 — Integration und Spike (Kapitel 24.6) — abgeschlossen
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 9.1 | Integrationstests (IT-01–IT-06 + Edge Cases DA/SI/MI, `test/integration/`) | fertig |
@@ -73,7 +73,7 @@ Phase 8 — abgeschlossen.
 | 9.1b | Fehlerbehebung E1: Editor behält Lebensmittel-Verknüpfungen, auch zu weich gelöschten Lebensmitteln (UI-11–UI-15, docs/decisions.md) | fertig |
 | 9.2 | Manueller Durchlauf (durch den Projektverantwortlichen) | bestanden mit 4 Befunden, behoben in 9.2a |
 | 9.2a | Fehlerbehebung: Schritt-Timer, Vergleichstexte, Master markieren, Mengenrechner (UI-16–UI-28, docs/decisions.md) | fertig — Nachtest der 4 Punkte von Hand offen |
-| 9.3 | Technischer Spike (mehrere Drift-Klassen auf einer Sync-DB) | offen |
+| 9.3 | Technischer Spike (mehrere Drift-Klassen auf einer Sync-DB, `test/spike/`) — Ergebnis: A eingeschränkt, B nicht unterstützt, C unterstützt; Empfehlung C mit geteilter `DatabaseConnection` (docs/decisions.md, „Spike 20.1“) | fertig |
 
 **Beobachtungen für 9.2:**
 - Einfrieren einer Version mit gelöschtem Lebensmittel erzeugt einen

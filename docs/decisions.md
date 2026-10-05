@@ -591,3 +591,57 @@ sequenzielle Anwendung korrekt · UI-26 „Als Master markieren“ nur bei
 Snapshots, Stern erscheint sofort · UI-27 Löschen der Master-Version wird
 abgelehnt · UI-28 Mengenrechner unter der Tabelle, Gramm ↔ kcal gekoppelt,
 auch für Snapshots.
+
+## 2026-10-05 — Spike 20.1: mehrere Drift-Datenbankklassen auf einer Datenbank (Schritt 9.3)
+
+**Fragestellung (Kapitel 20.1):** Können mehrere Drift-Datenbankklassen (eine
+je Paket) dieselbe Datenbankdatei bzw. denselben `QueryExecutor` nutzen, wie
+Teil 3 es braucht?
+
+**Aufbau:** `packages/unsalted_core/test/spike/` (nur Testcode, Teil 1
+unverändert). Paket 1 = die echte `CoreDatabase` (schemaVersion 1). Paket 2 =
+`SpikeDatabase` (Tabelle `spike_notes`, einstellbare schemaVersion,
+protokolliert ausgeführte Migrationen). Variante C = `SpikeCombinedDatabase`
+mit allen fünf Core-Tabellen plus `spike_notes`. Jeder Test nutzt eine echte
+temporäre Datei unter `Directory.systemTemp` (wird gelöscht), keine
+In-Memory-DB. 16 Tests, Laufzeit unter 1 s, dreimal in Folge stabil grün.
+Einzige Wartezeit: 200 ms Timeout in A5/C5b, um einen Deadlock nachzuweisen
+statt zu hängen.
+
+- **A:** beide Klassen auf derselben `NativeDatabase`-Instanz (zusätzlich gemessen: dieselbe `DatabaseConnection`-Instanz).
+- **B:** jede Klasse mit eigener `NativeDatabase` auf dieselbe Datei.
+- **C:** eine gemeinsame Klasse mit allen Tabellen; dazu „C mit Teil 1“: `CoreDatabase` auf derselben `DatabaseConnection` wie die gemeinsame Klasse, damit die Teil-1-Repositories unverändert laufen.
+
+**Ergebnis:**
+
+| Punkt | A: ein Executor | B: eigene Verbindung je Klasse | C: gemeinsame Klasse |
+|---|---|---|---|
+| 1 Anlegen | Nur die zuerst öffnende Klasse migriert. Öffnet Core zuerst, fehlt `spike_notes`; öffnet Paket 2 zuerst, fehlen alle Core-Tabellen (A1). Paket 2 muss seine Tabellen selbst anlegen (`createMigrator().createTable`). | Gleiche Versionsnummer: Paket 2 migriert nicht, `spike_notes` fehlt (B1). Höhere Version: `onCreate` von Paket 2 läuft nie (B2). | Eine Migration legt alle Tabellen an (C1). |
+| 2 Schema-Version | `user_version` gehört der zuerst öffnenden Klasse; die Migrationen der anderen laufen nie (A1, beide Reihenfolgen). | Gemeinsames `PRAGMA user_version`: Paket 2 (v2) hält Cores v1 für seine eigene Vorgängerversion (`onUpgrade 1→2`) und setzt v2. Beim nächsten Start sieht Core v2, ruft `onUpgrade(2→1)` und scheitert an der Standard-Strategie — **Core lässt sich nicht mehr öffnen** (B2). | Eine Version für die ganze Datei (C1). |
+| 3 Lesen/Schreiben | Funktioniert über beide Klassen (A3). | Funktioniert, wenn nacheinander geschrieben wird (B3). | Funktioniert (C3, „C mit Teil 1“). |
+| 4 Live-Streams | Rohe Executor-Instanz: nein, jede Klasse hat ihren eigenen Stream-Store (A4). Geteilte `DatabaseConnection`: ja (A4b). | Nein (B4); bestätigt durch die Drift-Doku. | Ja, innerhalb der Klasse und über eine geteilte `DatabaseConnection` auch für `CoreDatabase` („C mit Teil 1“). |
+| 5 Transaktion über beide Klassen | Nicht möglich: Die zweite Klasse erkennt die Transaktion nicht und wartet auf den Executor, den die Transaktion hält — Deadlock. Nach dem Abbruch läuft ihr Schreiben außerhalb, also nicht atomar (A5). | Nicht möglich: „database is locked“ (SQLite-Code 5), Transaktion zurückgerollt (B5). | Atomar, solange alles über die gemeinsame Klasse läuft (C5). Ein Teil-1-Repository innerhalb ihrer Transaktion blockiert wie in A (C5b). |
+| 6 Gleichzeitiges Schreiben | Funktioniert, der gemeinsame Executor serialisiert (A6). | Scheitert: Neben einer Teil-1-Transaktion (Repositories schreiben immer transaktional) bekommt die zweite Verbindung sofort „database is locked“; in der Messung 14 von 20 Schreibversuchen (B6). Drift setzt kein `busy_timeout`; mit synchronen Verbindungen im selben Isolate würde ein Timeout nur blockieren. | Funktioniert (C6). |
+| 7 Schließen | Schließt den Executor für beide; danach schlägt jede Abfrage der anderen Klasse fehl (A7). | Unabhängig (B7). | Schließen der gemeinsamen Verbindung schließt sie für alle Klassen darauf (C7). |
+
+**Urteil:**
+- **A: eingeschränkt.** Funktioniert nur unter vier Bedingungen: (a) genau eine Klasse besitzt Schema und Migrationen für alle Tabellen und öffnet zuerst, (b) alle Klassen teilen dieselbe `DatabaseConnection`-Instanz (nicht nur den Executor), (c) keine Transaktion umfasst Schreibzugriffe mehrerer Klassen, (d) nur der Eigentümer schließt die Verbindung.
+- **B: nicht unterstützt.** Das gemeinsame `user_version` macht unabhängige Migrationen unmöglich und kann Teil 1 dauerhaft aussperren; dazu gesperrte Schreibzugriffe und keine Stream-Synchronisierung.
+- **C: unterstützt.** Bedingung wie in A: Klassenübergreifende atomare Transaktionen laufen ausschließlich über die gemeinsame Klasse.
+
+**Empfehlung für Teil 3: C, kombiniert mit der geteilten Verbindung aus A** (so gemessen in „C mit Teil 1“):
+1. Die App-Hülle erzeugt **eine** `DatabaseConnection` und **eine** gemeinsame Datenbankklasse, die die Tabellen aller Pakete auflistet. Sie allein besitzt `schemaVersion`, `user_version` und alle Migrationen.
+2. Die gemeinsame Klasse wird **vor** jeder anderen Klasse geöffnet. Öffnet `CoreDatabase` zuerst, legt sie nur ihre eigenen Tabellen an (Mechanismus aus A1).
+3. `CoreDatabase` (und jede Paketklasse) wird auf **derselben** `DatabaseConnection` erzeugt und über `coreDatabaseProvider.overrideWithValue(...)` bereitgestellt. Teil 1 bleibt unverändert (Kapitel 20.1); Streams sind geteilt.
+4. Schreibzugriffe, die paketübergreifend atomar sein müssen (z. B. Sync-Merge), laufen vollständig über die gemeinsame Klasse, nie über Teil-1-Repositories innerhalb ihrer Transaktion (C5b).
+5. Folge: Künftige Schema-Änderungen von Teil 1 (CoreDatabase v2 …) müssen als Migrationsschritte in die gemeinsame Klasse übernommen werden; `CoreDatabase.schemaVersion` und `CoreDatabase.migration` sind in dieser Aufstellung inaktiv.
+
+**Versionen:** drift 2.35.0, drift_dev 2.35.0, build_runner 2.16.1, sqlite3 (Dart-Paket) 3.6.0, SQLite 3.53.4, Flutter 3.47.5 / Dart 3.13.4.
+
+**Quellen:**
+- Drift-Doku „Isolates“, https://drift.simonbinder.eu/isolates/ — „You can open two independent drift databases … but then stream queries won't synchronize between those independent instances“; `DatabaseConnection.delayed` synchronisiert auch Stream-Abfragen, `LazyDatabase` teilt nur den Executor.
+- Drift-API `DatabaseConnection`, https://pub.dev/documentation/drift/latest/drift/DatabaseConnection-class.html — eine Verbindung besteht aus `QueryExecutor` und `StreamQueryStore`.
+- Drift-FAQ, https://drift.simonbinder.eu/faq/#using-the-database — eine Instanz je Datenbankklasse.
+- Quelltext drift 2.35.0 (die Migrationsseite der Doku beschreibt den `user_version`-Mechanismus nicht, daher maßgeblich): `lib/src/runtime/executor/helpers/engines.dart` (`DelegatedDatabase.ensureOpen`: ist der Executor schon offen, laufen keine Migrationen; `_runMigrations` vergleicht `user_version` mit dem `schemaVersion` der öffnenden Klasse; `close` schließt für alle), `lib/src/runtime/api/connection_user.dart` (Konstruktor übernimmt eine übergebene `DatabaseConnection` samt Stream-Store; `resolvedEngine` nutzt den Transaktions-Executor nur bei gleicher `attachedDatabase`), `lib/src/runtime/api/db_base.dart` (Mehrfach-Warnung „race conditions“ nur je `runtimeType`; `beforeOpen` ruft `onUpgrade` auch bei sinkender Version), `lib/src/runtime/query_builder/migration.dart` (Standard-`onUpgrade` wirft eine Exception). Kein `busy_timeout` im Drift-Quelltext.
+
+**Nebenbefund Werkzeug:** `dart run build_runner build --build-filter="test/spike/**"` hat bei einem zweiten Lauf drei generierte Produktionsdateien gelöscht (`core_database.g.dart`, `drift_food_dao.g.dart`, `drift_recipe_dao.g.dart`). Sie wurden unverändert aus Git wiederhergestellt; `lib/` ist identisch mit dem vorherigen Commit. Siehe CLAUDE.md Abschnitt 4.

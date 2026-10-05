@@ -53,7 +53,7 @@ vermeiden.
 
 ---
 
-## 1. Projektstruktur (Stand: nach Schritt 9.2a)
+## 1. Projektstruktur (Stand: nach Schritt 9.3 — Phase 0–9 abgeschlossen)
 
 ```text
 unsalted/
@@ -192,6 +192,9 @@ unsalted/
          │  ├─ food_repository_test.dart     FD-01…05
          │  ├─ nutrition_service_test.dart
          │  └─ snapshot_service_test.dart    IT-01/03/05, GD-11/12
+         ├─ spike/                           Schritt 9.3: mehrere Drift-Klassen auf einer DB
+         │                                   (SpikeDatabase, SpikeCombinedDatabase + .g.dart,
+         │                                   echte Temp-Datei), Ergebnis in decisions.md
          ├─ integration/                     Schritt 9.1: IT-01…IT-06 + Edge Cases DA/SI/MI,
          │                                   echte Systemkette über die Provider, Gerät A/B
          │                                   = getrennte In-Memory-Datenbanken (support/)
@@ -218,13 +221,11 @@ App-Hülle `apps/unsalted_app`), **Schritt 9.1** (Integrationstests) und
 bestanden mit 4 Befunden) und **Fehlerbehebung 9.2a** (Schritt-Timer,
 Vergleichstexte, Master markieren, Mengenrechner).
 
-**Nächster Schritt: Nachtest der vier 9.2a-Punkte von Hand durch den
-Projektverantwortlichen.** Der Assistent wartet auf dessen Ergebnis.
+**Schritt 9.3** (technischer Spike, Kapitel 20.1) — Phase 9 abgeschlossen.
 
-Danach: 9.3
-(technischer Spike: mehrere Drift-Klassen auf einem `QueryExecutor`), dann
-Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
-`part1-v1.0.0`).
+**Nächster Schritt: Phase 10 — Freeze** (Abnahmeliste 10.1, öffentliche API
+dokumentieren 10.2, Tag `part1-v1.0.0` 10.3), sobald der
+Projektverantwortliche den Nachtest der 9.2a-Punkte bestätigt hat.
 
 ---
 
@@ -379,6 +380,19 @@ Phase 10 (Freeze: Abnahmeliste, öffentliche API dokumentieren, Tag
   unmittelbar vor dieser Änderung (Kapitel 14.4). `describeChanges` wendet
   die Liste deshalb nur für die Anzeige der Reihe nach an; die Liste selbst
   bleibt unverändert und wird exakt so übernommen.
+- **`build_runner --build-filter` kann fremde generierte Dateien löschen**
+  (seit 9.3): Ein auf `test/spike/**` gefilterter zweiter Lauf hat
+  `core_database.g.dart` und die DAO-`.g.dart` gelöscht. Nach jedem
+  `build_runner`-Lauf `git status` prüfen und gelöschte, committete
+  `.g.dart` mit `git checkout -- <datei>` wiederherstellen. Zwei
+  `@DriftDatabase`-Klassen mit derselben Tabelle gehören in getrennte
+  Bibliotheken, sonst erzeugt Drift doppelte Klassen im selben `part` und
+  der Compiler bricht ab (sieht in `flutter test` wie ein Hänger aus).
+- **Mehrere Drift-Klassen auf einer Datenbank: Ergebnis des Spikes 9.3
+  beachten** (docs/decisions.md, „Spike 20.1“): nur eine Klasse besitzt
+  Schema, Migrationen und `user_version` und öffnet zuerst; alle anderen
+  Klassen auf derselben `DatabaseConnection`-Instanz; keine Transaktion über
+  mehrere Klassen; nie getrennte Verbindungen auf dieselbe Datei.
 - **Long-Press-Drag in `ReorderableListView`-Widget-Tests** (seit 9.1b):
   Ein einzelnes `gesture.moveTo` auf das Ziel löst kein Umsortieren aus.
   Muster: `startGesture` auf den Drag-Handle, `pump(Duration(seconds: 1))`
