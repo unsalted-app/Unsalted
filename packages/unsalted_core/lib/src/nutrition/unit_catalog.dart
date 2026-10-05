@@ -34,8 +34,8 @@ class Unit {
   });
 }
 
-/// Die neun Einheiten aus Kapitel 6, wörtlich mit den dort festgelegten
-/// Faktoren. Diese Liste ist ab dem Freeze unveränderlich (Kapitel 21.1).
+/// Die neun Einheiten aus Kapitel 9, wörtlich mit den dort festgelegten
+/// Faktoren. Diese Liste ist ab dem Freeze unveränderlich (Kapitel 25.1).
 abstract final class UnitCatalog {
   /// Alle neun Einheiten aus Kapitel 9 mit ihren Umrechnungsfaktoren;
   /// eingefroren (Kapitel 25.1).
@@ -62,7 +62,7 @@ abstract final class UnitCatalog {
   /// Rechnet [quantity] in Gramm um. Gibt `null` zurück, wenn die dafür
   /// nötige Zusatzangabe fehlt (Dichte bei volume, Stückgewicht bei count) —
   /// das ist dann "nicht berechenbar", nicht geschätzt und nicht
-  /// stillschweigend mit 1,0 gerechnet (Kapitel 6).
+  /// stillschweigend mit 1,0 gerechnet (Kapitel 9).
   ///
   /// Wirft [ArgumentError] bei unbekanntem [unitCode].
   /// Wirft [ValidationException] bei negativer [quantity].

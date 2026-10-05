@@ -813,3 +813,47 @@ verweisen auf Kapitelnummern einer älteren Berichtsfassung (z. B.
 `NutrientSet` „Kapitel 5.1“). Laut Arbeitskarte wurden nur fehlende
 Kommentare ergänzt, bestehende nicht geändert. Korrektur wäre ein eigener
 kleiner Nachtrag.
+
+## 2026-10-05 — Nachtrag 10.2a: AT-05 erzwingt 28.1.3, Kapitelverweise korrigiert
+
+**a) AT-05.** `src/providers/` darf weiterhin aus `src/data/` importieren
+(Verdrahtung, Kapitel 16.7), aber `package:drift` ist dort jetzt verboten —
+AT-05 prüft den Drift-Import für alle Dateien außer `src/data/`, die
+Ausnahme für `src/providers/` gilt nur noch für Importe aus `data/`. Damit
+wird Kapitel 28.1.3 durch einen Test erzwungen. Gegenprobe: ein temporär
+eingefügtes `import 'package:drift/drift.dart';` in `core_providers.dart`
+macht AT-05 rot; danach wieder entfernt.
+
+**b) Kapitelverweise.** 151 bestehende `///`-Zeilen in `lib/` mit
+Kapitelverweis geprüft. Veraltet waren nur Verweise in `src/nutrition/` aus
+Phase 2, geschrieben gegen die ältere Berichtsfassung (dort Nährwertgrundlagen
+in Kapitel 5, Rechenkern in 13, Einheiten in 6, Datei-Plan in 14, Freeze in
+21; heute zusammengeführt in Kapitel 8 bzw. 9, 18, 25). Jeder Verweis wurde
+anhand des Inhalts dem Unterkapitel zugeordnet, in dem die Aussage heute
+steht; 17 Verweise in 6 Dateien ersetzt, nur Kommentarzeilen:
+
+- `nutrient_set.dart`: 5.1 → 8.1 (zweimal), 5.2 → 8.3 (zweimal), 13.1 → 8.3
+  (`incomplete` ist nur in 8.3 definiert), „4.1, 9“ → „7.4, 13.2“ (Decimal
+  als JSON-String, `null` als JSON-`null`).
+- `nutrition_result.dart`: 13.2 Randfall-Tabelle → 8.5, „5.2 / 13.1“ → 8.3,
+  6 → 9, 13.2 (`forAmount`- und `gramsForKcal`-Formel) → 8.4 (zweimal).
+- `nutrition_engine.dart`: 14 (Datei-Vertrag) → 18.1.
+- `nutrient_validator.dart`: 13.3 → 8.6. `decimal_math.dart`: 13.4 → 8.6.
+- `unit_catalog.dart`: 6 → 9 (zweimal), 21.1 → 25.1.
+
+**Unklar, nicht geändert:**
+- `nutrition/nutrition_engine.dart:39` „freie Zutat ohne Nährwerte,
+  Kapitel 7.4“ — heute passend sind 8.5 (Randfall „Zutat ohne verknüpfte
+  FoodVariant“), 10.5 und 11.4 (`foodVariantId` nullable); keine eindeutige
+  Zuordnung.
+- `data/tables/recipe_ingredients.dart:26` „1-basiert, lückenlos innerhalb
+  einer Version (Kapitel 10.10)“ — 10.10 regelt heute Zeitstempel; passend
+  wären 10.7 (Positionen nach `saveDraft`) oder 11.4 (Spalte `position`).
+
+**Beobachtung, nicht geändert (Inhalt statt Nummer):** Die Kopfkommentare von
+`data/tables/recipe_ingredients.dart` und `data/tables/recipe_steps.dart`
+beschreiben `deleted_at` als „ohne eigenen Schreibpfad“ und `saveDraft` als
+„Hart-Löschen + Neu-Einfügen“. Seit der aktuellen Spezifikation (Kapitel
+10.7) schreibt `saveDraft` per Upsert-/Soft-Delete-Delta `deleted_at`. Normale
+`//`-Kommentare mit alten Nummern wurden nicht angefasst (Auftrag: nur
+`///`).

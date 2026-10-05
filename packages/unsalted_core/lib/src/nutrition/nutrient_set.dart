@@ -40,7 +40,7 @@ class NutrientSet {
   final Decimal? saltG;
 
   /// Zusätzliche Werte, Schlüssel im Format `<name>_<einheit>`,
-  /// z. B. `sodium_mg`, `vitamin_c_mg` (Kapitel 5.1).
+  /// z. B. `sodium_mg`, `vitamin_c_mg` (Kapitel 8.1).
   final Map<String, Decimal> extra;
 
   /// Erzeugt einen Satz; nicht angegebene Felder sind unbekannt, [extra] ist leer.
@@ -56,7 +56,7 @@ class NutrientSet {
     this.extra = const {},
   });
 
-  /// Schlüssel der 8 festen Felder, in der Reihenfolge aus Kapitel 5.1.
+  /// Schlüssel der 8 festen Felder, in der Reihenfolge aus Kapitel 8.1.
   static const List<String> keys = [
     'energy_kcal',
     'fat_g',
@@ -82,7 +82,7 @@ class NutrientSet {
       extra.isEmpty;
 
   /// Skaliert jedes bekannte Feld mit [factor]. null bleibt null
-  /// (Kapitel 5.2: "Skalierung: null bleibt null").
+  /// (Kapitel 8.3: "Skalierung: null bleibt null").
   NutrientSet scale(Rational factor) {
     Decimal? scaleOne(Decimal? value) =>
         value == null ? null : (value.r * factor).toFixedDecimal();
@@ -104,14 +104,14 @@ class NutrientSet {
     );
   }
 
-  /// Addiert `this` und [other] nach der Regel aus Kapitel 5.2:
+  /// Addiert `this` und [other] nach der Regel aus Kapitel 8.3:
   ///   bekannt + bekannt  = Summe
   ///   bekannt + unbekannt = bekannt, aber Feld wird als "incomplete" gemeldet
   ///   unbekannt + unbekannt = unbekannt (und "incomplete")
   ///
   /// Gibt sowohl das Ergebnis als auch die Menge der dabei unvollständig
   /// gewordenen Feld-/extra-Schlüssel zurück — die Engine sammelt daraus
-  /// NutritionResult.incomplete (Kapitel 13.1).
+  /// NutritionResult.incomplete (Kapitel 8.3).
   ({NutrientSet set, Set<String> incomplete}) plus(NutrientSet other) {
     final incomplete = <String>{};
 
@@ -184,7 +184,7 @@ class NutrientSet {
   }
 
   /// JSON-Darstellung: alle Zahlen als String, null bleibt null
-  /// (Kapitel 4.1, Kapitel 9).
+  /// (Kapitel 7.4, 13.2).
   Map<String, dynamic> toJsonMap() {
     return {
       'energy_kcal': energyKcal?.toString(),

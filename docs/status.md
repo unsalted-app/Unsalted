@@ -108,6 +108,7 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
 | 10.1a | Nachtrag: GD-05 nach 23.3, GD-05b, RecipeStep-Tests; B2/B4 dokumentiert (docs/decisions.md) | fertig |
 | 10.1b | Nachtrag: SnapshotCodec sortiert Schlüssel nach 13.4 (GD-13, docs/decisions.md) | fertig |
 | 10.2 | Öffentliche API dokumentieren — 280 Lücken in der exportierten API geschlossen, `dart doc` 0 Warnungen/0 Fehler (docs/decisions.md) | fertig |
+| 10.2a | Nachtrag: AT-05 erzwingt 28.1.3, Kapitelverweise in `///`-Kommentaren korrigiert (docs/decisions.md) | fertig |
 | 10.3 | Tag `part1-v1.0.0` | offen — erst nach Freigabe durch den Projektverantwortlichen |
 
 Kapitel 28 „Nachträge und Klarstellungen zu Teil 1“ ist in `docs/spezifikation.md` übernommen (2026-10-05); es gilt vor Kapitel 1–27 und ist Teil des Freeze von `part1-v1.0.0`.
@@ -159,9 +160,9 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 - Der Editor zeigt live nur die Gesamt-kcal; pro Portion und pro 100 g fehlen.
 - Kein Hinweis bei doppeltem Lebensmittelnamen.
 
-**Offene Beobachtungen nach 10.2 (nicht blockierend):**
-- Bestehende `///`-Kommentare verweisen teils auf Kapitelnummern einer älteren Berichtsfassung (z. B. „Kapitel 13.2“, „21.1“, „5.1“); siehe docs/decisions.md, Schritt 10.2.
-- AT-05 überspringt `src/providers/` vollständig, also auch die Prüfung auf `package:drift`. Kapitel 28.1.3 sagt, `providers/` importiere `package:drift` nicht — das stimmt heute, wird von AT-05 aber nicht erzwungen.
+**Beobachtungen nach 10.2a (nicht blockierend, docs/decisions.md):**
+- Zwei Kapitelverweise ohne eindeutige Zuordnung bleiben unverändert: `nutrition_engine.dart:39` (7.4) und `data/tables/recipe_ingredients.dart:26` (10.10).
+- Die Kopfkommentare von `data/tables/recipe_ingredients.dart` und `recipe_steps.dart` beschreiben noch das frühere Hart-Löschen statt des Soft-Delete-Deltas aus Kapitel 10.7.
 
 ## Bekannte offene Lücken (nicht blockierend)
 

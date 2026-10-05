@@ -33,7 +33,7 @@ abstract final class NutrientValidator {
   ///
   /// Wirft [ValidationException], wenn mindestens eines der 8 Felder
   /// negativ ist — das ist der einzige Fall, der das Speichern verhindert
-  /// (Kapitel 13.3: "nie Sperre, außer bei negativen Werten").
+  /// (Kapitel 8.6: "nie Sperre, außer bei negativen Werten").
   static List<NutrientWarning> check(NutrientSet per100g) {
     _checkNoNegativeValues(per100g);
 

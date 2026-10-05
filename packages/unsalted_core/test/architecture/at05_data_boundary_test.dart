@@ -14,7 +14,8 @@
 // muss zwangsläufig aus data/ importieren (CoreDatabase, DriftRecipeDao,
 // DriftRecipeRepository, ...) — das ist ihr ganzer Zweck (Kapitel 16.7).
 // Die Ausnahme ist bewusst eng: nur src/providers/ selbst, nicht die
-// Implementierungen dahinter. Siehe docs/decisions.md.
+// Implementierungen dahinter, und nur für Importe aus data/. package:drift
+// bleibt auch dort verboten (Kapitel 28.1.3, Nachtrag 10.2a).
 
 import 'dart:io';
 import 'package:test/test.dart';
@@ -32,9 +33,10 @@ void main() {
 
       // Alles unter src/data/ ist ausgenommen -- dort ist Drift der Sinn
       // der Sache (Tabellen, DAOs, CoreDatabase, Mapper). src/providers/
-      // ebenfalls: eine Verdrahtungsdatei muss zwangsläufig aus data/
-      // importieren (Schritt 7.3, Kapitel 16.7).
-      if (rel.startsWith('src/data/') || rel.startsWith('src/providers/')) continue;
+      // darf aus data/ importieren (Schritt 7.3, Kapitel 16.7), aber nicht
+      // package:drift (Kapitel 28.1.3).
+      if (rel.startsWith('src/data/')) continue;
+      final isProviders = rel.startsWith('src/providers/');
 
       for (final entry in importLines(file)) {
         final line = entry.value;
@@ -46,7 +48,7 @@ void main() {
 
         // Relative Importe wie '../data/tables/recipes.dart' oder
         // '../data/core_database.dart' aus einer Nicht-data/-Datei heraus.
-        if (RegExp(r'''['"](\.\./)*data/''').hasMatch(line)) {
+        if (!isProviders && RegExp(r'''['"](\.\./)*data/''').hasMatch(line)) {
           violations.add('$rel:${entry.key} importiert direkt aus data/ → ${line.trim()}');
         }
       }

@@ -25,7 +25,7 @@ import 'nutrition_result.dart';
 import 'unit_catalog.dart';
 
 /// Eine Zutat als Eingabe für die Engine. Bewusst ohne eigenen Datei-Vertrag
-/// (Kapitel 14) — reines Eingabe-Objekt für [NutritionEngine.calculate],
+/// (Kapitel 18.1) — reines Eingabe-Objekt für [NutritionEngine.calculate],
 /// kein Fachmodell mit eigenem Lebenszyklus wie RecipeIngredient.
 ///
 /// [displayName] wird nur für [NutritionResult.notCalculable] gebraucht,

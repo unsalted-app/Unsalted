@@ -28,7 +28,7 @@ extension RationalToDecimalX on Rational {
   /// Dezimaldarstellung hat (z. B. 1/3). Die Standard-Rundungsart von
   /// `toDecimal` ist `truncate` (Kürzen, nicht kaufmännisches Runden) —
   /// das ist hier bewusst hingenommen, weil die eigentliche Rundung für die
-  /// Anzeige ohnehin ausschließlich im Formatter passiert (Kapitel 13.4).
+  /// Anzeige ohnehin ausschließlich im Formatter passiert (Kapitel 8.6).
   Decimal toFixedDecimal([int scale = kInternalScale]) =>
       toDecimal(scaleOnInfinitePrecision: scale);
 }

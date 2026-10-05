@@ -23,15 +23,15 @@ class NutritionResult {
   /// Fertiggewicht `0` ist (Kapitel 8.5).
   final NutrientSet per100g;
 
-  /// null, wenn servings == null (Kapitel 13.2, Randfall-Tabelle).
+  /// null, wenn servings == null (Kapitel 8.5, Randfall-Tabelle).
   final NutrientSet? perServing;
 
   /// Felder, die durch mindestens eine unvollständige Addition entstanden
-  /// sind (Kapitel 5.2 / 13.1), z. B. {'sugars_g'}.
+  /// sind (Kapitel 8.3), z. B. {'sugars_g'}.
   final Set<String> incomplete;
 
   /// Anzeigenamen der Zutaten, die nicht in Gramm umgerechnet werden
-  /// konnten (fehlende Dichte oder fehlendes Stückgewicht, Kapitel 6).
+  /// konnten (fehlende Dichte oder fehlendes Stückgewicht, Kapitel 9).
   final List<String> notCalculable;
 
   /// `true`, wenn [total] mindestens einen bekannten Wert enthält.
@@ -50,7 +50,7 @@ class NutritionResult {
   });
 
   /// Nährwerte für eine beliebige Menge in Gramm, hochgerechnet aus per100g
-  /// (Kapitel 13.2: `forAmount(g) = per100g * (g / 100)`).
+  /// (Kapitel 8.4: `forAmount(g) = per100g * (g / 100)`).
   NutrientSet forAmount(Decimal grams) {
     final factor = grams.r / Decimal.fromInt(100).r;
     return per100g.scale(factor);
@@ -58,7 +58,7 @@ class NutritionResult {
 
   /// Wie viel Gramm dieser Zutat/Mischung ergeben [kcal] Energie.
   /// null, wenn per100g.energy_kcal null oder 0 ist — Division durch 0 wird
-  /// so nie versucht (Kapitel 13.2:
+  /// so nie versucht (Kapitel 8.4:
   /// `gramsForKcal(k) = per100g.energy_kcal > 0 ? k * 100 / per100g.energy_kcal : null`).
   Decimal? gramsForKcal(Decimal kcal) {
     final energyPer100g = per100g.energyKcal;
