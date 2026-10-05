@@ -226,8 +226,12 @@ und Klarstellungen in Kapitel 28 der Spezifikation.
 - Bekannte Grenzen von `part1-v1.0.0` (Teilen-Dialog, Dateiauswahl, E2,
   Design-Punkte): Kapitel 28.8 und `docs/status.md`.
 
-**Nächster Schritt:** offen — Teil 1.1 (bekannte Grenzen) oder Teil 2
-(`unsalted_experiments`) nach neuen Arbeitskarten des Projektverantwortlichen.
+**Teil 1.1 (in Arbeit, `docs/status.md`):** 1.1a fertig (kein Flackern beim
+Versionswechsel im Rezeptdetail). Kein neuer Tag pro Schritt — Teil 1.1 wird
+nach dem Design-Pass gesammelt als `part1-v1.1.0` getaggt.
+
+**Nächster Schritt:** weitere Arbeitskarten zu Teil 1.1 (Design-Pass) oder
+Teil 2 (`unsalted_experiments`) nach Vorgabe des Projektverantwortlichen.
 
 ---
 
@@ -392,6 +396,16 @@ und Klarstellungen in Kapitel 28 der Spezifikation.
   für den Long-Press, dann in ~10 Schritten mit `Offset.lerp` und kurzem
   `pump` je Schritt bis knapp über das Ziel bewegen, `up()`,
   `pumpAndSettle()`. Siehe UI-12 in `recipe_editor_screen_test.dart`.
+- **„hit test missed" ist nur eine Warnung — der Test kann trotzdem grün
+  sein** (seit Teil 1.1a): Ein Tap, der danebengeht, wirft keinen Fehler.
+  Typischer Fall: zwei Chip-Wechsel nacheinander mit `_settle`-artigem
+  Pumpen ohne Zeitvorschub — die `ChoiceChip`-Auswahl-Animation steht still,
+  der zweite Tap verfehlt den Chip. Nach einem Auswahlwechsel die Animation
+  mit `pump(Duration(milliseconds: 500))` auslaufen lassen
+  (`pumpAndSettle` hängt, solange ein `LinearProgressIndicator` läuft) und
+  direkt nach jedem Tap seine Wirkung prüfen (z. B. gewählter Chip), nicht
+  erst das Endergebnis. Siehe `_tapVersion` in
+  `recipe_detail_screen_test.dart`.
 - **`dart doc` meldet fehlende Doku-Kommentare nicht** (seit 10.2): Lücken
   findet man nur mit vorübergehend aktiviertem Lint `public_member_api_docs`
   (nicht committen) und Filter auf die über `lib/unsalted_core.dart`

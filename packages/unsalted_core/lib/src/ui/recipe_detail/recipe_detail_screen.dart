@@ -20,6 +20,14 @@
 // AppBar- und Sections-Teil (der RecipeContext baut) erst gerendert,
 // sobald Version + Nährwerte geladen sind (_DetailScaffold, ein eigenes
 // ConsumerWidget), statt zu versuchen, WidgetRef künstlich nachzubilden.
+//
+// Versionswechsel (Teil 1.1a): Der zuletzt geladene Inhalt bleibt samt
+// AppBar und Versionsleiste stehen, bis die gewählte Version geladen ist;
+// solange zeigt ein LinearProgressIndicator unter der AppBar das Laden, und
+// die Versionsleiste markiert schon die neue Wahl. Der zentrierte Ladekreis
+// erscheint nur beim allerersten Laden. Antworten älterer Ladevorgänge
+// werden verworfen (Zähler `_request`), damit bei V1 → V3 → V2 eine späte
+// Antwort für V3 nicht V2 überschreibt.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -144,25 +152,57 @@ class _VersionLoader extends ConsumerStatefulWidget {
 }
 
 class _VersionLoaderState extends ConsumerState<_VersionLoader> {
-  late Future<(RecipeVersion, NutritionResult)> _future;
+  /// Zuletzt geladener Inhalt; bleibt während eines Versionswechsels stehen.
+  (RecipeVersion, NutritionResult)? _shown;
+  Object? _error;
+  bool _loading = false;
+
+  /// Zählt die Ladevorgänge; nur die Antwort des jüngsten wird übernommen.
+  int _request = 0;
 
   @override
   void initState() {
     super.initState();
-    _future = _load(widget.selectedVersionId);
+    _start(widget.selectedVersionId);
   }
 
   @override
   void didUpdateWidget(covariant _VersionLoader oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.selectedVersionId != widget.selectedVersionId) {
-      _future = _load(widget.selectedVersionId);
+      _start(widget.selectedVersionId);
     }
   }
 
+  /// Wird aus initState/didUpdateWidget aufgerufen, also vor dem nächsten
+  /// build -- deshalb ohne setState.
+  void _start(String versionId) {
+    final request = ++_request;
+    _loading = true;
+    _load(versionId).then<void>(
+      (result) {
+        if (!mounted || request != _request) return;
+        setState(() {
+          _shown = result;
+          _error = null;
+          _loading = false;
+        });
+      },
+      onError: (Object error) {
+        if (!mounted || request != _request) return;
+        setState(() {
+          _error = error;
+          _loading = false;
+        });
+      },
+    );
+  }
+
   Future<(RecipeVersion, NutritionResult)> _load(String versionId) async {
-    final version = await ref.read(recipeRepositoryProvider).getVersion(versionId);
-    final nutrition = await ref.read(nutritionServiceProvider).forVersion(versionId);
+    final repo = ref.read(recipeRepositoryProvider);
+    final nutritionService = ref.read(nutritionServiceProvider);
+    final version = await repo.getVersion(versionId);
+    final nutrition = await nutritionService.forVersion(versionId);
     if (version == null) {
       throw StateError('Version "$versionId" nicht gefunden.');
     }
@@ -171,31 +211,29 @@ class _VersionLoaderState extends ConsumerState<_VersionLoader> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<(RecipeVersion, NutritionResult)>(
-      future: _future,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return Scaffold(
-            appBar: AppBar(title: Text(widget.recipe.title)),
-            body: const Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (snapshot.hasError) {
-          return Scaffold(
-            appBar: AppBar(title: Text(widget.recipe.title)),
-            body: Center(child: Text(snapshot.error.toString())),
-          );
-        }
-        final (version, nutrition) = snapshot.data!;
-        return _DetailScaffold(
-          recipe: widget.recipe,
-          versions: widget.versions,
-          version: version,
-          nutrition: nutrition,
-          modules: widget.modules,
-          onVersionSelected: widget.onVersionSelected,
-        );
-      },
+    final shown = _shown;
+    if (_error != null && !_loading) {
+      return Scaffold(
+        appBar: AppBar(title: Text(widget.recipe.title)),
+        body: Center(child: Text(_error.toString())),
+      );
+    }
+    if (shown == null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(widget.recipe.title)),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    final (version, nutrition) = shown;
+    return _DetailScaffold(
+      recipe: widget.recipe,
+      versions: widget.versions,
+      version: version,
+      nutrition: nutrition,
+      selectedVersionId: widget.selectedVersionId,
+      loading: _loading,
+      modules: widget.modules,
+      onVersionSelected: widget.onVersionSelected,
     );
   }
 }
@@ -205,6 +243,12 @@ class _DetailScaffold extends ConsumerWidget {
   final List<RecipeVersion> versions;
   final RecipeVersion version;
   final NutritionResult nutrition;
+
+  /// Gewählte Version; weicht während eines Wechsels von [version] ab.
+  final String selectedVersionId;
+
+  /// `true`, solange die gewählte Version noch geladen wird.
+  final bool loading;
   final List<UnsaltedModule> modules;
   final ValueChanged<String> onVersionSelected;
 
@@ -213,6 +257,8 @@ class _DetailScaffold extends ConsumerWidget {
     required this.versions,
     required this.version,
     required this.nutrition,
+    required this.selectedVersionId,
+    required this.loading,
     required this.modules,
     required this.onVersionSelected,
   });
@@ -276,42 +322,48 @@ class _DetailScaffold extends ConsumerWidget {
             ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: Stack(
         children: [
-          VersionSwitcher(
-            versions: versions,
-            selectedVersionId: version.id,
-            onSelected: onVersionSelected,
-          ),
-          const SizedBox(height: 8),
-          if (recipe.description != null) Text(recipe.description!),
-          const SizedBox(height: 16),
-          NutritionHeader(result: nutrition),
-          const SizedBox(height: 8),
-          NutritionTable(result: nutrition),
-          const SizedBox(height: 8),
-          AmountCalculator(key: ValueKey(version.id), result: nutrition),
-          const Divider(height: 32),
-          const Text('Zutaten', style: TextStyle(fontWeight: FontWeight.bold)),
-          for (final ingredient in version.ingredients)
-            ListTile(
-              title: Text(ingredient.displayName),
-              subtitle: Text(
-                '${ingredient.quantity} ${ingredient.unitCode}'
-                '${ingredient.note == null ? '' : ' · ${ingredient.note}'}',
+          ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              VersionSwitcher(
+                versions: versions,
+                selectedVersionId: selectedVersionId,
+                onSelected: onVersionSelected,
               ),
-            ),
-          const Divider(height: 32),
-          const Text('Schritte', style: TextStyle(fontWeight: FontWeight.bold)),
-          for (final step in version.steps)
-            ListTile(
-              title: Text(step.instruction),
-              trailing:
-                  step.timerSeconds == null ? null : Chip(label: Text(_formatTimer(step.timerSeconds!))),
-            ),
-          if (sections.isNotEmpty) const Divider(height: 32),
-          for (final section in sections) section.build(context, recipeContext),
+              const SizedBox(height: 8),
+              if (recipe.description != null) Text(recipe.description!),
+              const SizedBox(height: 16),
+              NutritionHeader(result: nutrition),
+              const SizedBox(height: 8),
+              NutritionTable(result: nutrition),
+              const SizedBox(height: 8),
+              AmountCalculator(key: ValueKey(version.id), result: nutrition),
+              const Divider(height: 32),
+              const Text('Zutaten', style: TextStyle(fontWeight: FontWeight.bold)),
+              for (final ingredient in version.ingredients)
+                ListTile(
+                  title: Text(ingredient.displayName),
+                  subtitle: Text(
+                    '${ingredient.quantity} ${ingredient.unitCode}'
+                    '${ingredient.note == null ? '' : ' · ${ingredient.note}'}',
+                  ),
+                ),
+              const Divider(height: 32),
+              const Text('Schritte', style: TextStyle(fontWeight: FontWeight.bold)),
+              for (final step in version.steps)
+                ListTile(
+                  title: Text(step.instruction),
+                  trailing: step.timerSeconds == null
+                      ? null
+                      : Chip(label: Text(_formatTimer(step.timerSeconds!))),
+                ),
+              if (sections.isNotEmpty) const Divider(height: 32),
+              for (final section in sections) section.build(context, recipeContext),
+            ],
+          ),
+          if (loading) const Positioned(top: 0, left: 0, right: 0, child: LinearProgressIndicator()),
         ],
       ),
     );

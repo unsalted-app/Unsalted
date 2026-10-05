@@ -857,3 +857,76 @@ beschreiben `deleted_at` als „ohne eigenen Schreibpfad“ und `saveDraft` als
 10.7) schreibt `saveDraft` per Upsert-/Soft-Delete-Delta `deleted_at`. Normale
 `//`-Kommentare mit alten Nummern wurden nicht angefasst (Auftrag: nur
 `///`).
+
+## 2026-10-05 — Teil 1.1a: Kein Flackern beim Versionswechsel
+
+Fehlerbehebung nach Kapitel 25.2 (ohne Signatur- oder Formatänderung).
+`part1-v1.0.0` bleibt unverändert; getaggt wird Teil 1.1 gesammelt nach dem
+Design-Pass als `part1-v1.1.0`.
+
+**Befund.** Im Rezeptdetail blendete beim Versionswechsel (z. B. V1 → V3)
+der Titel kurz aus und wieder ein. Ursache: `_VersionLoader` baute mit einem
+`FutureBuilder` bei jedem `connectionState != done` ein eigenes Lade-Scaffold
+(nur AppBar-Titel, keine Aktionen, keine Versionsleiste, zentrierter
+Ladekreis) und tauschte so für die Dauer des Ladens den ganzen Bildschirm aus.
+
+**Fix (nur `recipe_detail_screen.dart`).**
+- `_VersionLoaderState` hält den zuletzt geladenen Inhalt (`RecipeVersion` +
+  `NutritionResult`) selbst statt über einen `FutureBuilder`. Während eine
+  neue Version lädt, bleibt `_DetailScaffold` mit dem alten Inhalt stehen —
+  Titel, AppBar-Aktionen und Versionsleiste bleiben sichtbar, es entsteht
+  kein zweites Scaffold. Erst wenn die neue Version samt Nährwerten da ist,
+  wird der Inhalt ausgetauscht.
+- Ladeanzeige: ein `LinearProgressIndicator` oben im Body, per `Stack` über
+  die Liste gelegt, also direkt unter der AppBar. Bewusst nicht als
+  `AppBar.bottom`: das würde die AppBar beim Ein- und Ausblenden um 4 px
+  verändern und den Inhalt verschieben — ein neues, kleineres Flackern.
+  Farben kommen aus dem Theme (Standard des `LinearProgressIndicator`).
+- Die Versionsleiste markiert die neue Wahl sofort (`selectedVersionId`
+  des Bildschirms), damit der Tipp eine sichtbare Rückmeldung hat. Inhalt,
+  `RecipeContext` und die Aktionen (z. B. „Bearbeiten“) beziehen sich bis zum
+  Austausch weiter auf die angezeigte Version — eine Aktion wirkt also immer
+  auf das, was gerade zu sehen ist.
+- Der zentrierte Ladekreis erscheint nur noch beim allerersten Laden (noch
+  kein Inhalt da, Kapitel 22). Der Fehlerfall bleibt wie bisher: das
+  Fehler-Scaffold mit Titel und Fehlertext.
+- Veraltete Antworten werden ignoriert: Jeder Ladevorgang bekommt eine
+  laufende Nummer (`_request`); nur die Antwort des jüngsten wird
+  übernommen, auch im Fehlerfall. Bei V1 → V3 → V2 überschreibt eine späte
+  Antwort für V3 also nicht mehr V2. Antworten nach `dispose` werden über
+  `mounted` verworfen.
+- Nebenbei: `_load` liest beide Provider vor dem ersten `await`. Vorher wurde
+  `nutritionServiceProvider` erst nach `getVersion` gelesen; wer den
+  Bildschirm in diesem Moment verließ, bekam einen `StateError`, weil
+  flutter_riverpod 3.4.3 `ref.read` nach dem Unmount ablehnt
+  (`_assertNotDisposed`).
+- Unverändert: kein Neuladen bei Stream-Updates ohne Versionswechsel (wie
+  bisher nur bei geänderter `selectedVersionId`), keine Änderung an
+  Verträgen, Daten, Modulen, Tür oder anderen Bildschirmen.
+
+**Tests (neue IDs, Erweiterung von 23.6).** UI-33: während eines Wechsels
+bleiben Titel, Aktionen „Versionen“/„Bearbeiten“ und die Versionsleiste
+stehen; genau ein Scaffold, kein zentrierter Ladekreis, Ladebalken sichtbar,
+alter Inhalt bleibt bis zur Antwort; beim allerersten Laden dagegen der
+zentrierte Ladekreis. UI-34: V1 → V3 → V2 mit zurückgehaltener V3-Antwort
+endet auf V2, auch nachdem V3 nachträglich antwortet.
+Für einen deterministischen Zwischenzustand hält ein Test-Wrapper um den
+echten `DriftNutritionService` (`_GatedNutritionService`) `forVersion` je
+Version an, bis der Test ihn freigibt. `_pumpDetail` hat dafür einen
+optionalen Parameter `nutritionService` bekommen (ohne Angabe wie bisher kein
+Override); die neun bestehenden Tests der Datei sind unverändert.
+
+**Gegenprobe.** Mit dem alten Bildschirmcode sind UI-33 und UI-34 rot, die
+übrigen neun grün. Ohne den `_request`-Schutz ist UI-34 rot: nach der späten
+V3-Antwort fehlt „Zucker V2“.
+
+**Stolperfalle beim Testen.** Ein erster Entwurf von UI-34 war grün, obwohl
+der Tap auf „V3“ danebenging (nur eine Warnung „hit test missed“, kein
+Fehler): `_settle` pumpt ohne Zeitvorschub, die Auswahl-Animation der
+`ChoiceChip`s nach dem vorherigen Wechsel stand still. Behoben mit dem
+Helfer `_tapVersion` (Chip antippen, laden, Animation 500 ms auslaufen
+lassen) und einer Prüfung direkt nach dem Tap, dass V3 gewählt ist und lädt.
+
+**Nicht geändert:** Kapitel 28 (Liste der neuen Test-IDs bis UI-32) bleibt,
+wie es ist; die Arbeitskarte nennt nur `docs/decisions.md` und
+`docs/status.md`.

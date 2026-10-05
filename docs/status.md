@@ -164,6 +164,18 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 - Zwei Kapitelverweise ohne eindeutige Zuordnung bleiben unverändert: `nutrition_engine.dart:39` (7.4) und `data/tables/recipe_ingredients.dart:26` (10.10).
 - Die Kopfkommentare von `data/tables/recipe_ingredients.dart` und `recipe_steps.dart` beschreiben noch das frühere Hart-Löschen statt des Soft-Delete-Deltas aus Kapitel 10.7.
 
+## Teil 1.1 — Fehlerbehebungen und Design-Pass (Kapitel 25.2) — in Arbeit
+
+Änderungen an Teil 1 nach dem Freeze, je mit eigener Arbeitskarte. Der Tag
+`part1-v1.0.0` bleibt unverändert; Teil 1.1 wird nach dem Design-Pass
+gesammelt als `part1-v1.1.0` getaggt.
+
+| Schritt | Beschreibung | Status |
+|---|---|---|
+| 1.1a | Fehlerbehebung: kein Flackern beim Versionswechsel im Rezeptdetail — alter Inhalt bleibt mit Ladebalken stehen, veraltete Antworten werden verworfen (UI-33, UI-34, docs/decisions.md) | fertig |
+
+Stand nach 1.1a: Core 368 Tests, App 1 Test, alle grün; `tool/check_architecture.dart` Exit 0.
+
 ## Bekannte offene Lücken (nicht blockierend)
 
 - `foodVariantToInsertCompanion`/`foodVariantToUpdateCompanion` in

@@ -7,6 +7,12 @@
 // (Schritt 8.7) testbar, siehe docs/status.md. Nachtrag 8.8a: feste
 // Core-Aktionen "Versionen" und "Bearbeiten" in der AppBar. UI-28
 // (Fehlerbehebung 9.2a, Befund 4): Mengenrechner unter der Nährwerttabelle.
+// UI-33/UI-34 (Teil 1.1a): kein Flackern beim Versionswechsel, späte
+// Antworten älterer Wechsel werden verworfen. Dafür hält
+// _GatedNutritionService `forVersion` je Version zurück, bis der Test sie
+// freigibt -- so ist der Zwischenzustand deterministisch prüfbar.
+
+import 'dart:async';
 
 import 'package:decimal/decimal.dart';
 import 'package:drift/native.dart';
@@ -16,14 +22,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:unsalted_core/src/contracts/input_models.dart';
+import 'package:unsalted_core/src/contracts/nutrition_service.dart';
 import 'package:unsalted_core/src/data/core_database.dart' as db;
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
 import 'package:unsalted_core/src/data/daos/drift_recipe_dao.dart';
 import 'package:unsalted_core/src/data/drift_food_repository.dart';
+import 'package:unsalted_core/src/data/drift_nutrition_service.dart';
 import 'package:unsalted_core/src/data/drift_recipe_repository.dart';
 import 'package:unsalted_core/src/food/food_variant.dart';
 import 'package:unsalted_core/src/module/extension_types.dart';
 import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
+import 'package:unsalted_core/src/nutrition/nutrition_result.dart';
 import 'package:unsalted_core/src/module/unsalted_module.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/recipe/recipe_ingredient.dart';
@@ -31,6 +40,7 @@ import 'package:unsalted_core/src/recipe/recipe_step.dart';
 import 'package:unsalted_core/src/ui/nutrition/amount_calculator.dart';
 import 'package:unsalted_core/src/ui/nutrition/nutrition_table.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/recipe_detail_screen.dart';
+import 'package:unsalted_core/src/ui/recipe_detail/version_switcher.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
 import 'package:unsalted_core/src/ui/versions/version_list_screen.dart';
 
@@ -52,6 +62,40 @@ class _FakeModule implements UnsaltedModule {
   List<SettingsEntry> get settingsEntries => const [];
   @override
   List<SyncTableSpec> get syncTables => const [];
+}
+
+/// Echter NutritionService, der `forVersion` für einzeln angehaltene
+/// Versionen erst nach Freigabe ausführt (Teil 1.1a).
+class _GatedNutritionService implements NutritionService {
+  final NutritionService inner;
+  final _gates = <String, Completer<void>>{};
+
+  _GatedNutritionService(this.inner);
+
+  /// Hält den nächsten `forVersion`-Aufruf für [versionId] an, bis der
+  /// zurückgegebene Completer abgeschlossen wird.
+  Completer<void> hold(String versionId) => _gates[versionId] = Completer<void>();
+
+  @override
+  Future<NutritionResult> forVersion(String versionId) async {
+    final gate = _gates.remove(versionId);
+    if (gate != null) await gate.future;
+    return inner.forVersion(versionId);
+  }
+
+  @override
+  NutritionResult preview({
+    required List<IngredientInput> ingredients,
+    required Decimal bakingLossPercent,
+    Decimal? finalWeightOverrideG,
+    int? servings,
+  }) =>
+      inner.preview(
+        ingredients: ingredients,
+        bakingLossPercent: bakingLossPercent,
+        finalWeightOverrideG: finalWeightOverrideG,
+        servings: servings,
+      );
 }
 
 Future<db.CoreDatabase> _openDatabase(WidgetTester tester) async {
@@ -107,6 +151,7 @@ Future<void> _pumpDetail(
   db.CoreDatabase database,
   String recipeId, {
   List<UnsaltedModule> modules = const [],
+  NutritionService? nutritionService,
 }) async {
   tester.view.physicalSize = const Size(800, 3000);
   tester.view.devicePixelRatio = 1.0;
@@ -117,11 +162,69 @@ Future<void> _pumpDetail(
     overrides: [
       coreDatabaseProvider.overrideWithValue(database),
       modulesProvider.overrideWithValue(modules),
+      if (nutritionService != null) nutritionServiceProvider.overrideWithValue(nutritionService),
     ],
     child: MaterialApp(home: RecipeDetailScreen(recipeId: recipeId)),
   ));
   await _settle(tester);
 }
+
+/// Legt per createDraftFrom([fromVersionId]) eine neue Version an und
+/// speichert sie mit genau einer Zutat [ingredientName].
+Future<String> _addVersion(
+  WidgetTester tester,
+  db.CoreDatabase database,
+  String recipeId,
+  String fromVersionId, {
+  required int versionIndex,
+  required String ingredientName,
+}) async {
+  final recipeRepo = DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
+  return tester.runAsync(() async {
+    final versionId = await recipeRepo.createDraftFrom(fromVersionId);
+    await recipeRepo.saveDraft(RecipeVersionDraft(
+      id: versionId,
+      recipeId: recipeId,
+      parentVersionId: fromVersionId,
+      versionIndex: versionIndex,
+      label: null,
+      servings: null,
+      bakingLossPercent: Decimal.zero,
+      finalWeightOverrideG: null,
+      notes: null,
+      ingredients: [
+        RecipeIngredient(
+          id: 'i$versionIndex',
+          versionId: versionId,
+          position: 1,
+          displayName: ingredientName,
+          quantity: Decimal.fromInt(50),
+          unitCode: 'g',
+        ),
+      ],
+      steps: const [],
+    ));
+    return versionId;
+  }).then((value) => value!);
+}
+
+/// Beschriftung des gewählten Chips in der Versionsleiste.
+String _selectedVersionLabel(WidgetTester tester) {
+  final chip = tester.widgetList<ChoiceChip>(find.byType(ChoiceChip)).singleWhere((c) => c.selected);
+  return (chip.label as Text).data!;
+}
+
+/// Tippt den Chip [label] der Versionsleiste an und lässt dessen
+/// Auswahl-Animation auslaufen -- `_settle` pumpt ohne Zeitvorschub, sonst
+/// verfehlt ein direkt folgender Tap den halb animierten Chip.
+Future<void> _tapVersion(WidgetTester tester, String label) async {
+  await tester.tap(find.widgetWithText(ChoiceChip, label));
+  await _settle(tester);
+  await tester.pump(const Duration(milliseconds: 500));
+}
+
+_GatedNutritionService _gatedNutrition(db.CoreDatabase database) =>
+    _GatedNutritionService(DriftNutritionService(DriftRecipeDao(database), DriftFoodDao(database)));
 
 void main() {
   testWidgets('EX-05: Seite funktioniert ohne registrierte Module', (tester) async {
@@ -408,6 +511,120 @@ void main() {
     await tester.runAsync(() => recipeRepo.snapshotVersion(versionId));
     await _pumpDetail(tester, database, recipeId);
     await expectCoupled();
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-33: beim Versionswechsel bleiben Titel, Aktionen und Versionsleiste stehen (Teil 1.1a)',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+
+    final (recipeId, v1) = await _seedDraftRecipe(
+      tester,
+      database,
+      ingredients: (vid) => [
+        RecipeIngredient(
+          id: 'i1',
+          versionId: vid,
+          position: 1,
+          displayName: 'Mehl V1',
+          quantity: Decimal.fromInt(100),
+          unitCode: 'g',
+        ),
+      ],
+    );
+    final v2 = await _addVersion(tester, database, recipeId, v1, versionIndex: 2, ingredientName: 'Zucker V2');
+    final nutrition = _gatedNutrition(database);
+
+    // Allererstes Laden: nur hier der zentrierte Ladekreis (Kapitel 22).
+    final firstLoad = nutrition.hold(v2);
+    await _pumpDetail(tester, database, recipeId, nutritionService: nutrition);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    firstLoad.complete();
+    await _settle(tester);
+    expect(find.text('Zucker V2'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    // Wechsel auf V1, dessen Nährwerte noch nicht geliefert sind.
+    final switchLoad = nutrition.hold(v1);
+    await _tapVersion(tester, 'V1');
+
+    expect(find.byType(Scaffold), findsOneWidget);
+    expect(find.text('Testrezept'), findsOneWidget);
+    expect(find.byTooltip('Versionen'), findsOneWidget);
+    expect(find.byTooltip('Bearbeiten'), findsOneWidget);
+    expect(find.byType(VersionSwitcher), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    // Alter Inhalt bleibt stehen, die Leiste markiert schon die neue Wahl.
+    expect(find.text('Zucker V2'), findsOneWidget);
+    expect(find.text('Mehl V1'), findsNothing);
+    expect(_selectedVersionLabel(tester), 'V1');
+
+    switchLoad.complete();
+    await _settle(tester);
+
+    expect(find.text('Mehl V1'), findsOneWidget);
+    expect(find.text('Zucker V2'), findsNothing);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(Scaffold), findsOneWidget);
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-34: schneller Wechsel V1 → V3 → V2 endet auf V2, späte V3-Antwort wird verworfen',
+      (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => tester.runAsync(database.close));
+
+    final (recipeId, v1) = await _seedDraftRecipe(
+      tester,
+      database,
+      ingredients: (vid) => [
+        RecipeIngredient(
+          id: 'i1',
+          versionId: vid,
+          position: 1,
+          displayName: 'Mehl V1',
+          quantity: Decimal.fromInt(100),
+          unitCode: 'g',
+        ),
+      ],
+    );
+    final v2 = await _addVersion(tester, database, recipeId, v1, versionIndex: 2, ingredientName: 'Zucker V2');
+    await _addVersion(tester, database, recipeId, v2, versionIndex: 3, ingredientName: 'Butter V3');
+    final nutrition = _gatedNutrition(database);
+
+    await _pumpDetail(tester, database, recipeId, nutritionService: nutrition);
+    await _tapVersion(tester, 'V1');
+    expect(find.text('Mehl V1'), findsOneWidget);
+
+    // V3 antwortet erst, nachdem V2 schon gewählt und geladen ist.
+    final v3 = tester.widget<VersionSwitcher>(find.byType(VersionSwitcher)).versions
+        .singleWhere((v) => v.versionIndex == 3)
+        .id;
+    final lateV3 = nutrition.hold(v3);
+    await _tapVersion(tester, 'V3');
+    // V3 ist gewählt und lädt noch; der Inhalt von V1 bleibt stehen.
+    expect(_selectedVersionLabel(tester), 'V3');
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.text('Mehl V1'), findsOneWidget);
+
+    await _tapVersion(tester, 'V2');
+    expect(find.text('Zucker V2'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    lateV3.complete();
+    await _settle(tester);
+
+    expect(find.text('Zucker V2'), findsOneWidget);
+    expect(find.text('Butter V3'), findsNothing);
+    expect(find.text('Mehl V1'), findsNothing);
+    expect(_selectedVersionLabel(tester), 'V2');
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+
     await _disposeWidgetTree(tester);
   });
 }
