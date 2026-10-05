@@ -49,7 +49,7 @@ Dateiscope von Schritt 6.4 erlaubte kein Ändern von Mappern — deshalb baut
 | 7.3 | Provider | fertig |
 | 7.4 | Öffentliche Tür schließen | fertig |
 
-## Phase 8 — Oberfläche (Kapitel 24.5)
+## Phase 8 — Oberfläche (Kapitel 24.5) — abgeschlossen
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 8.1 | Lebensmittel-Liste + Editor | fertig |
@@ -100,7 +100,7 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
   („Stück“, „Prise“); Editor, Rezeptdetail und Vergleichsspalten zeigen
   noch die Codes (`piece`, `pinch`).
 
-## Phase 10 — Freeze (Kapitel 24.7)
+## Phase 10 — Freeze (Kapitel 24.7) — abgeschlossen
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 10.0 | Nachtrag: PopScope im Lebensmittel-Editor (UI-29–UI-32, docs/decisions.md) | fertig |
@@ -109,11 +109,11 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
 | 10.1b | Nachtrag: SnapshotCodec sortiert Schlüssel nach 13.4 (GD-13, docs/decisions.md) | fertig |
 | 10.2 | Öffentliche API dokumentieren — 280 Lücken in der exportierten API geschlossen, `dart doc` 0 Warnungen/0 Fehler (docs/decisions.md) | fertig |
 | 10.2a | Nachtrag: AT-05 erzwingt 28.1.3, Kapitelverweise in `///`-Kommentaren korrigiert (docs/decisions.md) | fertig |
-| 10.3 | Tag `part1-v1.0.0` | offen — erst nach Freigabe durch den Projektverantwortlichen |
+| 10.3 | Finaler Release-Check und annotierter Tag `part1-v1.0.0` auf den Release-Check-Commit (nach grüner CI) | fertig |
 
 Kapitel 28 „Nachträge und Klarstellungen zu Teil 1“ ist in `docs/spezifikation.md` übernommen (2026-10-05); es gilt vor Kapitel 1–27 und ist Teil des Freeze von `part1-v1.0.0`.
 
-### 10.1 Freeze-Abnahme — Nachweis (Stand 2026-10-05, nach Nachtrag 10.0)
+### Freeze-Nachweis (10.1, abgeschlossen mit dem Release-Check 10.3, Stand 2026-10-05)
 
 Ausgeführt mit Flutter 3.47.5, alle Befehle im jeweiligen Paketordner.
 Testergebnisse aus `flutter test --reporter json` (Core und App), IDs gegen
@@ -122,7 +122,7 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 
 | Kriterium (Kapitel 25) | Nachweis | Ergebnis |
 |---|---|---|
-| Alle Tests grün (Ziel > 140) | `flutter test --reporter json`: Core 357 Tests, App 1 Test; 0 fehlgeschlagen, 0 übersprungen | erfüllt (358) |
+| Alle Tests grün (Ziel > 140) | `flutter test --reporter json` beim Release-Check: Core 366 Tests, App 1 Test; 0 fehlgeschlagen, 0 übersprungen; alle 165 Plan-IDs aus Kapitel 23 vorhanden | erfüllt (367) |
 | AT-01 bis AT-12 grün | `test/architecture/at01_…` bis `at12_…`, je ein Test | erfüllt |
 | Kein double in lib/ (AT-07) | AT-07 grün; `grep -rnwE "double\|num" lib` außerhalb `src/ui/`: 0, `.toDouble()`: 0. In `src/ui/` eine Layout-Stelle (`double.infinity`), nach 5.2 zulässig | erfüllt |
 | Kein toDecimal außerhalb decimal_math.dart (AT-08) | AT-08 grün; `grep -rn "toDecimal(" lib` außerhalb `decimal_math.dart`: 0 | erfüllt |
@@ -138,8 +138,8 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 | Öffentliche Tür = Golden-Liste (AT-06) | AT-06 grün gegen `test/architecture/public_api_golden.txt` | erfüllt |
 | Öffentliche API dokumentiert, dart doc ohne Warnung | Schritt 10.2: `public_member_api_docs` (vorübergehend) auf die exportierte API gefiltert: 280 → 0 Lücken; `dart doc --dry-run .`: 0 Warnungen, 0 Fehler | erfüllt |
 | Spike 20.1 protokolliert | `docs/decisions.md`, „Spike 20.1“ | erfüllt |
-| docs/status.md zeigt Phase 0 bis 10 fertig | Phase 0–9 abgeschlossen, Phase 10 offen | offen (nach 10.3) |
-| Git-Tag `part1-v1.0.0` | `git tag -l`: keine Tags | offen (10.3) |
+| docs/status.md zeigt Phase 0 bis 10 fertig | Phase 0–10 abgeschlossen (diese Datei) | erfüllt |
+| Git-Tag `part1-v1.0.0` | annotierter Tag auf den Commit „Schritt 10.3: Release-Check -- Teil 1 abgeschlossen“, gesetzt nach grüner CI für genau diesen Commit; Nachweis `git ls-remote --tags origin` | erfüllt |
 
 **Befunde (nicht stillschweigend gleichgesetzt) — erledigt mit 10.1a/10.1b, Entscheidungen in docs/decisions.md:**
 - **B1 — GD-05 prüft schwächer als 23.3.** 23.3 verlangt „Decodieren + erneutes Encodieren ergibt byteweise identisches JSON“. GD-05 kodiert dasselbe dekodierte Objekt zweimal und vergleicht die beiden Ausgaben (nur Determinismus). Der geforderte Sachverhalt wird von GD-01 bis GD-04 geprüft (`jsonEncode(encode(decode(golden))) == jsonEncode(golden)`), zusätzlich von SI-1 für den gespeicherten Export-String. Der Kopfkommentar von `golden_test.dart` beschreibt GD-05 unzutreffend als Vergleich mit dem Original.

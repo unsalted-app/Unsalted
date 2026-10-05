@@ -56,7 +56,7 @@ vermeiden.
 
 ---
 
-## 1. Projektstruktur (Stand: nach Schritt 10.1 — Phase 0–9 abgeschlossen)
+## 1. Projektstruktur (Stand: `part1-v1.0.0` — Teil 1 abgeschlossen, Phase 0–10)
 
 ```text
 unsalted/
@@ -210,33 +210,24 @@ unsalted/
 
 ## 2. Aktueller Stand
 
-**Abgeschlossen:** Phase 0 (Projektgrundlage), Phase 1 (Architektur,
-AT-01–AT-12), Phase 2 (Rechenkern), Phase 3 (Fachmodelle), Phase 4
-(Snapshot-Format, `RecipeDiff`), Phase 5 (Drift-Datenbank), **Phase 6**
-(Repositories und Services, Schritt 6.1–6.6), **Phase 7**
-(Modul-/Steckplatzsystem, Schritt 7.1–7.4: Modultypen, `CoreModule`,
-Provider, öffentliche Tür geschlossen und eingefroren), **Phase 8**
-(Oberfläche, Schritt 8.1–8.8 inkl. Nachtrag 8.7a: alle 13 Bildschirme aus Kapitel 22, ihre Routen in `CoreModule.routes` sowie die
-App-Hülle `apps/unsalted_app`), **Schritt 9.1** (Integrationstests) und
-**Fehlerbehebung 9.1a** (Draft-Kopie und Diff/Apply, F1–F5) und
-**Fehlerbehebung 9.1b** (Editor behält Lebensmittel-Verknüpfungen),
-**Schritt 9.2** (manueller Durchlauf durch den Projektverantwortlichen,
-bestanden mit 4 Befunden) und **Fehlerbehebung 9.2a** (Schritt-Timer,
-Vergleichstexte, Master markieren, Mengenrechner).
+**Teil 1 (`unsalted_core` + App-Hülle) ist abgeschlossen und eingefroren:**
+annotierter Tag `part1-v1.0.0` auf dem Commit „Schritt 10.3: Release-Check --
+Teil 1 abgeschlossen“. Phase 0–10 sind fertig; der Freeze-Nachweis (alle
+Kriterien aus Kapitel 25 erfüllt) steht in `docs/status.md`, alle Nachträge
+und Klarstellungen in Kapitel 28 der Spezifikation.
 
-**Schritt 9.3** (technischer Spike, Kapitel 20.1) — Phase 9 abgeschlossen
-(Nachtest 9.2a vom Projektverantwortlichen bestätigt). **Nachtrag 10.0**
-(PopScope im Lebensmittel-Editor).
+**Was das für jede weitere Arbeit bedeutet:**
+- Den Tag `part1-v1.0.0` nie verschieben oder neu setzen.
+- Änderungen an Teil 1 nur noch im Rahmen von Kapitel 25.2 (Fehlerbehebung
+  ohne Signatur- oder Formatänderung, additive Erweiterungen) und nur mit
+  eigener, vom Projektverantwortlichen freigegebener Arbeitskarte; jede
+  solche Änderung bekommt einen Eintrag in `docs/decisions.md` und, wo sie
+  die Spezifikation berührt, in Kapitel 28.
+- Bekannte Grenzen von `part1-v1.0.0` (Teilen-Dialog, Dateiauswahl, E2,
+  Design-Punkte): Kapitel 28.8 und `docs/status.md`.
 
-**Schritt 10.1** (Freeze-Abnahme, Nachweis in `docs/status.md`) mit den
-Nachträgen 10.1a (GD-05, RecipeStep-Tests) und 10.1b (SnapshotCodec sortiert
-Schlüssel nach 13.4). **Kapitel 28** in `docs/spezifikation.md` übernommen.
-
-**Schritt 10.2** (API-Dokumentation): exportierte API vollständig mit `///`
-dokumentiert, `dart doc` ohne Warnungen.
-
-**Nächster Schritt: 10.3 — Tag `part1-v1.0.0`, erst nach ausdrücklicher
-Freigabe durch den Projektverantwortlichen.**
+**Nächster Schritt:** offen — Teil 1.1 (bekannte Grenzen) oder Teil 2
+(`unsalted_experiments`) nach neuen Arbeitskarten des Projektverantwortlichen.
 
 ---
 
