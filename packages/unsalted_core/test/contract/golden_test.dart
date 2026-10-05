@@ -7,15 +7,17 @@ import 'package:unsalted_core/src/recipe/snapshot_codec.dart';
 
 /// Golden-Tests für das Snapshot-Format v1 (Kapitel 13, Schritt 4.2).
 ///
-/// Hinweis zu GD-05: Die Spezifikation verlangt ein "byteweise identisches"
-/// Ergebnis beim erneuten Kodieren. Hier wird das über den Vergleich der
-/// jsonEncode()-Ausgabe von Original und Rundreise geprüft (beide durchlaufen
-/// denselben Encoder mit fester Schlüsselreihenfolge) statt über einen
-/// Byte-Vergleich mit der handgeschriebenen Golden-Datei — deren exakte
-/// Einrückung sich sonst bei jeder Formatierungsänderung der Golden-Datei
-/// verschieben würde, ohne dass sich am Codec etwas ändert. Das prüft
-/// denselben Sachverhalt (keine Datenverluste, deterministisches Encoding)
-/// robuster gegen harmlose Whitespace-Unterschiede in der Testdatei.
+/// GD-05 (Kapitel 23.3, Nachtrag 10.1a): Decodieren + erneutes Encodieren
+/// muss byteweise identisch sein. Die Golden-Dateien sind zur Lesbarkeit
+/// eingerückt; der Codec erzeugt im Betrieb kompaktes `jsonEncode` (13.4).
+/// Deshalb vergleicht GD-05 in der Betriebsform: erwartet ist die kompakte
+/// Form des Dateiinhalts (`jsonEncode(jsonDecode(datei))`, Schlüssel in der
+/// Reihenfolge der Datei), tatsächlich die Ausgabe von
+/// `jsonEncode(SnapshotCodec.encode(SnapshotCodec.decode(...)))`. Das prüft
+/// genau die Bytes, die der Codec speichert, einschließlich
+/// Schlüsselreihenfolge und aller Wertdarstellungen; nur Leerzeichen und
+/// Zeilenumbrüche der Datei bleiben außen vor. GD-05b prüft zusätzlich, dass
+/// zweimaliges Encodieren dasselbe Ergebnis liefert.
 
 const _goldenFiles = [
   'gd01_minimal.json',
@@ -77,7 +79,18 @@ void main() {
       expect(jsonEncode(reEncoded), jsonEncode(json));
     });
 
-    test('GD-05 deterministisch: zweimaliges Encoden liefert identisches JSON',
+    test('GD-05 Rundreise: Decodieren + erneutes Encodieren ist byteweise identisch zur Datei', () {
+      for (final name in _goldenFiles) {
+        final content = File('test/contract/golden/$name').readAsStringSync();
+        final expected = jsonEncode(jsonDecode(content));
+        final actual = jsonEncode(
+          SnapshotCodec.encode(SnapshotCodec.decode(jsonDecode(content) as Map<String, dynamic>)),
+        );
+        expect(actual, expected, reason: name);
+      }
+    });
+
+    test('GD-05b deterministisch: zweimaliges Encoden liefert identisches JSON',
         () {
       final json = _loadGolden('gd02_full.json');
       final decoded = SnapshotCodec.decode(json);

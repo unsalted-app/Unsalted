@@ -104,7 +104,8 @@ mit 9.2a erledigt („Butter: anderes Lebensmittel verknüpft“).
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | 10.0 | Nachtrag: PopScope im Lebensmittel-Editor (UI-29–UI-32, docs/decisions.md) | fertig |
-| 10.1 | Abnahmeliste vollständig abhaken | Nachweis erbracht (siehe unten) — 4 Befunde, Entscheidung des Projektverantwortlichen offen |
+| 10.1 | Abnahmeliste vollständig abhaken | fertig — Nachweis siehe unten, Befunde B1–B4 erledigt (10.1a/10.1b) |
+| 10.1a | Nachtrag: GD-05 nach 23.3, GD-05b, RecipeStep-Tests; B2/B4 dokumentiert (docs/decisions.md) | fertig |
 | 10.1b | Nachtrag: SnapshotCodec sortiert Schlüssel nach 13.4 (GD-13, docs/decisions.md) | fertig |
 | 10.2 | Öffentliche API dokumentieren | offen |
 | 10.3 | Tag `part1-v1.0.0` | offen |
@@ -137,7 +138,7 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 | docs/status.md zeigt Phase 0 bis 10 fertig | Phase 0–9 abgeschlossen, Phase 10 offen | offen (nach 10.3) |
 | Git-Tag `part1-v1.0.0` | `git tag -l`: keine Tags | offen (10.3) |
 
-**Befunde (nicht stillschweigend gleichgesetzt):**
+**Befunde (nicht stillschweigend gleichgesetzt) — erledigt mit 10.1a/10.1b, Entscheidungen in docs/decisions.md:**
 - **B1 — GD-05 prüft schwächer als 23.3.** 23.3 verlangt „Decodieren + erneutes Encodieren ergibt byteweise identisches JSON“. GD-05 kodiert dasselbe dekodierte Objekt zweimal und vergleicht die beiden Ausgaben (nur Determinismus). Der geforderte Sachverhalt wird von GD-01 bis GD-04 geprüft (`jsonEncode(encode(decode(golden))) == jsonEncode(golden)`), zusätzlich von SI-1 für den gespeicherten Export-String. Der Kopfkommentar von `golden_test.dart` beschreibt GD-05 unzutreffend als Vergleich mit dem Original.
 - **B2 — AT-12-Ausnahme nicht spezifiziert.** 5.2 und 25 verlangen „kein kJ in lib/ oder test/“ ohne Ausnahme. Der AT-12-Test nimmt `test/architecture/` aus (er muss den Suchbegriff selbst enthalten); diese Ausnahme steht seit Phase 1 nur im Testcode, weder in der Spezifikation noch in `docs/decisions.md`.
 - **B3 — Testvertrag 18.1 für `recipe_step.dart` nicht erfüllt.** Laut Dateivertrag deckt `recipe/recipe_ingredient_test.dart` auch `recipe_step.dart` ab; `RecipeStep` wird in `test/recipe/` nirgends getestet (bekannte Lücke seit Schritt 3.1). Indirekt über RP-, UI- und Integrationstests ausgeführt, aber ohne eigenen Unit-Test.
@@ -155,7 +156,6 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 - Einfrieren einer Version mit gelöschtem Lebensmittel erzeugt ohne Warnung einen Snapshot ohne Nährwerte für diese Zutat (spezifikationskonform nach 10.7).
 - Der Editor zeigt live nur die Gesamt-kcal; pro Portion und pro 100 g fehlen.
 - Kein Hinweis bei doppeltem Lebensmittelnamen.
-- Kein eigener Unit-Test für `RecipeStep` (Befund B3).
 
 ## Bekannte offene Lücken (nicht blockierend)
 
@@ -173,7 +173,6 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
   entfernen oder Mapper korrigieren und Repository/Service umstellen),
   sobald eine Arbeitskarte `data/mappers/*.dart` in ihrem Dateiscope
   erlaubt.
-- `test/recipe/recipe_step_test.dart` fehlt noch (RecipeStep selbst korrekt).
 - `export_screen.dart` (Schritt 8.7) hat keinen nativen Teilen-Dialog
   (nur "In Zwischenablage kopieren"), `import_screen.dart` keine
   Datei-Auswahl (nur Text einfügen) — beides bräuchte ein zusätzliches

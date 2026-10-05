@@ -717,3 +717,66 @@ kodierten Snapshots — direkt aus `encode` und nach `jsonEncode`/`jsonDecode`
 wie gespeichert —, dass die Schlüssel alphabetisch sortiert sind (über 70
 Objekte). Gegenprobe: Mit dem alten Codec werden GD-13 und GD-01 bis GD-04
 rot.
+
+## 2026-10-05 — Nachtrag 10.1a: Befunde B1 bis B4 aus der Freeze-Abnahme
+
+### B1 — GD-05 prüft jetzt Kapitel 23.3 wörtlich
+
+**Befund:** GD-05 kodierte dasselbe dekodierte Objekt zweimal und verglich
+nur die beiden Ausgaben (Determinismus); 23.3 verlangt „Decodieren +
+erneutes Encodieren ergibt byteweise identisches JSON“. Der Kopfkommentar
+von `golden_test.dart` beschrieb das unzutreffend.
+
+**Entscheidung (freigegeben):** GD-05 prüft für jede Golden-Datei:
+`jsonEncode(SnapshotCodec.encode(SnapshotCodec.decode(jsonDecode(datei))))`
+ist byteweise gleich `jsonEncode(jsonDecode(datei))`. Verglichen wird in der
+Betriebsform (kompakt, 13.4), die Dateien bleiben eingerückt und lesbar. Der
+bisherige Determinismus-Test bleibt als GD-05b. Voraussetzung war Nachtrag
+10.1b (alphabetische Schlüssel). Gegenprobe: eine geänderte Wertdarstellung
+(„0“ → „0.0“) in einer Golden-Datei macht GD-05 rot.
+
+### B3 — Tests für `RecipeStep` (Testvertrag 18.1)
+
+**Befund:** Laut Dateivertrag 18.1 deckt `test/recipe/recipe_ingredient_test.dart`
+auch `recipe_step.dart` ab; `RecipeStep` war seit Schritt 3.1 ungetestet.
+
+**Entscheidung (freigegeben):** Eine Gruppe `RecipeStep` in dieser Datei
+prüft Konstruktion, das optionale `timerSeconds`, Gleichheit und
+`hashCode` über alle fünf Felder, `copyWith` (einschließlich „Timer nicht
+ändern“ gegenüber „Timer auf null setzen“) und `toString`. Keine
+Produktionsänderung.
+
+### B2 — AT-12 nimmt `test/architecture/` aus
+
+**Betroffenes Kapitel:** 5.2 (AT-12), 25 („Kein Vorkommen von "kJ" in lib/
+und test/“).
+
+**Befund:** Kapitel 5.2 und 25 verlangen das Fehlen der Zeichenfolge in
+`lib/` und `test/` ohne Ausnahme. `test/architecture/at12_no_kj_text_test.dart`
+nimmt seit Phase 1 den Ordner `test/architecture/` aus; das stand bisher nur
+im Testcode.
+
+**Entscheidung:** Die Ausnahme bleibt und wird hiermit festgehalten. Ein
+Prüfwerkzeug, das nach der Zeichenfolge sucht, muss sie selbst enthalten
+(Testname, Kommentar, Suchmuster); das ist kein Verstoß gegen R7. Alle
+übrigen Testdateien bauen den Suchbegriff zur Laufzeit aus Zeichencodes
+zusammen (CLAUDE.md Abschnitt 4). In `lib/` gilt das Verbot ohne Ausnahme.
+Übernahme als Klarstellung in Kapitel 28.
+
+### B4 — Testorte weichen von Kapitel 23.3/23.5 ab
+
+**Betroffenes Kapitel:** 23.3 (GD-11, GD-12 unter `test/contract/`), 23.5
+(IT-01 bis IT-06 unter `test/integration/`).
+
+**Befund:** GD-11 und GD-12 liegen in `test/data/snapshot_service_test.dart`,
+weil sie den `DriftSnapshotService` (Schritt 6.6) gegen eine Datenbank prüfen
+und nicht den reinen Codec. IT-01 bis IT-05 wurden in Schritt 6.5/6.6 bereits
+auf Service-Ebene in `test/data/` umgesetzt und existieren seit Schritt 9.1
+zusätzlich als Systemketten-Tests in `test/integration/`.
+
+**Entscheidung:** Beide Orte bleiben. Maßgeblich für die Freeze-Abnahme sind
+die Tests in `test/integration/` (IT-01 bis IT-06) bzw. in
+`test/data/snapshot_service_test.dart` (GD-11, GD-12); die Service-Varianten
+von IT-01 bis IT-05 in `test/data/` sind zusätzliche Absicherung. Kein
+Verschieben, weil sich dadurch nur Pfade, nicht die Prüfung ändern würden.
+Übernahme als Klarstellung in Kapitel 28.

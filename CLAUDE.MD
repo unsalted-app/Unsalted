@@ -175,12 +175,12 @@ unsalted/
          │  ├─ recipe_ingredient_test.dart
          │  ├─ recipe_change_test.dart
          │  └─ recipe_diff_test.dart
-         │     (recipe_step_test.dart fehlt noch — bekannte Lücke, siehe Abschnitt 3)
+         │     (RecipeStep wird laut 18.1 in recipe_ingredient_test.dart getestet, seit 10.1a)
          ├─ food/food_variant_test.dart
          ├─ contract/
          │  ├─ recipe_snapshot_v1_test.dart
          │  ├─ golden_test.dart
-         │  └─ golden/gd01…gd04.json
+         │  └─ golden/gd01…gd04.json     Schlüssel alphabetisch (13.4, seit 10.1b)
          ├─ data/
          │  ├─ decimal_converter_test.dart   MG-04
          │  ├─ mg01_schema_dump_exists_test.dart
@@ -245,9 +245,6 @@ Kapitel 28; danach 10.2 (öffentliche API dokumentieren) und 10.3 (Tag
   Zeilen seit Schritt 6.4/6.6 direkt selbst, weil die DAO-Signaturen einen
   vollen Row-Typ statt eines Companions erwarten. Aufräumen, sobald eine
   Arbeitskarte `data/mappers/*.dart` in ihrem Dateiscope erlaubt.
-- **`test/recipe/recipe_step_test.dart` fehlt noch.** `RecipeStep` selbst
-  ist korrekt gebaut (Schritt 3.1), aber ungetestet. Kein Blocker, aber
-  Lücke — nachholen, sobald ein Schritt diese Datei berührt.
 - **`export_screen.dart`/`import_screen.dart` ohne nativen Teilen-Dialog
   bzw. Datei-Auswahl** (nur Zwischenablage/Text einfügen) — bräuchte
   `share_plus`/`file_picker` und damit eine `pubspec.yaml`-Änderung von
