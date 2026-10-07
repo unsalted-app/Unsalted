@@ -76,7 +76,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · keine Unterschiede · Änderungen · Fehler beim Übernehmen.
 - **Template:** `DetailPageTemplate` mit `DetailSplit`.
 - **Abschnitte:** `version_compare_columns_section.dart` · `version_compare_changes_section.dart` · `version_compare_apply_section.dart`; Bausteine `snapshot_column.dart`, `change_list.dart`, `change_descriptions.dart`.
-- **Umgestellt:** offen (C21).
+- **Umgestellt:** C21.
 
 ## 9 Lebensmittel-Liste — `foods/food_list_screen.dart`
 

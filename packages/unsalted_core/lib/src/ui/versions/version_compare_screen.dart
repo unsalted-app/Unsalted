@@ -13,37 +13,22 @@
 // (Fehlerbehebung 9.1a, F3). Die Texte der Liste kommen aus
 // change_descriptions.dart (Fehlerbehebung 9.2a) und ändern die Liste nicht.
 
+// Seit Teil 1.2 (C21) aus Design-Komponenten: DetailPageTemplate mit
+// DetailSplit, Abschnitte unter sections/, Bausteine SnapshotColumn und
+// ChangeList.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../providers/core_providers.dart';
 import '../../recipe/recipe_change.dart';
 import '../../recipe/recipe_diff.dart';
 import '../../recipe/recipe_snapshot_v1.dart';
 import '../recipe_editor/recipe_editor_screen.dart';
-import 'change_descriptions.dart';
-
-enum _ChangeCategory { parameter, steps, ingredients }
-
-_ChangeCategory _categoryOf(RecipeChange change) {
-  return switch (change) {
-    SetTitle() || SetNotes() || SetBakingLoss() || SetFinalWeightOverride() || SetServings() =>
-      _ChangeCategory.parameter,
-    SetStep() || AddStep() || RemoveStep() => _ChangeCategory.steps,
-    SetIngredientQuantity() ||
-    ReplaceIngredient() ||
-    RemoveIngredient() ||
-    AddIngredient() ||
-    MoveIngredient() =>
-      _ChangeCategory.ingredients,
-  };
-}
-
-String _categoryLabel(_ChangeCategory category) => switch (category) {
-      _ChangeCategory.parameter => 'Parameter',
-      _ChangeCategory.steps => 'Schritte',
-      _ChangeCategory.ingredients => 'Zutaten',
-    };
+import 'sections/version_compare_apply_section.dart';
+import 'sections/version_compare_changes_section.dart';
+import 'sections/version_compare_columns_section.dart';
 
 class VersionCompareScreen extends ConsumerStatefulWidget {
   final String recipeId;
@@ -102,117 +87,35 @@ class _VersionCompareScreenState extends ConsumerState<VersionCompareScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Versionen vergleichen')),
+    return DetailPageTemplate(
+      title: 'Versionen vergleichen',
       body: FutureBuilder<(RecipeSnapshotV1, RecipeSnapshotV1, List<RecipeChange>)>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoading();
           }
           if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(snapshot.error.toString()),
-                  TextButton(
-                    onPressed: () => setState(() => _future = _load()),
-                    child: const Text('Erneut versuchen'),
-                  ),
-                ],
-              ),
+            return AppErrorState(
+              message: snapshot.error.toString(),
+              retryLabel: 'Erneut versuchen',
+              onRetry: () => setState(() => _future = _load()),
             );
           }
           final (a, b, changes) = snapshot.data!;
 
-          return Column(
-            children: [
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _SnapshotColumn(title: 'A', snapshot: a)),
-                    const VerticalDivider(),
-                    Expanded(child: _SnapshotColumn(title: 'B', snapshot: b)),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              Expanded(
-                child: changes.isEmpty
-                    ? const Center(child: Text('Keine Unterschiede.'))
-                    : _ChangeList(changes: changes, descriptions: describeChanges(a, changes)),
-              ),
-              if (_error != null)
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(_error!, style: const TextStyle(color: Colors.red)),
-                ),
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ElevatedButton(
-                    onPressed: (_applying || changes.isEmpty) ? null : () => _apply(changes),
-                    child: const Text('Als neuen Entwurf übernehmen'),
-                  ),
-                ),
+          return DetailSplit(
+            primary: VersionCompareColumnsSection(a: a, b: b),
+            secondary: VersionCompareChangesSection(a: a, changes: changes),
+            footer: [
+              VersionCompareApplySection(
+                error: _error,
+                onApply: (_applying || changes.isEmpty) ? null : () => _apply(changes),
               ),
             ],
           );
         },
       ),
     );
-  }
-}
-
-class _SnapshotColumn extends StatelessWidget {
-  final String title;
-  final RecipeSnapshotV1 snapshot;
-
-  const _SnapshotColumn({required this.title, required this.snapshot});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: Theme.of(context).textTheme.titleMedium),
-          Text(snapshot.recipe.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          for (final ingredient in snapshot.ingredients)
-            Text('${ingredient.name}: ${ingredient.quantity} ${ingredient.unit}'),
-          const SizedBox(height: 8),
-          for (final step in snapshot.steps) Text('${step.position}. ${step.instruction}'),
-        ],
-      ),
-    );
-  }
-}
-
-class _ChangeList extends StatelessWidget {
-  final List<RecipeChange> changes;
-  final List<String> descriptions;
-
-  const _ChangeList({required this.changes, required this.descriptions});
-
-  @override
-  Widget build(BuildContext context) {
-    final items = <Widget>[];
-    _ChangeCategory? currentCategory;
-    for (var i = 0; i < changes.length; i++) {
-      final category = _categoryOf(changes[i]);
-      if (category != currentCategory) {
-        currentCategory = category;
-        items.add(Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-          child: Text(_categoryLabel(category), style: const TextStyle(fontWeight: FontWeight.bold)),
-        ));
-      }
-      items.add(ListTile(dense: true, title: Text(descriptions[i])));
-    }
-    return ListView(children: items);
   }
 }

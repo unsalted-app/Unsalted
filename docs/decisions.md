@@ -1463,3 +1463,12 @@ Listeneintrags, wie die Tests es erwarten). Rückfrage beim Löschen über
 `showAppConfirmDialog`, Vergleichsziel über `showAppChoiceDialog`, Fehler
 des Repositorys über `showAppMessage` — Texte unverändert. Keine sichtbare
 Änderung. Bestehende Tests unverändert, Core 386 grün.
+
+**C21 — Versionsvergleich (Bildschirm 8).** `DetailPageTemplate` mit
+`DetailSplit`; Abschnitte `version_compare_columns_section.dart`,
+`version_compare_changes_section.dart`, `version_compare_apply_section.dart`;
+Bausteine `versions/snapshot_column.dart` und `versions/change_list.dart`
+(herausgelöst, Kategorie-Logik unverändert und privat). Diff,
+`targetRows` und Übernehmen bleiben im Bildschirm. *Sichtbare Änderung
+(freigegeben):* Fehler beim Übernehmen in `color/error` statt
+`Colors.red`. Bestehende Tests unverändert, Core 386 grün.
