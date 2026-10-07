@@ -12,14 +12,19 @@
 // versionId ohne echtes Editor-Rendering prüfen wollen), ohne dass
 // `recipe_list_screen.dart` (außerhalb des Dateiscopes von Schritt 8.3)
 // angefasst werden muss.
+//
+// Seit Teil 1.2 (C17) aus Design-Komponenten: FormPageTemplate, Abschnitt
+// sections/recipe_create_fields_section.dart.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../contracts/core_exceptions.dart';
 import '../../contracts/input_models.dart';
 import '../../providers/core_providers.dart';
 import 'recipe_editor_screen.dart';
+import 'sections/recipe_create_fields_section.dart';
 
 class RecipeCreateScreen extends ConsumerStatefulWidget {
   /// Wird nach erfolgreichem Anlegen mit (recipeId, versionId der neuen
@@ -63,24 +68,13 @@ class _RecipeCreateScreenState extends ConsumerState<RecipeCreateScreen> {
 
   Future<bool> _confirmDiscard() async {
     if (!_hasUnsavedInput) return true;
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Änderungen verwerfen?'),
-        content: const Text('Deine Eingaben sind noch nicht gespeichert.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Abbrechen'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Verwerfen'),
-          ),
-        ],
-      ),
+    return showAppConfirmDialog(
+      context,
+      title: 'Änderungen verwerfen?',
+      message: 'Deine Eingaben sind noch nicht gespeichert.',
+      confirmLabel: 'Verwerfen',
+      cancelLabel: 'Abbrechen',
     );
-    return result ?? false;
   }
 
   Future<void> _save() async {
@@ -137,41 +131,24 @@ class _RecipeCreateScreenState extends ConsumerState<RecipeCreateScreen> {
         if (!mounted) return;
         if (shouldDiscard) Navigator.of(context).pop();
       },
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Rezept erstellen')),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
+      child: FormPageTemplate(
+        title: 'Rezept erstellen',
+        body: FormSections(
           children: [
-            TextField(
-              controller: _titleController,
-              decoration: InputDecoration(
-                labelText: 'Titel',
-                errorText: _titleController.text.isEmpty || _isTitleValid
-                    ? null
-                    : 'Titel muss 1–200 Zeichen lang sein',
-              ),
-            ),
-            TextField(
-              controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Beschreibung'),
-              maxLines: 4,
+            RecipeCreateFieldsSection(
+              titleController: _titleController,
+              descriptionController: _descriptionController,
+              titleError: _titleController.text.isEmpty || _isTitleValid ? null : 'Titel muss 1–200 Zeichen lang sein',
             ),
             if (_saveError != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Text(_saveError!, style: const TextStyle(color: Colors.red)),
-              ),
+              AppPadding.only(top: AppSpace.l, child: AppText(_saveError!, tone: AppTone.error)),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: (_saving || !_isTitleValid) ? null : _save,
-          child: _saving
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                )
-              : const Icon(Icons.check),
+        primaryAction: AppFab(
+          icon: AppIcons.check,
+          tooltip: 'Rezept speichern',
+          loading: _saving,
+          onPressed: _isTitleValid ? _save : null,
         ),
       ),
     );

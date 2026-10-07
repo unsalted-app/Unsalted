@@ -16,7 +16,6 @@ const designTransitionList = <String>{
   'packages/unsalted_core/lib/src/ui/recipe_detail/recipe_detail_screen.dart',
   'packages/unsalted_core/lib/src/ui/recipe_detail/version_switcher.dart',
   'packages/unsalted_core/lib/src/ui/recipe_editor/ingredient_row.dart',
-  'packages/unsalted_core/lib/src/ui/recipe_editor/recipe_create_screen.dart',
   'packages/unsalted_core/lib/src/ui/recipe_editor/recipe_editor_screen.dart',
   'packages/unsalted_core/lib/src/ui/settings/export_screen.dart',
   'packages/unsalted_core/lib/src/ui/settings/import_screen.dart',

@@ -1426,3 +1426,12 @@ Verschiebung). *Sichtbare Änderung (freigegeben):* Tooltip „Neues Rezept“
 an der Hauptaktion — nicht „Rezept erstellen“, weil ein bestehender Test
 diesen Text nach dem Öffnen genau einmal erwartet. Bestehende Tests
 unverändert, Core 386 grün.
+
+**C17 — Rezept erstellen (Bildschirm 2).** `FormPageTemplate` mit
+`FormSections`; Abschnitt `recipe_create_fields_section.dart`; Rückfrage
+über `showAppConfirmDialog` (gleiche Texte, `false` beim Schließen ohne
+Wahl). `PopScope` und `addPostFrameCallback` bleiben unverändert im
+Bildschirm. Der Speicherfehler bleibt unter den Feldern. *Sichtbare
+Änderungen (freigegeben):* Speicherfehler in `color/error` statt
+`Colors.red`; Ladekreis im FAB in `onPrimaryContainer` statt `Colors.white`;
+Tooltip „Rezept speichern“. Bestehende Tests unverändert, Core 386 grün.

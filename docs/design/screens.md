@@ -25,7 +25,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** Eingabe · speichert · Speicherfehler.
 - **Template:** `FormPageTemplate` mit Hauptaktion.
 - **Abschnitte:** `recipe_create_fields_section.dart`.
-- **Umgestellt:** offen (C17).
+- **Umgestellt:** C17.
 
 ## 3 Rezept bearbeiten — `recipe_editor/recipe_editor_screen.dart`
 
