@@ -211,7 +211,7 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C22 | Nährwertanzeige, Mengenrechner (5, 6); `AppSurface`-Hinweistöne | fertig |
 | C23 | Rezeptdetail (4), UI-58 | fertig |
 | C24 | Lebensmittel bearbeiten (10), `PackageForm` | fertig |
-| C25 | Rezept-Editor (3) | offen |
+| C25 | Rezept-Editor (3), `IngredientRow`, `StepRow`, Auswahldialog | fertig |
 | C26 | App-Hülle: Theme hell/dunkel, Navigationsleiste | offen |
 | C27 | Abschluss Übergangslisten | offen |
 | C28 | Test-Finder auf Design-Typen | offen |

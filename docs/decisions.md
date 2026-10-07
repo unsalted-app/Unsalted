@@ -1538,3 +1538,25 @@ Außenabstand, Keys `package_form_warning`/`package_form_error` unverändert.
 `Colors.red.shade100`/`Colors.red`, Speicherfehler in `color/error`,
 Ladekreis im FAB in `onPrimaryContainer`; Tooltip „Lebensmittel speichern“.
 Bestehende Tests unverändert, Core 387 grün.
+
+**C25 — Rezept-Editor (Bildschirm 3).** `FormPageTemplate` in allen
+Zuständen (laden, Fehler + „Erneut versuchen“, nicht gefunden, eingefroren,
+bearbeitbar); bearbeitbar mit Vorschauleiste (`header`), Speicherfehler
+(`messages`), `FormSections` und Aktionsleiste (`bottomBar`). Abschnitte
+`recipe_editor_preview_section.dart`, `recipe_editor_frozen_section.dart`,
+`recipe_editor_parameters_section.dart`,
+`recipe_editor_ingredients_section.dart`, `recipe_editor_steps_section.dart`,
+`recipe_editor_actions_section.dart`. Bausteine: `IngredientRow` aus
+Design-Komponenten (`IngredientRowData` und Verknüpfungsregel 9.1b
+unverändert); neu herausgelöst `step_row.dart` mit `StepRowData` und
+`timerInputText` (bisher privat im Editor, Code und Timer-Regel 9.2a
+wörtlich übernommen) und `food_variant_picker_dialog.dart`. Das Suchfeld im
+Auswahldialog bleibt ohne Lupe (`AppTextField` mit Platzhalter statt
+`AppSearchField`), damit sich dort nichts sichtbar ändert. Stabile Keys
+(`ValueKey(id)`) an jeder Zeile, Umsortieren über `AppReorderableList`.
+*Sichtbare Änderungen (freigegeben):* Vorschauleiste in
+`color/surface-container-high` statt `Colors.grey.shade100`, Hinweis
+„Eingefroren …“ in `color/secondary-container` statt `Colors.blue.shade50`,
+Speicherfehler in `color/error`; Tooltips „Zutat entfernen“ und „Schritt
+entfernen“ an den Entfernen-Knöpfen. Die Übergangsliste ist damit leer.
+Bestehende Tests unverändert, Core 387 grün.

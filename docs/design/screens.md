@@ -35,7 +35,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · nicht gefunden · eingefroren (schreibgeschützt) · bearbeitbar · Speicherfehler.
 - **Template:** `FormPageTemplate` mit Vorschauleiste und Aktionsleiste.
 - **Abschnitte:** `recipe_editor_preview_section.dart` · `recipe_editor_frozen_section.dart` · `recipe_editor_parameters_section.dart` · `recipe_editor_ingredients_section.dart` · `recipe_editor_steps_section.dart` · `recipe_editor_actions_section.dart`; Bausteine `ingredient_row.dart`, `step_row.dart`, `food_variant_picker_dialog.dart`.
-- **Umgestellt:** offen (C25).
+- **Umgestellt:** C25.
 
 ## 4 Rezeptdetail — `recipe_detail/recipe_detail_screen.dart`
 

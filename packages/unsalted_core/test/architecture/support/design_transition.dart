@@ -8,6 +8,4 @@
 
 /// Noch nicht umgestellte Dateien.
 const designTransitionList = <String>{
-  'packages/unsalted_core/lib/src/ui/recipe_editor/ingredient_row.dart',
-  'packages/unsalted_core/lib/src/ui/recipe_editor/recipe_editor_screen.dart',
 };
