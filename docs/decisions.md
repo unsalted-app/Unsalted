@@ -1310,3 +1310,12 @@ bisher `result ?? false`), `showAppChoiceDialog`, `showAppDialog` +
 `AppDialog` (feste Inhaltsgröße 400 × 400 wie der bisherige
 Lebensmittel-Auswahldialog), `showAppAboutDialog`. `AppSkeleton` übernommen,
 nicht eingesetzt (F3). Tests DS-32 bis DS-39.
+
+**C09 — Komponenten IV.** `AppTopBar` (`AppBar` mit unterem Bereich 56 hoch,
+Innenabstand `l`/`s` wie bisher um die Suchfelder), `AppOverflowMenu`
+(`PopupMenuButton<VoidCallback>` wie im Rezeptdetail und im
+Lebensmittel-Editor), `AppNavigationBar`, `AppBottomActionBar` (eine Aktion
+in eigener Breite wie im Versionsvergleich, mehrere teilen sich die Breite
+wie im Editor), `AppKeyValueTable` (Spalten 2 : 1 : 1, Zellabstand `xs`,
+fette Kopfzeile — wie die Nährwerttabelle), `AppCodeBlock`. Media-Ordner
+bleibt bis Teil 4 leer (F5). Tests DS-40 bis DS-45.
