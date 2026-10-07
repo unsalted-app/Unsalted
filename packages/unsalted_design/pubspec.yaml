@@ -1,0 +1,19 @@
+name: unsalted_design
+description: "Design-System von unsalted: Tokens, Theme, Layout, Komponenten und Templates. Nur Flutter, keine Fachbegriffe."
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  sdk: ^3.13.4
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:

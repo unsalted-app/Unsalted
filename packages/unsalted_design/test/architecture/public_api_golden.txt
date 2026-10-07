@@ -1,0 +1,5 @@
+# public_api_golden.txt
+#
+# Soll-Liste der export-Zeilen aus lib/unsalted_design.dart (DS-03).
+# Format je Zeile: <pfad> show Name1, Name2, ...
+# Zeilen mit '#' sind Kommentare und werden ignoriert.

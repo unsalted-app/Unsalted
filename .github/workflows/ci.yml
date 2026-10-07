@@ -27,6 +27,16 @@ jobs:
       - name: Architekturprüfung
         run: dart run tool/check_architecture.dart
 
+      - name: unsalted_design — pub get
+        working-directory: packages/unsalted_design
+        run: flutter pub get
+      - name: unsalted_design — analyze
+        working-directory: packages/unsalted_design
+        run: flutter analyze
+      - name: unsalted_design — test
+        working-directory: packages/unsalted_design
+        run: flutter test
+
       - name: unsalted_core — pub get
         working-directory: packages/unsalted_core
         run: flutter pub get

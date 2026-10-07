@@ -1213,3 +1213,13 @@ ein Design-Import in `src/recipe/` und `src/ui/` von Core sowie ein
 Riverpod-, ein `dart:io`-, ein Flutter- und ein Eigenimport in
 `packages/unsalted_design/lib/` → genau drei Meldungen (Core `src/recipe/`,
 Riverpod, `dart:io`), Exit 1; nach dem Entfernen Exit 0.
+
+**C02 — Gerüst `unsalted_design`.** `flutter create --template=package`,
+Version 0.1.0 (`design-v0.1.0`, unveröffentlicht), `publish_to: none`,
+einzige Abhängigkeit `flutter`. Die Tür verlangt `show` an jedem Export, damit
+DS-03 neue oder umbenannte Komponenten erkennt (bei Core prüft AT-06 nur die
+Exportzeilen). Neue Tests: DS-01 (nur Flutter, auch `pubspec.yaml`), DS-03
+(Tür = Golden-Liste), DS-06 (keine Fachbegriffe in `lib/`, keine andere
+Energieeinheit in `lib/` und `test/`). CI prüft das Paket vor Core.
+*Gegenprobe:* `dart:io`-Import, ein Export ohne `show` und das Wort „Rezept“
+vorübergehend in der Tür → DS-01, DS-03 und DS-06 rot; danach grün.
