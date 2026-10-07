@@ -76,7 +76,8 @@ unsalted/
 │  └─ unsalted_app/                App-Hülle (Schritt 8.8)
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
 │     │                            flutter_riverpod, go_router
-│     ├─ lib/main.dart             ProviderScope-Overrides, GoRouter aus
+│     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
+     ├─ lib/main.dart             ProviderScope-Overrides (appOverrides), GoRouter aus
 │     │                            modules.expand((m) => m.routes), ShellRoute
 │     │                            mit NavigationBar (/, /foods, /settings)
 │     └─ test/widget_test.dart     App-Start-Rauchtest
@@ -88,7 +89,8 @@ unsalted/
       ├─ drift_schemas/
       │  └─ drift_schema_v1.json      Schema v1, eingefroren (Kapitel 25.1)
       ├─ lib/
-      │  ├─ unsalted_core.dart               öffentliche Tür — eingefroren seit Schritt 7.4
+      │  ├─ unsalted_core.dart               öffentliche Tür — eingefroren seit Schritt 7.4;
+      │  │                                   additiv: CoreUiOptions, coreUiOptionsProvider (28.9 Punkt 6)
       │  └─ src/
       │     ├─ nutrition/                    Phase 2, fertig, reines Dart
       │     │  ├─ decimal_math.dart
@@ -154,6 +156,7 @@ unsalted/
       │     │  └─ core_providers.dart        alle 8 Provider aus Kapitel 16.7
       │     └─ ui/                           Bildschirm 1–13; seit Teil 1.2 nur aus Design-Komponenten
       │        │                             (Templates + Abschnitte, docs/design/screens.md)
+      │        ├─ config/core_ui_options.dart   Anzeige-Schalter (Teil 1.2 C29), über die Tür exportiert
       │        ├─ <bereich>/<name>_screen.dart  Zustand, Daten, Aktionen
       │        ├─ <bereich>/sections/*_section.dart  je Abschnitt eine Datei, zustandslos
       │        ├─ recipe_list/recipe_card.dart, foods/food_tile.dart, versions/version_tile.dart,
@@ -247,8 +250,12 @@ wird später als `part1-v1.2.0` + `design-v0.1.0` getaggt.
 13 Bildschirme und die App-Hülle nutzen das Design-System, Übergangsliste
 leer. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03, AT-13–15, UI-58, APP-02.
 
-**Nächster Schritt:** nach Freigabe Etappe 3: C28 (Test-Finder), C27b
-(deutsche Einheiten), C29 (UI-Konfiguration) — `docs/status.md`.
+Etappe 3 (C27c, C28, C27b, C29) fertig: Übergangsmechanismus entfernt,
+Test-Finder auf Design-Typen, deutsche Einheiten, Anzeige-Schalter
+(`CoreUiOptions`). Test-IDs neu zusätzlich UI-59–63, UC-01–07.
+
+**Nächster Schritt:** Freigabe von Teil 1.2 durch den Projektverantwortlichen
+(Merge, Tags `part1-v1.2.0` + `design-v0.1.0` nur nach ausdrücklicher Freigabe).
 
 ---
 

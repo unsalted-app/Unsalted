@@ -64,3 +64,9 @@ export 'src/providers/core_providers.dart' show coreDatabaseProvider, domainEven
 // Datenbank-Handle (Kapitel 18.1: explizit als Ausnahme genannt)
 // ---------------------------------------------------------------------
 export 'src/data/core_database.dart' show CoreDatabase;
+
+// ---------------------------------------------------------------------
+// Anzeige-Schalter (Teil 1.2, Kapitel 28.9 Punkt 6): eine Konfiguration,
+// kein Widget — die Tür exportiert weiterhin keine Widgets (18.1).
+// ---------------------------------------------------------------------
+export 'src/ui/config/core_ui_options.dart' show CoreUiOptions, coreUiOptionsProvider;

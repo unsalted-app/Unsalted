@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../../nutrition/nutrition_result.dart';
+import '../../config/core_ui_options.dart';
 import '../../nutrition/amount_calculator.dart';
 import '../../nutrition/nutrition_header.dart';
 import '../../nutrition/nutrition_table.dart';
@@ -17,7 +18,12 @@ import '../../nutrition/nutrition_table.dart';
 /// Nährwerte der gewählten Version.
 class RecipeDetailNutritionSection extends StatelessWidget {
   /// Erzeugt den Abschnitt.
-  const RecipeDetailNutritionSection({super.key, required this.versionId, required this.nutrition});
+  const RecipeDetailNutritionSection({
+    super.key,
+    required this.versionId,
+    required this.nutrition,
+    this.options = const CoreUiOptions(),
+  });
 
   /// ID der angezeigten Version.
   final String versionId;
@@ -25,13 +31,16 @@ class RecipeDetailNutritionSection extends StatelessWidget {
   /// Nährwerte der Version.
   final NutritionResult nutrition;
 
+  /// Anzeige-Schalter (C29).
+  final CoreUiOptions options;
+
   @override
   Widget build(BuildContext context) => AppStack(
         gap: AppSpace.s,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           NutritionHeader(result: nutrition),
-          NutritionTable(result: nutrition),
+          NutritionTable(result: nutrition, options: options),
           AmountCalculator(key: ValueKey(versionId), result: nutrition),
         ],
       );

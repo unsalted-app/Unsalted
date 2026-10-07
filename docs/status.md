@@ -217,7 +217,9 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C27c | Übergangsmechanismus entfernt | fertig |
 | C28 | Test-Finder auf Design-Typen (116 Zeilen, nur Finder) | fertig |
 | C27b | deutsche Einheiten (UI-59–63) | fertig |
-| C29 | UI-Konfiguration | offen |
+| C29 | UI-Konfiguration: `CoreUiOptions`, App-Datei, UC-01–07 | fertig |
+
+Stand nach Etappe 3 (C27c, C28, C27b, C29): Design 212 Tests, Core 409, App 6, Widgetbook 6, alle grün; `check_architecture` Exit 0. Teil 1.2 wartet auf Freigabe (kein Merge, kein Tag).
 
 Stand nach Etappe 2 (C14–C27): Design 212 Tests, Core 387, App 3, Widgetbook 6, alle grün; `check_architecture` Exit 0; Übergangsliste leer.
 

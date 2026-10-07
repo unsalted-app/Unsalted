@@ -18,6 +18,7 @@ import 'package:unsalted_design/unsalted_design.dart';
 import '../../nutrition/nutrition_formatter.dart';
 import '../../nutrition/nutrition_result.dart';
 import '../../nutrition/nutrient_set.dart';
+import '../config/core_ui_options.dart';
 
 enum NutritionTableColumn2 { per100g, perServing }
 
@@ -53,7 +54,11 @@ Decimal? _saltG(NutrientSet n) => n.saltG;
 class NutritionTable extends StatefulWidget {
   final NutritionResult result;
 
-  const NutritionTable({super.key, required this.result});
+  /// Anzeige-Schalter (C29): ausgeblendete Nährwerte fehlen als Zeile und
+  /// Fußnote; kcal immer.
+  final CoreUiOptions options;
+
+  const NutritionTable({super.key, required this.result, this.options = const CoreUiOptions()});
 
   @override
   State<NutritionTable> createState() => _NutritionTableState();
@@ -115,19 +120,20 @@ class _NutritionTableState extends State<NutritionTable> {
           headers: ['pro 100 g', column2Label],
           rows: [
             for (final spec in _rows)
+              if (widget.options.showsNutrient(spec.fieldKey))
               AppTableRow(spec.label, [
                 _format(spec, result.per100g, result.incomplete),
                 _format(spec, column2Set, result.incomplete),
               ]),
           ],
         ),
-        if (result.incomplete.isNotEmpty)
+        if (_rows.any((spec) => result.incomplete.contains(spec.fieldKey) && widget.options.showsNutrient(spec.fieldKey)))
           AppPadding.only(
             top: AppSpace.s,
             child: AppStack(
               children: [
                 for (final spec in _rows)
-                  if (result.incomplete.contains(spec.fieldKey))
+                  if (result.incomplete.contains(spec.fieldKey) && widget.options.showsNutrient(spec.fieldKey))
                     AppText.caption('* ${spec.label}: unvollständig berechnet (mindestens eine Zutat ohne Angabe)'),
               ],
             ),

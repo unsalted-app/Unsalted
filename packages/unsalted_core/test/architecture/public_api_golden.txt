@@ -45,3 +45,5 @@ src/providers/core_providers.dart show coreDatabaseProvider, domainEventsProvide
 
 # Datenbank-Handle (Kapitel 18.1: explizit als Ausnahme genannt)
 src/data/core_database.dart show CoreDatabase
+# Anzeige-Schalter (Teil 1.2, 28.9 Punkt 6: Konfiguration, kein Widget)
+src/ui/config/core_ui_options.dart show CoreUiOptions, coreUiOptionsProvider

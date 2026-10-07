@@ -16,6 +16,7 @@ class RecipeEditorParametersSection extends StatelessWidget {
     required this.finalWeight,
     required this.notes,
     required this.onChanged,
+    this.showAdvanced = true,
   });
 
   /// Portionen.
@@ -33,13 +34,19 @@ class RecipeEditorParametersSection extends StatelessWidget {
   /// Meldet Änderungen, die die Vorschau beeinflussen.
   final VoidCallback onChanged;
 
+  /// `false`: Backverlust und Fertiggewicht-Override ausgeblendet (C29); ihre
+  /// Werte bleiben erhalten und werden mitgespeichert.
+  final bool showAdvanced;
+
   @override
   Widget build(BuildContext context) => AppStack(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppTextField(controller: servings, label: 'Portionen', onChanged: (_) => onChanged()),
-          AppTextField(controller: bakingLoss, label: 'Backverlust (%)', onChanged: (_) => onChanged()),
-          AppTextField(controller: finalWeight, label: 'Fertiggewicht-Override (g)', onChanged: (_) => onChanged()),
+          if (showAdvanced) ...[
+            AppTextField(controller: bakingLoss, label: 'Backverlust (%)', onChanged: (_) => onChanged()),
+            AppTextField(controller: finalWeight, label: 'Fertiggewicht-Override (g)', onChanged: (_) => onChanged()),
+          ],
           AppTextField(controller: notes, label: 'Notizen', maxLines: 3),
         ],
       );

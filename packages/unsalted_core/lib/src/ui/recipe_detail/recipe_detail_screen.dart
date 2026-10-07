@@ -53,6 +53,7 @@ import '../../recipe/recipe_version.dart';
 import '../recipe_editor/recipe_editor_screen.dart';
 import '../shared/undoable_deletion.dart';
 import '../versions/version_list_screen.dart';
+import '../config/core_ui_options.dart';
 import 'sections/recipe_detail_actions_section.dart';
 import 'sections/recipe_detail_description_section.dart';
 import 'sections/recipe_detail_extensions_section.dart';
@@ -343,7 +344,11 @@ class _DetailScaffold extends ConsumerWidget {
             onSelected: onVersionSelected,
           ),
           RecipeDetailDescriptionSection(description: recipe.description),
-          RecipeDetailNutritionSection(versionId: version.id, nutrition: nutrition),
+          RecipeDetailNutritionSection(
+            versionId: version.id,
+            nutrition: nutrition,
+            options: ref.watch(coreUiOptionsProvider),
+          ),
         ],
         secondary: [
           RecipeDetailIngredientsSection(ingredients: version.ingredients),

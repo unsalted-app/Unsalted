@@ -32,6 +32,7 @@ import '../../providers/core_providers.dart';
 import '../../recipe/recipe_ingredient.dart';
 import '../../recipe/recipe_step.dart';
 import '../../recipe/recipe_version.dart';
+import '../config/core_ui_options.dart';
 import 'ingredient_row.dart';
 import 'sections/recipe_editor_actions_section.dart';
 import 'sections/recipe_editor_frozen_section.dart';
@@ -308,6 +309,7 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
             finalWeight: _finalWeightController,
             notes: _notesController,
             onChanged: () => setState(() {}),
+            showAdvanced: ref.watch(coreUiOptionsProvider).showAdvancedFields,
           ),
           RecipeEditorIngredientsSection(
             rows: _ingredients,

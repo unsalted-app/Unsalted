@@ -22,6 +22,7 @@ import '../../contracts/core_exceptions.dart';
 import '../../contracts/input_models.dart';
 import '../../food/food_variant.dart';
 import '../../providers/core_providers.dart';
+import '../config/core_ui_options.dart';
 import '../shared/undoable_deletion.dart';
 import 'package_form.dart';
 
@@ -198,6 +199,7 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
           return PackageForm(
             key: _formKey,
             initial: initial,
+            options: ref.watch(coreUiOptionsProvider),
             onChanged: () => setState(() {}),
           );
         },

@@ -1722,3 +1722,37 @@ Umstellung auf `formatAmount` würde `change_descriptions_test.dart:78`
 (englischer Code als Anzeigetext) nicht. Ebenso unverändert: Zahlenfelder
 ohne Einheitencode (Backverlust, Fertiggewicht, Verpackungsformular).
 Core 396 Tests grün.
+
+**C29 — Anzeige-Schalter (UI-Konfiguration d1, F9).**
+`lib/src/ui/config/core_ui_options.dart`: `CoreUiOptions` (`hiddenNutrients`,
+`showBarcodeField`, `showAdvancedFields`, `showsNutrient`, Wertgleichheit)
+und `coreUiOptionsProvider` (Standard = Verhalten vor Teil 1.2). Tür: eine
+neue Exportzeile mit beiden Symbolen — die AT-06-Golden wächst damit um
+**eine** Zeile (plus Kommentar), nicht um zwei wie im Plan formuliert; die
+Golden-Datei führt Exportzeilen, nicht Symbole. Wirkung: `NutritionTable`
+(Zeilen und Fußnoten; der Fußnotenblock entfällt, wenn nur Ausgeblendetes
+unvollständig ist), `PackageForm` (Barcode; Dichte, Stückgewicht,
+Portionsgröße, Natrium; Nährwertfelder, mit Salz auch Natrium), Rezept-Editor
+(Backverlust, Fertiggewicht-Override). Bausteine bekommen die Optionen als
+Parameter mit Standardwert; die Bildschirme (Rezeptdetail,
+Lebensmittel-Editor, Rezept-Editor) lesen den Provider — so laufen die
+bestehenden Baustein-Tests ohne `ProviderScope` unverändert. Warnungen
+(F9b): eine Validator-Warnung entfällt, wenn eines ihrer Felder
+ausgeblendet ist (Zuordnung Warnungsart → Felder in `PackageForm`); ein
+ausgeblendetes Feld mit ungültigem oder negativem Wert wird eingeblendet.
+App: `apps/unsalted_app/lib/config/ui_options.dart` (`uiOptions`, explizit
+die Standardwerte, mit Beispielen im Kommentar); `main.dart` baut die
+Overrides über `appOverrides(database:, modules:, options: uiOptions)` —
+`Override` kommt in Riverpod 3.4.3 aus `package:flutter_riverpod/misc.dart`
+(im Pub-Cache geprüft). Tests: UC-01 bis UC-06 auf Baustein-Ebene
+(`test/ui/config/core_ui_options_test.dart`), UC-02/04/05 zusätzlich auf
+Bildschirm-Ebene mit Speichern (`core_ui_options_screens_test.dart`), UC-07
+in der App (`test/ui_options_test.dart`). *Gegenprobe:* Lebensmittel-Editor
+ohne Optionen → UC-04 (Bildschirm) rot; zurückgesetzt, grün. Mit den
+Standardwerten keine sichtbare Änderung.
+*Beobachtung:* Ein Core-Testlauf blieb einmal mit zwei untätigen
+`flutter_tester`-Prozessen stehen; drei Wiederholungen (mit
+`--timeout 60s` und ohne) liefen vollständig grün durch (26 s bis 1:15 min).
+Nicht reproduzierbar; vermutlich Rechnerlast bzw. ein Restprozess.
+Stand: Design 212, Core 409, App 6, Widgetbook 6 Tests grün;
+`check_architecture` Exit 0.
