@@ -1297,3 +1297,16 @@ die bestehenden Tests ihre Typen weiter. Neu gegenüber dem Plan:
 (später Raster ab Tablet). `AppSwipeToDelete` übernimmt den Hintergrund aus
 `DeleteSwipeBackground`. Texte (Platzhalter, Beschriftungen) liefert immer
 der Aufrufer; das Design-Paket enthält keine UI-Texte. Tests DS-23 bis DS-31.
+
+**C08 — Komponenten III.** `AppNotice` aus `notice.dart` (`design/1.1`),
+Radius/Abstände aus Tokens. `AppEmptyState` und `AppErrorState` bilden den
+heutigen Aufbau 1:1 nach (Symbol 48, Satz, Aktion; Text + „Erneut
+versuchen“) statt der umgestalteten Fassung aus `design/1.1`. Meldungen über
+`AppMessenger.of(context)`: kapselt `ScaffoldMessenger`, `persist: false` und
+die Regel aus 1.1b, `close()` nur auf noch offene Meldungen
+(`AppSnackbarHandle.close`); Fristen und Löschlogik bleiben in Core.
+Dialoge: `showAppConfirmDialog` (`false` auch beim Schließen ohne Wahl, wie
+bisher `result ?? false`), `showAppChoiceDialog`, `showAppDialog` +
+`AppDialog` (feste Inhaltsgröße 400 × 400 wie der bisherige
+Lebensmittel-Auswahldialog), `showAppAboutDialog`. `AppSkeleton` übernommen,
+nicht eingesetzt (F3). Tests DS-32 bis DS-39.

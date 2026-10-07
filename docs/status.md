@@ -194,7 +194,8 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C05 | Layout, DS-10–13 | fertig |
 | C06 | Komponenten I: Buttons, Symbole, Text, Flächen, `AppSection`; DS-14–22 | fertig |
 | C07 | Komponenten II: Eingaben, Listen, Chips; DS-23–31 | fertig |
-| C08–C09 | Komponenten III–IV | offen |
+| C08 | Komponenten III: Hinweise, Zustände, Meldungen, Dialoge; DS-32–39 | fertig |
+| C09 | Komponenten IV | offen |
 | C10 | Templates | offen |
 | C11 | Widgetbook, WB-01 | offen |
 | C12 | Doku `docs/design/*`, README/CHANGELOG | offen |
