@@ -1284,3 +1284,16 @@ primary, error aus dem ColorScheme). `AppSurface` (Töne low/medium/high),
 `AppDivider` (Höhe als Stufe, `.flush()`, `.vertical()`), `AppCard`,
 `AppSection` (Trennlinie `space/xxl` + fette Überschrift = bisheriges Muster
 „Divider(height: 32) + fetter Text“). Tests DS-14 bis DS-22.
+
+**C07 — Komponenten II.** `AppTextField` baut mit Controller ein
+`TextField`, mit Startwert ein `TextFormField` (die Schrittfelder des
+Editors und ihre Tests verwenden `TextFormField`); `helperMaxLines` immer 2
+wie bisher in der Zutatenzeile; Varianten `width: narrow` (120, ersetzt
+`SizedBox(width: 120)` um das Timer-Feld) und `expands` (Importfeld: füllend,
+oben ausgerichtet, mit Rahmen). `AppSelect<T>` baut ohne Label ein
+`DropdownButton<T>`, mit Label ein `DropdownButtonFormField<T>` — so finden
+die bestehenden Tests ihre Typen weiter. Neu gegenüber dem Plan:
+`AppItemList` (`List/Items`) als zentrale Stelle für Listen ganzer Seiten
+(später Raster ab Tablet). `AppSwipeToDelete` übernimmt den Hintergrund aus
+`DeleteSwipeBackground`. Texte (Platzhalter, Beschriftungen) liefert immer
+der Aufrufer; das Design-Paket enthält keine UI-Texte. Tests DS-23 bis DS-31.
