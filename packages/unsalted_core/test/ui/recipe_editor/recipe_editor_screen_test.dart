@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/contracts/input_models.dart';
 import 'package:unsalted_core/src/data/core_database.dart' as db;
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
@@ -136,11 +137,11 @@ void main() {
 
     // Menge ändern -> Vorschau aktualisiert sich sofort (rein lokale
     // Berechnung über NutritionService.preview, kein DB-Zugriff).
-    await tester.enterText(find.widgetWithText(TextField, 'Menge'), '100');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Menge'), '100');
     await tester.pump();
     expect(find.textContaining('300'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Speichern'));
+    await tester.tap(find.widgetWithText(AppButton, 'Speichern'));
     await _settle(tester);
 
     final saved = await tester.runAsync(() => recipeDao.getIngredientsForVersion(versionId));
@@ -166,15 +167,15 @@ void main() {
 
     await _pumpEditor(tester, database, recipeId: recipeId!, versionId: versionId!);
 
-    expect(find.widgetWithText(TextField, 'Name'), findsNothing);
+    expect(find.widgetWithText(AppTextField, 'Name'), findsNothing);
 
-    await tester.tap(find.widgetWithText(TextButton, 'Zutat hinzufügen'));
+    await tester.tap(find.widgetWithText(AppButton, 'Zutat hinzufügen'));
     await tester.pump();
-    expect(find.widgetWithText(TextField, 'Name'), findsOneWidget);
+    expect(find.widgetWithText(AppTextField, 'Name'), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.delete_outline).first);
     await tester.pump();
-    expect(find.widgetWithText(TextField, 'Name'), findsNothing);
+    expect(find.widgetWithText(AppTextField, 'Name'), findsNothing);
 
     await _disposeWidgetTree(tester);
   });
@@ -222,11 +223,11 @@ void main() {
     await _pumpEditor(tester, database, recipeId: recipeId!, versionId: versionId!);
 
     expect(find.text('Eingefroren — als neuen Entwurf kopieren?'), findsOneWidget);
-    expect(find.widgetWithText(TextField, 'Name'), findsNothing);
+    expect(find.widgetWithText(AppTextField, 'Name'), findsNothing);
     expect(find.text('Salz'), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, 'Speichern'), findsNothing);
+    expect(find.widgetWithText(AppButton, 'Speichern'), findsNothing);
 
-    await tester.tap(find.widgetWithText(TextButton, 'Kopieren'));
+    await tester.tap(find.widgetWithText(AppButton, 'Kopieren'));
     await _settle(tester, millis: 150);
     await tester.pumpAndSettle();
 
@@ -292,7 +293,7 @@ void main() {
   }
 
   Future<Map<String, RecipeIngredient>> saveAndReadRows(WidgetTester tester, db.CoreDatabase database, String versionId) async {
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Speichern'));
+    await tester.tap(find.widgetWithText(AppButton, 'Speichern'));
     await _settle(tester);
     final rows = await tester.runAsync(() => DriftRecipeDao(database).getIngredientsForVersion(versionId));
     return {
@@ -317,7 +318,7 @@ void main() {
     final seed = await seedDeletedLink(tester, database);
 
     await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
-    await tester.enterText(find.widgetWithText(TextField, 'Menge').first, '250');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Menge').first, '250');
     await tester.pump();
     final rows = await saveAndReadRows(tester, database, seed.versionId);
 
@@ -335,10 +336,10 @@ void main() {
     final seed = await seedDeletedLink(tester, database);
 
     await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
-    await tester.enterText(find.widgetWithText(TextField, 'Menge').at(1), '60');
-    await tester.enterText(find.widgetWithText(TextField, 'Notiz').at(1), 'kalt');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Menge').at(1), '60');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Notiz').at(1), 'kalt');
     await tester.pump();
-    await tester.tap(find.byType(DropdownButton<String>).at(1));
+    await tester.tap(find.byType(AppSelect<String>).at(1));
     await tester.pumpAndSettle();
     await tester.tap(find.text('kg').last);
     await tester.pumpAndSettle();
@@ -354,9 +355,9 @@ void main() {
     }
     await gesture.up();
     await tester.pumpAndSettle();
-    expect(find.widgetWithText(TextField, 'Butter').evaluate().isNotEmpty, isTrue);
-    expect(tester.getCenter(find.widgetWithText(TextField, 'Butter')).dy,
-        lessThan(tester.getCenter(find.widgetWithText(TextField, 'Mehl')).dy),
+    expect(find.widgetWithText(AppTextField, 'Butter').evaluate().isNotEmpty, isTrue);
+    expect(tester.getCenter(find.widgetWithText(AppTextField, 'Butter')).dy,
+        lessThan(tester.getCenter(find.widgetWithText(AppTextField, 'Mehl')).dy),
         reason: 'Drag hat die Reihenfolge nicht geändert');
 
     final butter = (await saveAndReadRows(tester, database, seed.versionId))['i2']!;
@@ -376,7 +377,7 @@ void main() {
     final seed = await seedDeletedLink(tester, database);
 
     await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
-    await tester.enterText(find.widgetWithText(TextField, 'Name').at(1), 'Pflanzenfett');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name').at(1), 'Pflanzenfett');
     await tester.pump();
     final butter = (await saveAndReadRows(tester, database, seed.versionId))['i2']!;
 
@@ -457,13 +458,13 @@ void main() {
     }))!;
   }
 
-  Finder timerField(int index) => find.widgetWithText(TextFormField, 'Timer (Min.)').at(index);
+  Finder timerField(int index) => find.widgetWithText(AppTextField, 'Timer (Min.)').at(index);
 
   String timerText(WidgetTester tester, int index) =>
       tester.widget<EditableText>(find.descendant(of: timerField(index), matching: find.byType(EditableText))).controller.text;
 
   Future<List<int?>> saveAndReadTimers(WidgetTester tester, db.CoreDatabase database, String versionId) async {
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Speichern'));
+    await tester.tap(find.widgetWithText(AppButton, 'Speichern'));
     await _settle(tester);
     final steps = await tester.runAsync(() => DriftRecipeDao(database).getStepsForVersion(versionId));
     return [for (final s in steps!..sort((a, b) => a.position.compareTo(b.position))) s.timerSeconds];
@@ -538,7 +539,7 @@ void main() {
 
     await _pumpEditor(tester, database, recipeId: recipeId, versionId: versionId);
     expect(timerText(tester, 2), '1:30');
-    await tester.enterText(find.widgetWithText(TextFormField, 'Anweisung').at(2), 'Ruhen lassen');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Anweisung').at(2), 'Ruhen lassen');
     await tester.pump();
     expect(await saveAndReadTimers(tester, database, versionId), [null, 600, 90]);
 
@@ -570,9 +571,9 @@ void main() {
       await _settle(tester, millis: 150);
     }
 
-    expect(find.widgetWithText(Chip, '8:00'), findsOneWidget);
-    expect(find.widgetWithText(Chip, '10:00'), findsOneWidget);
-    expect(find.widgetWithText(Chip, '1:30'), findsOneWidget);
+    expect(find.widgetWithText(AppChip, '8:00'), findsOneWidget);
+    expect(find.widgetWithText(AppChip, '10:00'), findsOneWidget);
+    expect(find.widgetWithText(AppChip, '1:30'), findsOneWidget);
     await _disposeWidgetTree(tester);
   });
 }

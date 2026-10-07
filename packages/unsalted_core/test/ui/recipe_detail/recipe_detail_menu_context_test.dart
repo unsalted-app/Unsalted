@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/contracts/input_models.dart';
 import 'package:unsalted_core/src/data/core_database.dart' as db;
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
@@ -106,7 +107,7 @@ void main() {
     ));
     await _settle(tester);
 
-    await tester.tap(find.byType(PopupMenuButton<VoidCallback>));
+    await tester.tap(find.byType(AppOverflowMenu));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Gesperrt'));
     await tester.pumpAndSettle();

@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/contracts/input_models.dart';
 import 'package:unsalted_core/src/data/core_database.dart';
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
@@ -112,7 +113,7 @@ void main() {
     await _pumpFoodList(tester, database);
 
     expect(find.text('Keine Lebensmittel gefunden.'), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, 'Eigenes Produkt anlegen'), findsOneWidget);
+    expect(find.widgetWithText(AppButton, 'Eigenes Produkt anlegen'), findsOneWidget);
 
     await _disposeWidgetTree(tester);
   });
@@ -169,7 +170,7 @@ void main() {
     expect(find.text('Mehl'), findsOneWidget);
     expect(find.text('Zucker'), findsOneWidget);
 
-    await tester.enterText(find.byType(TextField), 'Meh');
+    await tester.enterText(find.byType(AppSearchField), 'Meh');
     await tester.pump();
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
     await tester.pump();
@@ -186,7 +187,7 @@ void main() {
 
     await _pumpFoodList(tester, database);
 
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byType(AppFab));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 

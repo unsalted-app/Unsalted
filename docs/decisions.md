@@ -1611,3 +1611,93 @@ Dateien“) entfällt mit der Liste. Regeln und Detektoren unverändert streng.
 *Gegenprobe:* `Color(…)` und `Divider()` vorübergehend in
 `lib/src/ui/foods/food_tile.dart` → AT-13 und AT-14 rot mit genau diesen
 Zeilen; zurückgesetzt, grün. Core 386 Tests (−1).
+
+**C28 — Test-Finder auf Design-Typen (F7).** In 14 Testdateien unter
+`packages/unsalted_core/test/ui/` 116 Zeilen geändert, jede nur im Typ des
+Finders (maschinell geprüft: ohne den Typnamen sind alte und neue Zeile
+gleich), dazu je Datei der Import der Design-Tür. Keine Erwartung, kein
+Ablauf, keine Testdaten geändert. Zeilennummern im neuen Stand:
+
+- `test/ui/foods/food_editor_screen_test.dart`
+  - Z. 16: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 81, 121, 139, 140, 195, 212, 240, 260, 262, 306: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+  - Z. 87, 123, 242, 331: `find.byType(FloatingActionButton` → `find.byType(AppFab`
+  - Z. 218, 224: `find.widgetWithText(TextButton` → `find.widgetWithText(AppButton`
+  - Z. 309, 334: `find.byType(PopupMenuButton<VoidCallback>` → `find.byType(AppOverflowMenu`
+- `test/ui/foods/food_list_screen_test.dart`
+  - Z. 19: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 116: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+  - Z. 173: `find.byType(TextField` → `find.byType(AppSearchField`
+  - Z. 190: `find.byType(FloatingActionButton` → `find.byType(AppFab`
+- `test/ui/foods/package_form_test.dart`
+  - Z. 11: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 45, 79, 81, 83, 96, 97, 107, 108, 109, 126, 127, 128: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+- `test/ui/nutrition/amount_calculator_test.dart`
+  - Z. 11: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 35, 47, 59, 71, 73: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+- `test/ui/recipe_detail/recipe_detail_menu_context_test.dart`
+  - Z. 15: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 110: `find.byType(PopupMenuButton<VoidCallback>` → `find.byType(AppOverflowMenu`
+- `test/ui/recipe_detail/recipe_detail_screen_test.dart`
+  - Z. 27: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 237, 718, 761, 772: `find.widgetWithText(ChoiceChip` → `find.widgetWithText(AppChoiceChip`
+  - Z. 318: `find.widgetWithIcon(IconButton` → `find.widgetWithIcon(AppIconButton`
+  - Z. 558, 564, 576: `find.byType(CircularProgressIndicator` → `find.byType(AppLoading`
+  - Z. 559, 575, 587, 628, 633, 642, 722, 726, 730, 764, 766, 775, 780, 787: `find.byType(LinearProgressIndicator` → `find.byType(AppProgressBar`
+  - Z. 570, 588: `find.byType(Scaffold` → `find.byType(AppPage`
+  - Z. 671: `find.byType(PopupMenuButton<VoidCallback>` → `find.byType(AppOverflowMenu`
+- `test/ui/recipe_editor/ingredient_row_test.dart`
+  - Z. 13: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 71: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+- `test/ui/recipe_editor/recipe_create_screen_test.dart`
+  - Z. 11: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 57, 76, 108, 109, 158, 202: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+  - Z. 111, 160: `find.byType(FloatingActionButton` → `find.byType(AppFab`
+- `test/ui/recipe_editor/recipe_editor_screen_test.dart`
+  - Z. 16: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 140, 170, 174, 178, 226, 321, 339, 340, 358, 359, 360, 380: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+  - Z. 144, 228, 296, 467: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+  - Z. 172, 230: `find.widgetWithText(TextButton` → `find.widgetWithText(AppButton`
+  - Z. 342: `find.byType(DropdownButton<String>` → `find.byType(AppSelect<String>`
+  - Z. 461, 542: `find.widgetWithText(TextFormField` → `find.widgetWithText(AppTextField`
+  - Z. 574, 575, 576: `find.widgetWithText(Chip` → `find.widgetWithText(AppChip`
+- `test/ui/recipe_list/recipe_list_screen_test.dart`
+  - Z. 16: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 121: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+  - Z. 167: `find.byType(TextField` → `find.byType(AppSearchField`
+  - Z. 184: `find.byType(FloatingActionButton` → `find.byType(AppFab`
+- `test/ui/settings/export_screen_test.dart`
+  - Z. 13: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 91, 99, 134: `find.widgetWithText(DropdownButtonFormField<String>` → `find.widgetWithText(AppSelect<String>`
+  - Z. 108: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+- `test/ui/settings/import_screen_test.dart`
+  - Z. 13: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 130, 148, 164, 183: `find.byType(TextField` → `find.byType(AppTextField`
+  - Z. 186: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+- `test/ui/versions/version_compare_screen_test.dart`
+  - Z. 14: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 174, 317: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+- `test/ui/versions/version_list_screen_test.dart`
+  - Z. 13: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 133, 166: `find.widgetWithIcon(IconButton` → `find.widgetWithIcon(AppIconButton`
+  - Z. 174, 275: `find.widgetWithText(TextButton` → `find.widgetWithText(AppButton`
+  - Z. 234: `find.byType(ListTile` → `find.byType(AppListItem`
+
+*Bewusst unverändert* (sie prüfen Eigenschaften des gerenderten
+Material-Widgets; eine Umstellung hinge am Typ-Argument von
+`tester.widget<…>` und würde die Prüfung selbst ändern — z. B. ist
+`AppFab.onPressed` beim Laden gesetzt, das `onPressed` des FAB aber `null`):
+`import_screen_test.dart:134`, `version_compare_screen_test.dart:249`,
+`recipe_editor_screen_test.dart:524` (`widget<ElevatedButton>`),
+`recipe_create_screen_test.dart:54, 60, 79`,
+`food_editor_screen_test.dart:78, 84, 143` (`widget<FloatingActionButton>`),
+`amount_calculator_test.dart:38, 50, 76`, `package_form_test.dart:118`,
+`recipe_detail_screen_test.dart:512, 513` (Finder für `widget<TextField>`
+in Z. 516, 519), `version_list_screen_test.dart:198`
+(`widget<IconButton>`), `recipe_detail_screen_test.dart:229`
+(`widgetList<ChoiceChip>`, liest `label`). Ebenso die drei Finder auf
+`SnackBarAction` (`recipe_detail_screen_test.dart:681`,
+`recipe_list_screen_test.dart:229`, `food_list_screen_test.dart:212`) —
+dafür gibt es kein Design-Widget. Symbol-Finder (`find.byIcon(Icons.…)`)
+sind keine Typ-Finder und bleiben. Der App-Test nutzt keine
+Material-Typ-Finder. Core 386 Tests grün.

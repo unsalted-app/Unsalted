@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/contracts/input_models.dart';
 import 'package:unsalted_core/src/data/core_database.dart' as db;
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
@@ -87,7 +88,7 @@ void main() {
     ));
     await _settle(tester);
 
-    await tester.tap(find.widgetWithText(DropdownButtonFormField<String>, 'Rezept'));
+    await tester.tap(find.widgetWithText(AppSelect<String>, 'Rezept'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Brot').last);
     await tester.pumpAndSettle();
@@ -95,7 +96,7 @@ void main() {
 
     // Dropdown-Einträge existieren erst im Baum, während das Menü offen
     // ist (Overlay) -- deshalb erst öffnen, dann auf V1/V2 prüfen.
-    await tester.tap(find.widgetWithText(DropdownButtonFormField<String>, 'Version'));
+    await tester.tap(find.widgetWithText(AppSelect<String>, 'Version'));
     await tester.pumpAndSettle();
 
     expect(find.text('V1'), findsOneWidget);
@@ -104,7 +105,7 @@ void main() {
     await tester.tap(find.text('V1').last);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Exportieren'));
+    await tester.tap(find.widgetWithText(AppButton, 'Exportieren'));
     await _settle(tester);
 
     expect(find.textContaining('unsalted_recipe_snapshot'), findsOneWidget);
@@ -130,7 +131,7 @@ void main() {
     ));
     await _settle(tester);
 
-    await tester.tap(find.widgetWithText(DropdownButtonFormField<String>, 'Rezept'));
+    await tester.tap(find.widgetWithText(AppSelect<String>, 'Rezept'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Nur Entwurf').last);
     await tester.pumpAndSettle();

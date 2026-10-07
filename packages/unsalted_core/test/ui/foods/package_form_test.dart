@@ -8,6 +8,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/ui/foods/package_form.dart';
 
@@ -41,7 +42,7 @@ void main() {
   testWidgets('Name ausgefüllt -> value liefert die eingegebenen Daten', (tester) async {
     final key = await _pump(tester);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Mehl');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Mehl');
     await tester.pump();
 
     final value = key.currentState!.value;
@@ -75,11 +76,11 @@ void main() {
       (tester) async {
     final key = await _pump(tester);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Testprodukt');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Testprodukt');
     // gesättigte Fettsäuren > Fett -> Warnung (VA-02), kein Fehler.
-    await tester.enterText(find.widgetWithText(TextField, 'Fett (g)'), '5');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Fett (g)'), '5');
     await tester.enterText(
-      find.widgetWithText(TextField, 'davon gesättigte Fettsäuren (g)'),
+      find.widgetWithText(AppTextField, 'davon gesättigte Fettsäuren (g)'),
       '10',
     );
     await tester.pump();
@@ -92,8 +93,8 @@ void main() {
   testWidgets('Formularfehlerpfad: negativer Wert blockiert Speichern (rot)', (tester) async {
     final key = await _pump(tester);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Testprodukt');
-    await tester.enterText(find.widgetWithText(TextField, 'Fett (g)'), '-1');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Testprodukt');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Fett (g)'), '-1');
     await tester.pump();
 
     expect(find.byKey(const Key('package_form_error')), findsOneWidget);
@@ -103,9 +104,9 @@ void main() {
   testWidgets('Natrium-Eingabe ersetzt Salz (Kapitel 8.2)', (tester) async {
     final key = await _pump(tester);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Testprodukt');
-    await tester.enterText(find.widgetWithText(TextField, 'Salz (g)'), '1');
-    await tester.enterText(find.widgetWithText(TextField, 'oder: Natrium (mg)'), '400');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Testprodukt');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Salz (g)'), '1');
+    await tester.enterText(find.widgetWithText(AppTextField, 'oder: Natrium (mg)'), '400');
     await tester.pump();
 
     // salt_g = 400 / 1000 * 2.5 = 1.0 -- überschreibt die manuelle 1-g-Eingabe
@@ -122,9 +123,9 @@ void main() {
       (tester) async {
     final key = await _pump(tester);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Testprodukt');
-    await tester.enterText(find.widgetWithText(TextField, 'Salz (g)'), '5');
-    await tester.enterText(find.widgetWithText(TextField, 'oder: Natrium (mg)'), '800');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Testprodukt');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Salz (g)'), '5');
+    await tester.enterText(find.widgetWithText(AppTextField, 'oder: Natrium (mg)'), '800');
     await tester.pump();
 
     // salt_g = 800 / 1000 * 2.5 = 2.0, nicht 5.

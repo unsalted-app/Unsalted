@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/contracts/input_models.dart';
 import 'package:unsalted_core/src/data/core_database.dart';
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
@@ -77,13 +78,13 @@ void main() {
     final fab = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
     expect(fab.onPressed, isNull, reason: 'ohne Namen nicht speicherbar');
 
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Neues Produkt');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Neues Produkt');
     await tester.pump();
 
     final fabAfter = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
     expect(fabAfter.onPressed, isNotNull);
 
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byType(AppFab));
     await _settle(tester);
 
     final variants = await tester.runAsync(() => dao.watchAll().first);
@@ -117,9 +118,9 @@ void main() {
     expect(find.text('Zucker'), findsOneWidget);
     expect(find.text('400'), findsOneWidget);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Zucker (raffiniert)');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Zucker (raffiniert)');
     await tester.pump();
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byType(AppFab));
     await _settle(tester);
 
     final repo = DriftFoodRepository(DriftFoodDao(database));
@@ -135,8 +136,8 @@ void main() {
 
     await _pumpEditor(tester, database);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Testprodukt');
-    await tester.enterText(find.widgetWithText(TextField, 'Fett (g)'), '-1');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Testprodukt');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Fett (g)'), '-1');
     await tester.pump();
 
     final fab = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
@@ -191,7 +192,7 @@ void main() {
     addTearDown(() => _closeDatabase(tester, database));
 
     await openEditorFromLauncher(tester, database);
-    await tester.tap(find.widgetWithText(TextField, 'Marke'));
+    await tester.tap(find.widgetWithText(AppTextField, 'Marke'));
     await tester.pump();
     await tester.pageBack();
     await tester.pumpAndSettle();
@@ -208,19 +209,19 @@ void main() {
     addTearDown(() => _closeDatabase(tester, database));
 
     await openEditorFromLauncher(tester, database);
-    await tester.enterText(find.widgetWithText(TextField, 'Marke'), 'Alpenhof');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Marke'), 'Alpenhof');
     await tester.pump();
 
     await tester.pageBack();
     await tester.pumpAndSettle();
     expect(find.text('Änderungen verwerfen?'), findsOneWidget);
-    await tester.tap(find.widgetWithText(TextButton, 'Abbrechen'));
+    await tester.tap(find.widgetWithText(AppButton, 'Abbrechen'));
     await tester.pumpAndSettle();
     expect(find.byType(FoodEditorScreen), findsOneWidget);
 
     await tester.pageBack();
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'Verwerfen'));
+    await tester.tap(find.widgetWithText(AppButton, 'Verwerfen'));
     await tester.pumpAndSettle();
     expect(find.byType(FoodEditorScreen), findsNothing);
 
@@ -236,9 +237,9 @@ void main() {
     final id = await createZucker(tester, database);
 
     await openEditorFromLauncher(tester, database, foodId: id);
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Rohrzucker');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Rohrzucker');
     await tester.pump();
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byType(AppFab));
     await _settle(tester);
     await tester.pumpAndSettle();
 
@@ -256,9 +257,9 @@ void main() {
     final id = await createZucker(tester, database);
 
     await openEditorFromLauncher(tester, database, foodId: id);
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Zuckerl');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Zuckerl');
     await tester.pump();
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Zucker');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Zucker');
     await tester.pump();
     await tester.pageBack();
     await tester.pumpAndSettle();
@@ -302,10 +303,10 @@ void main() {
     expect(find.byType(FoodEditorScreen), findsOneWidget);
 
     // Ungespeicherte Änderung: Löschen fragt trotzdem nicht nach.
-    await tester.enterText(find.widgetWithText(TextField, 'Marke'), 'Alpenhof');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Marke'), 'Alpenhof');
     await tester.pump();
 
-    await tester.tap(find.byType(PopupMenuButton<VoidCallback>));
+    await tester.tap(find.byType(AppOverflowMenu));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Löschen'));
     await tester.pumpAndSettle();
@@ -327,10 +328,10 @@ void main() {
 
     // Beim Anlegen gibt es nichts zu löschen, also kein Menü.
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byType(AppFab));
     await tester.pumpAndSettle();
     expect(find.byType(FoodEditorScreen), findsOneWidget);
-    expect(find.byType(PopupMenuButton<VoidCallback>), findsNothing);
+    expect(find.byType(AppOverflowMenu), findsNothing);
 
     await _disposeWidgetTree(tester);
   });
