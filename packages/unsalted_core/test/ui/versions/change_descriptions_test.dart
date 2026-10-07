@@ -75,7 +75,7 @@ void main() {
 
     expect(texts, [
       'Milch: 500 ml → 400 ml',
-      'Mehl: 500 g → 0.5 kg',
+      'Mehl: 500 g → 0,5 kg',
       'Butter ersetzt durch Margarine',
       'Zucker: anderes Lebensmittel verknüpft',
       'Margarine entfernt',
@@ -132,7 +132,7 @@ void main() {
     expect(texts, [
       'Titel: „Brot“ → „Brot hell“',
       'Notizen: „alt“ → —',
-      'Backverlust: 10 % → 12.5 %',
+      'Backverlust: 10 % → 12,5 %',
       'Fertiggewicht-Override: — → 900 g',
       'Portionen: 4 → 6',
     ]);

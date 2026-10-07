@@ -24,6 +24,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/contracts/input_models.dart';
 import 'package:unsalted_core/src/contracts/nutrition_service.dart';
 import 'package:unsalted_core/src/data/core_database.dart' as db;
@@ -233,7 +234,7 @@ String _selectedVersionLabel(WidgetTester tester) {
 /// Auswahl-Animation auslaufen -- `_settle` pumpt ohne Zeitvorschub, sonst
 /// verfehlt ein direkt folgender Tap den halb animierten Chip.
 Future<void> _tapVersion(WidgetTester tester, String label) async {
-  await tester.tap(find.widgetWithText(ChoiceChip, label));
+  await tester.tap(find.widgetWithText(AppChoiceChip, label));
   await _settle(tester);
   await tester.pump(const Duration(milliseconds: 500));
 }
@@ -314,7 +315,7 @@ void main() {
 
     await _pumpDetail(tester, database, recipeId, modules: [module]);
 
-    final button = find.widgetWithIcon(IconButton, const IconData(0xe000));
+    final button = find.widgetWithIcon(AppIconButton, const IconData(0xe000));
     expect(button, findsOneWidget);
     await tester.tap(button);
     await tester.pump();
@@ -554,25 +555,25 @@ void main() {
     // Allererstes Laden: nur hier der zentrierte Ladekreis (Kapitel 22).
     final firstLoad = nutrition.hold(v2);
     await _pumpDetail(tester, database, recipeId, nutritionService: nutrition);
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(AppLoading), findsOneWidget);
+    expect(find.byType(AppProgressBar), findsNothing);
 
     firstLoad.complete();
     await _settle(tester);
     expect(find.text('Zucker V2'), findsOneWidget);
-    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byType(AppLoading), findsNothing);
 
     // Wechsel auf V1, dessen Nährwerte noch nicht geliefert sind.
     final switchLoad = nutrition.hold(v1);
     await _tapVersion(tester, 'V1');
 
-    expect(find.byType(Scaffold), findsOneWidget);
+    expect(find.byType(AppPage), findsOneWidget);
     expect(find.text('Testrezept'), findsOneWidget);
     expect(find.byTooltip('Versionen'), findsOneWidget);
     expect(find.byTooltip('Bearbeiten'), findsOneWidget);
     expect(find.byType(VersionSwitcher), findsOneWidget);
-    expect(find.byType(LinearProgressIndicator), findsOneWidget);
-    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byType(AppProgressBar), findsOneWidget);
+    expect(find.byType(AppLoading), findsNothing);
     // Alter Inhalt bleibt stehen, die Leiste markiert schon die neue Wahl.
     expect(find.text('Zucker V2'), findsOneWidget);
     expect(find.text('Mehl V1'), findsNothing);
@@ -583,8 +584,8 @@ void main() {
 
     expect(find.text('Mehl V1'), findsOneWidget);
     expect(find.text('Zucker V2'), findsNothing);
-    expect(find.byType(LinearProgressIndicator), findsNothing);
-    expect(find.byType(Scaffold), findsOneWidget);
+    expect(find.byType(AppProgressBar), findsNothing);
+    expect(find.byType(AppPage), findsOneWidget);
 
     await _disposeWidgetTree(tester);
   });
@@ -624,12 +625,12 @@ void main() {
     await _tapVersion(tester, 'V3');
     // V3 ist gewählt und lädt noch; der Inhalt von V1 bleibt stehen.
     expect(_selectedVersionLabel(tester), 'V3');
-    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.byType(AppProgressBar), findsOneWidget);
     expect(find.text('Mehl V1'), findsOneWidget);
 
     await _tapVersion(tester, 'V2');
     expect(find.text('Zucker V2'), findsOneWidget);
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(AppProgressBar), findsNothing);
 
     lateV3.complete();
     await _settle(tester);
@@ -638,7 +639,7 @@ void main() {
     expect(find.text('Butter V3'), findsNothing);
     expect(find.text('Mehl V1'), findsNothing);
     expect(_selectedVersionLabel(tester), 'V2');
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(AppProgressBar), findsNothing);
 
     await _disposeWidgetTree(tester);
   });
@@ -667,7 +668,7 @@ void main() {
     await _settle(tester);
     expect(find.byType(RecipeDetailScreen), findsOneWidget);
 
-    await tester.tap(find.byType(PopupMenuButton<VoidCallback>));
+    await tester.tap(find.byType(AppOverflowMenu));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Rezept löschen'));
     await tester.pumpAndSettle();
@@ -714,19 +715,19 @@ void main() {
     await _pumpDetail(tester, database, recipeId);
     expect(find.text('Zucker V2'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(ChoiceChip, 'V1'));
+    await tester.tap(find.widgetWithText(AppChoiceChip, 'V1'));
     await tester.pump();
     // Der Wechsel läuft schon, der Ladebalken bleibt verborgen.
     expect(_selectedVersionLabel(tester), 'V1');
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(AppProgressBar), findsNothing);
 
     await _settle(tester);
     expect(find.text('Mehl V1'), findsOneWidget);
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(AppProgressBar), findsNothing);
 
     // Die Verzögerung endet mit der Antwort -- auch danach kein Strich.
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(AppProgressBar), findsNothing);
 
     await _disposeWidgetTree(tester);
   });
@@ -757,33 +758,33 @@ void main() {
 
     // V1 lädt langsam: erst nach 300 ms erscheint der Strich.
     final slowV1 = nutrition.hold(v1);
-    await tester.tap(find.widgetWithText(ChoiceChip, 'V1'));
+    await tester.tap(find.widgetWithText(AppChoiceChip, 'V1'));
     await _settle(tester);
     await tester.pump(const Duration(milliseconds: 250));
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(AppProgressBar), findsNothing);
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.byType(AppProgressBar), findsOneWidget);
     expect(find.text('Butter V3'), findsOneWidget);
 
     // Wechsel auf V2, während noch geladen wird: der Strich bleibt sofort stehen.
     final slowV2 = nutrition.hold(v2);
     await tester.pump(const Duration(milliseconds: 500));
-    await tester.tap(find.widgetWithText(ChoiceChip, 'V2'));
+    await tester.tap(find.widgetWithText(AppChoiceChip, 'V2'));
     await tester.pump();
     expect(_selectedVersionLabel(tester), 'V2');
-    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.byType(AppProgressBar), findsOneWidget);
 
     slowV2.complete();
     await _settle(tester);
     expect(find.text('Zucker V2'), findsOneWidget);
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(AppProgressBar), findsNothing);
 
     // Die späte V1-Antwort ändert nichts mehr.
     slowV1.complete();
     await _settle(tester);
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('Zucker V2'), findsOneWidget);
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(AppProgressBar), findsNothing);
 
     await _disposeWidgetTree(tester);
   });

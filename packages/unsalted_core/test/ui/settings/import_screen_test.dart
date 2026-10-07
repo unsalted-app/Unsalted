@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/data/core_database.dart' as db;
 import 'package:unsalted_core/src/data/daos/drift_recipe_dao.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
@@ -126,7 +127,7 @@ void main() {
 
     await _pumpImportScreen(tester, database);
 
-    await tester.enterText(find.byType(TextField), '{ das ist kein gültiges JSON');
+    await tester.enterText(find.byType(AppTextField), '{ das ist kein gültiges JSON');
     await tester.pump();
 
     expect(find.text('Ungültiges JSON.'), findsOneWidget);
@@ -144,7 +145,7 @@ void main() {
     await _pumpImportScreen(tester, database);
 
     await tester.enterText(
-      find.byType(TextField),
+      find.byType(AppTextField),
       jsonEncode({'format': 'etwas_anderes', 'format_version': 1}),
     );
     await tester.pump();
@@ -160,7 +161,7 @@ void main() {
 
     await _pumpImportScreen(tester, database);
 
-    await tester.enterText(find.byType(TextField), _validSnapshotJson(title: 'Testbrot'));
+    await tester.enterText(find.byType(AppTextField), _validSnapshotJson(title: 'Testbrot'));
     await tester.pump();
 
     expect(find.text('Vorschau: Testbrot'), findsOneWidget);
@@ -179,10 +180,10 @@ void main() {
 
     await _pumpImportScreen(tester, database);
 
-    await tester.enterText(find.byType(TextField), _validSnapshotJson(title: 'Testbrot'));
+    await tester.enterText(find.byType(AppTextField), _validSnapshotJson(title: 'Testbrot'));
     await tester.pump();
 
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Importieren'));
+    await tester.tap(find.widgetWithText(AppButton, 'Importieren'));
     await _settle(tester);
     await tester.pumpAndSettle();
 

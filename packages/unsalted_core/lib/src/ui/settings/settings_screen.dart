@@ -3,14 +3,19 @@
 // Bildschirm 13 (Kapitel 22, Schritt 8.7): Sammelseite. Export, Import,
 // "Über unsalted" als feste Einträge; darunter alle settingsEntries aus
 // den registrierten Modulen (Kapitel 21), generisch nach order sortiert.
+// Seit Teil 1.2 (C14) aus Design-Komponenten: ListPageTemplate, Abschnitte
+// unter sections/.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../module/extension_types.dart';
 import '../../providers/core_providers.dart';
 import 'export_screen.dart';
 import 'import_screen.dart';
+import 'sections/settings_core_entries_section.dart';
+import 'sections/settings_module_entries_section.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -22,36 +27,20 @@ class SettingsScreen extends ConsumerWidget {
       for (final module in modules) ...module.settingsEntries,
     ]..sort((a, b) => a.order.compareTo(b.order));
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Einstellungen')),
-      body: ListView(
+    return ListPageTemplate(
+      title: 'Einstellungen',
+      body: AppItemList(
         children: [
-          ListTile(
-            leading: const Icon(Icons.upload),
-            title: const Text('Export'),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
+          SettingsCoreEntriesSection(
+            onExport: () => Navigator.of(context).push(MaterialPageRoute<void>(
               builder: (_) => const ExportScreen(),
             )),
-          ),
-          ListTile(
-            leading: const Icon(Icons.download),
-            title: const Text('Import'),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
+            onImport: () => Navigator.of(context).push(MaterialPageRoute<void>(
               builder: (_) => const ImportScreen(),
             )),
+            onAbout: () => showAppAboutDialog(context, applicationName: 'unsalted'),
           ),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('Über unsalted'),
-            onTap: () => showAboutDialog(context: context, applicationName: 'unsalted'),
-          ),
-          if (entries.isNotEmpty) const Divider(),
-          for (final entry in entries)
-            ListTile(
-              title: Text(entry.title),
-              subtitle: entry.subtitle == null ? null : Text(entry.subtitle!),
-              onTap: () => entry.onTap(context),
-            ),
+          SettingsModuleEntriesSection(entries: entries, onSelected: (entry) => entry.onTap(context)),
         ],
       ),
     );

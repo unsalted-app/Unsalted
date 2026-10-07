@@ -1,0 +1,53 @@
+# public_api_golden.txt
+#
+# Soll-Liste der export-Zeilen aus lib/unsalted_design.dart (DS-03).
+# Format je Zeile: <pfad> show Name1, Name2, ...
+# Zeilen mit '#' sind Kommentare und werden ignoriert.
+src/tokens/breakpoint_tokens.dart show AppBreakpoints
+src/tokens/color_tokens.dart show AppColorTokens
+src/tokens/elevation_tokens.dart show AppElevation
+src/tokens/motion_tokens.dart show AppMotion
+src/tokens/radius_tokens.dart show AppRadius
+src/tokens/spacing_tokens.dart show AppSpace, AppSpacing
+src/tokens/typography_tokens.dart show AppTypography
+src/theme/app_theme.dart show AppTheme
+src/layout/app_grid.dart show AppGrid
+src/layout/app_page.dart show AppPage
+src/layout/app_stack.dart show AppGap, AppPadding, AppStack
+src/layout/responsive.dart show AppWindowSize, ResponsiveBuilder
+src/theme/app_tone.dart show AppTone
+src/layout/app_section.dart show AppSection
+src/components/buttons/app_button.dart show AppButton, AppButtonVariant
+src/components/buttons/app_fab.dart show AppFab
+src/components/buttons/app_icon_button.dart show AppIconButton
+src/components/cards/app_card.dart show AppCard
+src/components/icons/app_icon.dart show AppIcon, AppIconSize
+src/components/icons/app_icons.dart show AppIcons
+src/components/surfaces/app_divider.dart show AppDivider
+src/components/surfaces/app_surface.dart show AppSurface, AppSurfaceTone
+src/components/text/app_text.dart show AppText, AppTextRole
+src/components/chips/app_chip.dart show AppChip
+src/components/chips/app_choice_chip.dart show AppChoiceChip
+src/components/inputs/app_search_field.dart show AppSearchField
+src/components/inputs/app_select.dart show AppSelect, AppSelectItem
+src/components/inputs/app_text_field.dart show AppFieldWidth, AppTextField
+src/components/lists/app_item_list.dart show AppItemList
+src/components/lists/app_list_item.dart show AppListItem
+src/components/lists/app_reorderable_list.dart show AppReorderableList
+src/components/lists/app_swipe_to_delete.dart show AppSwipeToDelete
+src/components/feedback/app_dialog.dart show AppDialog, showAppAboutDialog, showAppChoiceDialog, showAppConfirmDialog, showAppDialog
+src/components/feedback/app_empty_state.dart show AppEmptyState
+src/components/feedback/app_error_state.dart show AppErrorState
+src/components/feedback/app_loading.dart show AppLoading, AppProgressBar
+src/components/feedback/app_notice.dart show AppNotice, AppNoticeKind
+src/components/feedback/app_skeleton.dart show AppSkeleton
+src/components/feedback/app_snackbar.dart show AppMessenger, AppSnackbarHandle, showAppMessage
+src/components/data/app_code_block.dart show AppCodeBlock
+src/components/data/app_key_value_table.dart show AppKeyValueTable, AppTableRow
+src/components/navigation/app_bottom_action_bar.dart show AppBottomActionBar
+src/components/navigation/app_navigation_bar.dart show AppNavigationBar, AppNavigationDestination
+src/components/navigation/app_overflow_menu.dart show AppMenuEntry, AppOverflowMenu
+src/components/navigation/app_top_bar.dart show AppTopBar
+src/templates/detail_page_template.dart show DetailLayout, DetailPageTemplate, DetailSections, DetailSplit
+src/templates/form_page_template.dart show FormPageTemplate, FormSections
+src/templates/list_page_template.dart show ListPageTemplate

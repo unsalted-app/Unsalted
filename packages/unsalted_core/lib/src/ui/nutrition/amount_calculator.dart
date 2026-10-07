@@ -17,6 +17,7 @@
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../nutrition/nutrition_result.dart';
 
@@ -98,20 +99,25 @@ class _AmountCalculatorState extends State<AmountCalculator> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return AppStack(
+      direction: Axis.horizontal,
+      gap: AppSpace.l,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
       children: [
         Expanded(
-          child: TextField(
+          child: AppTextField(
             controller: _gramsController,
-            decoration: InputDecoration(labelText: 'Gramm', errorText: _gramsError),
+            label: 'Gramm',
+            error: _gramsError,
             onChanged: _onGramsChanged,
           ),
         ),
-        const SizedBox(width: 16),
         Expanded(
-          child: TextField(
+          child: AppTextField(
             controller: _kcalController,
-            decoration: InputDecoration(labelText: 'kcal', errorText: _kcalError),
+            label: 'kcal',
+            error: _kcalError,
             onChanged: _onKcalChanged,
           ),
         ),

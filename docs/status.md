@@ -164,11 +164,11 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 - Zwei Kapitelverweise ohne eindeutige Zuordnung bleiben unverändert: `nutrition_engine.dart:39` (7.4) und `data/tables/recipe_ingredients.dart:26` (10.10).
 - Die Kopfkommentare von `data/tables/recipe_ingredients.dart` und `recipe_steps.dart` beschreiben noch das frühere Hart-Löschen statt des Soft-Delete-Deltas aus Kapitel 10.7.
 
-## Teil 1.1 — Fehlerbehebungen und Design-Pass (Kapitel 25.2) — in Arbeit
+## Teil 1.1 — Fehlerbehebungen (Kapitel 25.2) — abgeschlossen, `part1-v1.1.0`
 
 Änderungen an Teil 1 nach dem Freeze, je mit eigener Arbeitskarte. Der Tag
-`part1-v1.0.0` bleibt unverändert; Teil 1.1 wird nach dem Design-Pass
-gesammelt als `part1-v1.1.0` getaggt.
+`part1-v1.0.0` bleibt unverändert; Teil 1.1 ist gesammelt als
+`part1-v1.1.0` getaggt.
 
 | Schritt | Beschreibung | Status |
 |---|---|---|
@@ -178,6 +178,55 @@ gesammelt als `part1-v1.1.0` getaggt.
 | 1.1d | CI-Zeitlimit (`timeout-minutes: 20`) und Test-Hänger nach fehlgeschlagenen Widget-Tests: Ursache in den Testdateien (Drift-Abbestell-Timer in der Fake-Zone), Datenbank-Teardowns räumen jetzt erst den Widget-Baum ab (docs/decisions.md) | fertig |
 
 Stand nach 1.1d: Core 380 Tests, App 1 Test, alle grün; `tool/check_architecture.dart` Exit 0; CI mit Zeitlimit 20 min.
+
+Teil 1.1 ist als annotierter Tag `part1-v1.1.0` auf `25b09d9` getaggt (2026-10-07). Der Design-Pass auf `design/1.1` wird nicht übernommen (Branch bleibt als Referenz); an seine Stelle tritt Teil 1.2.
+
+## Teil 1.2 — Design-System (Branch `design-system`) — in Arbeit
+
+Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stopp: C01–C13, C14–C27, C28/C27b/C29. Kein Merge, kein Tag ohne Freigabe.
+
+| Schritt | Beschreibung | Status |
+|---|---|---|
+| C01 | Regeln: `architecture.yaml`, `check_architecture.dart`, Kapitel 28.9 (1–3) | fertig |
+| C02 | Gerüst `unsalted_design`, DS-01/03/06, CI | fertig |
+| C03 | Tokens, DS-02/04/05 | fertig |
+| C04 | Theme, DS-07 | fertig |
+| C05 | Layout, DS-10–13 | fertig |
+| C06 | Komponenten I: Buttons, Symbole, Text, Flächen, `AppSection`; DS-14–22 | fertig |
+| C07 | Komponenten II: Eingaben, Listen, Chips; DS-23–31 | fertig |
+| C08 | Komponenten III: Hinweise, Zustände, Meldungen, Dialoge; DS-32–39 | fertig |
+| C09 | Komponenten IV: Navigation, Daten; DS-40–45 | fertig |
+| C10 | Templates, DS-46–48 | fertig |
+| C11 | Widgetbook (macOS), WB-01–03 | fertig |
+| C12 | Doku `docs/design/*`, README/CHANGELOG | fertig |
+| C13 | Core-Anbindung, AT-13/14/15 mit Übergangsliste (18 Dateien) | fertig |
+| C14 | Einstellungen (13) | fertig |
+| C15 | Lebensmittel-Liste (9), Meldung in `undoable_deletion.dart` | fertig |
+| C16 | Rezeptliste (1), Wischen in `undoable_deletion.dart` | fertig |
+| C17 | Rezept erstellen (2) | fertig |
+| C18 | Export (11) | fertig |
+| C19 | Import (12) | fertig |
+| C20 | Versionen (7) | fertig |
+| C21 | Versionsvergleich (8) | fertig |
+| C22 | Nährwertanzeige, Mengenrechner (5, 6); `AppSurface`-Hinweistöne | fertig |
+| C23 | Rezeptdetail (4), UI-58 | fertig |
+| C24 | Lebensmittel bearbeiten (10), `PackageForm` | fertig |
+| C25 | Rezept-Editor (3), `IngredientRow`, `StepRow`, Auswahldialog | fertig |
+| C26 | App-Hülle: Theme hell/dunkel, Navigationsleiste, APP-02 | fertig |
+| C27 | Abschluss: Übergangsliste leer (Mechanismus bleibt bis zur Freigabe), Doku auf Ist-Stand | fertig |
+| C27c | Übergangsmechanismus entfernt | fertig |
+| C28 | Test-Finder auf Design-Typen (116 Zeilen, nur Finder) | fertig |
+| C27b | deutsche Einheiten (UI-59–63) | fertig |
+| C29 | UI-Konfiguration: `CoreUiOptions`, App-Datei, UC-01–07 | fertig |
+| C30 | Dezimalkomma in der ganzen Anzeige (Änderungsliste, Editor-Parameter, Verpackungsformular), UI-64–66 | fertig |
+
+Stand nach C30: Design 212 Tests, Core 412, App 6, Widgetbook 6, alle grün; `check_architecture` Exit 0.
+
+Stand nach Etappe 3 (C27c, C28, C27b, C29): Design 212 Tests, Core 409, App 6, Widgetbook 6, alle grün; `check_architecture` Exit 0. Teil 1.2 wartet auf Freigabe (kein Merge, kein Tag).
+
+Stand nach Etappe 2 (C14–C27): Design 212 Tests, Core 387, App 3, Widgetbook 6, alle grün; `check_architecture` Exit 0; Übergangsliste leer.
+
+Stand nach Etappe 1 (C01–C13): Design 208 Tests, Core 386, App 1, Widgetbook 6, alle grün; `tool/check_architecture.dart` Exit 0. Entwurfs-PR `design-system` → `main` steht noch aus (`gh` lokal nicht angemeldet).
 
 ### Design-Notizen (für den Design-Pass)
 

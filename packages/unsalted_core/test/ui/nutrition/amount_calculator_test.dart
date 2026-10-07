@@ -8,6 +8,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/nutrition/nutrition_result.dart';
 import 'package:unsalted_core/src/ui/nutrition/amount_calculator.dart';
@@ -31,7 +32,7 @@ void main() {
       home: Scaffold(body: AmountCalculator(result: _result())),
     ));
 
-    await tester.enterText(find.widgetWithText(TextField, 'Gramm'), '200');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Gramm'), '200');
     await tester.pump();
 
     final kcalField = tester.widget<TextField>(find.widgetWithText(TextField, 'kcal'));
@@ -43,7 +44,7 @@ void main() {
       home: Scaffold(body: AmountCalculator(result: _result())),
     ));
 
-    await tester.enterText(find.widgetWithText(TextField, 'kcal'), '700');
+    await tester.enterText(find.widgetWithText(AppTextField, 'kcal'), '700');
     await tester.pump();
 
     final gramsField = tester.widget<TextField>(find.widgetWithText(TextField, 'Gramm'));
@@ -55,7 +56,7 @@ void main() {
       home: Scaffold(body: AmountCalculator(result: _result())),
     ));
 
-    await tester.enterText(find.widgetWithText(TextField, 'Gramm'), 'abc');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Gramm'), 'abc');
     await tester.pump();
 
     expect(tester.takeException(), isNull);
@@ -67,9 +68,9 @@ void main() {
       home: Scaffold(body: AmountCalculator(result: _result())),
     ));
 
-    await tester.enterText(find.widgetWithText(TextField, 'Gramm'), '200');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Gramm'), '200');
     await tester.pump();
-    await tester.enterText(find.widgetWithText(TextField, 'Gramm'), '');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Gramm'), '');
     await tester.pump();
 
     final kcalField = tester.widget<TextField>(find.widgetWithText(TextField, 'kcal'));

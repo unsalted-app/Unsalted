@@ -7,6 +7,9 @@
 // Wiederherstellen-Methode gibt es nicht und braucht es nicht: Bis zum Ablauf
 // ist nichts gelöscht.
 //
+// Seit Teil 1.2 zeigt `AppMessenger` die Meldung, den Wisch-Hintergrund
+// liefert `AppSwipeToDelete` (unsalted_design).
+//
 // Die ausstehenden Löschungen liegen in einem UI-internen Provider (nicht über
 // die Tür exportiert), damit sie das Schließen eines Bildschirms überleben --
 // das Rezeptdetail startet die Löschung und kehrt zur Liste zurück, die den
@@ -19,6 +22,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../contracts/core_exceptions.dart';
 import '../../food/food_variant.dart';
@@ -89,7 +93,7 @@ final pendingFoodDeletionsProvider =
 void deleteRecipeWithUndo(BuildContext context, WidgetRef ref, Recipe recipe) {
   final repo = ref.read(recipeRepositoryProvider);
   _scheduleWithUndo(
-    messenger: ScaffoldMessenger.of(context),
+    messenger: AppMessenger.of(context),
     pending: ref.read(pendingRecipeDeletionsProvider.notifier),
     id: recipe.id,
     message: '„${recipe.title}“ gelöscht',
@@ -103,7 +107,7 @@ void deleteRecipeWithUndo(BuildContext context, WidgetRef ref, Recipe recipe) {
 void deleteFoodWithUndo(BuildContext context, WidgetRef ref, FoodVariant variant) {
   final repo = ref.read(foodRepositoryProvider);
   _scheduleWithUndo(
-    messenger: ScaffoldMessenger.of(context),
+    messenger: AppMessenger.of(context),
     pending: ref.read(pendingFoodDeletionsProvider.notifier),
     id: variant.id,
     message: '„${variant.name}“ gelöscht. Eingefrorene Versionen behalten ihre Nährwerte.',
@@ -112,48 +116,20 @@ void deleteFoodWithUndo(BuildContext context, WidgetRef ref, FoodVariant variant
 }
 
 void _scheduleWithUndo({
-  required ScaffoldMessengerState messenger,
+  required AppMessenger messenger,
   required PendingDeletions pending,
   required String id,
   required String message,
   required Future<void> Function() delete,
 }) {
-  // Eine noch sichtbare SnackBar weicht sofort; ihre Löschung läuft weiter.
-  messenger.hideCurrentSnackBar();
-  final controller = messenger.showSnackBar(SnackBar(
-    content: Text(message),
+  // Eine noch sichtbare Meldung weicht sofort; ihre Löschung läuft weiter.
+  final snackbar = messenger.showWithAction(
+    message: message,
+    actionLabel: 'Rückgängig',
+    onAction: () => pending.undo(id),
     duration: undoableDeletionDelay,
-    // Mit Aktion bliebe die SnackBar sonst stehen, bis jemand tippt.
-    persist: false,
-    action: SnackBarAction(label: 'Rückgängig', onPressed: () => pending.undo(id)),
-  ));
-  var closed = false;
-  controller.closed.then((_) => closed = true);
+  );
   // Mit Ablauf der Frist verschwindet auch „Rückgängig“ -- danach wäre es
   // wirkungslos.
-  pending.schedule(id, delete, onExpired: () {
-    if (!closed) controller.close();
-  });
-}
-
-/// Hintergrund beim Wischen nach links: Löschsymbol rechts, Farben aus dem
-/// Theme.
-class DeleteSwipeBackground extends StatelessWidget {
-  /// Erzeugt den Hintergrund.
-  const DeleteSwipeBackground({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return ColoredBox(
-      color: colors.errorContainer,
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Icon(Icons.delete, color: colors.onErrorContainer),
-        ),
-      ),
-    );
-  }
+  pending.schedule(id, delete, onExpired: snackbar.close);
 }

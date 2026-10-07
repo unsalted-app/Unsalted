@@ -8,14 +8,17 @@
 // das eingebaute Clipboard-API; ein nativer Teilen-Dialog bräuchte ein
 // zusätzliches Paket (z. B. share_plus), das pubspec.yaml ändern würde --
 // außerhalb des Dateiscopes dieses Schritts (nur lib/src/ui/settings/*).
+// Seit Teil 1.2 (C18) aus Design-Komponenten: FormPageTemplate mit festen
+// Abschnitten unter sections/.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../providers/core_providers.dart';
-import '../../recipe/recipe.dart';
-import '../../recipe/recipe_version.dart';
+import 'sections/export_result_section.dart';
+import 'sections/export_selection_section.dart';
 
 class ExportScreen extends ConsumerStatefulWidget {
   const ExportScreen({super.key});
@@ -47,94 +50,38 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
   Future<void> _copyToClipboard() async {
     await Clipboard.setData(ClipboardData(text: _exportedJson!));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('In Zwischenablage kopiert.')),
-    );
+    showAppMessage(context, 'In Zwischenablage kopiert.');
   }
 
   @override
   Widget build(BuildContext context) {
     final repo = ref.watch(recipeRepositoryProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Export')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StreamBuilder<List<Recipe>>(
-              stream: repo.watchRecipes(),
-              builder: (context, snapshot) {
-                final recipes = snapshot.data ?? const <Recipe>[];
-                return DropdownButtonFormField<String>(
-                  initialValue: _selectedRecipeId,
-                  decoration: const InputDecoration(labelText: 'Rezept'),
-                  items: [
-                    for (final recipe in recipes)
-                      DropdownMenuItem(value: recipe.id, child: Text(recipe.title)),
-                  ],
-                  onChanged: (id) => setState(() {
-                    _selectedRecipeId = id;
-                    _selectedVersionId = null;
-                    _exportedJson = null;
-                  }),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-            if (_selectedRecipeId != null)
-              StreamBuilder<List<RecipeVersion>>(
-                stream: repo.watchVersions(_selectedRecipeId!),
-                builder: (context, snapshot) {
-                  final versions = (snapshot.data ?? const <RecipeVersion>[])
-                      .where((v) => v.state == VersionState.snapshot)
-                      .toList();
-                  if (versions.isEmpty) {
-                    return const Text('Keine eingefrorene Version vorhanden.');
-                  }
-                  return DropdownButtonFormField<String>(
-                    initialValue: _selectedVersionId,
-                    decoration: const InputDecoration(labelText: 'Version'),
-                    items: [
-                      for (final version in versions)
-                        DropdownMenuItem(
-                          value: version.id,
-                          child: Text('V${version.versionIndex}'),
-                        ),
-                    ],
-                    onChanged: (id) => setState(() {
-                      _selectedVersionId = id;
-                      _exportedJson = null;
-                    }),
-                  );
-                },
-              ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _selectedVersionId == null ? null : _export,
-              child: const Text('Exportieren'),
-            ),
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(_error!, style: const TextStyle(color: Colors.red)),
-              ),
-            if (_exportedJson != null) ...[
-              const SizedBox(height: 16),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: SelectableText(_exportedJson!),
-                ),
-              ),
-              const SizedBox(height: 8),
-              OutlinedButton(
-                onPressed: _copyToClipboard,
-                child: const Text('In Zwischenablage kopieren'),
-              ),
-            ],
-          ],
-        ),
+    return FormPageTemplate(
+      title: 'Export',
+      body: FormSections.fixed(
+        children: [
+          ExportSelectionSection(
+            recipes: repo.watchRecipes(),
+            versions: _selectedRecipeId == null ? null : repo.watchVersions(_selectedRecipeId!),
+            selectedRecipeId: _selectedRecipeId,
+            selectedVersionId: _selectedVersionId,
+            onRecipeSelected: (id) => setState(() {
+              _selectedRecipeId = id;
+              _selectedVersionId = null;
+              _exportedJson = null;
+            }),
+            onVersionSelected: (id) => setState(() {
+              _selectedVersionId = id;
+              _exportedJson = null;
+            }),
+          ),
+          const AppGap(AppSpace.l),
+          AppButton.primary(label: 'Exportieren', onPressed: _selectedVersionId == null ? null : _export),
+          if (_error != null) AppPadding.only(top: AppSpace.s, child: AppText(_error!, tone: AppTone.error)),
+          if (_exportedJson != null)
+            Expanded(child: ExportResultSection(json: _exportedJson!, onCopy: _copyToClipboard)),
+        ],
       ),
     );
   }

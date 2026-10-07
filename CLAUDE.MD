@@ -65,25 +65,32 @@ unsalted/
 ├─ docs/
 │  ├─ spezifikation.md             VERBINDLICHE Spezifikation (Quelle der Wahrheit)
 │  ├─ status.md                    Phase/Schritt-Tracker
-│  └─ decisions.md                 Protokoll technischer Entscheidungen
+│  ├─ decisions.md                 Protokoll technischer Entscheidungen
+│  └─ design/                      Teil 1.2: plan.md, design_system.md, components.md, screens.md
 ├─ tool/
 │  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
-├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Core und App (Nachtrag 0.1a)
+├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Design, Core, App, Widgetbook
 ├─ apps/
+│  ├─ unsalted_widgetbook/         Komponenten-Katalog (Teil 1.2, C11), Rang 99, nur macOS;
+│  │                               lib/catalog/ je Design-Ordner eine Datei, Tests WB-01–03
 │  └─ unsalted_app/                App-Hülle (Schritt 8.8)
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
 │     │                            flutter_riverpod, go_router
-│     ├─ lib/main.dart             ProviderScope-Overrides, GoRouter aus
+│     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
+     ├─ lib/main.dart             ProviderScope-Overrides (appOverrides), GoRouter aus
 │     │                            modules.expand((m) => m.routes), ShellRoute
 │     │                            mit NavigationBar (/, /foods, /settings)
 │     └─ test/widget_test.dart     App-Start-Rauchtest
 └─ packages/
+   ├─ unsalted_design/             Design-System (Teil 1.2), Rang 0, nur Flutter, Tür mit show
+   │  └─ lib/src/  tokens/ theme/ layout/ components/<gruppe>/ templates/; Tests DS-01–48
    └─ unsalted_core/
       ├─ pubspec.yaml
       ├─ drift_schemas/
       │  └─ drift_schema_v1.json      Schema v1, eingefroren (Kapitel 25.1)
       ├─ lib/
-      │  ├─ unsalted_core.dart               öffentliche Tür — eingefroren seit Schritt 7.4
+      │  ├─ unsalted_core.dart               öffentliche Tür — eingefroren seit Schritt 7.4;
+      │  │                                   additiv: CoreUiOptions, coreUiOptionsProvider (28.9 Punkt 6)
       │  └─ src/
       │     ├─ nutrition/                    Phase 2, fertig, reines Dart
       │     │  ├─ decimal_math.dart
@@ -147,32 +154,27 @@ unsalted/
       │     │  └─ core_module.dart           class CoreModule — routes seit Nachtrag 8.7a gefüllt (Kapitel 22)
       │     ├─ providers/                    Phase 7, fertig
       │     │  └─ core_providers.dart        alle 8 Provider aus Kapitel 16.7
-      │     └─ ui/                           Phase 8, fertig (Bildschirm 1–13)
-      │        ├─ recipe_list/recipe_list_screen.dart        Bildschirm 1
-      │        ├─ recipe_editor/recipe_create_screen.dart    Bildschirm 2
-      │        ├─ recipe_editor/recipe_editor_screen.dart    Bildschirm 3
-      │        ├─ recipe_editor/ingredient_row.dart
-      │        ├─ recipe_detail/recipe_detail_screen.dart    Bildschirm 4
-      │        ├─ recipe_detail/version_switcher.dart
-      │        ├─ nutrition/nutrition_header.dart            Bildschirm 5
-      │        ├─ nutrition/nutrition_table.dart              Bildschirm 5
-      │        ├─ nutrition/amount_calculator.dart            Bildschirm 6
-      │        ├─ versions/version_list_screen.dart           Bildschirm 7
-      │        ├─ versions/version_compare_screen.dart        Bildschirm 8
-      │        ├─ versions/change_descriptions.dart           Texte der Änderungsliste (9.2a)
-      │        ├─ foods/food_list_screen.dart                 Bildschirm 9
-      │        ├─ foods/food_editor_screen.dart               Bildschirm 10 (PopScope seit Nachtrag 10.0)
-      │        ├─ foods/package_form.dart
-      │        ├─ settings/export_screen.dart                 Bildschirm 11 — Lücke: kein Teilen-Dialog
-      │        ├─ settings/import_screen.dart                 Bildschirm 12 — Lücke: keine Datei-Auswahl
-      │        ├─ settings/settings_screen.dart                Bildschirm 13
-      │        └─ shared/undoable_deletion.dart                Löschen mit 5 s „Rückgängig“ (Teil 1.1b),
-      │                                                        UI-interne Provider, nicht exportiert
+      │     └─ ui/                           Bildschirm 1–13; seit Teil 1.2 nur aus Design-Komponenten
+      │        │                             (Templates + Abschnitte, docs/design/screens.md)
+      │        ├─ config/core_ui_options.dart   Anzeige-Schalter (Teil 1.2 C29), über die Tür exportiert
+      │        ├─ <bereich>/<name>_screen.dart  Zustand, Daten, Aktionen
+      │        ├─ <bereich>/sections/*_section.dart  je Abschnitt eine Datei, zustandslos
+      │        ├─ recipe_list/recipe_card.dart, foods/food_tile.dart, versions/version_tile.dart,
+      │        │  versions/snapshot_column.dart, versions/change_list.dart,
+      │        │  recipe_editor/ingredient_row.dart, recipe_editor/step_row.dart (StepRowData),
+      │        │  recipe_editor/food_variant_picker_dialog.dart, recipe_detail/version_switcher.dart,
+      │        │  nutrition/*, foods/package_form.dart   fachliche Bausteine
+      │        ├─ versions/change_descriptions.dart     Texte der Änderungsliste (9.2a)
+      │        ├─ settings/export_screen.dart / import_screen.dart  Lücken: kein Teilen-Dialog,
+      │        │                                                    keine Datei-Auswahl
+      │        ├─ shared/undoable_deletion.dart         Löschen mit 5 s „Rückgängig“ (Teil 1.1b),
+      │        │                                        UI-interne Provider, nicht exportiert
+      │        └─ shared/unit_labels.dart               Einheiten deutsch, Dezimalkomma (Teil 1.2 C27b)
       └─ test/
-         ├─ architecture/                    AT-01 bis AT-12, alle fertig und grün
-         │  ├─ at01_no_upper_imports_test.dart … at12_no_kj_text_test.dart
+         ├─ architecture/                    AT-01 bis AT-15, alle grün (AT-13–15 seit Teil 1.2)
+         │  ├─ at01_no_upper_imports_test.dart … at15_design_only_in_ui_test.dart
          │  ├─ public_api_golden.txt
-         │  └─ support/architecture_test_utils.dart
+         │  └─ support/  architecture_test_utils.dart, ui_rules.dart (Detektoren AT-13/14)
          ├─ nutrition/                       6 Testdateien, Phase 2
          ├─ recipe/
          │  ├─ recipe_test.dart
@@ -228,16 +230,33 @@ und Klarstellungen in Kapitel 28 der Spezifikation.
 - Bekannte Grenzen von `part1-v1.0.0` (Teilen-Dialog, Dateiauswahl, E2,
   Design-Punkte): Kapitel 28.8 und `docs/status.md`.
 
-**Teil 1.1 (in Arbeit, `docs/status.md`):** 1.1a fertig (kein Flackern beim
+**Teil 1.1 (abgeschlossen, Tag `part1-v1.1.0` auf `25b09d9`):** 1.1a fertig (kein Flackern beim
 Versionswechsel im Rezeptdetail), 1.1b fertig (Rezepte und Lebensmittel
 löschen mit 5 s „Rückgängig“), 1.1c fertig (Ladebalken im Rezeptdetail erst
 nach 300 ms), 1.1d fertig (CI-Zeitlimit, Tests räumen auch bei
-Fehlschlag auf); Test-IDs bis UI-46. Kein neuer Tag pro
-Schritt — Teil 1.1 wird nach dem Design-Pass gesammelt als `part1-v1.1.0`
-getaggt. Design-Notizen für den Design-Pass sammelt `docs/status.md`.
+Fehlschlag auf); Test-IDs bis UI-46.
 
-**Nächster Schritt:** weitere Arbeitskarten zu Teil 1.1 (Design-Pass) oder
-Teil 2 (`unsalted_experiments`) nach Vorgabe des Projektverantwortlichen.
+**Design-Pass `design/1.1` wird NICHT übernommen** (Branch bleibt als
+Referenz, nicht löschen, nicht mergen). Ersetzt durch **Teil 1.2 –
+Design-System** auf Branch `design-system` (von `main`): eigenes Paket
+`packages/unsalted_design` (Rang 0, nur Flutter), Widgetbook-Katalog,
+Core-Bildschirme aus Abschnitten. Phase A (nur Plan) liegt in
+`docs/design/plan.md`, freigegeben 2026-10-07 (Antworten F1–F12 in
+`docs/decisions.md`, „Teil 1.2“). Fortschritt je Commit C01 … in
+`docs/status.md`. Kein Merge, kein Tag ohne ausdrückliche Freigabe; Teil 1.2
+wird später als `part1-v1.2.0` + `design-v0.1.0` getaggt.
+
+**Stand Teil 1.2:** Etappe 1 (C01–C13) und Etappe 2 (C14–C27) fertig; alle
+13 Bildschirme und die App-Hülle nutzen das Design-System, Übergangsliste
+leer. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03, AT-13–15, UI-58, APP-02.
+
+Etappe 3 (C27c, C28, C27b, C29) fertig: Übergangsmechanismus entfernt,
+Test-Finder auf Design-Typen, deutsche Einheiten, Anzeige-Schalter
+(`CoreUiOptions`). C30: Dezimalkomma in der ganzen Anzeige. Test-IDs neu
+zusätzlich UI-59–66, UC-01–07.
+
+**Nächster Schritt:** Freigabe von Teil 1.2 durch den Projektverantwortlichen
+(Merge, Tags `part1-v1.2.0` + `design-v0.1.0` nur nach ausdrücklicher Freigabe).
 
 ---
 
@@ -460,6 +479,13 @@ Teil 2 (`unsalted_experiments`) nach Vorgabe des Projektverantwortlichen.
 - Fachliche Zahlen: `Decimal`, intern `Rational`, niemals `double`.
 - Energie ausschließlich `energy_kcal`, kein kJ.
 - Rundung ausschließlich im `NutritionFormatter`.
+- **Aussehen nur im Design-System (Teil 1.2):** `packages/unsalted_design`
+  (Rang 0, nur Flutter, keine Fachbegriffe, keine UI-Texte). In
+  `lib/src/ui/` keine Material-Bausteine, für die es eine Design-Komponente
+  gibt, keine festen Farben, keine Stile, keine Zahlen für Abstände (AT-13,
+  AT-14, Liste in `test/architecture/support/ui_rules.dart`);
+  `package:unsalted_design/` nur in `lib/src/ui/` (AT-15). Regeln:
+  `docs/design/design_system.md`.
 - Fachmodell ≠ Persistenzmodell — welches Standardfeld (`id`,
   `created_at`, `updated_at`, `deleted_at`) in welches Fachmodell gehört,
   legt Kapitel 10 der Spezifikation pro Modell einzeln fest.

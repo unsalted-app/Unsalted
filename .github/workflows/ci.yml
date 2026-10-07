@@ -27,6 +27,16 @@ jobs:
       - name: Architekturprüfung
         run: dart run tool/check_architecture.dart
 
+      - name: unsalted_design — pub get
+        working-directory: packages/unsalted_design
+        run: flutter pub get
+      - name: unsalted_design — analyze
+        working-directory: packages/unsalted_design
+        run: flutter analyze
+      - name: unsalted_design — test
+        working-directory: packages/unsalted_design
+        run: flutter test
+
       - name: unsalted_core — pub get
         working-directory: packages/unsalted_core
         run: flutter pub get
@@ -45,4 +55,14 @@ jobs:
         run: flutter analyze
       - name: unsalted_app — test
         working-directory: apps/unsalted_app
+        run: flutter test
+
+      - name: unsalted_widgetbook — pub get
+        working-directory: apps/unsalted_widgetbook
+        run: flutter pub get
+      - name: unsalted_widgetbook — analyze
+        working-directory: apps/unsalted_widgetbook
+        run: flutter analyze
+      - name: unsalted_widgetbook — test
+        working-directory: apps/unsalted_widgetbook
         run: flutter test

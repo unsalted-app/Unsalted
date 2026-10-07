@@ -1170,3 +1170,616 @@ das Startskript; die `flutter_tester`-Kindprozesse liefen als Waisen weiter, ein
 Lauf ignorierte das Signal ganz. Die Waisen aus den Gegenproben zu 1.1b/1.1c
 sind beendet; für Gegenproben ein Skript verwenden, das nach Ablauf auch die
 Kindprozesse beendet.
+
+## 2026-10-07 — Teil 1.2: Design-System statt Design-Pass `design/1.1`
+
+**Betroffenes Kapitel:** 2, 3, 4, 5, 19, 22, 27 (Regel 14); Nachträge in
+Kapitel 28.9.
+
+**Entscheidung (Projektverantwortlicher):** Der Design-Pass auf `design/1.1`
+wird nicht übernommen; der Branch bleibt als Referenz. Stattdessen baut
+Teil 1.2 auf `design-system` ein eigenes Paket `packages/unsalted_design`
+(Rang 0, nur Flutter) mit Tokens, Theme, Layout, Komponenten und Templates,
+einen Widgetbook-Katalog und stellt die Core-Bildschirme ohne
+Funktionsänderung auf diese Komponenten um. Plan und Antworten auf F1–F12:
+`docs/design/plan.md` (freigegeben 2026-10-07). Teil 1.1a–d ist als
+`part1-v1.1.0` auf `25b09d9` getaggt; Teil 1.2 wird erst nach Freigabe als
+`part1-v1.2.0` + `design-v0.1.0` getaggt.
+
+**Antworten auf F1–F12:** F1 streng — AT-14 verbietet auch `Icons.`,
+`TextStyle(`, `FontWeight.`, `Theme.of(`, `EdgeInsets.`, `BorderRadius.` und
+`SizedBox` mit Zahl, über die Übergangsliste. F2 ja. F3 `unit_labels.dart`
+übernehmen und nach C27 als eigener Commit C27b einsetzen (eigene Tests,
+Kapitel 28.9); Skelett übernehmen, aber nicht einsetzen, der Ladekreis
+bleibt. F4 `darkTheme` ab C26, folgt dem System. F5–F8 wie empfohlen (Media
+erst Teil 4; Token-Namen jetzt, Generator später; C28 nur Finder;
+Widgetbook Web + macOS, von Hand). F9 UI-Konfiguration wie vorgeschlagen;
+Werte zunächst nur in `apps/unsalted_app/lib/config/ui_options.dart`;
+unbekannte Schlüssel werden ignoriert; Kapitel 28.9 hält fest, dass
+`CoreUiOptions` eine Konfiguration und kein Widget ist (18.1 verbietet nur
+den Export von Widgets). F10 Präfix `App…`. F11 Entwurfs-PR
+`design-system` → `main`, nicht mergen. F12 `part1-v1.1.0` jetzt, Teil 1.2
+später nach Freigabe.
+
+**C01 — Regeln.** `architecture.yaml`: `unsalted_design` Rang 0,
+`unsalted_widgetbook` Rang 99, `package:unsalted_design/` in
+`forbidden_in_core` (nur `src/ui/`), neuer Block `allowed_in_design`.
+`tool/check_architecture.dart` hing die Ausnahmen bisher an
+`contains('flutter')`/`contains('drift')`; ein Design-Eintrag wäre damit
+überall gemeldet worden. Jetzt eine Tabelle Eintrag → Ausnahmeordner (für
+Flutter und Drift unverändert), dazu die Prüfung des Design-Pakets (nur
+`allowed_in_design`, kein `dart:io`/`dart:ffi`). *Gegenprobe:* vorübergehend
+ein Design-Import in `src/recipe/` und `src/ui/` von Core sowie ein
+Riverpod-, ein `dart:io`-, ein Flutter- und ein Eigenimport in
+`packages/unsalted_design/lib/` → genau drei Meldungen (Core `src/recipe/`,
+Riverpod, `dart:io`), Exit 1; nach dem Entfernen Exit 0.
+
+**C02 — Gerüst `unsalted_design`.** `flutter create --template=package`,
+Version 0.1.0 (`design-v0.1.0`, unveröffentlicht), `publish_to: none`,
+einzige Abhängigkeit `flutter`. Die Tür verlangt `show` an jedem Export, damit
+DS-03 neue oder umbenannte Komponenten erkennt (bei Core prüft AT-06 nur die
+Exportzeilen). Neue Tests: DS-01 (nur Flutter, auch `pubspec.yaml`), DS-03
+(Tür = Golden-Liste), DS-06 (keine Fachbegriffe in `lib/`, keine andere
+Energieeinheit in `lib/` und `test/`). CI prüft das Paket vor Core.
+*Gegenprobe:* `dart:io`-Import, ein Export ohne `show` und das Wort „Rezept“
+vorübergehend in der Tür → DS-01, DS-03 und DS-06 rot; danach grün.
+
+**C03 — Tokens.** Sieben Dateien unter `lib/src/tokens/`, Figma-Name je Wert
+im Doku-Kommentar und in `byFigmaName`. Farbwerte per Skript aus
+`_colorSchemeLightM3`/`_colorSchemeDarkM3` in
+`material/theme_data.dart` (Flutter 3.47.5) übernommen, 46 Rollen ohne die
+veralteten `background`, `onBackground`, `surfaceVariant`. Folge: Ein aus
+den Tokens gebautes `ColorScheme` ist nicht `==` zu dem von `ThemeData()`,
+weil `surfaceVariant` dann auf `surfaceContainerHighest` zurückfällt
+(`E6E0E9` statt `E7E0EC`, dunkel `36343B` statt `49454F`). Kein
+Flutter-Widget liest `surfaceVariant` mehr (SDK durchsucht); `background`
+fällt auf `surface` zurück und ist in beiden Standardschemata gleich. DS-07
+vergleicht deshalb rollenweise. Typo-Tokens = `Typography.englishLike2021`
+(Größe, Schnitt, Zeilenhöhe, Laufweite; ohne Farbe und Schriftfamilie).
+Bewegung: `AppMotion.durationOf` aus `motion.dart` (`design/1.1`); Kurven
+`Easing.standard` und `Curves.easeInOutCubicEmphasized`. Tests DS-02 (Farbwerte
+nur in `tokens/`), DS-04 (Vollständigkeit, Figma-Namensformat, Typo =
+Flutter-Skala, Bewegung reduzieren), DS-05 (alle 45 Text-auf-Fläche-Paare je
+Modus ≥ 4,5:1 — die Material-Standardfarben bestehen ohne Ausnahme).
+*Gegenprobe DS-02:* `Color(…)` in einer Datei außerhalb von `tokens/` → rot.
+
+**C04 — Theme.** `AppTheme.light()`/`.dark()` bauen `ThemeData` nur aus
+`AppColorTokens` und `AppTypography`. DS-07 vergleicht mit `ThemeData()` bzw.
+`ThemeData(brightness: dark)`: alle 46 Rollen einzeln, die abgeleiteten
+Flächenfarben (`scaffoldBackgroundColor`, `canvasColor`, `cardColor`,
+`dividerColor`, `hintColor`, `disabledColor`, `primaryColor`) und die Typo
+nach `ThemeData.localize` (so wendet `MaterialApp` das Theme an) — gleich.
+*Abweichung vom Plan:* `theme/app_tokens.dart` (ThemeExtension) und
+`theme/component_themes.dart` entfallen vorerst. Komponenten lesen
+Abstände, Radien und Bewegung als statische Tokens und Farben/Typo aus
+`Theme.of(context)`; ohne Design-Theme liefert `ThemeData()` dieselben
+Werte, damit ist Risiko R2 (Core-Tests pumpen `MaterialApp` ohne Theme)
+ohne Rückfall-Logik gelöst. Komponenten-Themes und eine Erweiterung (z. B.
+für Farben außerhalb der Material-Rollen) kommen, sobald das Figma-Design
+sie verlangt (KI-S4).
+
+**C05 — Layout.** `AppSpace` (Enum der Abstandsstufen, in
+`spacing_tokens.dart`): Bildschirme geben Abstände nur als Stufe an, nie als
+Zahl. `AppGap`, `AppStack` (Abstand nur zwischen Kindern), `AppPadding`
+(`all`/`symmetric`/`only`; im Plan nicht eigens genannt, ersetzt
+`EdgeInsets` in Bildschirmen), `AppPage` (baut genau ein `Scaffold`),
+`AppGrid` (aus `card_layout.dart`, ohne Sliver, Spalten nach verfügbarer
+Breite), `AppWindowSize` + `ResponsiveBuilder` (statt des im Plan genannten
+`Responsive.of`; `AppWindowSize.of(context)` für die Fensterbreite).
+`AppSection` folgt in C06, weil sie `AppText` und `AppDivider` nutzt. Tests
+DS-10 bis DS-13 laufen über `test/support/design_harness.dart` in vier
+Varianten (hell/dunkel × Handy 390×844 / Tablet 1024×1366).
+
+**C06 — Komponenten I.** `AppButton` (`primary`/`secondary`/`tertiary` →
+`ElevatedButton`/`OutlinedButton`/`TextButton`, mit Symbol die `.icon`-
+Varianten), `AppIconButton` und `AppFab` mit Pflicht-Tooltip
+(Screenreader-Text; heute haben FABs und die Entfernen-Knöpfe der Zeilen
+keinen — kommt mit der Umstellung hinzu), `AppFab` mit Ladezustand
+(Ladekreis in `onPrimaryContainer` statt `Colors.white`, das auf dem hellen
+FAB kaum zu sehen war). `AppIcons` mit Figma-Namen; DS-06 ignoriert jetzt
+Material-Symbolnamen (`Icons.no_food` ist kein eigener Fachbegriff).
+`AppText` (`body` = schlichter `Text` ohne Stil, `strong` = fett wie die
+bisherigen Überschriften, `title`, `caption`) und `AppTone` (normal, muted,
+primary, error aus dem ColorScheme). `AppSurface` (Töne low/medium/high),
+`AppDivider` (Höhe als Stufe, `.flush()`, `.vertical()`), `AppCard`,
+`AppSection` (Trennlinie `space/xxl` + fette Überschrift = bisheriges Muster
+„Divider(height: 32) + fetter Text“). Tests DS-14 bis DS-22.
+
+**C07 — Komponenten II.** `AppTextField` baut mit Controller ein
+`TextField`, mit Startwert ein `TextFormField` (die Schrittfelder des
+Editors und ihre Tests verwenden `TextFormField`); `helperMaxLines` immer 2
+wie bisher in der Zutatenzeile; Varianten `width: narrow` (120, ersetzt
+`SizedBox(width: 120)` um das Timer-Feld) und `expands` (Importfeld: füllend,
+oben ausgerichtet, mit Rahmen). `AppSelect<T>` baut ohne Label ein
+`DropdownButton<T>`, mit Label ein `DropdownButtonFormField<T>` — so finden
+die bestehenden Tests ihre Typen weiter. Neu gegenüber dem Plan:
+`AppItemList` (`List/Items`) als zentrale Stelle für Listen ganzer Seiten
+(später Raster ab Tablet). `AppSwipeToDelete` übernimmt den Hintergrund aus
+`DeleteSwipeBackground`. Texte (Platzhalter, Beschriftungen) liefert immer
+der Aufrufer; das Design-Paket enthält keine UI-Texte. Tests DS-23 bis DS-31.
+
+**C08 — Komponenten III.** `AppNotice` aus `notice.dart` (`design/1.1`),
+Radius/Abstände aus Tokens. `AppEmptyState` und `AppErrorState` bilden den
+heutigen Aufbau 1:1 nach (Symbol 48, Satz, Aktion; Text + „Erneut
+versuchen“) statt der umgestalteten Fassung aus `design/1.1`. Meldungen über
+`AppMessenger.of(context)`: kapselt `ScaffoldMessenger`, `persist: false` und
+die Regel aus 1.1b, `close()` nur auf noch offene Meldungen
+(`AppSnackbarHandle.close`); Fristen und Löschlogik bleiben in Core.
+Dialoge: `showAppConfirmDialog` (`false` auch beim Schließen ohne Wahl, wie
+bisher `result ?? false`), `showAppChoiceDialog`, `showAppDialog` +
+`AppDialog` (feste Inhaltsgröße 400 × 400 wie der bisherige
+Lebensmittel-Auswahldialog), `showAppAboutDialog`. `AppSkeleton` übernommen,
+nicht eingesetzt (F3). Tests DS-32 bis DS-39.
+
+**C09 — Komponenten IV.** `AppTopBar` (`AppBar` mit unterem Bereich 56 hoch,
+Innenabstand `l`/`s` wie bisher um die Suchfelder), `AppOverflowMenu`
+(`PopupMenuButton<VoidCallback>` wie im Rezeptdetail und im
+Lebensmittel-Editor), `AppNavigationBar`, `AppBottomActionBar` (eine Aktion
+in eigener Breite wie im Versionsvergleich, mehrere teilen sich die Breite
+wie im Editor), `AppKeyValueTable` (Spalten 2 : 1 : 1, Zellabstand `xs`,
+fette Kopfzeile — wie die Nährwerttabelle), `AppCodeBlock`. Media-Ordner
+bleibt bis Teil 4 leer (F5). Tests DS-40 bis DS-45.
+
+**C10 — Templates.** Templates bekommen den Inhalt des aktuellen Zustands
+als `body` (der Bildschirm entscheidet: `AppLoading`, `AppErrorState`, leer
+oder Inhalt). Inhalt-Layouts: `DetailSections` (scrollend; ein- oder
+zweispaltig über die **eine** zentrale Einstellung `DetailLayout.standard`,
+zunächst `oneColumn`), `DetailSplit` (zwei Bereiche übereinander +
+Fußzeile, wie der Versionsvergleich), `FormSections` und
+`FormSections.fixed` (Innenabstand `l`; fest für `Expanded`-Kinder wie
+Export/Import). Stabilität als Teil des Vertrags: `DetailPageTemplate`
+legt den Inhalt immer in einen `Stack` (`StackFit.expand`), damit das
+Ein- und Ausblenden des Ladebalkens (1.1a/1.1c) Inhalt und Scrollposition
+nicht neu aufbaut; `FormPageTemplate` hält den Inhalt in einem `Expanded`
+mit festem Key, damit erscheinende Meldungen Eingaben nicht verwerfen.
+Tests DS-46 bis DS-48. *Gegenprobe DS-47:* `Stack` nur bei sichtbarem
+Ladebalken → alle vier Varianten rot (Scrollposition 0, Inhalt neu
+erzeugt); zurückgesetzt, grün.
+
+**C11 — Widgetbook.** `apps/unsalted_widgetbook`, `widgetbook` 3.25.0 per
+`flutter pub add`; API im Pub-Cache geprüft (`Widgetbook.material`,
+`MaterialThemeAddon` + `WidgetbookTheme`, `ViewportAddon` mit
+`IosViewports.iPhone13`/`iPadPro11Inches`, `WidgetbookFolder`/
+`WidgetbookCategory`/`WidgetbookComponent`/`WidgetbookUseCase`). Katalog von
+Hand (kein Generator, F8), je Ordner des Design-Pakets eine Datei;
+Komponentenname = Dart-Klasse, Anwendungsfall = Figma-Variante. Tests WB-01
+(alle 63 Anwendungsfälle bauen in hell/dunkel × Handy/Tablet ohne Fehler und
+ohne Überlauf), WB-02 (jedes Symbol der Tür ist Katalogeintrag oder
+ausdrücklich ausgenommen, z. B. Tokens und Parametertypen), WB-03 (die App
+startet). *Abweichung von F8:* Nur macOS — `flutter create
+--platforms=web,macos` hat keinen `web/`-Ordner angelegt, weil Web in der
+lokalen Flutter-Konfiguration abgeschaltet ist (`enable-web: false`). Die
+globale Konfiguration wurde nicht geändert; Web lässt sich nachrüsten mit
+`flutter config --enable-web` und `flutter create --platforms=web .` im
+App-Ordner. CI prüft die App (analyze + test). Rang 99 in
+`architecture.yaml` seit C01.
+
+**C12 — Doku.** `docs/design/design_system.md` (Ebenen, acht Regeln,
+Benennung = Figma-Namen, Ablauf Figma → Code), `components.md` (Komponente |
+Figma-Name | Datei | Status | Test, dazu die fachlichen Bausteine in Core),
+`screens.md` (je Bildschirm Zweck, Daten, Aktionen, Zustände, Template,
+Abschnitte; Spalte „Umgestellt“ wird mit C14–C26 nachgeführt), README und
+CHANGELOG des Pakets.
+
+**C13 — Core-Anbindung.** `flutter pub add unsalted_design --path
+../unsalted_design` in Core; dazu `publish_to: 'none'` in Core-`pubspec.yaml`,
+weil der Analyzer Pfad-Abhängigkeiten in veröffentlichbaren Paketen meldet
+(`invalid_dependency`). Die App-`pubspec.lock` ändert sich transitiv.
+Neue Architekturtests mit gemeinsamen Detektoren in
+`test/architecture/support/ui_rules.dart`:
+- **AT-13** (feste Farben) wie auf `design/1.1`.
+- **AT-14** (nur Design-Komponenten, F1 „streng“). Gegenüber der Liste im
+  Plan zusätzlich verboten, weil es eine Komponente dafür gibt: `Icon`
+  (`AppIcon`), `InputDecoration` (`AppTextField`), `ListView`
+  (`AppItemList`/Templates), `Container`, `DecoratedBox`, `ColoredBox`
+  (`AppSurface`), `Padding` (`AppPadding`), `NavigationDestination`,
+  `TableRow`, `ScaffoldMessenger.` (`AppMessenger`), `SizedBox.square` und
+  `SizedBox(width: double.…)`. Erlaubt bleiben Struktur-Widgets (`Text`
+  ohne Stil, `Column`, `Row`, `Expanded`, `Flexible`, `Stack`, `Center`,
+  `SingleChildScrollView`, Builder, `PopScope`, `Navigator`,
+  `MaterialPageRoute`). Detektor mit Selbsttest (20 Verstöße, 12 erlaubte
+  Fälle).
+- **AT-15** (Design-Import nur in `lib/src/ui/`).
+- **Übergangsliste** `support/design_transition.dart`: die 18 noch nicht
+  umgestellten UI-Dateien (alle außer `change_descriptions.dart`, die schon
+  sauber ist). Ein zweiter AT-14-Test schlägt fehl, wenn eine Datei ohne
+  Verstoß auf der Liste steht oder es sie nicht gibt.
+AT-01 inhaltlich unverändert (Rang 0 < 1), Kopfkommentar korrigiert.
+*Gegenproben:* `Colors.red` in einer neuen Datei unter `src/ui/` → AT-13 rot;
+`settings_screen.dart` von der Liste gestrichen → AT-14 rot
+(`settings_screen.dart:25 → return Scaffold(`); Design-Import in
+`src/recipe/` → AT-15 rot; alles zurückgesetzt, grün. Core 386 Tests
+(+6), App 1, Design 208, Widgetbook 6; `check_architecture` Exit 0.
+
+**C14 — Einstellungen (Bildschirm 13).** `ListPageTemplate` mit
+`AppItemList`; Abschnitte `settings_core_entries_section.dart` (Export,
+Import, „Über unsalted“) und `settings_module_entries_section.dart`
+(Trennlinie + `settingsEntries`, leer = nichts). Modul-Einträge erhalten wie
+bisher den Kontext des Bildschirms (`entry.onTap(context)` im Bildschirm).
+Keine sichtbare Änderung. `components.md`: eigene Zeilen für die in
+Etappe 1 hinzugekommenen Bausteine `AppSpace`, `AppPadding`, `AppItemList`,
+`AppTone`, `AppMessenger`, `AppWindowSize`. Bestehende Tests unverändert,
+Core 386 grün.
+
+**C15 — Lebensmittel-Liste (Bildschirm 9).** `ListPageTemplate`; Abschnitte
+`food_list_search_section.dart`, `food_list_empty_section.dart`,
+`food_list_results_section.dart`, Baustein `foods/food_tile.dart`.
+`undoable_deletion.dart` zeigt die Meldung jetzt über
+`AppMessenger.showWithAction`; die Regel „nur schließen, solange offen“ liegt
+im `AppSnackbarHandle`. *Abweichung vom Plan:* `undoable_deletion.dart`
+bleibt bis C16 auf der Übergangsliste, weil `DeleteSwipeBackground` noch von
+der Rezeptliste benutzt wird; es entfällt mit C16. *Sichtbare Änderung
+(freigegeben):* Die Hauptaktion hat den Tooltip „Neues Lebensmittel“ —
+bewusst nicht „Lebensmittel anlegen“, weil ein bestehender Test nach dem
+Öffnen des Editors genau einen solchen Text erwartet. Bestehende Tests
+unverändert, Core 386 grün.
+
+**C16 — Rezeptliste (Bildschirm 1).** `ListPageTemplate`; Abschnitte
+`recipe_list_search_section.dart`, `recipe_list_empty_section.dart`,
+`recipe_list_results_section.dart`, Baustein `recipe_list/recipe_card.dart`
+(vorerst `AppListItem`, damit die Liste aussieht wie bisher).
+`DeleteSwipeBackground` entfällt in `undoable_deletion.dart` (jetzt
+`AppSwipeToDelete`); beide Dateien sind von der Übergangsliste gestrichen.
+Im leeren Zustand „Keine Treffer.“ steht statt der Aktion ein leerer
+Platzhalter, damit der Abstand unter dem Satz bleibt wie bisher (keine
+Verschiebung). *Sichtbare Änderung (freigegeben):* Tooltip „Neues Rezept“
+an der Hauptaktion — nicht „Rezept erstellen“, weil ein bestehender Test
+diesen Text nach dem Öffnen genau einmal erwartet. Bestehende Tests
+unverändert, Core 386 grün.
+
+**C17 — Rezept erstellen (Bildschirm 2).** `FormPageTemplate` mit
+`FormSections`; Abschnitt `recipe_create_fields_section.dart`; Rückfrage
+über `showAppConfirmDialog` (gleiche Texte, `false` beim Schließen ohne
+Wahl). `PopScope` und `addPostFrameCallback` bleiben unverändert im
+Bildschirm. Der Speicherfehler bleibt unter den Feldern. *Sichtbare
+Änderungen (freigegeben):* Speicherfehler in `color/error` statt
+`Colors.red`; Ladekreis im FAB in `onPrimaryContainer` statt `Colors.white`;
+Tooltip „Rezept speichern“. Bestehende Tests unverändert, Core 386 grün.
+
+**C18 — Export (Bildschirm 11).** `FormPageTemplate` mit
+`FormSections.fixed`; Abschnitte `export_selection_section.dart` (Rezept,
+Version) und `export_result_section.dart` (JSON in `AppCodeBlock`,
+„In Zwischenablage kopieren“). Die Auswahl bekommt die beiden Streams als
+Daten und baut ihre `StreamBuilder` an derselben Stelle wie bisher, damit
+Abonnements und der Formularzustand der Auswahllisten unverändert bleiben
+(Abschnitte lesen weiter keine Provider). Meldung „In Zwischenablage
+kopiert.“ über `showAppMessage`. *Sichtbare Änderung (freigegeben):*
+Fehlertext in `color/error` statt `Colors.red`. Bestehende Tests
+unverändert, Core 386 grün.
+
+**C19 — Import (Bildschirm 12).** `FormPageTemplate` mit
+`FormSections.fixed`; Abschnitte `import_input_section.dart` (füllendes
+Feld mit Rahmen, `AppTextField.expands`) und `import_preview_section.dart`
+(Titel fett, Zutatenzahl, Gesamt-kcal über `NutritionFormatter`).
+Reihenfolge, Abstände und Logik unverändert. *Sichtbare Änderung
+(freigegeben):* Vorschau- und Importfehler in `color/error` statt
+`Colors.red`. Bestehende Tests unverändert, Core 386 grün.
+
+**C20 — Versionen (Bildschirm 7).** `ListPageTemplate` ohne Suche und
+Hauptaktion; Abschnitt `version_list_results_section.dart`, Baustein
+`versions/version_tile.dart` (Stern, Titel, Entwurf/Eingefroren mit Datum,
+vier Aktionen mit den bisherigen Tooltips — alle innerhalb des
+Listeneintrags, wie die Tests es erwarten). Rückfrage beim Löschen über
+`showAppConfirmDialog`, Vergleichsziel über `showAppChoiceDialog`, Fehler
+des Repositorys über `showAppMessage` — Texte unverändert. Keine sichtbare
+Änderung. Bestehende Tests unverändert, Core 386 grün.
+
+**C21 — Versionsvergleich (Bildschirm 8).** `DetailPageTemplate` mit
+`DetailSplit`; Abschnitte `version_compare_columns_section.dart`,
+`version_compare_changes_section.dart`, `version_compare_apply_section.dart`;
+Bausteine `versions/snapshot_column.dart` und `versions/change_list.dart`
+(herausgelöst, Kategorie-Logik unverändert und privat). Diff,
+`targetRows` und Übernehmen bleiben im Bildschirm. *Sichtbare Änderung
+(freigegeben):* Fehler beim Übernehmen in `color/error` statt
+`Colors.red`. Bestehende Tests unverändert, Core 386 grün.
+
+**C22 — Nährwertanzeige und Mengenrechner (Bildschirm 5, 6).**
+`NutritionTable` aus `AppKeyValueTable` (Spalten 2 : 1 : 1, fette Köpfe wie
+bisher), Spalte 2 über `AppSelect<NutritionTableColumn2>` (baut weiter
+`DropdownButton`), Fußnoten als `AppText.caption` (= bisher `bodySmall`).
+`NutritionHeader` aus `AppText`; `AmountCalculator` aus zwei
+`AppTextField` in einem `AppStack` (Abstand `l` wie bisher). Rechnung,
+Rundung (nur `NutritionFormatter`) und Kopplung unverändert.
+*Design-Paket, additiv:* `AppSurface` bekommt die im Plan vorgesehenen Töne
+`info`, `warning`, `error` (Fläche `…Container`, Text und Symbole im Inhalt
+`on…Container`), Test DS-20b, Katalogeintrag. Grund: Die bisherigen
+farbigen Kästen (hier „Nicht berechenbar“, später Verpackungsformular und
+Editor) haben weder Symbol noch runde Ecken; `AppNotice` brächte beides
+mit und wäre eine weitere sichtbare Änderung. `AppNotice` bleibt im
+Design-System, wird in Core vorerst nicht eingesetzt. *Sichtbare Änderung
+(freigegeben, Theme-Farben statt `Colors.*`):* Hinweis „Nicht berechenbar“
+in `color/tertiary-container` mit `color/on-tertiary-container` statt
+`Colors.amber.shade100`. Bestehende Tests unverändert; Core 386, Design 212,
+Widgetbook 6 grün.
+
+**C23 — Rezeptdetail (Bildschirm 4).** Alle Zustände über `AppPage`
+(Rezept lädt/Fehler/nicht gefunden, wie bisher ohne Kopfleiste) bzw.
+`DetailPageTemplate` mit Titel; Inhalt über `DetailSections`: Haupt
+`VersionSwitcher`, `recipe_detail_description_section.dart`,
+`recipe_detail_nutrition_section.dart`; Neben
+`recipe_detail_ingredients_section.dart`, `recipe_detail_steps_section.dart`,
+`recipe_detail_extensions_section.dart` — einspaltig in genau der bisherigen
+Reihenfolge. Kopfleiste über `recipe_detail_actions_section.dart`
+(Material 3 ordnet AppBar-Aktionen ohnehin in einer mittig ausgerichteten
+`Row` an, die zusätzliche Zeile ändert das Layout nicht). Modul-Abschnitte
+werden wie bisher im Bildschirm mit dessen Kontext und dem `RecipeContext`
+gebaut. `_VersionLoader` (1.1a, 1.1c) unverändert; der Ladebalken sitzt im
+`Stack` des Templates.
+
+*Menü-Kontext (freigegebene Änderung, geprüft):* Modul-Aktionen im Menü
+erhalten jetzt den Kontext der Detailseite. Die Gegenprobe (alter
+Bildschirm aus `HEAD` mit dem neuen Test) zeigte, dass der alte Kontext
+**nicht** der der Menü-Route war, sondern der des `PopupMenuButton`
+(`itemBuilder` wird mit dem Kontext des Knopfs aufgerufen) — ebenfalls
+gültig und unter `RecipeDetailScreen`. Die Änderung ist damit geringer als
+angekündigt (Knopf- statt Seitenkontext, gleiche Vorfahren für Navigator,
+Theme, ScaffoldMessenger). EX-01, EX-02, EX-04, EX-05 (hier) und EX-03
+(Einstellungen) grün. Neuer Test **UI-58**
+(`test/ui/recipe_detail/recipe_detail_menu_context_test.dart`, bisher gab es
+keinen Test für Menü-Aktionen): gültiger Kontext unter `RecipeDetailScreen`,
+richtiger `RecipeContext`, gesperrte Aktion wird nicht ausgeführt; er ist
+mit altem und neuem Bildschirm grün. Keine weitere sichtbare Änderung.
+Bestehende Tests unverändert, Core 387 grün.
+
+**C24 — Lebensmittel bearbeiten (Bildschirm 10).** `FormPageTemplate`
+(Menü „Löschen“ über `AppOverflowMenu`, Speicherfehler als Meldung über dem
+Formular, Hauptaktion `AppFab`); Laden, Fehler und „nicht gefunden“ über
+`AppLoading`/`AppErrorState`. `PackageForm` behält Controller,
+`hasChanges` (10.0), Prüfung und Natrium-Umrechnung; dargestellt in
+`package_identity_section.dart`, `package_measures_section.dart`,
+`package_nutrients_section.dart` (Feldbeschreibung `PackageNumberField`)
+und `package_validation_section.dart`. Warn- und Fehlerkasten sind
+`AppSurface` mit den Tönen `warning`/`error`, gleicher Innen- und
+Außenabstand, Keys `package_form_warning`/`package_form_error` unverändert.
+`PopScope` und `addPostFrameCallback` bleiben im Bildschirm.
+*Sichtbare Änderungen (freigegeben):* Warnkasten in
+`color/tertiary-container` statt `Colors.yellow.shade100`, Fehlerkasten in
+`color/error-container` mit `color/on-error-container` statt
+`Colors.red.shade100`/`Colors.red`, Speicherfehler in `color/error`,
+Ladekreis im FAB in `onPrimaryContainer`; Tooltip „Lebensmittel speichern“.
+Bestehende Tests unverändert, Core 387 grün.
+
+**C25 — Rezept-Editor (Bildschirm 3).** `FormPageTemplate` in allen
+Zuständen (laden, Fehler + „Erneut versuchen“, nicht gefunden, eingefroren,
+bearbeitbar); bearbeitbar mit Vorschauleiste (`header`), Speicherfehler
+(`messages`), `FormSections` und Aktionsleiste (`bottomBar`). Abschnitte
+`recipe_editor_preview_section.dart`, `recipe_editor_frozen_section.dart`,
+`recipe_editor_parameters_section.dart`,
+`recipe_editor_ingredients_section.dart`, `recipe_editor_steps_section.dart`,
+`recipe_editor_actions_section.dart`. Bausteine: `IngredientRow` aus
+Design-Komponenten (`IngredientRowData` und Verknüpfungsregel 9.1b
+unverändert); neu herausgelöst `step_row.dart` mit `StepRowData` und
+`timerInputText` (bisher privat im Editor, Code und Timer-Regel 9.2a
+wörtlich übernommen) und `food_variant_picker_dialog.dart`. Das Suchfeld im
+Auswahldialog bleibt ohne Lupe (`AppTextField` mit Platzhalter statt
+`AppSearchField`), damit sich dort nichts sichtbar ändert. Stabile Keys
+(`ValueKey(id)`) an jeder Zeile, Umsortieren über `AppReorderableList`.
+*Sichtbare Änderungen (freigegeben):* Vorschauleiste in
+`color/surface-container-high` statt `Colors.grey.shade100`, Hinweis
+„Eingefroren …“ in `color/secondary-container` statt `Colors.blue.shade50`,
+Speicherfehler in `color/error`; Tooltips „Zutat entfernen“ und „Schritt
+entfernen“ an den Entfernen-Knöpfen. Die Übergangsliste ist damit leer.
+Bestehende Tests unverändert, Core 387 grün.
+
+**C26 — App-Hülle.** `apps/unsalted_app/pubspec.yaml` + `unsalted_design`
+(per `flutter pub add … --path`). `MaterialApp.router` bekommt
+`theme: AppTheme.light()` und `darkTheme: AppTheme.dark()`, `themeMode`
+bleibt `system` (Antwort F4). Die Navigationsschale baut `AppPage` mit
+`AppNavigationBar` (gleiche Ziele, Symbole und Beschriftungen). Import nur
+über die Tür (AT-09). Neuer Test **APP-02** (`test/theme_test.dart`):
+Themes aus dem Design-Paket, `ThemeMode.system`, hell und dunkel je nach
+Systemeinstellung, Navigationsleiste mit drei Zielen. *Gegenprobe:* ohne
+`darkTheme` → APP-02 rot; zurückgesetzt, grün. *Sichtbare Änderung
+(freigegeben, F4):* Die App folgt jetzt dem Dunkelmodus des Systems. Der
+bestehende App-Test ist unverändert; App 3 Tests grün.
+
+**C27 — Abschluss Etappe 2.** Übergangsliste leer: alle Dateien unter
+`lib/src/ui/` erfüllen AT-13 und AT-14 ohne Ausnahme. *Abweichung vom
+Plan:* Der Mechanismus der Übergangsliste (`support/design_transition.dart`
+und seine Verwendung in AT-13/AT-14) ist **nicht** entfernt, weil das die
+Testdateien AT-13/AT-14 ändern würde und bestehende Tests in Etappe 2 nicht
+geändert werden durften; die leere Liste wirkt nicht mehr. Entfernen nach
+Freigabe (reine Aufräumarbeit). `docs/design/screens.md` auf den
+tatsächlichen Stand gebracht (Abschnitte je Bildschirm mit Pfad, in
+Anzeigereihenfolge), `components.md` (fachliche Bausteine, nicht eingesetzte
+Komponenten), Kapitel 28.9 Punkt 5, CLAUDE.MD.
+
+*Sichtbare Änderungen Etappe 2, vollständig (alle in den freigegebenen
+Gruppen):* (1) Theme-Farben statt `Colors.*`: Fehlertexte in `color/error`
+(Rezept erstellen, Export, Import, Versionsvergleich, Lebensmittel-Editor,
+Rezept-Editor); Hinweis „Nicht berechenbar“ und Warnkasten im
+Verpackungsformular in `tertiary-container`; Fehlerkasten im
+Verpackungsformular in `error-container`/`on-error-container`; Vorschauleiste
+des Editors in `surface-container-high`; Hinweis „Eingefroren …“ in
+`secondary-container`; Ladekreis in den FABs in `on-primary-container`.
+(2) Tooltips: „Neues Rezept“, „Neues Lebensmittel“, „Rezept speichern“,
+„Lebensmittel speichern“, „Zutat entfernen“, „Schritt entfernen“.
+(3) Menü-Kontext im Rezeptdetail (Knopf- → Seitenkontext, ohne
+beobachtbaren Unterschied, UI-58). (4) Dunkelmodus nach System (F4, C26).
+Keine weiteren: Reihenfolge, Texte, Abstände und Verhalten unverändert.
+Stand: Design 212, Core 387, App 3, Widgetbook 6 Tests grün;
+`check_architecture` Exit 0.
+
+## 2026-10-07 — Teil 1.2, Etappe 3 (freigegeben)
+
+Reihenfolge nach Vorgabe: C27c, C28, C27b, C29; je ein Commit.
+
+**C27c — Übergangsmechanismus entfernt.** `test/architecture/support/
+design_transition.dart` gelöscht; AT-13 und AT-14 ohne Ausnahmeprüfung;
+der zweite AT-14-Test („Übergangsliste enthält nur nicht umgestellte
+Dateien“) entfällt mit der Liste. Regeln und Detektoren unverändert streng.
+*Gegenprobe:* `Color(…)` und `Divider()` vorübergehend in
+`lib/src/ui/foods/food_tile.dart` → AT-13 und AT-14 rot mit genau diesen
+Zeilen; zurückgesetzt, grün. Core 386 Tests (−1).
+
+**C28 — Test-Finder auf Design-Typen (F7).** In 14 Testdateien unter
+`packages/unsalted_core/test/ui/` 116 Zeilen geändert, jede nur im Typ des
+Finders (maschinell geprüft: ohne den Typnamen sind alte und neue Zeile
+gleich), dazu je Datei der Import der Design-Tür. Keine Erwartung, kein
+Ablauf, keine Testdaten geändert. Zeilennummern im neuen Stand:
+
+- `test/ui/foods/food_editor_screen_test.dart`
+  - Z. 16: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 81, 121, 139, 140, 195, 212, 240, 260, 262, 306: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+  - Z. 87, 123, 242, 331: `find.byType(FloatingActionButton` → `find.byType(AppFab`
+  - Z. 218, 224: `find.widgetWithText(TextButton` → `find.widgetWithText(AppButton`
+  - Z. 309, 334: `find.byType(PopupMenuButton<VoidCallback>` → `find.byType(AppOverflowMenu`
+- `test/ui/foods/food_list_screen_test.dart`
+  - Z. 19: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 116: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+  - Z. 173: `find.byType(TextField` → `find.byType(AppSearchField`
+  - Z. 190: `find.byType(FloatingActionButton` → `find.byType(AppFab`
+- `test/ui/foods/package_form_test.dart`
+  - Z. 11: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 45, 79, 81, 83, 96, 97, 107, 108, 109, 126, 127, 128: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+- `test/ui/nutrition/amount_calculator_test.dart`
+  - Z. 11: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 35, 47, 59, 71, 73: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+- `test/ui/recipe_detail/recipe_detail_menu_context_test.dart`
+  - Z. 15: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 110: `find.byType(PopupMenuButton<VoidCallback>` → `find.byType(AppOverflowMenu`
+- `test/ui/recipe_detail/recipe_detail_screen_test.dart`
+  - Z. 27: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 237, 718, 761, 772: `find.widgetWithText(ChoiceChip` → `find.widgetWithText(AppChoiceChip`
+  - Z. 318: `find.widgetWithIcon(IconButton` → `find.widgetWithIcon(AppIconButton`
+  - Z. 558, 564, 576: `find.byType(CircularProgressIndicator` → `find.byType(AppLoading`
+  - Z. 559, 575, 587, 628, 633, 642, 722, 726, 730, 764, 766, 775, 780, 787: `find.byType(LinearProgressIndicator` → `find.byType(AppProgressBar`
+  - Z. 570, 588: `find.byType(Scaffold` → `find.byType(AppPage`
+  - Z. 671: `find.byType(PopupMenuButton<VoidCallback>` → `find.byType(AppOverflowMenu`
+- `test/ui/recipe_editor/ingredient_row_test.dart`
+  - Z. 13: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 71: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+- `test/ui/recipe_editor/recipe_create_screen_test.dart`
+  - Z. 11: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 57, 76, 108, 109, 158, 202: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+  - Z. 111, 160: `find.byType(FloatingActionButton` → `find.byType(AppFab`
+- `test/ui/recipe_editor/recipe_editor_screen_test.dart`
+  - Z. 16: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 140, 170, 174, 178, 226, 321, 339, 340, 358, 359, 360, 380: `find.widgetWithText(TextField` → `find.widgetWithText(AppTextField`
+  - Z. 144, 228, 296, 467: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+  - Z. 172, 230: `find.widgetWithText(TextButton` → `find.widgetWithText(AppButton`
+  - Z. 342: `find.byType(DropdownButton<String>` → `find.byType(AppSelect<String>`
+  - Z. 461, 542: `find.widgetWithText(TextFormField` → `find.widgetWithText(AppTextField`
+  - Z. 574, 575, 576: `find.widgetWithText(Chip` → `find.widgetWithText(AppChip`
+- `test/ui/recipe_list/recipe_list_screen_test.dart`
+  - Z. 16: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 121: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+  - Z. 167: `find.byType(TextField` → `find.byType(AppSearchField`
+  - Z. 184: `find.byType(FloatingActionButton` → `find.byType(AppFab`
+- `test/ui/settings/export_screen_test.dart`
+  - Z. 13: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 91, 99, 134: `find.widgetWithText(DropdownButtonFormField<String>` → `find.widgetWithText(AppSelect<String>`
+  - Z. 108: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+- `test/ui/settings/import_screen_test.dart`
+  - Z. 13: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 130, 148, 164, 183: `find.byType(TextField` → `find.byType(AppTextField`
+  - Z. 186: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+- `test/ui/versions/version_compare_screen_test.dart`
+  - Z. 14: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 174, 317: `find.widgetWithText(ElevatedButton` → `find.widgetWithText(AppButton`
+- `test/ui/versions/version_list_screen_test.dart`
+  - Z. 13: Import `package:unsalted_design/unsalted_design.dart` ergänzt
+  - Z. 133, 166: `find.widgetWithIcon(IconButton` → `find.widgetWithIcon(AppIconButton`
+  - Z. 174, 275: `find.widgetWithText(TextButton` → `find.widgetWithText(AppButton`
+  - Z. 234: `find.byType(ListTile` → `find.byType(AppListItem`
+
+*Bewusst unverändert* (sie prüfen Eigenschaften des gerenderten
+Material-Widgets; eine Umstellung hinge am Typ-Argument von
+`tester.widget<…>` und würde die Prüfung selbst ändern — z. B. ist
+`AppFab.onPressed` beim Laden gesetzt, das `onPressed` des FAB aber `null`):
+`import_screen_test.dart:134`, `version_compare_screen_test.dart:249`,
+`recipe_editor_screen_test.dart:524` (`widget<ElevatedButton>`),
+`recipe_create_screen_test.dart:54, 60, 79`,
+`food_editor_screen_test.dart:78, 84, 143` (`widget<FloatingActionButton>`),
+`amount_calculator_test.dart:38, 50, 76`, `package_form_test.dart:118`,
+`recipe_detail_screen_test.dart:512, 513` (Finder für `widget<TextField>`
+in Z. 516, 519), `version_list_screen_test.dart:198`
+(`widget<IconButton>`), `recipe_detail_screen_test.dart:229`
+(`widgetList<ChoiceChip>`, liest `label`). Ebenso die drei Finder auf
+`SnackBarAction` (`recipe_detail_screen_test.dart:681`,
+`recipe_list_screen_test.dart:229`, `food_list_screen_test.dart:212`) —
+dafür gibt es kein Design-Widget. Symbol-Finder (`find.byIcon(Icons.…)`)
+sind keine Typ-Finder und bleiben. Der App-Test nutzt keine
+Material-Typ-Finder. Core 386 Tests grün.
+
+**C27b — deutsche Einheiten (F3).** `lib/src/ui/shared/unit_labels.dart`
+aus `design/1.1` übernommen (`unitLabel`, `formatQuantity`, `formatAmount`).
+Eingesetzt: Zutaten im Rezeptdetail („0,5 l“, „2 Stück · Notiz“,
+„3 Prisen“), eingefrorene Ansicht des Editors, Vergleichsspalten
+(„Ei: 2 Stück“), Zutatenzeile (Auswahlliste „Stück“ statt `piece`,
+Mengenfeld startet mit Dezimalkomma; die Eingabe akzeptierte Komma schon
+vorher). Gespeichert bleibt der Code. Neue Tests: UI-59
+(`test/ui/shared/unit_labels_test.dart`, 6 Fälle) und UI-60 bis UI-63
+(`test/ui/shared/german_units_display_test.dart`). *Gegenprobe:*
+`unitLabel` liefert vorübergehend den Code → UI-60 bis UI-63 rot;
+zurückgesetzt, grün. Kein bestehender Test erwartet einen englischen Code
+als Anzeigetext; bestehende Tests unverändert.
+*Bewusst nicht umgestellt (Abweichung, zur Entscheidung):*
+`versions/change_descriptions.dart` nennt Einheiten seit 9.2a schon deutsch,
+zeigt Mengen aber mit Dezimalpunkt („Mehl: 500 g → 0.5 kg“). Eine
+Umstellung auf `formatAmount` würde `change_descriptions_test.dart:78`
+ändern (erwartet „0.5 kg“) — das deckt die freigegebene Ausnahme
+(englischer Code als Anzeigetext) nicht. Ebenso unverändert: Zahlenfelder
+ohne Einheitencode (Backverlust, Fertiggewicht, Verpackungsformular).
+Core 396 Tests grün.
+
+**C29 — Anzeige-Schalter (UI-Konfiguration d1, F9).**
+`lib/src/ui/config/core_ui_options.dart`: `CoreUiOptions` (`hiddenNutrients`,
+`showBarcodeField`, `showAdvancedFields`, `showsNutrient`, Wertgleichheit)
+und `coreUiOptionsProvider` (Standard = Verhalten vor Teil 1.2). Tür: eine
+neue Exportzeile mit beiden Symbolen — die AT-06-Golden wächst damit um
+**eine** Zeile (plus Kommentar), nicht um zwei wie im Plan formuliert; die
+Golden-Datei führt Exportzeilen, nicht Symbole. Wirkung: `NutritionTable`
+(Zeilen und Fußnoten; der Fußnotenblock entfällt, wenn nur Ausgeblendetes
+unvollständig ist), `PackageForm` (Barcode; Dichte, Stückgewicht,
+Portionsgröße, Natrium; Nährwertfelder, mit Salz auch Natrium), Rezept-Editor
+(Backverlust, Fertiggewicht-Override). Bausteine bekommen die Optionen als
+Parameter mit Standardwert; die Bildschirme (Rezeptdetail,
+Lebensmittel-Editor, Rezept-Editor) lesen den Provider — so laufen die
+bestehenden Baustein-Tests ohne `ProviderScope` unverändert. Warnungen
+(F9b): eine Validator-Warnung entfällt, wenn eines ihrer Felder
+ausgeblendet ist (Zuordnung Warnungsart → Felder in `PackageForm`); ein
+ausgeblendetes Feld mit ungültigem oder negativem Wert wird eingeblendet.
+App: `apps/unsalted_app/lib/config/ui_options.dart` (`uiOptions`, explizit
+die Standardwerte, mit Beispielen im Kommentar); `main.dart` baut die
+Overrides über `appOverrides(database:, modules:, options: uiOptions)` —
+`Override` kommt in Riverpod 3.4.3 aus `package:flutter_riverpod/misc.dart`
+(im Pub-Cache geprüft). Tests: UC-01 bis UC-06 auf Baustein-Ebene
+(`test/ui/config/core_ui_options_test.dart`), UC-02/04/05 zusätzlich auf
+Bildschirm-Ebene mit Speichern (`core_ui_options_screens_test.dart`), UC-07
+in der App (`test/ui_options_test.dart`). *Gegenprobe:* Lebensmittel-Editor
+ohne Optionen → UC-04 (Bildschirm) rot; zurückgesetzt, grün. Mit den
+Standardwerten keine sichtbare Änderung.
+*Beobachtung:* Ein Core-Testlauf blieb einmal mit zwei untätigen
+`flutter_tester`-Prozessen stehen; drei Wiederholungen (mit
+`--timeout 60s` und ohne) liefen vollständig grün durch (26 s bis 1:15 min).
+Nicht reproduzierbar; vermutlich Rechnerlast bzw. ein Restprozess.
+Stand: Design 212, Core 409, App 6, Widgetbook 6 Tests grün;
+`check_architecture` Exit 0.
+
+**C30 — Dezimalkomma in der ganzen Anzeige (Freigabe 2026-10-07).**
+`change_descriptions.dart` formatiert Mengen, Backverlust und
+Fertiggewicht-Override über `formatQuantity` aus `unit_labels.dart`; die
+eigene Einheitenbenennung der Änderungsliste (9.2a) bleibt. Rezept-Editor
+(Backverlust, Fertiggewicht-Override) und Verpackungsformular (alle
+Zahlenfelder) sind mit `formatQuantity` vorbelegt; die Eingabe nahm Komma
+und Punkt schon vorher an (`replaceAll(',', '.')`), daran ändert sich nichts.
+Keine zweite Hilfsfunktion. Gespeichert, exportiert und im Snapshot bleibt
+der unveränderte Decimal-Wert. `hasChanges` (10.0) vergleicht mit der
+Komma-Vorbelegung als Ausgangszustand.
+*Geänderte bestehende Testzeilen (freigegeben):*
+`packages/unsalted_core/test/ui/versions/change_descriptions_test.dart:78`
+„Mehl: 500 g → 0.5 kg“ → „Mehl: 500 g → 0,5 kg“ (UI-22, Zutatenmenge) und
+`…/change_descriptions_test.dart:135` „Backverlust: 10 % → 12.5 %“ →
+„Backverlust: 10 % → 12,5 %“ (UI-24, Backverlust) — jeweils nur der
+erwartete Text, weil die Änderungsliste jetzt Dezimalkomma zeigt. Die
+zweite Zeile wurde vor der Änderung gemeldet und einzeln freigegeben.
+Neue Tests (`test/ui/shared/decimal_comma_test.dart`): UI-64
+(Änderungsliste mit Komma inkl. Fertiggewicht 850,25 → 900,5 g, kein
+Dezimalpunkt mehr), UI-65 (Verpackungsformular: Vorbelegung mit Komma,
+Eingabe mit Komma und Punkt, `hasChanges` false bei Vorbelegung), UI-66
+(Rezept-Editor: Vorbelegung 12,5 / 900,5, unverändertes Speichern, Eingabe
+„7.5“ und „850,25“ wird als 7.5 / 850.25 gespeichert). *Gegenprobe:* die
+drei Produktivdateien vorübergehend auf C29 → UI-64 bis UI-66 rot;
+zurückgesetzt, grün. Stand: Design 212, Core 412, App 6, Widgetbook 6 Tests
+grün; `check_architecture` Exit 0.

@@ -4,24 +4,40 @@
 // Modulliste registriert und coreDatabaseProvider/modulesProvider
 // überschreibt (Kapitel 16.7). Importiert ausschließlich die öffentliche Tür
 // von unsalted_core (AT-09); alle Bildschirmrouten stammen aus
-// `UnsaltedModule.routes`.
+// `UnsaltedModule.routes`. Seit Teil 1.2 (C26): Theme hell/dunkel aus
+// unsalted_design (folgt der Systemeinstellung), Hauptnavigation über
+// AppNavigationBar. Anzeige-Schalter aus config/ui_options.dart (C29).
 
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 import 'package:unsalted_core/unsalted_core.dart';
+import 'package:unsalted_design/unsalted_design.dart';
+
+import 'config/ui_options.dart';
 
 void main() {
   final modules = <UnsaltedModule>[CoreModule()];
   runApp(ProviderScope(
-    overrides: [
-      coreDatabaseProvider.overrideWithValue(CoreDatabase(driftDatabase(name: 'unsalted'))),
-      modulesProvider.overrideWithValue(modules),
-    ],
+    overrides: appOverrides(database: CoreDatabase(driftDatabase(name: 'unsalted')), modules: modules),
     child: UnsaltedApp(modules: modules),
   ));
 }
+
+/// Alle Provider-Overrides der App (Kapitel 16.7, 21): Datenbank, Modulliste
+/// und Anzeige-Schalter aus `config/ui_options.dart` (Teil 1.2, C29).
+List<Override> appOverrides({
+  required CoreDatabase database,
+  required List<UnsaltedModule> modules,
+  CoreUiOptions options = uiOptions,
+}) =>
+    [
+      coreDatabaseProvider.overrideWithValue(database),
+      modulesProvider.overrideWithValue(modules),
+      coreUiOptionsProvider.overrideWithValue(options),
+    ];
 
 class UnsaltedApp extends StatefulWidget {
   const UnsaltedApp({super.key, required this.modules});
@@ -50,7 +66,12 @@ class _UnsaltedAppState extends State<UnsaltedApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(title: 'unsalted', routerConfig: _router);
+    return MaterialApp.router(
+      title: 'unsalted',
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      routerConfig: _router,
+    );
   }
 }
 
@@ -70,15 +91,15 @@ class _NavigationShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppPage(
       body: child,
-      bottomNavigationBar: NavigationBar(
+      bottomBar: AppNavigationBar(
         selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) => context.go(_destinations[index]),
+        onSelected: (index) => context.go(_destinations[index]),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.menu_book), label: 'Rezepte'),
-          NavigationDestination(icon: Icon(Icons.restaurant), label: 'Lebensmittel'),
-          NavigationDestination(icon: Icon(Icons.settings), label: 'Einstellungen'),
+          AppNavigationDestination(icon: AppIcons.book, label: 'Rezepte'),
+          AppNavigationDestination(icon: AppIcons.restaurant, label: 'Lebensmittel'),
+          AppNavigationDestination(icon: AppIcons.settings, label: 'Einstellungen'),
         ],
       ),
     );

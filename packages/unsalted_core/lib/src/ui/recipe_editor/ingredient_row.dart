@@ -5,16 +5,20 @@
 // complete"), Menge, Einheit-Dropdown aus UnitCatalog, Notiz. Reine
 // Formularlogik -- keine eigene Nährwertberechnung, kein Speichern; der
 // Aufrufer (recipe_editor_screen.dart) liest den aktuellen Wert über
-// [onChanged] und baut daraus RecipeVersionDraft.
+// [onChanged] und baut daraus RecipeVersionDraft. Seit Teil 1.2 (C25) aus
+// Design-Komponenten; der Auswahldialog liegt in
+// food_variant_picker_dialog.dart.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
-import '../../contracts/food_repository.dart';
 import '../../food/food_variant.dart';
 import '../../nutrition/unit_catalog.dart';
 import '../../providers/core_providers.dart';
+import '../shared/unit_labels.dart';
+import 'food_variant_picker_dialog.dart';
 
 /// Zutatenzeile im UI-State des Editors. `id` ist stabil (Kapitel 10.7:
 /// Upsert-/Soft-Delete-Delta braucht stabile IDs über mehrere saveDraft-
@@ -99,7 +103,7 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.data.displayName);
-    _quantityController = TextEditingController(text: widget.data.quantity.toString());
+    _quantityController = TextEditingController(text: formatQuantity(widget.data.quantity));
     _noteController = TextEditingController(text: widget.data.note ?? '');
   }
 
@@ -117,10 +121,7 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
 
   Future<void> _pickVariant() async {
     final repo = ref.read(foodRepositoryProvider);
-    final selected = await showDialog<FoodVariant>(
-      context: context,
-      builder: (context) => _FoodVariantPickerDialog(repo: repo),
-    );
+    final selected = await showAppDialog<FoodVariant>(context, (context) => FoodVariantPickerDialog(repo: repo));
     if (selected == null) return;
     setState(() {
       _nameController.text = selected.name;
@@ -130,34 +131,26 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
+    return AppPadding.symmetric(
+      vertical: AppSpace.xs,
+      child: AppStack(
+        direction: Axis.horizontal,
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
         children: [
-          const Icon(Icons.drag_handle),
-          const SizedBox(width: 8),
+          const AppIcon(AppIcons.dragHandle),
+          const AppGap(AppSpace.s),
           Expanded(
             flex: 3,
-            child: TextField(
+            child: AppTextField(
               controller: _nameController,
               enabled: !widget.readOnly,
-              decoration: InputDecoration(
-                labelText: 'Name',
-                helperText: widget.data.hasUnresolvedVariant ? deletedVariantHint : null,
-                helperMaxLines: 2,
-                helperStyle: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Theme.of(context).colorScheme.error),
-                suffixIcon: widget.readOnly
-                    ? null
-                    : IconButton(
-                        icon: const Icon(Icons.search),
-                        tooltip: 'Lebensmittel verknüpfen',
-                        onPressed: _pickVariant,
-                      ),
-              ),
+              label: 'Name',
+              helper: widget.data.hasUnresolvedVariant ? deletedVariantHint : null,
+              helperTone: AppTone.error,
+              suffix: widget.readOnly
+                  ? null
+                  : AppIconButton(icon: AppIcons.search, tooltip: 'Lebensmittel verknüpfen', onPressed: _pickVariant),
               onChanged: (value) {
                 // Freie Texteingabe löst eine zuvor verknüpfte Variante,
                 // weil der angezeigte Name nicht mehr zu ihr passt.
@@ -165,12 +158,12 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
               },
             ),
           ),
-          const SizedBox(width: 8),
+          const AppGap(AppSpace.s),
           Expanded(
-            child: TextField(
+            child: AppTextField(
               controller: _quantityController,
               enabled: !widget.readOnly,
-              decoration: const InputDecoration(labelText: 'Menge'),
+              label: 'Menge',
               onChanged: (value) {
                 try {
                   final parsed = Decimal.parse(value.trim().replaceAll(',', '.'));
@@ -182,98 +175,27 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
               },
             ),
           ),
-          const SizedBox(width: 8),
-          DropdownButton<String>(
+          const AppGap(AppSpace.s),
+          AppSelect<String>(
             value: widget.data.unitCode,
-            onChanged: widget.readOnly
-                ? null
-                : (value) {
-                    if (value != null) _emit((d) => d.copyWith(unitCode: value));
-                  },
-            items: [
-              for (final unit in UnitCatalog.all)
-                DropdownMenuItem(value: unit.code, child: Text(unit.code)),
-            ],
+            onChanged: widget.readOnly ? null : (value) => _emit((d) => d.copyWith(unitCode: value)),
+            items: [for (final unit in UnitCatalog.all) AppSelectItem(unit.code, unitLabel(unit.code))],
           ),
-          const SizedBox(width: 8),
+          const AppGap(AppSpace.s),
           Expanded(
-            child: TextField(
+            child: AppTextField(
               controller: _noteController,
               enabled: !widget.readOnly,
-              decoration: const InputDecoration(labelText: 'Notiz'),
+              label: 'Notiz',
               onChanged: (value) {
                 _emit((d) => d.copyWith(note: () => value.trim().isEmpty ? null : value));
               },
             ),
           ),
           if (!widget.readOnly)
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: widget.onRemove,
-            ),
+            AppIconButton(icon: AppIcons.deleteOutline, tooltip: 'Zutat entfernen', onPressed: widget.onRemove),
         ],
       ),
-    );
-  }
-}
-
-class _FoodVariantPickerDialog extends StatefulWidget {
-  final FoodRepository repo;
-
-  const _FoodVariantPickerDialog({required this.repo});
-
-  @override
-  State<_FoodVariantPickerDialog> createState() => _FoodVariantPickerDialogState();
-}
-
-class _FoodVariantPickerDialogState extends State<_FoodVariantPickerDialog> {
-  String _query = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Lebensmittel verknüpfen'),
-      content: SizedBox(
-        width: 400,
-        height: 400,
-        child: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(hintText: 'Suchen …'),
-              onChanged: (value) => setState(() => _query = value),
-              autofocus: true,
-            ),
-            Expanded(
-              child: StreamBuilder<List<FoodVariant>>(
-                stream: widget.repo.search(_query),
-                builder: (context, snapshot) {
-                  final variants = snapshot.data ?? const <FoodVariant>[];
-                  if (variants.isEmpty) {
-                    return const Center(child: Text('Keine Treffer.'));
-                  }
-                  return ListView.builder(
-                    itemCount: variants.length,
-                    itemBuilder: (context, index) {
-                      final variant = variants[index];
-                      return ListTile(
-                        title: Text(variant.name),
-                        subtitle: variant.brand == null ? null : Text(variant.brand!),
-                        onTap: () => Navigator.of(context).pop(variant),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
-        ),
-      ],
     );
   }
 }

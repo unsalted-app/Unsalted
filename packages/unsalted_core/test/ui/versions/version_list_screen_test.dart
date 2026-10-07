@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/contracts/input_models.dart';
 import 'package:unsalted_core/src/data/core_database.dart' as db;
 import 'package:unsalted_core/src/data/daos/drift_food_dao.dart';
@@ -129,7 +130,7 @@ void main() {
 
     await _pumpList(tester, database, recipeId);
 
-    await tester.tap(find.widgetWithIcon(IconButton, Icons.copy));
+    await tester.tap(find.widgetWithIcon(AppIconButton, Icons.copy));
     await _settle(tester);
     await tester.pumpAndSettle();
 
@@ -162,7 +163,7 @@ void main() {
     var versions = await tester.runAsync(() => recipeDao.watchVersions(recipeId).first);
     expect(versions, hasLength(2));
 
-    await tester.tap(find.widgetWithIcon(IconButton, Icons.delete_outline).first);
+    await tester.tap(find.widgetWithIcon(AppIconButton, Icons.delete_outline).first);
     await tester.pump();
     expect(find.text('Version löschen?'), findsOneWidget);
 
@@ -170,7 +171,7 @@ void main() {
     versions = await tester.runAsync(() => recipeDao.watchVersions(recipeId).first);
     expect(versions, hasLength(2));
 
-    await tester.tap(find.widgetWithText(TextButton, 'Löschen'));
+    await tester.tap(find.widgetWithText(AppButton, 'Löschen'));
     await _settle(tester);
 
     versions = await tester.runAsync(() => recipeDao.watchVersions(recipeId).first);
@@ -230,7 +231,7 @@ void main() {
     }))!;
   }
 
-  Finder tileOf(String label) => find.ancestor(of: find.text(label), matching: find.byType(ListTile));
+  Finder tileOf(String label) => find.ancestor(of: find.text(label), matching: find.byType(AppListItem));
   Finder markAction(String label) =>
       find.descendant(of: tileOf(label), matching: find.byTooltip('Als Master markieren'));
 
@@ -271,7 +272,7 @@ void main() {
 
     await tester.tap(find.descendant(of: tileOf('V2'), matching: find.byTooltip('Löschen')));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'Löschen'));
+    await tester.tap(find.widgetWithText(AppButton, 'Löschen'));
     await _settle(tester);
     await tester.pump();
 

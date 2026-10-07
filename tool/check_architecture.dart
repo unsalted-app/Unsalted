@@ -5,7 +5,9 @@
 //   - unsalted_core importiert nichts aus forbidden_in_core,
 //     außer in den erlaubten Ausnahmeordnern: package:flutter/ in
 //     lib/src/ui/ und lib/src/module/ (Kapitel 27, Regel 14), package:drift/
-//     in lib/src/data/.
+//     in lib/src/data/, package:unsalted_design/ in lib/src/ui/ (Teil 1.2).
+//   - unsalted_design importiert nur, was in allowed_in_design steht
+//     (Flutter und sich selbst), und weder dart:io noch dart:ffi (Teil 1.2).
 //
 // Aufruf:  dart run tool/check_architecture.dart
 // Exit-Code 0 = keine Verstöße, 1 = mindestens ein Verstoß gefunden.
@@ -27,7 +29,8 @@ void main() {
 
   final archText = archFile.readAsStringSync();
   final ranks = _parseRanks(archText);
-  final forbiddenInCore = _parseForbiddenInCore(archText);
+  final forbiddenInCore = _parseList(archText, 'forbidden_in_core');
+  final allowedInDesign = _parseList(archText, 'allowed_in_design');
 
   if (ranks.isEmpty) {
     stderr.writeln('FEHLER: Keine Pakete in architecture.yaml gefunden.');
@@ -73,6 +76,16 @@ void main() {
 
       for (var i = 0; i < lines.length; i++) {
         final line = lines[i];
+
+        // unsalted_design — kein Zugriff auf Dateisystem oder native Bibliotheken.
+        if (packageName == 'unsalted_design' && _forbiddenDartInDesignRegex.hasMatch(line)) {
+          violations.add(
+            '❌ VERBOTENER IMPORT: unsalted_design/lib/$relativePath:${i + 1} '
+            'importiert dart:io oder dart:ffi\n'
+            '   → ${line.trim()}',
+          );
+        }
+
         final importMatch = _importPackageRegex.firstMatch(line);
         if (importMatch == null) continue;
 
@@ -95,18 +108,11 @@ void main() {
 
         // forbidden_in_core — nur für unsalted_core, mit Ausnahmeordnern.
         if (packageName == 'unsalted_core') {
-          final isFlutterException = relativePath.startsWith('src/ui/') ||
-              relativePath.startsWith('src/module/');
-          final isDataException = relativePath.startsWith('src/data/');
-
           for (final forbidden in forbiddenInCore) {
             if (!fullImportPath.contains(forbidden)) continue;
 
-            final isFlutterImport = forbidden.contains('flutter');
-            final isDriftImport = forbidden.contains('drift');
-
-            if (isFlutterImport && isFlutterException) continue;
-            if (isDriftImport && isDataException) continue;
+            final exceptionDirs = _coreExceptionDirs[forbidden] ?? const <String>[];
+            if (exceptionDirs.any(relativePath.startsWith)) continue;
 
             violations.add(
               '❌ VERBOTENER IMPORT: unsalted_core/lib/$relativePath:${i + 1} '
@@ -114,6 +120,16 @@ void main() {
               '   → ${line.trim()}',
             );
           }
+        }
+
+        // allowed_in_design — unsalted_design importiert nur Flutter und sich selbst.
+        if (packageName == 'unsalted_design' &&
+            !allowedInDesign.any(fullImportPath.contains)) {
+          violations.add(
+            '❌ VERBOTENER IMPORT: unsalted_design/lib/$relativePath:${i + 1} '
+            'importiert "$importedPackage" (erlaubt: ${allowedInDesign.join(', ')})\n'
+            '   → ${line.trim()}',
+          );
         }
       }
     }
@@ -150,10 +166,22 @@ Map<String, int> _parseRanks(String yamlText) {
   return ranks;
 }
 
-/// Parst den `forbidden_in_core:`-Block aus architecture.yaml.
-/// Erwartetes Format je Zeile: `  - "package:flutter/"`
-List<String> _parseForbiddenInCore(String yamlText) {
-  final sectionIndex = yamlText.indexOf('forbidden_in_core:');
+/// Ausnahmeordner (relativ zu lib/) je Eintrag aus `forbidden_in_core`.
+/// Ein Eintrag ohne Ausnahmeordner ist in ganz unsalted_core verboten.
+const Map<String, List<String>> _coreExceptionDirs = {
+  'package:flutter/': ['src/ui/', 'src/module/'],
+  'package:drift/': ['src/data/'],
+  'package:unsalted_design/': ['src/ui/'],
+};
+
+/// Erfasst `import 'dart:io';` und `import 'dart:ffi';`.
+final RegExp _forbiddenDartInDesignRegex =
+    RegExp(r"""import\s+['"]dart:(io|ffi)['"]""");
+
+/// Parst einen Listen-Block (`forbidden_in_core:`, `allowed_in_design:`) aus
+/// architecture.yaml. Erwartetes Format je Zeile: `  - "package:flutter/"`
+List<String> _parseList(String yamlText, String key) {
+  final sectionIndex = yamlText.indexOf('$key:');
   if (sectionIndex == -1) return [];
 
   final section = yamlText.substring(sectionIndex);
@@ -165,7 +193,7 @@ List<String> _parseForbiddenInCore(String yamlText) {
     if (line.isNotEmpty &&
         !line.startsWith(' ') &&
         !line.startsWith('-') &&
-        !line.startsWith('forbidden_in_core')) {
+        !line.startsWith(key)) {
       break;
     }
     final m = itemRegex.firstMatch(line);

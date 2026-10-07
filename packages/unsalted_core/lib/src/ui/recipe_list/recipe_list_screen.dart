@@ -6,16 +6,22 @@
 // Steckplätze auf diesem Bildschirm (die rendert erst Bildschirm 4).
 // Nach links wischen löscht ein Rezept samt aller Versionen, mit 5 s
 // „Rückgängig“ (Teil 1.1b, shared/undoable_deletion.dart); ausstehende
-// Löschungen sind sofort ausgeblendet.
+// Löschungen sind sofort ausgeblendet. Seit Teil 1.2 (C16) aus
+// Design-Komponenten: ListPageTemplate, Abschnitte unter sections/, Baustein
+// RecipeCard.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../recipe/recipe.dart';
 import '../../providers/core_providers.dart';
 import '../recipe_detail/recipe_detail_screen.dart';
 import '../recipe_editor/recipe_create_screen.dart';
 import '../shared/undoable_deletion.dart';
+import 'sections/recipe_list_empty_section.dart';
+import 'sections/recipe_list_results_section.dart';
+import 'sections/recipe_list_search_section.dart';
 
 class RecipeListScreen extends ConsumerStatefulWidget {
   const RecipeListScreen({super.key});
@@ -45,42 +51,23 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
     final repo = ref.watch(recipeRepositoryProvider);
     final hidden = ref.watch(pendingRecipeDeletionsProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rezepte'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Suchen …',
-                prefixIcon: Icon(Icons.search),
-              ),
-              onChanged: (value) => setState(() => _query = value),
-            ),
-          ),
-        ),
+    return ListPageTemplate(
+      title: 'Rezepte',
+      search: RecipeListSearchSection(
+        controller: _searchController,
+        onChanged: (value) => setState(() => _query = value),
       ),
       body: StreamBuilder<List<Recipe>>(
         stream: repo.watchRecipes(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoading();
           }
           if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(snapshot.error.toString()),
-                  TextButton(
-                    onPressed: () => setState(() {}),
-                    child: const Text('Erneut versuchen'),
-                  ),
-                ],
-              ),
+            return AppErrorState(
+              message: snapshot.error.toString(),
+              retryLabel: 'Erneut versuchen',
+              onRetry: () => setState(() {}),
             );
           }
 
@@ -91,49 +78,19 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
               : all.where((r) => r.title.toLowerCase().contains(normalizedQuery)).toList();
 
           if (recipes.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.menu_book, size: 48),
-                  const SizedBox(height: 8),
-                  Text(all.isEmpty ? 'Noch keine Rezepte.' : 'Keine Treffer.'),
-                  const SizedBox(height: 8),
-                  if (all.isEmpty)
-                    ElevatedButton(
-                      onPressed: _openCreateScreen,
-                      child: const Text('Erstes Rezept anlegen'),
-                    ),
-                ],
-              ),
-            );
+            return RecipeListEmptySection(hasRecipes: all.isNotEmpty, onCreate: _openCreateScreen);
           }
 
-          return ListView.builder(
-            itemCount: recipes.length,
-            itemBuilder: (context, index) {
-              final recipe = recipes[index];
-              return Dismissible(
-                key: ValueKey('recipe-${recipe.id}'),
-                direction: DismissDirection.endToStart,
-                background: const DeleteSwipeBackground(),
-                onDismissed: (_) => deleteRecipeWithUndo(context, ref, recipe),
-                child: ListTile(
-                  title: Text(recipe.title),
-                  subtitle: recipe.description == null ? null : Text(recipe.description!),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
-                    builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
-                  )),
-                ),
-              );
-            },
+          return RecipeListResultsSection(
+            recipes: recipes,
+            onOpen: (recipe) => Navigator.of(context).push(MaterialPageRoute<void>(
+              builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
+            )),
+            onDelete: (recipe) => deleteRecipeWithUndo(context, ref, recipe),
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openCreateScreen,
-        child: const Icon(Icons.add),
-      ),
+      primaryAction: AppFab(icon: AppIcons.add, tooltip: 'Neues Rezept', onPressed: _openCreateScreen),
     );
   }
 }

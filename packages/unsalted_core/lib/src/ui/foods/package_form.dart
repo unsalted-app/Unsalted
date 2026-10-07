@@ -15,14 +15,25 @@
 // den daraus berechneten Wert (`salt_g = sodium_mg / 1000 * 2.5`) -- die
 // Umrechnung passiert hier (einzige Stelle), nicht im Rechenkern und nicht
 // nochmal beim Speichern in food_editor_screen.dart.
+//
+// Seit Teil 1.2 (C24) aus Design-Komponenten: Darstellung in den Abschnitten
+// sections/package_*_section.dart; Zustand, Prüfung und Umrechnung bleiben
+// hier.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../contracts/core_exceptions.dart';
 import '../../nutrition/decimal_math.dart';
 import '../../nutrition/nutrient_set.dart';
 import '../../nutrition/nutrient_validator.dart';
+import '../config/core_ui_options.dart';
+import '../shared/unit_labels.dart';
+import 'sections/package_identity_section.dart';
+import 'sections/package_measures_section.dart';
+import 'sections/package_nutrients_section.dart';
+import 'sections/package_validation_section.dart';
 
 /// Ergebnis eines gültigen Formularzustands -- `null`-Felder bedeuten
 /// "nicht angegeben", nicht "0".
@@ -44,7 +55,12 @@ class PackageForm extends StatefulWidget {
   /// liest den aktuellen Stand danach über den GlobalKey.
   final VoidCallback? onChanged;
 
-  const PackageForm({super.key, this.initial, this.onChanged});
+  /// Anzeige-Schalter (C29). Ausgeblendete Felder behalten ihren Wert; ein
+  /// ausgeblendetes Feld mit ungültigem oder negativem Wert wird wieder
+  /// eingeblendet, damit der blockierende Fehler behebbar bleibt.
+  final CoreUiOptions options;
+
+  const PackageForm({super.key, this.initial, this.onChanged, this.options = const CoreUiOptions()});
 
   @override
   State<PackageForm> createState() => PackageFormState();
@@ -128,7 +144,7 @@ class PackageFormState extends State<PackageForm> {
         _sodiumController,
       ];
 
-  static String _decimalText(Decimal? value) => value == null ? '' : value.toString();
+  static String _decimalText(Decimal? value) => value == null ? '' : formatQuantity(value);
 
   void _handleChanged() {
     setState(() {});
@@ -236,95 +252,81 @@ class PackageFormState extends State<PackageForm> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final error = blockingError;
-    final currentWarnings = warnings;
-    final sodiumFilled = _sodiumController.text.trim().isNotEmpty;
-
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        TextField(
-          controller: _nameController,
-          decoration: const InputDecoration(labelText: 'Name'),
-        ),
-        TextField(
-          controller: _brandController,
-          decoration: const InputDecoration(labelText: 'Marke'),
-        ),
-        TextField(
-          controller: _barcodeController,
-          decoration: const InputDecoration(labelText: 'Barcode'),
-        ),
-        const Divider(height: 32),
-        TextField(
-          controller: _densityController,
-          decoration: const InputDecoration(labelText: 'Dichte (g/ml)'),
-        ),
-        TextField(
-          controller: _gramsPerPieceController,
-          decoration: const InputDecoration(labelText: 'Stückgewicht (g)'),
-        ),
-        TextField(
-          controller: _servingSizeController,
-          decoration: const InputDecoration(labelText: 'Portionsgröße (g)'),
-        ),
-        const Divider(height: 32),
-        const Text('Nährwerte pro 100 g', style: TextStyle(fontWeight: FontWeight.bold)),
-        _nutrientField(_energyKcalController, 'Kalorien (kcal)'),
-        _nutrientField(_fatController, 'Fett (g)'),
-        _nutrientField(_saturatedFatController, 'davon gesättigte Fettsäuren (g)'),
-        _nutrientField(_carbsController, 'Kohlenhydrate (g)'),
-        _nutrientField(_sugarsController, 'davon Zucker (g)'),
-        _nutrientField(_fiberController, 'Ballaststoffe (g)'),
-        _nutrientField(_proteinController, 'Eiweiß (g)'),
-        _nutrientField(_saltController, 'Salz (g)', enabled: !sodiumFilled),
-        _nutrientField(
-          _sodiumController,
-          'oder: Natrium (mg)',
-          helperText: 'Ersetzt die Salz-Eingabe (Kapitel 8.2).',
-        ),
-        const SizedBox(height: 16),
-        for (final warning in currentWarnings)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Container(
-              key: const Key('package_form_warning'),
-              padding: const EdgeInsets.all(8),
-              color: Colors.yellow.shade100,
-              child: Text(warning.message),
-            ),
-          ),
-        if (error != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Container(
-              key: const Key('package_form_error'),
-              padding: const EdgeInsets.all(8),
-              color: Colors.red.shade100,
-              child: Text(error, style: const TextStyle(color: Colors.red)),
-            ),
-          ),
-      ],
-    );
+  /// Ungültige Zahl oder negativer Wert: das Feld muss sichtbar sein.
+  bool _needsAttention(TextEditingController controller) {
+    final parsed = _tryParse(controller.text);
+    return parsed.error != null || (parsed.value != null && parsed.value! < Decimal.zero);
   }
 
-  Widget _nutrientField(
-    TextEditingController controller,
-    String label, {
-    bool enabled = true,
-    String? helperText,
-  }) {
-    final result = _tryParse(controller.text);
-    return TextField(
-      controller: controller,
-      enabled: enabled,
-      decoration: InputDecoration(
-        labelText: label,
-        errorText: result.error,
-        helperText: helperText,
-      ),
+  bool _showsNutrient(String key, TextEditingController controller) =>
+      widget.options.showsNutrient(key) || _needsAttention(controller);
+
+  bool _showsMeasure(TextEditingController controller) =>
+      widget.options.showAdvancedFields || _needsAttention(controller);
+
+  /// Felder, die eine Warnung betreffen (Kapitel 8.6).
+  static const _warningFields = {
+    NutrientWarningKind.saturatedFatExceedsFat: ['saturated_fat_g', 'fat_g'],
+    NutrientWarningKind.sugarsExceedCarbs: ['sugars_g', 'carbs_g'],
+    NutrientWarningKind.macrosExceed100g: ['fat_g', 'carbs_g', 'protein_g', 'fiber_g'],
+    NutrientWarningKind.energyMismatch: ['energy_kcal', 'fat_g', 'carbs_g', 'protein_g', 'fiber_g'],
+    NutrientWarningKind.allFieldsEmpty: <String>[],
+  };
+
+  /// Warnungen ohne die, die ein ausgeblendetes Feld betreffen (Antwort F9).
+  List<NutrientWarning> get _visibleWarnings => [
+        for (final warning in warnings)
+          if ((_warningFields[warning.kind] ?? const <String>[]).every(widget.options.showsNutrient)) warning,
+      ];
+
+  @override
+  Widget build(BuildContext context) {
+    final sodiumFilled = _sodiumController.text.trim().isNotEmpty;
+    PackageNumberField field(TextEditingController controller, String label, {bool enabled = true, String? helper}) =>
+        PackageNumberField(
+          controller: controller,
+          label: label,
+          error: _tryParse(controller.text).error,
+          helper: helper,
+          enabled: enabled,
+        );
+
+    return FormSections(
+      children: [
+        PackageIdentitySection(
+          name: _nameController,
+          brand: _brandController,
+          barcode: _barcodeController,
+          showBarcode: widget.options.showBarcodeField,
+        ),
+        PackageMeasuresSection(
+          density: _densityController,
+          gramsPerPiece: _gramsPerPieceController,
+          servingSize: _servingSizeController,
+          visible: {
+            if (_showsMeasure(_densityController)) Measure.density,
+            if (_showsMeasure(_gramsPerPieceController)) Measure.gramsPerPiece,
+            if (_showsMeasure(_servingSizeController)) Measure.servingSize,
+          },
+        ),
+        PackageNutrientsSection(fields: [
+          field(_energyKcalController, 'Kalorien (kcal)'),
+          if (_showsNutrient('fat_g', _fatController)) field(_fatController, 'Fett (g)'),
+          if (_showsNutrient('saturated_fat_g', _saturatedFatController))
+            field(_saturatedFatController, 'davon gesättigte Fettsäuren (g)'),
+          if (_showsNutrient('carbs_g', _carbsController)) field(_carbsController, 'Kohlenhydrate (g)'),
+          if (_showsNutrient('sugars_g', _sugarsController)) field(_sugarsController, 'davon Zucker (g)'),
+          if (_showsNutrient('fiber_g', _fiberController)) field(_fiberController, 'Ballaststoffe (g)'),
+          if (_showsNutrient('protein_g', _proteinController)) field(_proteinController, 'Eiweiß (g)'),
+          if (_showsNutrient('salt_g', _saltController)) field(_saltController, 'Salz (g)', enabled: !sodiumFilled),
+          if (widget.options.showsNutrient('salt_g') && widget.options.showAdvancedFields)
+            field(_sodiumController, 'oder: Natrium (mg)', helper: 'Ersetzt die Salz-Eingabe (Kapitel 8.2).'),
+        ]),
+        PackageValidationSection(
+          warnings: [for (final warning in _visibleWarnings) warning.message],
+          error: blockingError,
+        ),
+      ],
     );
   }
 }

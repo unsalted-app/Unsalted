@@ -8,19 +8,23 @@
 // Original-Text, damit unbekannte Felder wie vom Snapshot-Contract
 // vorgesehen erhalten bleiben (Kapitel 13.6, GD-12). Datei-Auswahl bräuchte
 // ein zusätzliches Paket (z. B. file_picker) -- außerhalb des
-// Dateiscopes dieses Schritts, deshalb nur Text einfügen.
+// Dateiscopes dieses Schritts, deshalb nur Text einfügen. Seit Teil 1.2
+// (C19) aus Design-Komponenten: FormPageTemplate mit festen Abschnitten unter
+// sections/.
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../contracts/core_exceptions.dart';
-import '../../nutrition/nutrition_formatter.dart';
 import '../../providers/core_providers.dart';
 import '../../recipe/recipe_snapshot_v1.dart';
 import '../../recipe/snapshot_codec.dart';
 import '../recipe_detail/recipe_detail_screen.dart';
+import 'sections/import_input_section.dart';
+import 'sections/import_preview_section.dart';
 
 class ImportScreen extends ConsumerStatefulWidget {
   const ImportScreen({super.key});
@@ -100,60 +104,24 @@ class _ImportScreenState extends ConsumerState<ImportScreen> {
   Widget build(BuildContext context) {
     final preview = _preview;
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Import')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _textController,
-                maxLines: null,
-                expands: true,
-                textAlignVertical: TextAlignVertical.top,
-                decoration: const InputDecoration(
-                  labelText: 'JSON einfügen',
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: _updatePreview,
-              ),
+    return FormPageTemplate(
+      title: 'Import',
+      body: FormSections.fixed(
+        children: [
+          Expanded(child: ImportInputSection(controller: _textController, onChanged: _updatePreview)),
+          if (_previewError != null)
+            AppPadding.only(top: AppSpace.s, child: AppText(_previewError!, tone: AppTone.error)),
+          if (preview != null) AppPadding.only(top: AppSpace.s, child: ImportPreviewSection(preview: preview)),
+          if (_importError != null)
+            AppPadding.only(top: AppSpace.s, child: AppText(_importError!, tone: AppTone.error)),
+          AppPadding.only(
+            top: AppSpace.l,
+            child: AppButton.primary(
+              label: 'Importieren',
+              onPressed: (preview == null || _importing) ? null : _import,
             ),
-            if (_previewError != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(_previewError!, style: const TextStyle(color: Colors.red)),
-              ),
-            if (preview != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Vorschau: ${preview.recipe.title}',
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text('${preview.ingredients.length} Zutaten'),
-                    Text(
-                      'Gesamt: ${NutritionFormatter.formatKcal(preview.nutrition.total.energyKcal)} kcal',
-                    ),
-                  ],
-                ),
-              ),
-            if (_importError != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(_importError!, style: const TextStyle(color: Colors.red)),
-              ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: ElevatedButton(
-                onPressed: (preview == null || _importing) ? null : _import,
-                child: const Text('Importieren'),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

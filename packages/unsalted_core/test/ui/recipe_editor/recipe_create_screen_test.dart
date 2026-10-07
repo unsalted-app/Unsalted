@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:unsalted_design/unsalted_design.dart';
 import 'package:unsalted_core/src/data/core_database.dart';
 import 'package:unsalted_core/src/data/daos/drift_recipe_dao.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
@@ -53,7 +54,7 @@ void main() {
     var fab = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
     expect(fab.onPressed, isNull);
 
-    await tester.enterText(find.widgetWithText(TextField, 'Titel'), 'Pizzateig');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Titel'), 'Pizzateig');
     await tester.pump();
 
     fab = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
@@ -72,7 +73,7 @@ void main() {
     ));
     await tester.pump();
 
-    await tester.enterText(find.widgetWithText(TextField, 'Titel'), 'x' * 201);
+    await tester.enterText(find.widgetWithText(AppTextField, 'Titel'), 'x' * 201);
     await tester.pump();
 
     final fab = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
@@ -104,10 +105,10 @@ void main() {
     ));
     await tester.pump();
 
-    await tester.enterText(find.widgetWithText(TextField, 'Titel'), 'Pizzateig');
-    await tester.enterText(find.widgetWithText(TextField, 'Beschreibung'), 'Knusprig dünn');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Titel'), 'Pizzateig');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Beschreibung'), 'Knusprig dünn');
     await tester.pump();
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byType(AppFab));
     await _settle(tester);
 
     expect(createdRecipeId, isNotNull);
@@ -154,9 +155,9 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    await tester.enterText(find.widgetWithText(TextField, 'Titel'), 'Pizzateig');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Titel'), 'Pizzateig');
     await tester.pump();
-    await tester.tap(find.byType(FloatingActionButton));
+    await tester.tap(find.byType(AppFab));
     await _settle(tester);
     await tester.pumpAndSettle();
     // RecipeEditorScreen lädt die neue Version asynchron nach (echte
@@ -198,7 +199,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    await tester.enterText(find.widgetWithText(TextField, 'Titel'), 'Unfertiges Rezept');
+    await tester.enterText(find.widgetWithText(AppTextField, 'Titel'), 'Unfertiges Rezept');
     await tester.pump();
 
     // Simuliert den AppBar-Zurück-Button (Systemzurück), den PopScope
