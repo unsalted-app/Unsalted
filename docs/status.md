@@ -190,7 +190,7 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C01 | Regeln: `architecture.yaml`, `check_architecture.dart`, Kapitel 28.9 (1–3) | fertig |
 | C02 | Gerüst `unsalted_design`, DS-01/03/06, CI | fertig |
 | C03 | Tokens, DS-02/04/05 | fertig |
-| C04 | Theme, DS-07 | offen |
+| C04 | Theme, DS-07 | fertig |
 | C05 | Layout | offen |
 | C06–C09 | Komponenten I–IV | offen |
 | C10 | Templates | offen |

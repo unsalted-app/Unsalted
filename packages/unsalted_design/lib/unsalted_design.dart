@@ -14,3 +14,6 @@ export 'src/tokens/motion_tokens.dart' show AppMotion;
 export 'src/tokens/radius_tokens.dart' show AppRadius;
 export 'src/tokens/spacing_tokens.dart' show AppSpacing;
 export 'src/tokens/typography_tokens.dart' show AppTypography;
+
+// Theme
+export 'src/theme/app_theme.dart' show AppTheme;

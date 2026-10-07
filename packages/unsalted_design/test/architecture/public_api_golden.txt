@@ -10,3 +10,4 @@ src/tokens/motion_tokens.dart show AppMotion
 src/tokens/radius_tokens.dart show AppRadius
 src/tokens/spacing_tokens.dart show AppSpacing
 src/tokens/typography_tokens.dart show AppTypography
+src/theme/app_theme.dart show AppTheme

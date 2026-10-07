@@ -1242,3 +1242,18 @@ nur in `tokens/`), DS-04 (Vollständigkeit, Figma-Namensformat, Typo =
 Flutter-Skala, Bewegung reduzieren), DS-05 (alle 45 Text-auf-Fläche-Paare je
 Modus ≥ 4,5:1 — die Material-Standardfarben bestehen ohne Ausnahme).
 *Gegenprobe DS-02:* `Color(…)` in einer Datei außerhalb von `tokens/` → rot.
+
+**C04 — Theme.** `AppTheme.light()`/`.dark()` bauen `ThemeData` nur aus
+`AppColorTokens` und `AppTypography`. DS-07 vergleicht mit `ThemeData()` bzw.
+`ThemeData(brightness: dark)`: alle 46 Rollen einzeln, die abgeleiteten
+Flächenfarben (`scaffoldBackgroundColor`, `canvasColor`, `cardColor`,
+`dividerColor`, `hintColor`, `disabledColor`, `primaryColor`) und die Typo
+nach `ThemeData.localize` (so wendet `MaterialApp` das Theme an) — gleich.
+*Abweichung vom Plan:* `theme/app_tokens.dart` (ThemeExtension) und
+`theme/component_themes.dart` entfallen vorerst. Komponenten lesen
+Abstände, Radien und Bewegung als statische Tokens und Farben/Typo aus
+`Theme.of(context)`; ohne Design-Theme liefert `ThemeData()` dieselben
+Werte, damit ist Risiko R2 (Core-Tests pumpen `MaterialApp` ohne Theme)
+ohne Rückfall-Logik gelöst. Komponenten-Themes und eine Erweiterung (z. B.
+für Farben außerhalb der Material-Rollen) kommen, sobald das Figma-Design
+sie verlangt (KI-S4).
