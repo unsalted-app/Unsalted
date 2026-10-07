@@ -125,7 +125,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Aktionen:** Export, Import, „Über unsalted“, Modul-Einträge.
 - **Template:** `ListPageTemplate` ohne Suche.
 - **Abschnitte:** `settings_core_entries_section.dart` · `settings_module_entries_section.dart`.
-- **Umgestellt:** offen (C14).
+- **Umgestellt:** C14.
 
 ## Gemeinsam
 

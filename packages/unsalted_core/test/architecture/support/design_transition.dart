@@ -22,7 +22,6 @@ const designTransitionList = <String>{
   'packages/unsalted_core/lib/src/ui/recipe_list/recipe_list_screen.dart',
   'packages/unsalted_core/lib/src/ui/settings/export_screen.dart',
   'packages/unsalted_core/lib/src/ui/settings/import_screen.dart',
-  'packages/unsalted_core/lib/src/ui/settings/settings_screen.dart',
   'packages/unsalted_core/lib/src/ui/shared/undoable_deletion.dart',
   'packages/unsalted_core/lib/src/ui/versions/version_compare_screen.dart',
   'packages/unsalted_core/lib/src/ui/versions/version_list_screen.dart',

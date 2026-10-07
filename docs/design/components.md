@@ -2,7 +2,9 @@
 
 Stand Teil 1.2. Pfade relativ zu `packages/unsalted_design/lib/src/`. Status:
 **fertig** = im Paket, getestet und im Katalog; **geplant** = noch nicht
-gebaut. Regeln und Benennung: `docs/design/design_system.md`.
+gebaut; „(neu)“ = im Plan nicht vorgesehen, in Etappe 1 hinzugekommen
+(`docs/decisions.md`, C05–C08). Regeln und Benennung:
+`docs/design/design_system.md`.
 
 ## Tokens und Theme
 
@@ -10,13 +12,14 @@ gebaut. Regeln und Benennung: `docs/design/design_system.md`.
 |---|---|---|---|---|
 | `AppColorTokens` (`light`, `dark`) | Sammlung `color`, Modi `light`/`dark` | `tokens/color_tokens.dart` | fertig | DS-02, DS-04, DS-05, DS-07 |
 | `AppTypography` | `type/*` | `tokens/typography_tokens.dart` | fertig | DS-04, DS-07 |
-| `AppSpacing`, `AppSpace` | `space/*` | `tokens/spacing_tokens.dart` | fertig | DS-04, DS-10 |
+| `AppSpacing` | `space/*` | `tokens/spacing_tokens.dart` | fertig | DS-04 |
+| `AppSpace` (Stufe als Parameter, neu) | `space/*` | `tokens/spacing_tokens.dart` | fertig | DS-10 |
 | `AppRadius` | `radius/*` | `tokens/radius_tokens.dart` | fertig | DS-04 |
 | `AppElevation` | `elevation/*` | `tokens/elevation_tokens.dart` | fertig | DS-04 |
 | `AppMotion` | `motion/duration/*`, `motion/easing/*` | `tokens/motion_tokens.dart` | fertig | DS-04 |
 | `AppBreakpoints` | `breakpoint/*` | `tokens/breakpoint_tokens.dart` | fertig | DS-04, DS-13 |
 | `AppTheme` | — | `theme/app_theme.dart` | fertig | DS-07 |
-| `AppTone` | — | `theme/app_tone.dart` | fertig | DS-17, DS-18 |
+| `AppTone` (neu) | Farbton aus `color/on-surface-variant`, `color/primary`, `color/error` | `theme/app_tone.dart` | fertig | DS-17, DS-18 |
 
 ## Layout
 
@@ -24,9 +27,11 @@ gebaut. Regeln und Benennung: `docs/design/design_system.md`.
 |---|---|---|---|---|
 | `AppPage` | `Layout/Page` | `layout/app_page.dart` | fertig | DS-11 |
 | `AppSection` | `Layout/Section` | `layout/app_section.dart` | fertig | DS-22 |
-| `AppStack`, `AppGap`, `AppPadding` | `Layout/Stack`, `Layout/Gap` | `layout/app_stack.dart` | fertig | DS-10 |
+| `AppStack`, `AppGap` | `Layout/Stack`, `Layout/Gap` | `layout/app_stack.dart` | fertig | DS-10 |
+| `AppPadding` (neu) | `Layout/Padding` | `layout/app_stack.dart` | fertig | DS-10 |
 | `AppGrid` | `Layout/Grid` | `layout/app_grid.dart` | fertig | DS-12 |
-| `AppWindowSize`, `ResponsiveBuilder` | `breakpoint/*` | `layout/responsive.dart` | fertig | DS-13 |
+| `AppWindowSize` (neu, statt `Responsive.of`) | `breakpoint/*` | `layout/responsive.dart` | fertig | DS-13 |
+| `ResponsiveBuilder` | `breakpoint/*` | `layout/responsive.dart` | fertig | DS-13 |
 
 ## Komponenten
 
@@ -45,7 +50,7 @@ gebaut. Regeln und Benennung: `docs/design/design_system.md`.
 | `AppSearchField` | `Input/Search` | `components/inputs/app_search_field.dart` | fertig | DS-24 |
 | `AppSelect` | `Input/Select` | `components/inputs/app_select.dart` | fertig | DS-25 |
 | `AppListItem` | `List/Item` | `components/lists/app_list_item.dart` | fertig | DS-26 |
-| `AppItemList` | `List/Items` | `components/lists/app_item_list.dart` | fertig | DS-27 |
+| `AppItemList` (neu) | `List/Items` | `components/lists/app_item_list.dart` | fertig | DS-27 |
 | `AppSwipeToDelete` | `List/Swipe to Delete` | `components/lists/app_swipe_to_delete.dart` | fertig | DS-28 |
 | `AppReorderableList` | `List/Reorderable` | `components/lists/app_reorderable_list.dart` | fertig | DS-29 |
 | `AppChoiceChip` | `Chip/Choice` | `components/chips/app_choice_chip.dart` | fertig | DS-30 |
@@ -56,7 +61,8 @@ gebaut. Regeln und Benennung: `docs/design/design_system.md`.
 | `AppLoading` | `Feedback/Loading` | `components/feedback/app_loading.dart` | fertig | DS-35 |
 | `AppProgressBar` | `Feedback/Progress Bar` | `components/feedback/app_loading.dart` | fertig | DS-36 |
 | `AppSkeleton` | `Feedback/Skeleton` | `components/feedback/app_skeleton.dart` | fertig, nicht eingesetzt (F3) | DS-37 |
-| `AppMessenger`, `showAppMessage` | `Feedback/Snackbar` | `components/feedback/app_snackbar.dart` | fertig | DS-38 |
+| `AppMessenger` (neu, statt `showAppUndoSnackbar`), `AppSnackbarHandle` | `Feedback/Snackbar` | `components/feedback/app_snackbar.dart` | fertig | DS-38 |
+| `showAppMessage` | `Feedback/Snackbar` | `components/feedback/app_snackbar.dart` | fertig | DS-38 |
 | `AppDialog`, `showAppConfirmDialog`, `showAppChoiceDialog`, `showAppDialog`, `showAppAboutDialog` | `Feedback/Dialog` | `components/feedback/app_dialog.dart` | fertig | DS-39 |
 | `AppTopBar` | `Navigation/Top Bar` | `components/navigation/app_top_bar.dart` | fertig | DS-40 |
 | `AppOverflowMenu` | `Navigation/Overflow Menu` | `components/navigation/app_overflow_menu.dart` | fertig | DS-41 |

@@ -1390,3 +1390,13 @@ AT-01 inhaltlich unverändert (Rang 0 < 1), Kopfkommentar korrigiert.
 (`settings_screen.dart:25 → return Scaffold(`); Design-Import in
 `src/recipe/` → AT-15 rot; alles zurückgesetzt, grün. Core 386 Tests
 (+6), App 1, Design 208, Widgetbook 6; `check_architecture` Exit 0.
+
+**C14 — Einstellungen (Bildschirm 13).** `ListPageTemplate` mit
+`AppItemList`; Abschnitte `settings_core_entries_section.dart` (Export,
+Import, „Über unsalted“) und `settings_module_entries_section.dart`
+(Trennlinie + `settingsEntries`, leer = nichts). Modul-Einträge erhalten wie
+bisher den Kontext des Bildschirms (`entry.onTap(context)` im Bildschirm).
+Keine sichtbare Änderung. `components.md`: eigene Zeilen für die in
+Etappe 1 hinzugekommenen Bausteine `AppSpace`, `AppPadding`, `AppItemList`,
+`AppTone`, `AppMessenger`, `AppWindowSize`. Bestehende Tests unverändert,
+Core 386 grün.
