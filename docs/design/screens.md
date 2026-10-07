@@ -116,7 +116,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** leer · ungültiges JSON · Vorschau · Importfehler im Klartext.
 - **Template:** `FormPageTemplate` mit `FormSections.fixed`.
 - **Abschnitte:** `import_input_section.dart` · `import_preview_section.dart`.
-- **Umgestellt:** offen (C19).
+- **Umgestellt:** C19.
 
 ## 13 Einstellungen — `settings/settings_screen.dart`
 

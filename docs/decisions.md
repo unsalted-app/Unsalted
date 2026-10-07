@@ -1446,3 +1446,11 @@ Abonnements und der Formularzustand der Auswahllisten unverändert bleiben
 kopiert.“ über `showAppMessage`. *Sichtbare Änderung (freigegeben):*
 Fehlertext in `color/error` statt `Colors.red`. Bestehende Tests
 unverändert, Core 386 grün.
+
+**C19 — Import (Bildschirm 12).** `FormPageTemplate` mit
+`FormSections.fixed`; Abschnitte `import_input_section.dart` (füllendes
+Feld mit Rahmen, `AppTextField.expands`) und `import_preview_section.dart`
+(Titel fett, Zutatenzahl, Gesamt-kcal über `NutritionFormatter`).
+Reihenfolge, Abstände und Logik unverändert. *Sichtbare Änderung
+(freigegeben):* Vorschau- und Importfehler in `color/error` statt
+`Colors.red`. Bestehende Tests unverändert, Core 386 grün.
