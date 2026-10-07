@@ -33,6 +33,7 @@ import '../../recipe/recipe_ingredient.dart';
 import '../../recipe/recipe_step.dart';
 import '../../recipe/recipe_version.dart';
 import '../config/core_ui_options.dart';
+import '../shared/unit_labels.dart';
 import 'ingredient_row.dart';
 import 'sections/recipe_editor_actions_section.dart';
 import 'sections/recipe_editor_frozen_section.dart';
@@ -125,8 +126,9 @@ class _RecipeEditorScreenState extends ConsumerState<RecipeEditorScreen> {
             ))
         .toList();
     _servingsController.text = version.servings?.toString() ?? '';
-    _bakingLossController.text = version.bakingLossPercent.toString();
-    _finalWeightController.text = version.finalWeightOverrideG?.toString() ?? '';
+    _bakingLossController.text = formatQuantity(version.bakingLossPercent);
+    _finalWeightController.text =
+        version.finalWeightOverrideG == null ? '' : formatQuantity(version.finalWeightOverrideG!);
     _notesController.text = version.notes ?? '';
   }
 

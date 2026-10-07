@@ -1756,3 +1756,30 @@ Standardwerten keine sichtbare Änderung.
 Nicht reproduzierbar; vermutlich Rechnerlast bzw. ein Restprozess.
 Stand: Design 212, Core 409, App 6, Widgetbook 6 Tests grün;
 `check_architecture` Exit 0.
+
+**C30 — Dezimalkomma in der ganzen Anzeige (Freigabe 2026-10-07).**
+`change_descriptions.dart` formatiert Mengen, Backverlust und
+Fertiggewicht-Override über `formatQuantity` aus `unit_labels.dart`; die
+eigene Einheitenbenennung der Änderungsliste (9.2a) bleibt. Rezept-Editor
+(Backverlust, Fertiggewicht-Override) und Verpackungsformular (alle
+Zahlenfelder) sind mit `formatQuantity` vorbelegt; die Eingabe nahm Komma
+und Punkt schon vorher an (`replaceAll(',', '.')`), daran ändert sich nichts.
+Keine zweite Hilfsfunktion. Gespeichert, exportiert und im Snapshot bleibt
+der unveränderte Decimal-Wert. `hasChanges` (10.0) vergleicht mit der
+Komma-Vorbelegung als Ausgangszustand.
+*Geänderte bestehende Testzeilen (freigegeben):*
+`packages/unsalted_core/test/ui/versions/change_descriptions_test.dart:78`
+„Mehl: 500 g → 0.5 kg“ → „Mehl: 500 g → 0,5 kg“ (UI-22, Zutatenmenge) und
+`…/change_descriptions_test.dart:135` „Backverlust: 10 % → 12.5 %“ →
+„Backverlust: 10 % → 12,5 %“ (UI-24, Backverlust) — jeweils nur der
+erwartete Text, weil die Änderungsliste jetzt Dezimalkomma zeigt. Die
+zweite Zeile wurde vor der Änderung gemeldet und einzeln freigegeben.
+Neue Tests (`test/ui/shared/decimal_comma_test.dart`): UI-64
+(Änderungsliste mit Komma inkl. Fertiggewicht 850,25 → 900,5 g, kein
+Dezimalpunkt mehr), UI-65 (Verpackungsformular: Vorbelegung mit Komma,
+Eingabe mit Komma und Punkt, `hasChanges` false bei Vorbelegung), UI-66
+(Rezept-Editor: Vorbelegung 12,5 / 900,5, unverändertes Speichern, Eingabe
+„7.5“ und „850,25“ wird als 7.5 / 850.25 gespeichert). *Gegenprobe:* die
+drei Produktivdateien vorübergehend auf C29 → UI-64 bis UI-66 rot;
+zurückgesetzt, grün. Stand: Design 212, Core 412, App 6, Widgetbook 6 Tests
+grün; `check_architecture` Exit 0.

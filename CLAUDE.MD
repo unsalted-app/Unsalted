@@ -252,7 +252,8 @@ leer. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03, AT-13–15, UI-58, APP-02.
 
 Etappe 3 (C27c, C28, C27b, C29) fertig: Übergangsmechanismus entfernt,
 Test-Finder auf Design-Typen, deutsche Einheiten, Anzeige-Schalter
-(`CoreUiOptions`). Test-IDs neu zusätzlich UI-59–63, UC-01–07.
+(`CoreUiOptions`). C30: Dezimalkomma in der ganzen Anzeige. Test-IDs neu
+zusätzlich UI-59–66, UC-01–07.
 
 **Nächster Schritt:** Freigabe von Teil 1.2 durch den Projektverantwortlichen
 (Merge, Tags `part1-v1.2.0` + `design-v0.1.0` nur nach ausdrücklicher Freigabe).

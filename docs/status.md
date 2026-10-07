@@ -218,6 +218,9 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C28 | Test-Finder auf Design-Typen (116 Zeilen, nur Finder) | fertig |
 | C27b | deutsche Einheiten (UI-59–63) | fertig |
 | C29 | UI-Konfiguration: `CoreUiOptions`, App-Datei, UC-01–07 | fertig |
+| C30 | Dezimalkomma in der ganzen Anzeige (Änderungsliste, Editor-Parameter, Verpackungsformular), UI-64–66 | fertig |
+
+Stand nach C30: Design 212 Tests, Core 412, App 6, Widgetbook 6, alle grün; `check_architecture` Exit 0.
 
 Stand nach Etappe 3 (C27c, C28, C27b, C29): Design 212 Tests, Core 409, App 6, Widgetbook 6, alle grün; `check_architecture` Exit 0. Teil 1.2 wartet auf Freigabe (kein Merge, kein Tag).
 

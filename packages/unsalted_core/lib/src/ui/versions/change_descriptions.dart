@@ -9,13 +9,15 @@
 // dieser Änderung (Kapitel 14.4), nicht auf Version A. Deshalb wird die
 // Liste hier für die Anzeige der Reihe nach auf eine Namensliste aus A
 // angewendet; ein Nachschlagen in A wäre nach Remove/Add/Move falsch.
-// Zahlen erscheinen ungerundet als Decimal-Ausgabe.
+// Zahlen erscheinen ungerundet, mit Dezimalkomma (formatQuantity, Teil 1.2
+// C30).
 
 import 'package:decimal/decimal.dart';
 
 import '../../nutrition/unit_catalog.dart';
 import '../../recipe/recipe_change.dart';
 import '../../recipe/recipe_snapshot_v1.dart';
+import '../shared/unit_labels.dart';
 
 class _Ingredient {
   _Ingredient(this.name, this.quantity, this.unit);
@@ -41,7 +43,7 @@ String _unitLabel(String code) {
   }
 }
 
-String _amount(Decimal quantity, String unit) => '$quantity ${_unitLabel(unit)}';
+String _amount(Decimal quantity, String unit) => '${formatQuantity(quantity)} ${_unitLabel(unit)}';
 
 String _timer(int? seconds) {
   if (seconds == null) return 'kein Timer';
@@ -83,9 +85,9 @@ List<String> describeChanges(RecipeSnapshotV1 a, List<RecipeChange> changes) {
       case SetNotes c:
         texts.add('Notizen: ${_quoted(a.version.notes)} → ${_quoted(c.notes)}');
       case SetBakingLoss c:
-        texts.add('Backverlust: ${a.version.bakingLossPercent} % → ${c.percent} %');
+        texts.add('Backverlust: ${formatQuantity(a.version.bakingLossPercent)} % → ${formatQuantity(c.percent)} %');
       case SetFinalWeightOverride c:
-        String grams(Decimal? g) => g == null ? '—' : '$g g';
+        String grams(Decimal? g) => g == null ? '—' : '${formatQuantity(g)} g';
         texts.add('Fertiggewicht-Override: ${grams(a.version.finalWeightOverrideG)} → ${grams(c.grams)}');
       case SetServings c:
         texts.add('Portionen: ${a.version.servings ?? '—'} → ${c.servings ?? '—'}');

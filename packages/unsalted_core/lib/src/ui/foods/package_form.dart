@@ -29,6 +29,7 @@ import '../../nutrition/decimal_math.dart';
 import '../../nutrition/nutrient_set.dart';
 import '../../nutrition/nutrient_validator.dart';
 import '../config/core_ui_options.dart';
+import '../shared/unit_labels.dart';
 import 'sections/package_identity_section.dart';
 import 'sections/package_measures_section.dart';
 import 'sections/package_nutrients_section.dart';
@@ -143,7 +144,7 @@ class PackageFormState extends State<PackageForm> {
         _sodiumController,
       ];
 
-  static String _decimalText(Decimal? value) => value == null ? '' : value.toString();
+  static String _decimalText(Decimal? value) => value == null ? '' : formatQuantity(value);
 
   void _handleChanged() {
     setState(() {});
