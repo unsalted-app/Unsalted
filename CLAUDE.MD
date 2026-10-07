@@ -152,27 +152,20 @@ unsalted/
       │     │  └─ core_module.dart           class CoreModule — routes seit Nachtrag 8.7a gefüllt (Kapitel 22)
       │     ├─ providers/                    Phase 7, fertig
       │     │  └─ core_providers.dart        alle 8 Provider aus Kapitel 16.7
-      │     └─ ui/                           Phase 8, fertig (Bildschirm 1–13)
-      │        ├─ recipe_list/recipe_list_screen.dart        Bildschirm 1
-      │        ├─ recipe_editor/recipe_create_screen.dart    Bildschirm 2
-      │        ├─ recipe_editor/recipe_editor_screen.dart    Bildschirm 3
-      │        ├─ recipe_editor/ingredient_row.dart
-      │        ├─ recipe_detail/recipe_detail_screen.dart    Bildschirm 4
-      │        ├─ recipe_detail/version_switcher.dart
-      │        ├─ nutrition/nutrition_header.dart            Bildschirm 5
-      │        ├─ nutrition/nutrition_table.dart              Bildschirm 5
-      │        ├─ nutrition/amount_calculator.dart            Bildschirm 6
-      │        ├─ versions/version_list_screen.dart           Bildschirm 7
-      │        ├─ versions/version_compare_screen.dart        Bildschirm 8
-      │        ├─ versions/change_descriptions.dart           Texte der Änderungsliste (9.2a)
-      │        ├─ foods/food_list_screen.dart                 Bildschirm 9
-      │        ├─ foods/food_editor_screen.dart               Bildschirm 10 (PopScope seit Nachtrag 10.0)
-      │        ├─ foods/package_form.dart
-      │        ├─ settings/export_screen.dart                 Bildschirm 11 — Lücke: kein Teilen-Dialog
-      │        ├─ settings/import_screen.dart                 Bildschirm 12 — Lücke: keine Datei-Auswahl
-      │        ├─ settings/settings_screen.dart                Bildschirm 13
-      │        └─ shared/undoable_deletion.dart                Löschen mit 5 s „Rückgängig“ (Teil 1.1b),
-      │                                                        UI-interne Provider, nicht exportiert
+      │     └─ ui/                           Bildschirm 1–13; seit Teil 1.2 nur aus Design-Komponenten
+      │        │                             (Templates + Abschnitte, docs/design/screens.md)
+      │        ├─ <bereich>/<name>_screen.dart  Zustand, Daten, Aktionen
+      │        ├─ <bereich>/sections/*_section.dart  je Abschnitt eine Datei, zustandslos
+      │        ├─ recipe_list/recipe_card.dart, foods/food_tile.dart, versions/version_tile.dart,
+      │        │  versions/snapshot_column.dart, versions/change_list.dart,
+      │        │  recipe_editor/ingredient_row.dart, recipe_editor/step_row.dart (StepRowData),
+      │        │  recipe_editor/food_variant_picker_dialog.dart, recipe_detail/version_switcher.dart,
+      │        │  nutrition/*, foods/package_form.dart   fachliche Bausteine
+      │        ├─ versions/change_descriptions.dart     Texte der Änderungsliste (9.2a)
+      │        ├─ settings/export_screen.dart / import_screen.dart  Lücken: kein Teilen-Dialog,
+      │        │                                                    keine Datei-Auswahl
+      │        └─ shared/undoable_deletion.dart         Löschen mit 5 s „Rückgängig“ (Teil 1.1b),
+      │                                                 UI-interne Provider, nicht exportiert
       └─ test/
          ├─ architecture/                    AT-01 bis AT-15, alle grün (AT-13–15 seit Teil 1.2)
          │  ├─ at01_no_upper_imports_test.dart … at15_design_only_in_ui_test.dart
@@ -250,8 +243,12 @@ Core-Bildschirme aus Abschnitten. Phase A (nur Plan) liegt in
 `docs/status.md`. Kein Merge, kein Tag ohne ausdrückliche Freigabe; Teil 1.2
 wird später als `part1-v1.2.0` + `design-v0.1.0` getaggt.
 
-**Nächster Schritt:** Teil 1.2 in Etappen mit Stopp: C01–C13, C14–C27,
-C28/C27b/C29 (`docs/status.md`).
+**Stand Teil 1.2:** Etappe 1 (C01–C13) und Etappe 2 (C14–C27) fertig; alle
+13 Bildschirme und die App-Hülle nutzen das Design-System, Übergangsliste
+leer. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03, AT-13–15, UI-58, APP-02.
+
+**Nächster Schritt:** nach Freigabe Etappe 3: C28 (Test-Finder), C27b
+(deutsche Einheiten), C29 (UI-Konfiguration) — `docs/status.md`.
 
 ---
 

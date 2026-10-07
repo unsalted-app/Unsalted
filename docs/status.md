@@ -213,10 +213,12 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C24 | Lebensmittel bearbeiten (10), `PackageForm` | fertig |
 | C25 | Rezept-Editor (3), `IngredientRow`, `StepRow`, Auswahldialog | fertig |
 | C26 | App-Hülle: Theme hell/dunkel, Navigationsleiste, APP-02 | fertig |
-| C27 | Abschluss Übergangslisten | offen |
+| C27 | Abschluss: Übergangsliste leer (Mechanismus bleibt bis zur Freigabe), Doku auf Ist-Stand | fertig |
 | C28 | Test-Finder auf Design-Typen | offen |
 | C27b | deutsche Einheiten | offen |
 | C29 | UI-Konfiguration | offen |
+
+Stand nach Etappe 2 (C14–C27): Design 212 Tests, Core 387, App 3, Widgetbook 6, alle grün; `check_architecture` Exit 0; Übergangsliste leer.
 
 Stand nach Etappe 1 (C01–C13): Design 208 Tests, Core 386, App 1, Widgetbook 6, alle grün; `tool/check_architecture.dart` Exit 0. Entwurfs-PR `design-system` → `main` steht noch aus (`gh` lokal nicht angemeldet).
 

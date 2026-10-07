@@ -1572,3 +1572,30 @@ Systemeinstellung, Navigationsleiste mit drei Zielen. *Gegenprobe:* ohne
 `darkTheme` → APP-02 rot; zurückgesetzt, grün. *Sichtbare Änderung
 (freigegeben, F4):* Die App folgt jetzt dem Dunkelmodus des Systems. Der
 bestehende App-Test ist unverändert; App 3 Tests grün.
+
+**C27 — Abschluss Etappe 2.** Übergangsliste leer: alle Dateien unter
+`lib/src/ui/` erfüllen AT-13 und AT-14 ohne Ausnahme. *Abweichung vom
+Plan:* Der Mechanismus der Übergangsliste (`support/design_transition.dart`
+und seine Verwendung in AT-13/AT-14) ist **nicht** entfernt, weil das die
+Testdateien AT-13/AT-14 ändern würde und bestehende Tests in Etappe 2 nicht
+geändert werden durften; die leere Liste wirkt nicht mehr. Entfernen nach
+Freigabe (reine Aufräumarbeit). `docs/design/screens.md` auf den
+tatsächlichen Stand gebracht (Abschnitte je Bildschirm mit Pfad, in
+Anzeigereihenfolge), `components.md` (fachliche Bausteine, nicht eingesetzte
+Komponenten), Kapitel 28.9 Punkt 5, CLAUDE.MD.
+
+*Sichtbare Änderungen Etappe 2, vollständig (alle in den freigegebenen
+Gruppen):* (1) Theme-Farben statt `Colors.*`: Fehlertexte in `color/error`
+(Rezept erstellen, Export, Import, Versionsvergleich, Lebensmittel-Editor,
+Rezept-Editor); Hinweis „Nicht berechenbar“ und Warnkasten im
+Verpackungsformular in `tertiary-container`; Fehlerkasten im
+Verpackungsformular in `error-container`/`on-error-container`; Vorschauleiste
+des Editors in `surface-container-high`; Hinweis „Eingefroren …“ in
+`secondary-container`; Ladekreis in den FABs in `on-primary-container`.
+(2) Tooltips: „Neues Rezept“, „Neues Lebensmittel“, „Rezept speichern“,
+„Lebensmittel speichern“, „Zutat entfernen“, „Schritt entfernen“.
+(3) Menü-Kontext im Rezeptdetail (Knopf- → Seitenkontext, ohne
+beobachtbaren Unterschied, UI-58). (4) Dunkelmodus nach System (F4, C26).
+Keine weiteren: Reihenfolge, Texte, Abstände und Verhalten unverändert.
+Stand: Design 212, Core 387, App 3, Widgetbook 6 Tests grün;
+`check_architecture` Exit 0.

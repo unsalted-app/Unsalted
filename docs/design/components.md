@@ -82,20 +82,25 @@ gebaut; „(neu)“ = im Plan nicht vorgesehen, in Etappe 1 hinzugekommen
 
 ## Fachliche Bausteine (in `unsalted_core/lib/src/ui/`)
 
-Aus Design-Komponenten zusammengesetzt; Status der Umstellung in
-`docs/design/screens.md`.
+Aus Design-Komponenten zusammengesetzt (Stand C27); Abschnitte je
+Bildschirm in `docs/design/screens.md`.
 
 | Baustein | Datei | aus |
 |---|---|---|
 | `RecipeCard` | `recipe_list/recipe_card.dart` | `AppListItem` |
 | `FoodTile` | `foods/food_tile.dart` | `AppListItem` |
-| `VersionTile` | `versions/version_tile.dart` | `AppListItem`, `AppIconButton`, `AppIcon` |
-| `VersionSwitcher` | `recipe_detail/version_switcher.dart` | `AppChoiceChip` |
-| `IngredientRow` | `recipe_editor/ingredient_row.dart` | `AppTextField`, `AppSelect`, `AppIconButton` |
-| `StepRow` | `recipe_editor/step_row.dart` | `AppTextField`, `AppIconButton` |
-| `FoodVariantPickerDialog` | `recipe_editor/food_variant_picker_dialog.dart` | `AppDialog`, `AppSearchField`, `AppListItem` |
+| `VersionTile` | `versions/version_tile.dart` | `AppListItem`, `AppIconButton`, `AppIcon`, `AppStack` |
+| `VersionSwitcher` | `recipe_detail/version_switcher.dart` | `AppChoiceChip`, `AppStack`, `AppPadding` |
+| `IngredientRow` | `recipe_editor/ingredient_row.dart` | `AppTextField`, `AppSelect`, `AppIconButton`, `AppIcon`, `AppStack` |
+| `StepRow` | `recipe_editor/step_row.dart` | `AppTextField` (Startwert, schmal), `AppIconButton`, `AppIcon`, `AppStack` |
+| `FoodVariantPickerDialog` | `recipe_editor/food_variant_picker_dialog.dart` | `AppDialog`, `AppTextField` (ohne Lupe, wie bisher), `AppItemList`, `AppListItem`, `AppEmptyState` |
 | `NutritionHeader` | `nutrition/nutrition_header.dart` | `AppText`, `AppSurface` (warning) |
 | `NutritionTable` | `nutrition/nutrition_table.dart` | `AppKeyValueTable`, `AppSelect`, `AppText` |
 | `AmountCalculator` | `nutrition/amount_calculator.dart` | `AppTextField`, `AppStack` |
-| `PackageForm` | `foods/package_form.dart` | Abschnitte unter `foods/sections/` |
-| `SnapshotColumn`, `ChangeList` | `versions/snapshot_column.dart`, `versions/change_list.dart` | `AppText`, `AppListItem`, `AppPadding` |
+| `PackageForm` | `foods/package_form.dart` | Abschnitte unter `foods/sections/` (`AppTextField`, `AppSection`, `AppSurface` warning/error) |
+| `SnapshotColumn` | `versions/snapshot_column.dart` | `AppText`, `AppPadding`, `AppStack` |
+| `ChangeList` | `versions/change_list.dart` | `AppItemList`, `AppListItem`, `AppText`, `AppPadding` |
+
+In Core noch nicht eingesetzt: `AppNotice` (Symbol und runde Ecken wären
+eine sichtbare Änderung; Hinweiskästen nutzen `AppSurface`), `AppSkeleton`
+(F3), `AppCard`, `AppGrid` (vorbereitet für Karten bzw. Raster ab Tablet).
