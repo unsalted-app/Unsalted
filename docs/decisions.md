@@ -1389,4 +1389,4 @@ AT-01 inhaltlich unverändert (Rang 0 < 1), Kopfkommentar korrigiert.
 `settings_screen.dart` von der Liste gestrichen → AT-14 rot
 (`settings_screen.dart:25 → return Scaffold(`); Design-Import in
 `src/recipe/` → AT-15 rot; alles zurückgesetzt, grün. Core 386 Tests
-(+6), App 1, Design 184, Widgetbook 6; `check_architecture` Exit 0.
+(+6), App 1, Design 208, Widgetbook 6; `check_architecture` Exit 0.

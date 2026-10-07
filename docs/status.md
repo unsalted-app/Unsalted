@@ -207,6 +207,8 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C27b | deutsche Einheiten | offen |
 | C29 | UI-Konfiguration | offen |
 
+Stand nach Etappe 1 (C01–C13): Design 208 Tests, Core 386, App 1, Widgetbook 6, alle grün; `tool/check_architecture.dart` Exit 0. Entwurfs-PR `design-system` → `main` steht noch aus (`gh` lokal nicht angemeldet).
+
 ### Design-Notizen (für den Design-Pass)
 
 - ~~Ladebalken im Rezeptdetail erst nach ~300 ms Verzögerung zeigen (blitzt bei schnellem Laden kurz auf).~~ → umgesetzt in Teil 1.1c.
