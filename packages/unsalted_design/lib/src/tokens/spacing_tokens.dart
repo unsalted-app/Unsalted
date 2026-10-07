@@ -38,3 +38,33 @@ abstract final class AppSpacing {
     'space/xxl': xxl,
   };
 }
+
+/// Abstandsstufe als Parameter für Layout und Komponenten. Bildschirme geben
+/// Abstände nur als Stufe an, nie als Zahl (AT-14).
+enum AppSpace {
+  /// `space/xxs`
+  xxs(AppSpacing.xxs),
+
+  /// `space/xs`
+  xs(AppSpacing.xs),
+
+  /// `space/s`
+  s(AppSpacing.s),
+
+  /// `space/m`
+  m(AppSpacing.m),
+
+  /// `space/l`
+  l(AppSpacing.l),
+
+  /// `space/xl`
+  xl(AppSpacing.xl),
+
+  /// `space/xxl`
+  xxl(AppSpacing.xxl);
+
+  const AppSpace(this.value);
+
+  /// Wert in logischen Pixeln.
+  final double value;
+}

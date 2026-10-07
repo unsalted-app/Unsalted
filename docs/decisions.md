@@ -1257,3 +1257,15 @@ Werte, damit ist Risiko R2 (Core-Tests pumpen `MaterialApp` ohne Theme)
 ohne Rückfall-Logik gelöst. Komponenten-Themes und eine Erweiterung (z. B.
 für Farben außerhalb der Material-Rollen) kommen, sobald das Figma-Design
 sie verlangt (KI-S4).
+
+**C05 — Layout.** `AppSpace` (Enum der Abstandsstufen, in
+`spacing_tokens.dart`): Bildschirme geben Abstände nur als Stufe an, nie als
+Zahl. `AppGap`, `AppStack` (Abstand nur zwischen Kindern), `AppPadding`
+(`all`/`symmetric`/`only`; im Plan nicht eigens genannt, ersetzt
+`EdgeInsets` in Bildschirmen), `AppPage` (baut genau ein `Scaffold`),
+`AppGrid` (aus `card_layout.dart`, ohne Sliver, Spalten nach verfügbarer
+Breite), `AppWindowSize` + `ResponsiveBuilder` (statt des im Plan genannten
+`Responsive.of`; `AppWindowSize.of(context)` für die Fensterbreite).
+`AppSection` folgt in C06, weil sie `AppText` und `AppDivider` nutzt. Tests
+DS-10 bis DS-13 laufen über `test/support/design_harness.dart` in vier
+Varianten (hell/dunkel × Handy 390×844 / Tablet 1024×1366).
