@@ -2836,3 +2836,11 @@ Getrennte Verbindungen auf dieselbe Datenbankdatei werden nicht unterstützt: Da
 3. **E2.** Siehe 28.3.6.
 4. **Snapshot mit weich gelöschtem Lebensmittel.** Das Einfrieren einer Version, deren Zutat auf ein weich gelöschtes Lebensmittel zeigt, erzeugt ohne Warnung einen Snapshot ohne Nährwerte für diese Zutat; das ist spezifikationskonform nach Kapitel 10.7.
 5. **Design- und Komfortpunkte.** Reine Design- und Komfortpunkte stehen in `docs/status.md` unter „Bekannte Grenzen von part1-v1.0.0“.
+
+## 28.9 Teil 1.2 – Design-System
+
+Das Aussehen liegt ausschließlich im Paket `unsalted_design`; Bildschirme legen nur fest, was angezeigt wird und was eine Aktion tut. Plan, Ebenen und Commit-Reihenfolge: `docs/design/plan.md`. → `decisions.md` „Teil 1.2“
+
+1. **Kapitel 2/3, `architecture.yaml`.** Neues Paket `packages/unsalted_design` mit Rang 0: einzige Abhängigkeit `flutter`, keine Fachbegriffe, keine Importe von Core, Riverpod oder Drift. Neue App `apps/unsalted_widgetbook` mit Rang 99 als Komponenten-Katalog. → „Teil 1.2 C01“
+2. **Kapitel 4.1/4.2.** `unsalted_core` und `unsalted_app` hängen per Pfad von `unsalted_design` ab. → „Teil 1.2 C01“
+3. **Kapitel 5.1, Kapitel 27 Regel 14.** `tool/check_architecture.dart` führt die Ausnahmeordner je Eintrag von `forbidden_in_core`: `package:flutter/` in `src/ui/` und `src/module/`, `package:drift/` in `src/data/`, `package:unsalted_design/` nur in `src/ui/`. Für `unsalted_design` sind nur die Importe aus `allowed_in_design` (`package:flutter/`, das eigene Paket) erlaubt, `dart:io` und `dart:ffi` nicht. → „Teil 1.2 C01“

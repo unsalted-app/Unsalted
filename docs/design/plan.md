@@ -1,7 +1,8 @@
 # Teil 1.2 – Design-System (Grundlage): Plan
 
 Phase A · Stand 2026-10-07 · Branch `design-system` (von `main` @ `25b09d9`) ·
-**wartet auf Freigabe**
+**freigegeben 2026-10-07** — Antworten auf F1–F12 in `docs/decisions.md`,
+„Teil 1.2“; zusätzlich Commit C27b (deutsche Einheiten nach C27)
 
 Dieses Dokument ist nur der Plan, Code gibt es noch keinen. Phase B beginnt
 erst nach Freigabe und läuft Commit für Commit nach Abschnitt (e). Offene

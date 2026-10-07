@@ -164,11 +164,11 @@ fehlende DF-11) sind als eigene Tests vorhanden, grün und nicht übersprungen.
 - Zwei Kapitelverweise ohne eindeutige Zuordnung bleiben unverändert: `nutrition_engine.dart:39` (7.4) und `data/tables/recipe_ingredients.dart:26` (10.10).
 - Die Kopfkommentare von `data/tables/recipe_ingredients.dart` und `recipe_steps.dart` beschreiben noch das frühere Hart-Löschen statt des Soft-Delete-Deltas aus Kapitel 10.7.
 
-## Teil 1.1 — Fehlerbehebungen und Design-Pass (Kapitel 25.2) — in Arbeit
+## Teil 1.1 — Fehlerbehebungen (Kapitel 25.2) — abgeschlossen, `part1-v1.1.0`
 
 Änderungen an Teil 1 nach dem Freeze, je mit eigener Arbeitskarte. Der Tag
-`part1-v1.0.0` bleibt unverändert; Teil 1.1 wird nach dem Design-Pass
-gesammelt als `part1-v1.1.0` getaggt.
+`part1-v1.0.0` bleibt unverändert; Teil 1.1 ist gesammelt als
+`part1-v1.1.0` getaggt.
 
 | Schritt | Beschreibung | Status |
 |---|---|---|
@@ -178,6 +178,31 @@ gesammelt als `part1-v1.1.0` getaggt.
 | 1.1d | CI-Zeitlimit (`timeout-minutes: 20`) und Test-Hänger nach fehlgeschlagenen Widget-Tests: Ursache in den Testdateien (Drift-Abbestell-Timer in der Fake-Zone), Datenbank-Teardowns räumen jetzt erst den Widget-Baum ab (docs/decisions.md) | fertig |
 
 Stand nach 1.1d: Core 380 Tests, App 1 Test, alle grün; `tool/check_architecture.dart` Exit 0; CI mit Zeitlimit 20 min.
+
+Teil 1.1 ist als annotierter Tag `part1-v1.1.0` auf `25b09d9` getaggt (2026-10-07). Der Design-Pass auf `design/1.1` wird nicht übernommen (Branch bleibt als Referenz); an seine Stelle tritt Teil 1.2.
+
+## Teil 1.2 — Design-System (Branch `design-system`) — in Arbeit
+
+Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stopp: C01–C13, C14–C27, C28/C27b/C29. Kein Merge, kein Tag ohne Freigabe.
+
+| Schritt | Beschreibung | Status |
+|---|---|---|
+| C01 | Regeln: `architecture.yaml`, `check_architecture.dart`, Kapitel 28.9 (1–3) | fertig |
+| C02 | Gerüst `unsalted_design`, DS-01/03/06, CI | offen |
+| C03 | Tokens, DS-02/04/05 | offen |
+| C04 | Theme, DS-07 | offen |
+| C05 | Layout | offen |
+| C06–C09 | Komponenten I–IV | offen |
+| C10 | Templates | offen |
+| C11 | Widgetbook, WB-01 | offen |
+| C12 | Doku `docs/design/*`, README/CHANGELOG | offen |
+| C13 | Core-Anbindung, AT-13/14/15 mit Übergangsliste | offen |
+| C14–C25 | Bildschirme umstellen | offen |
+| C26 | App-Hülle: Theme hell/dunkel, Navigationsleiste | offen |
+| C27 | Abschluss Übergangslisten | offen |
+| C28 | Test-Finder auf Design-Typen | offen |
+| C27b | deutsche Einheiten | offen |
+| C29 | UI-Konfiguration | offen |
 
 ### Design-Notizen (für den Design-Pass)
 

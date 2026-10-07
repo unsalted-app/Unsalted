@@ -1170,3 +1170,46 @@ das Startskript; die `flutter_tester`-Kindprozesse liefen als Waisen weiter, ein
 Lauf ignorierte das Signal ganz. Die Waisen aus den Gegenproben zu 1.1b/1.1c
 sind beendet; für Gegenproben ein Skript verwenden, das nach Ablauf auch die
 Kindprozesse beendet.
+
+## 2026-10-07 — Teil 1.2: Design-System statt Design-Pass `design/1.1`
+
+**Betroffenes Kapitel:** 2, 3, 4, 5, 19, 22, 27 (Regel 14); Nachträge in
+Kapitel 28.9.
+
+**Entscheidung (Projektverantwortlicher):** Der Design-Pass auf `design/1.1`
+wird nicht übernommen; der Branch bleibt als Referenz. Stattdessen baut
+Teil 1.2 auf `design-system` ein eigenes Paket `packages/unsalted_design`
+(Rang 0, nur Flutter) mit Tokens, Theme, Layout, Komponenten und Templates,
+einen Widgetbook-Katalog und stellt die Core-Bildschirme ohne
+Funktionsänderung auf diese Komponenten um. Plan und Antworten auf F1–F12:
+`docs/design/plan.md` (freigegeben 2026-10-07). Teil 1.1a–d ist als
+`part1-v1.1.0` auf `25b09d9` getaggt; Teil 1.2 wird erst nach Freigabe als
+`part1-v1.2.0` + `design-v0.1.0` getaggt.
+
+**Antworten auf F1–F12:** F1 streng — AT-14 verbietet auch `Icons.`,
+`TextStyle(`, `FontWeight.`, `Theme.of(`, `EdgeInsets.`, `BorderRadius.` und
+`SizedBox` mit Zahl, über die Übergangsliste. F2 ja. F3 `unit_labels.dart`
+übernehmen und nach C27 als eigener Commit C27b einsetzen (eigene Tests,
+Kapitel 28.9); Skelett übernehmen, aber nicht einsetzen, der Ladekreis
+bleibt. F4 `darkTheme` ab C26, folgt dem System. F5–F8 wie empfohlen (Media
+erst Teil 4; Token-Namen jetzt, Generator später; C28 nur Finder;
+Widgetbook Web + macOS, von Hand). F9 UI-Konfiguration wie vorgeschlagen;
+Werte zunächst nur in `apps/unsalted_app/lib/config/ui_options.dart`;
+unbekannte Schlüssel werden ignoriert; Kapitel 28.9 hält fest, dass
+`CoreUiOptions` eine Konfiguration und kein Widget ist (18.1 verbietet nur
+den Export von Widgets). F10 Präfix `App…`. F11 Entwurfs-PR
+`design-system` → `main`, nicht mergen. F12 `part1-v1.1.0` jetzt, Teil 1.2
+später nach Freigabe.
+
+**C01 — Regeln.** `architecture.yaml`: `unsalted_design` Rang 0,
+`unsalted_widgetbook` Rang 99, `package:unsalted_design/` in
+`forbidden_in_core` (nur `src/ui/`), neuer Block `allowed_in_design`.
+`tool/check_architecture.dart` hing die Ausnahmen bisher an
+`contains('flutter')`/`contains('drift')`; ein Design-Eintrag wäre damit
+überall gemeldet worden. Jetzt eine Tabelle Eintrag → Ausnahmeordner (für
+Flutter und Drift unverändert), dazu die Prüfung des Design-Pakets (nur
+`allowed_in_design`, kein `dart:io`/`dart:ffi`). *Gegenprobe:* vorübergehend
+ein Design-Import in `src/recipe/` und `src/ui/` von Core sowie ein
+Riverpod-, ein `dart:io`-, ein Flutter- und ein Eigenimport in
+`packages/unsalted_design/lib/` → genau drei Meldungen (Core `src/recipe/`,
+Riverpod, `dart:io`), Exit 1; nach dem Entfernen Exit 0.

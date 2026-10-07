@@ -228,16 +228,24 @@ und Klarstellungen in Kapitel 28 der Spezifikation.
 - Bekannte Grenzen von `part1-v1.0.0` (Teilen-Dialog, Dateiauswahl, E2,
   Design-Punkte): Kapitel 28.8 und `docs/status.md`.
 
-**Teil 1.1 (in Arbeit, `docs/status.md`):** 1.1a fertig (kein Flackern beim
+**Teil 1.1 (abgeschlossen, Tag `part1-v1.1.0` auf `25b09d9`):** 1.1a fertig (kein Flackern beim
 Versionswechsel im Rezeptdetail), 1.1b fertig (Rezepte und Lebensmittel
 löschen mit 5 s „Rückgängig“), 1.1c fertig (Ladebalken im Rezeptdetail erst
 nach 300 ms), 1.1d fertig (CI-Zeitlimit, Tests räumen auch bei
-Fehlschlag auf); Test-IDs bis UI-46. Kein neuer Tag pro
-Schritt — Teil 1.1 wird nach dem Design-Pass gesammelt als `part1-v1.1.0`
-getaggt. Design-Notizen für den Design-Pass sammelt `docs/status.md`.
+Fehlschlag auf); Test-IDs bis UI-46.
 
-**Nächster Schritt:** weitere Arbeitskarten zu Teil 1.1 (Design-Pass) oder
-Teil 2 (`unsalted_experiments`) nach Vorgabe des Projektverantwortlichen.
+**Design-Pass `design/1.1` wird NICHT übernommen** (Branch bleibt als
+Referenz, nicht löschen, nicht mergen). Ersetzt durch **Teil 1.2 –
+Design-System** auf Branch `design-system` (von `main`): eigenes Paket
+`packages/unsalted_design` (Rang 0, nur Flutter), Widgetbook-Katalog,
+Core-Bildschirme aus Abschnitten. Phase A (nur Plan) liegt in
+`docs/design/plan.md`, freigegeben 2026-10-07 (Antworten F1–F12 in
+`docs/decisions.md`, „Teil 1.2“). Fortschritt je Commit C01 … in
+`docs/status.md`. Kein Merge, kein Tag ohne ausdrückliche Freigabe; Teil 1.2
+wird später als `part1-v1.2.0` + `design-v0.1.0` getaggt.
+
+**Nächster Schritt:** Teil 1.2 in Etappen mit Stopp: C01–C13, C14–C27,
+C28/C27b/C29 (`docs/status.md`).
 
 ---
 
