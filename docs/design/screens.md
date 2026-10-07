@@ -106,7 +106,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** keine Auswahl · keine eingefrorene Version · Fehler · Ergebnis.
 - **Template:** `FormPageTemplate` mit `FormSections.fixed`.
 - **Abschnitte:** `export_selection_section.dart` · `export_result_section.dart`.
-- **Umgestellt:** offen (C18).
+- **Umgestellt:** C18.
 
 ## 12 Import — `settings/import_screen.dart`
 

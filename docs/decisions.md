@@ -1435,3 +1435,14 @@ Bildschirm. Der Speicherfehler bleibt unter den Feldern. *Sichtbare
 Änderungen (freigegeben):* Speicherfehler in `color/error` statt
 `Colors.red`; Ladekreis im FAB in `onPrimaryContainer` statt `Colors.white`;
 Tooltip „Rezept speichern“. Bestehende Tests unverändert, Core 386 grün.
+
+**C18 — Export (Bildschirm 11).** `FormPageTemplate` mit
+`FormSections.fixed`; Abschnitte `export_selection_section.dart` (Rezept,
+Version) und `export_result_section.dart` (JSON in `AppCodeBlock`,
+„In Zwischenablage kopieren“). Die Auswahl bekommt die beiden Streams als
+Daten und baut ihre `StreamBuilder` an derselben Stelle wie bisher, damit
+Abonnements und der Formularzustand der Auswahllisten unverändert bleiben
+(Abschnitte lesen weiter keine Provider). Meldung „In Zwischenablage
+kopiert.“ über `showAppMessage`. *Sichtbare Änderung (freigegeben):*
+Fehlertext in `color/error` statt `Colors.red`. Bestehende Tests
+unverändert, Core 386 grün.

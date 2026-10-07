@@ -204,7 +204,8 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C15 | Lebensmittel-Liste (9), Meldung in `undoable_deletion.dart` | fertig |
 | C16 | Rezeptliste (1), Wischen in `undoable_deletion.dart` | fertig |
 | C17 | Rezept erstellen (2) | fertig |
-| C18–C25 | Bildschirme umstellen | offen |
+| C18 | Export (11) | fertig |
+| C19–C25 | Bildschirme umstellen | offen |
 | C26 | App-Hülle: Theme hell/dunkel, Navigationsleiste | offen |
 | C27 | Abschluss Übergangslisten | offen |
 | C28 | Test-Finder auf Design-Typen | offen |
