@@ -44,7 +44,7 @@ gebaut; „(neu)“ = im Plan nicht vorgesehen, in Etappe 1 hinzugekommen
 | `AppIcons` | `Icon/<name>` | `components/icons/app_icons.dart` | fertig | DS-17 |
 | `AppText` | `Text/Body`, `Text/Strong`, `Text/Title`, `Text/Caption` | `components/text/app_text.dart` | fertig | DS-18 |
 | `AppCard` | `Card` | `components/cards/app_card.dart` | fertig | DS-19 |
-| `AppSurface` | `Surface/low`, `Surface/medium`, `Surface/high` | `components/surfaces/app_surface.dart` | fertig | DS-20 |
+| `AppSurface` | `Surface/low`, `Surface/medium`, `Surface/high`, `Surface/info`, `Surface/warning`, `Surface/error` | `components/surfaces/app_surface.dart` | fertig (Hinweistöne seit C22) | DS-20, DS-20b |
 | `AppDivider` | `Divider` | `components/surfaces/app_divider.dart` | fertig | DS-21 |
 | `AppTextField` | `Input/Text Field` | `components/inputs/app_text_field.dart` | fertig | DS-23 |
 | `AppSearchField` | `Input/Search` | `components/inputs/app_search_field.dart` | fertig | DS-24 |
@@ -55,7 +55,7 @@ gebaut; „(neu)“ = im Plan nicht vorgesehen, in Etappe 1 hinzugekommen
 | `AppReorderableList` | `List/Reorderable` | `components/lists/app_reorderable_list.dart` | fertig | DS-29 |
 | `AppChoiceChip` | `Chip/Choice` | `components/chips/app_choice_chip.dart` | fertig | DS-30 |
 | `AppChip` | `Chip/Info` | `components/chips/app_chip.dart` | fertig | DS-31 |
-| `AppNotice` | `Feedback/Notice` | `components/feedback/app_notice.dart` | fertig | DS-32 |
+| `AppNotice` | `Feedback/Notice` | `components/feedback/app_notice.dart` | fertig, in Core noch nicht eingesetzt (Symbol und runde Ecken wären eine sichtbare Änderung) | DS-32 |
 | `AppEmptyState` | `Feedback/Empty State` | `components/feedback/app_empty_state.dart` | fertig | DS-33 |
 | `AppErrorState` | `Feedback/Error State` | `components/feedback/app_error_state.dart` | fertig | DS-34 |
 | `AppLoading` | `Feedback/Loading` | `components/feedback/app_loading.dart` | fertig | DS-35 |
@@ -94,7 +94,7 @@ Aus Design-Komponenten zusammengesetzt; Status der Umstellung in
 | `IngredientRow` | `recipe_editor/ingredient_row.dart` | `AppTextField`, `AppSelect`, `AppIconButton` |
 | `StepRow` | `recipe_editor/step_row.dart` | `AppTextField`, `AppIconButton` |
 | `FoodVariantPickerDialog` | `recipe_editor/food_variant_picker_dialog.dart` | `AppDialog`, `AppSearchField`, `AppListItem` |
-| `NutritionHeader` | `nutrition/nutrition_header.dart` | `AppText`, `AppNotice` |
+| `NutritionHeader` | `nutrition/nutrition_header.dart` | `AppText`, `AppSurface` (warning) |
 | `NutritionTable` | `nutrition/nutrition_table.dart` | `AppKeyValueTable`, `AppSelect`, `AppText` |
 | `AmountCalculator` | `nutrition/amount_calculator.dart` | `AppTextField`, `AppStack` |
 | `PackageForm` | `foods/package_form.dart` | Abschnitte unter `foods/sections/` |

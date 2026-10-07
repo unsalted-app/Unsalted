@@ -10,9 +10,6 @@
 const designTransitionList = <String>{
   'packages/unsalted_core/lib/src/ui/foods/food_editor_screen.dart',
   'packages/unsalted_core/lib/src/ui/foods/package_form.dart',
-  'packages/unsalted_core/lib/src/ui/nutrition/amount_calculator.dart',
-  'packages/unsalted_core/lib/src/ui/nutrition/nutrition_header.dart',
-  'packages/unsalted_core/lib/src/ui/nutrition/nutrition_table.dart',
   'packages/unsalted_core/lib/src/ui/recipe_detail/recipe_detail_screen.dart',
   'packages/unsalted_core/lib/src/ui/recipe_detail/version_switcher.dart',
   'packages/unsalted_core/lib/src/ui/recipe_editor/ingredient_row.dart',

@@ -4,9 +4,11 @@
 // Fertiggewicht, Gesamt-kcal, kcal/Portion (nur wenn servings gesetzt war,
 // erkennbar an result.perServing != null), Hinweisblock für nicht
 // berechenbare Zutaten. Reine Anzeige; keine eigene Berechnung.
-// NutritionFormatter ist die einzige Rundungsstelle.
+// NutritionFormatter ist die einzige Rundungsstelle. Seit Teil 1.2 (C22) aus
+// Design-Komponenten.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../nutrition/nutrition_formatter.dart';
 import '../../nutrition/nutrition_result.dart';
@@ -20,25 +22,24 @@ class NutritionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final incompleteEnergy = result.incomplete.contains('energy_kcal');
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return AppStack(
       children: [
-        Text('Fertiggewicht: ${NutritionFormatter.formatGrams(result.finalWeightG)} g'),
-        Text(
+        AppText('Fertiggewicht: ${NutritionFormatter.formatGrams(result.finalWeightG)} g'),
+        AppText(
           'Gesamt: ${NutritionFormatter.formatKcal(result.total.energyKcal, isIncomplete: incompleteEnergy)} kcal',
         ),
         if (result.perServing != null)
-          Text(
+          AppText(
             'kcal/Portion: '
             '${NutritionFormatter.formatKcal(result.perServing!.energyKcal, isIncomplete: incompleteEnergy)} kcal',
           ),
         if (result.notCalculable.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              color: Colors.amber.shade100,
-              child: Text(
+          AppPadding.only(
+            top: AppSpace.s,
+            child: AppSurface(
+              tone: AppSurfaceTone.warning,
+              padding: AppSpace.s,
+              child: AppText(
                 'Nicht berechenbar (fehlende Dichte/Stückgewicht): '
                 '${result.notCalculable.join(", ")}',
               ),

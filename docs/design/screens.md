@@ -51,12 +51,12 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 
 - **Bausteine:** `nutrition/nutrition_header.dart` (Fertiggewicht, Gesamt-kcal, kcal/Portion, Hinweis „nicht berechenbar“), `nutrition/nutrition_table.dart` (EU-Reihenfolge, Spalte 2 wählbar, `*`-Fußnoten).
 - **Daten:** `NutritionResult`; Rundung nur über `NutritionFormatter`.
-- **Umgestellt:** offen (C22).
+- **Umgestellt:** C22.
 
 ## 6 Mengenrechner — Teil von 5
 
 - **Baustein:** `nutrition/amount_calculator.dart` — Gramm ↔ kcal, beidseitig gekoppelt; ungültige Eingabe markiert das Feld.
-- **Umgestellt:** offen (C22).
+- **Umgestellt:** C22.
 
 ## 7 Versionen — `versions/version_list_screen.dart`
 

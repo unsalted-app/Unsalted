@@ -15,3 +15,4 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 - Templates: `ListPageTemplate`, `DetailPageTemplate` mit `DetailSections`/`DetailSplit`/`DetailLayout`, `FormPageTemplate` mit `FormSections` (C10).
 - Katalog `apps/unsalted_widgetbook` (widgetbook 3.25.0) mit allen Komponenten (C11).
 - Dokumentation: README, `docs/design/design_system.md`, `components.md`, `screens.md` (C12).
+- `AppSurface`: Hinweistöne `info`, `warning`, `error` (Fläche und Inhalt in den container-Rollen), Test DS-20b (C22).

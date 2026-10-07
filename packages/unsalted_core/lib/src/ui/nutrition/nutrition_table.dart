@@ -8,10 +8,12 @@
 // falls servings gesetzt war -- erkennbar an result.perServing != null --
 // sonst pro 100 g, da dann keine Alternative existiert). Werte aus
 // incomplete bekommen ein `*` plus Fußnote. NutritionFormatter ist die
-// einzige Rundungsstelle.
+// einzige Rundungsstelle. Seit Teil 1.2 (C22) aus Design-Komponenten:
+// AppKeyValueTable, AppSelect für Spalte 2.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../nutrition/nutrition_formatter.dart';
 import '../../nutrition/nutrition_result.dart';
@@ -93,71 +95,40 @@ class _NutritionTableState extends State<NutritionTable> {
         _column2 == NutritionTableColumn2.perServing ? (result.perServing ?? result.per100g) : result.per100g;
     final column2Label = _column2 == NutritionTableColumn2.perServing ? 'pro Portion' : 'pro 100 g';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return AppStack(
       children: [
         if (result.perServing != null)
           Row(
             children: [
-              const Text('Spalte 2: '),
-              DropdownButton<NutritionTableColumn2>(
+              const AppText('Spalte 2: '),
+              AppSelect<NutritionTableColumn2>(
                 value: _column2,
-                onChanged: (value) {
-                  if (value != null) setState(() => _column2 = value);
-                },
+                onChanged: (value) => setState(() => _column2 = value),
                 items: const [
-                  DropdownMenuItem(
-                    value: NutritionTableColumn2.per100g,
-                    child: Text('pro 100 g'),
-                  ),
-                  DropdownMenuItem(
-                    value: NutritionTableColumn2.perServing,
-                    child: Text('pro Portion'),
-                  ),
+                  AppSelectItem(NutritionTableColumn2.per100g, 'pro 100 g'),
+                  AppSelectItem(NutritionTableColumn2.perServing, 'pro Portion'),
                 ],
               ),
             ],
           ),
-        Table(
-          columnWidths: const {0: FlexColumnWidth(2), 1: FlexColumnWidth(1), 2: FlexColumnWidth(1)},
-          children: [
-            TableRow(children: [
-              const SizedBox.shrink(),
-              const Padding(
-                padding: EdgeInsets.all(4),
-                child: Text('pro 100 g', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: Text(column2Label, style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ]),
+        AppKeyValueTable(
+          headers: ['pro 100 g', column2Label],
+          rows: [
             for (final spec in _rows)
-              TableRow(children: [
-                Padding(padding: const EdgeInsets.all(4), child: Text(spec.label)),
-                Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(_format(spec, result.per100g, result.incomplete)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(_format(spec, column2Set, result.incomplete)),
-                ),
+              AppTableRow(spec.label, [
+                _format(spec, result.per100g, result.incomplete),
+                _format(spec, column2Set, result.incomplete),
               ]),
           ],
         ),
         if (result.incomplete.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          AppPadding.only(
+            top: AppSpace.s,
+            child: AppStack(
               children: [
                 for (final spec in _rows)
                   if (result.incomplete.contains(spec.fieldKey))
-                    Text(
-                      '* ${spec.label}: unvollständig berechnet (mindestens eine Zutat ohne Angabe)',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
+                    AppText.caption('* ${spec.label}: unvollständig berechnet (mindestens eine Zutat ohne Angabe)'),
               ],
             ),
           ),

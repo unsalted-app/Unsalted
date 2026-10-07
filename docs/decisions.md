@@ -1472,3 +1472,22 @@ Bausteine `versions/snapshot_column.dart` und `versions/change_list.dart`
 `targetRows` und Übernehmen bleiben im Bildschirm. *Sichtbare Änderung
 (freigegeben):* Fehler beim Übernehmen in `color/error` statt
 `Colors.red`. Bestehende Tests unverändert, Core 386 grün.
+
+**C22 — Nährwertanzeige und Mengenrechner (Bildschirm 5, 6).**
+`NutritionTable` aus `AppKeyValueTable` (Spalten 2 : 1 : 1, fette Köpfe wie
+bisher), Spalte 2 über `AppSelect<NutritionTableColumn2>` (baut weiter
+`DropdownButton`), Fußnoten als `AppText.caption` (= bisher `bodySmall`).
+`NutritionHeader` aus `AppText`; `AmountCalculator` aus zwei
+`AppTextField` in einem `AppStack` (Abstand `l` wie bisher). Rechnung,
+Rundung (nur `NutritionFormatter`) und Kopplung unverändert.
+*Design-Paket, additiv:* `AppSurface` bekommt die im Plan vorgesehenen Töne
+`info`, `warning`, `error` (Fläche `…Container`, Text und Symbole im Inhalt
+`on…Container`), Test DS-20b, Katalogeintrag. Grund: Die bisherigen
+farbigen Kästen (hier „Nicht berechenbar“, später Verpackungsformular und
+Editor) haben weder Symbol noch runde Ecken; `AppNotice` brächte beides
+mit und wäre eine weitere sichtbare Änderung. `AppNotice` bleibt im
+Design-System, wird in Core vorerst nicht eingesetzt. *Sichtbare Änderung
+(freigegeben, Theme-Farben statt `Colors.*`):* Hinweis „Nicht berechenbar“
+in `color/tertiary-container` mit `color/on-tertiary-container` statt
+`Colors.amber.shade100`. Bestehende Tests unverändert; Core 386, Design 212,
+Widgetbook 6 grün.

@@ -44,6 +44,11 @@ final surfacesFolder = WidgetbookFolder(name: 'text, icons, cards, surfaces', ch
           AppSurface(child: Text('medium')),
           AppSurface(tone: AppSurfaceTone.high, fullWidth: true, child: Text('high, volle Breite')),
         ])),
+    useCase('Surface/info, warning, error', (_) => const AppStack(gap: AppSpace.s, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          AppSurface(tone: AppSurfaceTone.info, child: Text('Eingefroren — als Entwurf kopieren?')),
+          AppSurface(tone: AppSurfaceTone.warning, padding: AppSpace.s, child: Text('Wert ungewöhnlich hoch.')),
+          AppSurface(tone: AppSurfaceTone.error, padding: AppSpace.s, child: Text('Eingabe ungültig.')),
+        ])),
   ]),
   component('AppDivider', [
     useCase('Divider', (_) => const AppStack(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
