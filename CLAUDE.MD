@@ -236,27 +236,21 @@ löschen mit 5 s „Rückgängig“), 1.1c fertig (Ladebalken im Rezeptdetail er
 nach 300 ms), 1.1d fertig (CI-Zeitlimit, Tests räumen auch bei
 Fehlschlag auf); Test-IDs bis UI-46.
 
-**Design-Pass `design/1.1` wird NICHT übernommen** (Branch bleibt als
-Referenz, nicht löschen, nicht mergen). Ersetzt durch **Teil 1.2 –
-Design-System** auf Branch `design-system` (von `main`): eigenes Paket
-`packages/unsalted_design` (Rang 0, nur Flutter), Widgetbook-Katalog,
-Core-Bildschirme aus Abschnitten. Phase A (nur Plan) liegt in
-`docs/design/plan.md`, freigegeben 2026-10-07 (Antworten F1–F12 in
-`docs/decisions.md`, „Teil 1.2“). Fortschritt je Commit C01 … in
-`docs/status.md`. Kein Merge, kein Tag ohne ausdrückliche Freigabe; Teil 1.2
-wird später als `part1-v1.2.0` + `design-v0.1.0` getaggt.
+**Teil 1.2 – Design-System (abgeschlossen, Tags `part1-v1.2.0` und
+`design-v0.1.0` auf Merge-Commit `763fa45`):** eigenes Paket
+`packages/unsalted_design` (Rang 0, nur Flutter), Widgetbook-Katalog
+`apps/unsalted_widgetbook`, alle Core-Bildschirme aus Templates und
+Abschnitten (AT-13/14/15 ohne Ausnahmen), Anzeige-Schalter `CoreUiOptions`
+(Werte nur in `apps/unsalted_app/lib/config/ui_options.dart`), deutsche
+Einheiten und Dezimalkomma in der ganzen Anzeige. Plan, Regeln und
+Bildschirme: `docs/design/`; Entscheidungen C01–C30 in `docs/decisions.md`;
+Spezifikation Kapitel 28.9. Der frühere Design-Pass `design/1.1` wurde nicht
+übernommen und ist gelöscht. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03,
+AT-13–15, UI-58–66, UC-01–07, APP-02.
 
-**Stand Teil 1.2:** Etappe 1 (C01–C13) und Etappe 2 (C14–C27) fertig; alle
-13 Bildschirme und die App-Hülle nutzen das Design-System, Übergangsliste
-leer. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03, AT-13–15, UI-58, APP-02.
-
-Etappe 3 (C27c, C28, C27b, C29) fertig: Übergangsmechanismus entfernt,
-Test-Finder auf Design-Typen, deutsche Einheiten, Anzeige-Schalter
-(`CoreUiOptions`). C30: Dezimalkomma in der ganzen Anzeige. Test-IDs neu
-zusätzlich UI-59–66, UC-01–07.
-
-**Nächster Schritt:** Freigabe von Teil 1.2 durch den Projektverantwortlichen
-(Merge, Tags `part1-v1.2.0` + `design-v0.1.0` nur nach ausdrücklicher Freigabe).
+**Nächster Schritt:** neue Arbeitskarten (z. B. echtes Design aus Figma über
+die Tokens, Teil 2 `unsalted_experiments`) nach Vorgabe des
+Projektverantwortlichen.
 
 ---
 

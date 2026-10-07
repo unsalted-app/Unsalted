@@ -181,9 +181,11 @@ Stand nach 1.1d: Core 380 Tests, App 1 Test, alle grün; `tool/check_architectur
 
 Teil 1.1 ist als annotierter Tag `part1-v1.1.0` auf `25b09d9` getaggt (2026-10-07). Der Design-Pass auf `design/1.1` wird nicht übernommen (Branch bleibt als Referenz); an seine Stelle tritt Teil 1.2.
 
-## Teil 1.2 — Design-System (Branch `design-system`) — in Arbeit
+## Teil 1.2 — Design-System — abgeschlossen, `part1-v1.2.0`, `design-v0.1.0`
 
-Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stopp: C01–C13, C14–C27, C28/C27b/C29. Kein Merge, kein Tag ohne Freigabe.
+Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stopp: C01–C13, C14–C27, C28/C27b/C29, dazu C30.
+
+**Abgeschlossen 2026-10-07:** vom Projektverantwortlichen freigegeben; PR #1 (`design-system` → `main`, CI grün auf `fcf89bc`) als Merge-Commit `763fa45` „Teil 1.2: Design-System (C01–C30)“ übernommen (`--no-ff`, Historie C01–C30 erhalten). Annotierte Tags auf `763fa45`: `part1-v1.2.0` („Teil 1.2: Design-System, UI-Konfiguration, deutsche Anzeige“) und `design-v0.1.0` („unsalted_design 0.1.0: neutrales Design-System“). Auf `main` nach dem Merge: Design 212, Core 412, App 6, Widgetbook 6 Tests grün; `check_architecture` Exit 0; `flutter analyze` ohne Befund in allen vier Paketen. Branches `design-system` und `design/1.1` danach gelöscht.
 
 | Schritt | Beschreibung | Status |
 |---|---|---|
@@ -220,9 +222,9 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C29 | UI-Konfiguration: `CoreUiOptions`, App-Datei, UC-01–07 | fertig |
 | C30 | Dezimalkomma in der ganzen Anzeige (Änderungsliste, Editor-Parameter, Verpackungsformular), UI-64–66 | fertig |
 
-Stand nach C30: Design 212 Tests, Core 412, App 6, Widgetbook 6, alle grün; `check_architecture` Exit 0.
+Stand nach C30 (= `part1-v1.2.0`): Design 212 Tests, Core 412, App 6, Widgetbook 6, alle grün; `check_architecture` Exit 0.
 
-Stand nach Etappe 3 (C27c, C28, C27b, C29): Design 212 Tests, Core 409, App 6, Widgetbook 6, alle grün; `check_architecture` Exit 0. Teil 1.2 wartet auf Freigabe (kein Merge, kein Tag).
+Stand nach Etappe 3 (C27c, C28, C27b, C29): Design 212 Tests, Core 409, App 6, Widgetbook 6, alle grün; `check_architecture` Exit 0. 
 
 Stand nach Etappe 2 (C14–C27): Design 212 Tests, Core 387, App 3, Widgetbook 6, alle grün; `check_architecture` Exit 0; Übergangsliste leer.
 
