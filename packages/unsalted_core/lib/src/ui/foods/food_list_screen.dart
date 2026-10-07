@@ -4,15 +4,20 @@
 // Datenquelle ausschließlich FoodRepository.search (Kapitel 16.2).
 // Nach links wischen löscht ein Lebensmittel mit 5 s „Rückgängig“
 // (Teil 1.1b, shared/undoable_deletion.dart); ausstehende Löschungen sind
-// sofort ausgeblendet.
+// sofort ausgeblendet. Seit Teil 1.2 (C15) aus Design-Komponenten:
+// ListPageTemplate, Abschnitte unter sections/, Baustein FoodTile.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../food/food_variant.dart';
 import '../../providers/core_providers.dart';
 import '../shared/undoable_deletion.dart';
 import 'food_editor_screen.dart';
+import 'sections/food_list_empty_section.dart';
+import 'sections/food_list_results_section.dart';
+import 'sections/food_list_search_section.dart';
 
 class FoodListScreen extends ConsumerStatefulWidget {
   const FoodListScreen({super.key});
@@ -42,88 +47,40 @@ class _FoodListScreenState extends ConsumerState<FoodListScreen> {
     final repo = ref.watch(foodRepositoryProvider);
     final hidden = ref.watch(pendingFoodDeletionsProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lebensmittel'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Suchen …',
-                prefixIcon: Icon(Icons.search),
-              ),
-              onChanged: (value) => setState(() => _query = value),
-            ),
-          ),
-        ),
+    return ListPageTemplate(
+      title: 'Lebensmittel',
+      search: FoodListSearchSection(
+        controller: _searchController,
+        onChanged: (value) => setState(() => _query = value),
       ),
       body: StreamBuilder<List<FoodVariant>>(
         stream: repo.search(_query),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoading();
           }
           if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(snapshot.error.toString()),
-                  TextButton(
-                    onPressed: () => setState(() {}),
-                    child: const Text('Erneut versuchen'),
-                  ),
-                ],
-              ),
+            return AppErrorState(
+              message: snapshot.error.toString(),
+              retryLabel: 'Erneut versuchen',
+              onRetry: () => setState(() {}),
             );
           }
 
           final variants =
               (snapshot.data ?? const <FoodVariant>[]).where((v) => !hidden.contains(v.id)).toList();
           if (variants.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.no_food, size: 48),
-                  const SizedBox(height: 8),
-                  const Text('Keine Lebensmittel gefunden.'),
-                  const SizedBox(height: 8),
-                  ElevatedButton(
-                    onPressed: () => _openEditor(),
-                    child: const Text('Eigenes Produkt anlegen'),
-                  ),
-                ],
-              ),
-            );
+            return FoodListEmptySection(onCreate: () => _openEditor());
           }
 
-          return ListView.builder(
-            itemCount: variants.length,
-            itemBuilder: (context, index) {
-              final variant = variants[index];
-              return Dismissible(
-                key: ValueKey('food-${variant.id}'),
-                direction: DismissDirection.endToStart,
-                background: const DeleteSwipeBackground(),
-                onDismissed: (_) => deleteFoodWithUndo(context, ref, variant),
-                child: ListTile(
-                  title: Text(variant.name),
-                  subtitle: variant.brand == null ? null : Text(variant.brand!),
-                  onTap: () => _openEditor(foodId: variant.id),
-                ),
-              );
-            },
+          return FoodListResultsSection(
+            variants: variants,
+            onOpen: (variant) => _openEditor(foodId: variant.id),
+            onDelete: (variant) => deleteFoodWithUndo(context, ref, variant),
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openEditor(),
-        child: const Icon(Icons.add),
-      ),
+      primaryAction: AppFab(icon: AppIcons.add, tooltip: 'Neues Lebensmittel', onPressed: () => _openEditor()),
     );
   }
 }

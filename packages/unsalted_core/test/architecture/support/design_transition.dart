@@ -9,7 +9,6 @@
 /// Noch nicht umgestellte Dateien.
 const designTransitionList = <String>{
   'packages/unsalted_core/lib/src/ui/foods/food_editor_screen.dart',
-  'packages/unsalted_core/lib/src/ui/foods/food_list_screen.dart',
   'packages/unsalted_core/lib/src/ui/foods/package_form.dart',
   'packages/unsalted_core/lib/src/ui/nutrition/amount_calculator.dart',
   'packages/unsalted_core/lib/src/ui/nutrition/nutrition_header.dart',

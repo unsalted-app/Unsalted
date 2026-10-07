@@ -86,7 +86,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · leer · Liste.
 - **Template:** `ListPageTemplate`.
 - **Abschnitte:** `food_list_search_section.dart` · `food_list_empty_section.dart` · `food_list_results_section.dart`; Baustein `food_tile.dart`.
-- **Umgestellt:** offen (C15).
+- **Umgestellt:** C15.
 
 ## 10 Lebensmittel bearbeiten — `foods/food_editor_screen.dart`, `foods/package_form.dart`
 
@@ -129,5 +129,5 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 
 ## Gemeinsam
 
-- `shared/undoable_deletion.dart` — Fristen und Provider bleiben; Meldung über `AppMessenger`, Wischen über `AppSwipeToDelete`. **Umgestellt:** offen (C15).
+- `shared/undoable_deletion.dart` — Fristen und Provider bleiben; Meldung über `AppMessenger` (C15), Wischen über `AppSwipeToDelete`. **Umgestellt:** offen (C16, mit der Rezeptliste).
 - App-Hülle `apps/unsalted_app/lib/main.dart` — Theme hell/dunkel aus `AppTheme`, Navigation über `AppNavigationBar`. **Umgestellt:** offen (C26).

@@ -19,6 +19,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../contracts/core_exceptions.dart';
 import '../../food/food_variant.dart';
@@ -89,7 +90,7 @@ final pendingFoodDeletionsProvider =
 void deleteRecipeWithUndo(BuildContext context, WidgetRef ref, Recipe recipe) {
   final repo = ref.read(recipeRepositoryProvider);
   _scheduleWithUndo(
-    messenger: ScaffoldMessenger.of(context),
+    messenger: AppMessenger.of(context),
     pending: ref.read(pendingRecipeDeletionsProvider.notifier),
     id: recipe.id,
     message: '„${recipe.title}“ gelöscht',
@@ -103,7 +104,7 @@ void deleteRecipeWithUndo(BuildContext context, WidgetRef ref, Recipe recipe) {
 void deleteFoodWithUndo(BuildContext context, WidgetRef ref, FoodVariant variant) {
   final repo = ref.read(foodRepositoryProvider);
   _scheduleWithUndo(
-    messenger: ScaffoldMessenger.of(context),
+    messenger: AppMessenger.of(context),
     pending: ref.read(pendingFoodDeletionsProvider.notifier),
     id: variant.id,
     message: '„${variant.name}“ gelöscht. Eingefrorene Versionen behalten ihre Nährwerte.',
@@ -112,28 +113,22 @@ void deleteFoodWithUndo(BuildContext context, WidgetRef ref, FoodVariant variant
 }
 
 void _scheduleWithUndo({
-  required ScaffoldMessengerState messenger,
+  required AppMessenger messenger,
   required PendingDeletions pending,
   required String id,
   required String message,
   required Future<void> Function() delete,
 }) {
-  // Eine noch sichtbare SnackBar weicht sofort; ihre Löschung läuft weiter.
-  messenger.hideCurrentSnackBar();
-  final controller = messenger.showSnackBar(SnackBar(
-    content: Text(message),
+  // Eine noch sichtbare Meldung weicht sofort; ihre Löschung läuft weiter.
+  final snackbar = messenger.showWithAction(
+    message: message,
+    actionLabel: 'Rückgängig',
+    onAction: () => pending.undo(id),
     duration: undoableDeletionDelay,
-    // Mit Aktion bliebe die SnackBar sonst stehen, bis jemand tippt.
-    persist: false,
-    action: SnackBarAction(label: 'Rückgängig', onPressed: () => pending.undo(id)),
-  ));
-  var closed = false;
-  controller.closed.then((_) => closed = true);
+  );
   // Mit Ablauf der Frist verschwindet auch „Rückgängig“ -- danach wäre es
   // wirkungslos.
-  pending.schedule(id, delete, onExpired: () {
-    if (!closed) controller.close();
-  });
+  pending.schedule(id, delete, onExpired: snackbar.close);
 }
 
 /// Hintergrund beim Wischen nach links: Löschsymbol rechts, Farben aus dem

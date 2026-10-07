@@ -1400,3 +1400,16 @@ Keine sichtbare Änderung. `components.md`: eigene Zeilen für die in
 Etappe 1 hinzugekommenen Bausteine `AppSpace`, `AppPadding`, `AppItemList`,
 `AppTone`, `AppMessenger`, `AppWindowSize`. Bestehende Tests unverändert,
 Core 386 grün.
+
+**C15 — Lebensmittel-Liste (Bildschirm 9).** `ListPageTemplate`; Abschnitte
+`food_list_search_section.dart`, `food_list_empty_section.dart`,
+`food_list_results_section.dart`, Baustein `foods/food_tile.dart`.
+`undoable_deletion.dart` zeigt die Meldung jetzt über
+`AppMessenger.showWithAction`; die Regel „nur schließen, solange offen“ liegt
+im `AppSnackbarHandle`. *Abweichung vom Plan:* `undoable_deletion.dart`
+bleibt bis C16 auf der Übergangsliste, weil `DeleteSwipeBackground` noch von
+der Rezeptliste benutzt wird; es entfällt mit C16. *Sichtbare Änderung
+(freigegeben):* Die Hauptaktion hat den Tooltip „Neues Lebensmittel“ —
+bewusst nicht „Lebensmittel anlegen“, weil ein bestehender Test nach dem
+Öffnen des Editors genau einen solchen Text erwartet. Bestehende Tests
+unverändert, Core 386 grün.
