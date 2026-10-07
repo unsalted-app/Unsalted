@@ -1223,3 +1223,22 @@ Exportzeilen). Neue Tests: DS-01 (nur Flutter, auch `pubspec.yaml`), DS-03
 Energieeinheit in `lib/` und `test/`). CI prüft das Paket vor Core.
 *Gegenprobe:* `dart:io`-Import, ein Export ohne `show` und das Wort „Rezept“
 vorübergehend in der Tür → DS-01, DS-03 und DS-06 rot; danach grün.
+
+**C03 — Tokens.** Sieben Dateien unter `lib/src/tokens/`, Figma-Name je Wert
+im Doku-Kommentar und in `byFigmaName`. Farbwerte per Skript aus
+`_colorSchemeLightM3`/`_colorSchemeDarkM3` in
+`material/theme_data.dart` (Flutter 3.47.5) übernommen, 46 Rollen ohne die
+veralteten `background`, `onBackground`, `surfaceVariant`. Folge: Ein aus
+den Tokens gebautes `ColorScheme` ist nicht `==` zu dem von `ThemeData()`,
+weil `surfaceVariant` dann auf `surfaceContainerHighest` zurückfällt
+(`E6E0E9` statt `E7E0EC`, dunkel `36343B` statt `49454F`). Kein
+Flutter-Widget liest `surfaceVariant` mehr (SDK durchsucht); `background`
+fällt auf `surface` zurück und ist in beiden Standardschemata gleich. DS-07
+vergleicht deshalb rollenweise. Typo-Tokens = `Typography.englishLike2021`
+(Größe, Schnitt, Zeilenhöhe, Laufweite; ohne Farbe und Schriftfamilie).
+Bewegung: `AppMotion.durationOf` aus `motion.dart` (`design/1.1`); Kurven
+`Easing.standard` und `Curves.easeInOutCubicEmphasized`. Tests DS-02 (Farbwerte
+nur in `tokens/`), DS-04 (Vollständigkeit, Figma-Namensformat, Typo =
+Flutter-Skala, Bewegung reduzieren), DS-05 (alle 45 Text-auf-Fläche-Paare je
+Modus ≥ 4,5:1 — die Material-Standardfarben bestehen ohne Ausnahme).
+*Gegenprobe DS-02:* `Color(…)` in einer Datei außerhalb von `tokens/` → rot.

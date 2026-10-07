@@ -3,3 +3,10 @@
 # Soll-Liste der export-Zeilen aus lib/unsalted_design.dart (DS-03).
 # Format je Zeile: <pfad> show Name1, Name2, ...
 # Zeilen mit '#' sind Kommentare und werden ignoriert.
+src/tokens/breakpoint_tokens.dart show AppBreakpoints
+src/tokens/color_tokens.dart show AppColorTokens
+src/tokens/elevation_tokens.dart show AppElevation
+src/tokens/motion_tokens.dart show AppMotion
+src/tokens/radius_tokens.dart show AppRadius
+src/tokens/spacing_tokens.dart show AppSpacing
+src/tokens/typography_tokens.dart show AppTypography
