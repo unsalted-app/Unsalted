@@ -66,7 +66,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** laden · Fehler · leer · Liste.
 - **Template:** `ListPageTemplate` ohne Suche und Hauptaktion.
 - **Abschnitte:** `version_list_results_section.dart`; Baustein `version_tile.dart`.
-- **Umgestellt:** offen (C20).
+- **Umgestellt:** C20.
 
 ## 8 Versionsvergleich — `versions/version_compare_screen.dart`
 

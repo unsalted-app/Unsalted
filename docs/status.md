@@ -206,7 +206,8 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C17 | Rezept erstellen (2) | fertig |
 | C18 | Export (11) | fertig |
 | C19 | Import (12) | fertig |
-| C20–C25 | Bildschirme umstellen | offen |
+| C20 | Versionen (7) | fertig |
+| C21–C25 | Bildschirme umstellen | offen |
 | C26 | App-Hülle: Theme hell/dunkel, Navigationsleiste | offen |
 | C27 | Abschluss Übergangslisten | offen |
 | C28 | Test-Finder auf Design-Typen | offen |

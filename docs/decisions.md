@@ -1454,3 +1454,12 @@ Feld mit Rahmen, `AppTextField.expands`) und `import_preview_section.dart`
 Reihenfolge, Abstände und Logik unverändert. *Sichtbare Änderung
 (freigegeben):* Vorschau- und Importfehler in `color/error` statt
 `Colors.red`. Bestehende Tests unverändert, Core 386 grün.
+
+**C20 — Versionen (Bildschirm 7).** `ListPageTemplate` ohne Suche und
+Hauptaktion; Abschnitt `version_list_results_section.dart`, Baustein
+`versions/version_tile.dart` (Stern, Titel, Entwurf/Eingefroren mit Datum,
+vier Aktionen mit den bisherigen Tooltips — alle innerhalb des
+Listeneintrags, wie die Tests es erwarten). Rückfrage beim Löschen über
+`showAppConfirmDialog`, Vergleichsziel über `showAppChoiceDialog`, Fehler
+des Repositorys über `showAppMessage` — Texte unverändert. Keine sichtbare
+Änderung. Bestehende Tests unverändert, Core 386 grün.
