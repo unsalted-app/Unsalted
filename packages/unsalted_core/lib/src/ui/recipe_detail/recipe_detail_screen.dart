@@ -32,10 +32,17 @@
 // Antworten älterer Ladevorgänge werden verworfen (Zähler `_request`), damit
 // bei V1 → V3 → V2 eine späte Antwort für V3 nicht V2 überschreibt.
 
+// Seit Teil 1.2 (C23) aus Design-Komponenten: DetailPageTemplate mit
+// DetailSections, Abschnitte unter sections/. Modul-Aktionen im Menü erhalten
+// wie die in der Kopfleiste den Kontext dieser Seite (vorher den des
+// Menüknopfs, ebenfalls darunter; UI-58). Lade- und Wechsellogik (1.1a,
+// 1.1c) unverändert.
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../module/extension_types.dart';
 import '../../module/unsalted_module.dart';
@@ -43,12 +50,15 @@ import '../../nutrition/nutrition_result.dart';
 import '../../providers/core_providers.dart';
 import '../../recipe/recipe.dart';
 import '../../recipe/recipe_version.dart';
-import '../nutrition/amount_calculator.dart';
-import '../nutrition/nutrition_header.dart';
-import '../nutrition/nutrition_table.dart';
 import '../recipe_editor/recipe_editor_screen.dart';
 import '../shared/undoable_deletion.dart';
 import '../versions/version_list_screen.dart';
+import 'sections/recipe_detail_actions_section.dart';
+import 'sections/recipe_detail_description_section.dart';
+import 'sections/recipe_detail_extensions_section.dart';
+import 'sections/recipe_detail_ingredients_section.dart';
+import 'sections/recipe_detail_nutrition_section.dart';
+import 'sections/recipe_detail_steps_section.dart';
 import 'version_switcher.dart';
 
 class RecipeDetailScreen extends ConsumerStatefulWidget {
@@ -88,14 +98,14 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
       stream: repo.watchRecipe(widget.recipeId),
       builder: (context, recipeSnapshot) {
         if (recipeSnapshot.connectionState == ConnectionState.waiting && !recipeSnapshot.hasData) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const AppPage(body: AppLoading());
         }
         if (recipeSnapshot.hasError) {
-          return Scaffold(body: Center(child: Text(recipeSnapshot.error.toString())));
+          return AppPage(body: AppErrorState(message: recipeSnapshot.error.toString()));
         }
         final recipe = recipeSnapshot.data;
         if (recipe == null) {
-          return const Scaffold(body: Center(child: Text('Rezept nicht gefunden.')));
+          return const AppPage(body: AppEmptyState(message: 'Rezept nicht gefunden.'));
         }
 
         return StreamBuilder<List<RecipeVersion>>(
@@ -103,24 +113,21 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
           builder: (context, versionsSnapshot) {
             if (versionsSnapshot.connectionState == ConnectionState.waiting &&
                 !versionsSnapshot.hasData) {
-              return Scaffold(
-                appBar: AppBar(title: Text(recipe.title)),
-                body: const Center(child: CircularProgressIndicator()),
-              );
+              return DetailPageTemplate(title: recipe.title, body: const AppLoading());
             }
             if (versionsSnapshot.hasError) {
-              return Scaffold(
-                appBar: AppBar(title: Text(recipe.title)),
-                body: Center(child: Text(versionsSnapshot.error.toString())),
+              return DetailPageTemplate(
+                title: recipe.title,
+                body: AppErrorState(message: versionsSnapshot.error.toString()),
               );
             }
             final versions = versionsSnapshot.data ?? const <RecipeVersion>[];
             _ensureSelection(versions, recipe);
 
             if (versions.isEmpty) {
-              return Scaffold(
-                appBar: AppBar(title: Text(recipe.title)),
-                body: const Center(child: Text('Keine Version vorhanden.')),
+              return DetailPageTemplate(
+                title: recipe.title,
+                body: const AppEmptyState(message: 'Keine Version vorhanden.'),
               );
             }
 
@@ -246,16 +253,10 @@ class _VersionLoaderState extends ConsumerState<_VersionLoader> {
   Widget build(BuildContext context) {
     final shown = _shown;
     if (_error != null && !_loading) {
-      return Scaffold(
-        appBar: AppBar(title: Text(widget.recipe.title)),
-        body: Center(child: Text(_error.toString())),
-      );
+      return DetailPageTemplate(title: widget.recipe.title, body: AppErrorState(message: _error.toString()));
     }
     if (shown == null) {
-      return Scaffold(
-        appBar: AppBar(title: Text(widget.recipe.title)),
-        body: const Center(child: CircularProgressIndicator()),
-      );
+      return DetailPageTemplate(title: widget.recipe.title, body: const AppLoading());
     }
     final (version, nutrition) = shown;
     return _DetailScaffold(
@@ -316,91 +317,40 @@ class _DetailScaffold extends ConsumerWidget {
     final appBarActions = actions.where((a) => a.placement == RecipeActionPlacement.appBar).toList();
     final menuActions = actions.where((a) => a.placement == RecipeActionPlacement.menu).toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(recipe.title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.history),
-            tooltip: 'Versionen',
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
-              builder: (_) => VersionListScreen(recipeId: recipe.id),
-            )),
+    return DetailPageTemplate(
+      title: recipe.title,
+      showProgress: showProgress,
+      actions: [
+        RecipeDetailActionsSection(
+          appBarActions: appBarActions,
+          menuActions: menuActions,
+          isEnabled: (action) => action.isEnabled?.call(recipeContext) ?? true,
+          onAction: (action) => action.onPressed(context, recipeContext),
+          onVersions: () => Navigator.of(context).push(MaterialPageRoute<void>(
+            builder: (_) => VersionListScreen(recipeId: recipe.id),
+          )),
+          onEdit: () => Navigator.of(context).push(MaterialPageRoute<void>(
+            builder: (_) => RecipeEditorScreen(recipeId: recipe.id, versionId: version.id),
+          )),
+          onDelete: () => _deleteRecipe(context, ref),
+        ),
+      ],
+      body: DetailSections(
+        sections: [
+          VersionSwitcher(
+            versions: versions,
+            selectedVersionId: selectedVersionId,
+            onSelected: onVersionSelected,
           ),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            tooltip: 'Bearbeiten',
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
-              builder: (_) => RecipeEditorScreen(recipeId: recipe.id, versionId: version.id),
-            )),
-          ),
-          for (final action in appBarActions)
-            IconButton(
-              icon: Icon(action.icon),
-              tooltip: action.label,
-              onPressed: (action.isEnabled?.call(recipeContext) ?? true)
-                  ? () => action.onPressed(context, recipeContext)
-                  : null,
-            ),
-          PopupMenuButton<VoidCallback>(
-            itemBuilder: (context) => [
-              for (final action in menuActions)
-                PopupMenuItem(
-                  value: () => action.onPressed(context, recipeContext),
-                  enabled: action.isEnabled?.call(recipeContext) ?? true,
-                  child: Text(action.label),
-                ),
-              PopupMenuItem(
-                value: () => _deleteRecipe(context, ref),
-                child: const Text('Rezept löschen'),
-              ),
-            ],
-            onSelected: (callback) => callback(),
-          ),
+          RecipeDetailDescriptionSection(description: recipe.description),
+          RecipeDetailNutritionSection(versionId: version.id, nutrition: nutrition),
         ],
-      ),
-      body: Stack(
-        children: [
-          ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              VersionSwitcher(
-                versions: versions,
-                selectedVersionId: selectedVersionId,
-                onSelected: onVersionSelected,
-              ),
-              const SizedBox(height: 8),
-              if (recipe.description != null) Text(recipe.description!),
-              const SizedBox(height: 16),
-              NutritionHeader(result: nutrition),
-              const SizedBox(height: 8),
-              NutritionTable(result: nutrition),
-              const SizedBox(height: 8),
-              AmountCalculator(key: ValueKey(version.id), result: nutrition),
-              const Divider(height: 32),
-              const Text('Zutaten', style: TextStyle(fontWeight: FontWeight.bold)),
-              for (final ingredient in version.ingredients)
-                ListTile(
-                  title: Text(ingredient.displayName),
-                  subtitle: Text(
-                    '${ingredient.quantity} ${ingredient.unitCode}'
-                    '${ingredient.note == null ? '' : ' · ${ingredient.note}'}',
-                  ),
-                ),
-              const Divider(height: 32),
-              const Text('Schritte', style: TextStyle(fontWeight: FontWeight.bold)),
-              for (final step in version.steps)
-                ListTile(
-                  title: Text(step.instruction),
-                  trailing: step.timerSeconds == null
-                      ? null
-                      : Chip(label: Text(_formatTimer(step.timerSeconds!))),
-                ),
-              if (sections.isNotEmpty) const Divider(height: 32),
-              for (final section in sections) section.build(context, recipeContext),
-            ],
+        secondary: [
+          RecipeDetailIngredientsSection(ingredients: version.ingredients),
+          RecipeDetailStepsSection(steps: version.steps),
+          RecipeDetailExtensionsSection(
+            children: [for (final section in sections) section.build(context, recipeContext)],
           ),
-          if (showProgress) const Positioned(top: 0, left: 0, right: 0, child: LinearProgressIndicator()),
         ],
       ),
     );
@@ -411,11 +361,5 @@ class _DetailScaffold extends ConsumerWidget {
     final navigator = Navigator.of(context);
     if (navigator.canPop()) navigator.pop();
     deleteRecipeWithUndo(context, ref, recipe);
-  }
-
-  static String _formatTimer(int totalSeconds) {
-    final minutes = totalSeconds ~/ 60;
-    final seconds = totalSeconds % 60;
-    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 }

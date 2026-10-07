@@ -1491,3 +1491,32 @@ Design-System, wird in Core vorerst nicht eingesetzt. *Sichtbare Änderung
 in `color/tertiary-container` mit `color/on-tertiary-container` statt
 `Colors.amber.shade100`. Bestehende Tests unverändert; Core 386, Design 212,
 Widgetbook 6 grün.
+
+**C23 — Rezeptdetail (Bildschirm 4).** Alle Zustände über `AppPage`
+(Rezept lädt/Fehler/nicht gefunden, wie bisher ohne Kopfleiste) bzw.
+`DetailPageTemplate` mit Titel; Inhalt über `DetailSections`: Haupt
+`VersionSwitcher`, `recipe_detail_description_section.dart`,
+`recipe_detail_nutrition_section.dart`; Neben
+`recipe_detail_ingredients_section.dart`, `recipe_detail_steps_section.dart`,
+`recipe_detail_extensions_section.dart` — einspaltig in genau der bisherigen
+Reihenfolge. Kopfleiste über `recipe_detail_actions_section.dart`
+(Material 3 ordnet AppBar-Aktionen ohnehin in einer mittig ausgerichteten
+`Row` an, die zusätzliche Zeile ändert das Layout nicht). Modul-Abschnitte
+werden wie bisher im Bildschirm mit dessen Kontext und dem `RecipeContext`
+gebaut. `_VersionLoader` (1.1a, 1.1c) unverändert; der Ladebalken sitzt im
+`Stack` des Templates.
+
+*Menü-Kontext (freigegebene Änderung, geprüft):* Modul-Aktionen im Menü
+erhalten jetzt den Kontext der Detailseite. Die Gegenprobe (alter
+Bildschirm aus `HEAD` mit dem neuen Test) zeigte, dass der alte Kontext
+**nicht** der der Menü-Route war, sondern der des `PopupMenuButton`
+(`itemBuilder` wird mit dem Kontext des Knopfs aufgerufen) — ebenfalls
+gültig und unter `RecipeDetailScreen`. Die Änderung ist damit geringer als
+angekündigt (Knopf- statt Seitenkontext, gleiche Vorfahren für Navigator,
+Theme, ScaffoldMessenger). EX-01, EX-02, EX-04, EX-05 (hier) und EX-03
+(Einstellungen) grün. Neuer Test **UI-58**
+(`test/ui/recipe_detail/recipe_detail_menu_context_test.dart`, bisher gab es
+keinen Test für Menü-Aktionen): gültiger Kontext unter `RecipeDetailScreen`,
+richtiger `RecipeContext`, gesperrte Aktion wird nicht ausgeführt; er ist
+mit altem und neuem Bildschirm grün. Keine weitere sichtbare Änderung.
+Bestehende Tests unverändert, Core 387 grün.

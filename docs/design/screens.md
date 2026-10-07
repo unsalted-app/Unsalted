@@ -45,7 +45,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** erstes Laden · Versionswechsel (alter Inhalt bleibt, Ladebalken nach 300 ms) · Fehler · Inhalt.
 - **Template:** `DetailPageTemplate` mit `DetailSections`.
 - **Abschnitte:** `recipe_detail_actions_section.dart` · `version_switcher.dart` · `recipe_detail_description_section.dart` · `recipe_detail_nutrition_section.dart` · `recipe_detail_ingredients_section.dart` · `recipe_detail_steps_section.dart` · `recipe_detail_extensions_section.dart`.
-- **Umgestellt:** offen (C23).
+- **Umgestellt:** C23.
 
 ## 5 Nährwertanzeige — Teil von 4
 

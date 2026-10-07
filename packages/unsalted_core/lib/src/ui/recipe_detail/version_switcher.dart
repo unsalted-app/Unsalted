@@ -3,9 +3,11 @@
 // Bildschirm 4 (Kapitel 22, Schritt 8.5): Versionsumschalter -- zeigt
 // „V{versionIndex}" + optionales label je Version, absteigend sortiert
 // (wie von RecipeRepository.watchVersions geliefert). Reine Anzeige/
-// Auswahl, keine eigene Datenquelle.
+// Auswahl, keine eigene Datenquelle. Seit Teil 1.2 (C23) aus
+// Design-Komponenten (AppChoiceChip).
 
 import 'package:flutter/material.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../recipe/recipe_version.dart';
 
@@ -25,20 +27,21 @@ class VersionSwitcher extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          for (final version in versions)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: ChoiceChip(
-                label: Text(
-                  version.label == null ? 'V${version.versionIndex}' : 'V${version.versionIndex} · ${version.label}',
-                ),
+      child: AppPadding.symmetric(
+        horizontal: AppSpace.xs,
+        child: AppStack(
+          direction: Axis.horizontal,
+          gap: AppSpace.s,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            for (final version in versions)
+              AppChoiceChip(
+                label: version.label == null ? 'V${version.versionIndex}' : 'V${version.versionIndex} · ${version.label}',
                 selected: version.id == selectedVersionId,
-                onSelected: (_) => onSelected(version.id),
+                onSelected: () => onSelected(version.id),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
