@@ -1319,3 +1319,19 @@ in eigener Breite wie im Versionsvergleich, mehrere teilen sich die Breite
 wie im Editor), `AppKeyValueTable` (Spalten 2 : 1 : 1, Zellabstand `xs`,
 fette Kopfzeile — wie die Nährwerttabelle), `AppCodeBlock`. Media-Ordner
 bleibt bis Teil 4 leer (F5). Tests DS-40 bis DS-45.
+
+**C10 — Templates.** Templates bekommen den Inhalt des aktuellen Zustands
+als `body` (der Bildschirm entscheidet: `AppLoading`, `AppErrorState`, leer
+oder Inhalt). Inhalt-Layouts: `DetailSections` (scrollend; ein- oder
+zweispaltig über die **eine** zentrale Einstellung `DetailLayout.standard`,
+zunächst `oneColumn`), `DetailSplit` (zwei Bereiche übereinander +
+Fußzeile, wie der Versionsvergleich), `FormSections` und
+`FormSections.fixed` (Innenabstand `l`; fest für `Expanded`-Kinder wie
+Export/Import). Stabilität als Teil des Vertrags: `DetailPageTemplate`
+legt den Inhalt immer in einen `Stack` (`StackFit.expand`), damit das
+Ein- und Ausblenden des Ladebalkens (1.1a/1.1c) Inhalt und Scrollposition
+nicht neu aufbaut; `FormPageTemplate` hält den Inhalt in einem `Expanded`
+mit festem Key, damit erscheinende Meldungen Eingaben nicht verwerfen.
+Tests DS-46 bis DS-48. *Gegenprobe DS-47:* `Stack` nur bei sichtbarem
+Ladebalken → alle vier Varianten rot (Scrollposition 0, Inhalt neu
+erzeugt); zurückgesetzt, grün.

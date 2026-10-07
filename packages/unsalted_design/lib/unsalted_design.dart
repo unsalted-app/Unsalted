@@ -58,3 +58,8 @@ export 'src/components/navigation/app_bottom_action_bar.dart' show AppBottomActi
 export 'src/components/navigation/app_navigation_bar.dart' show AppNavigationBar, AppNavigationDestination;
 export 'src/components/navigation/app_overflow_menu.dart' show AppMenuEntry, AppOverflowMenu;
 export 'src/components/navigation/app_top_bar.dart' show AppTopBar;
+
+// Templates
+export 'src/templates/detail_page_template.dart' show DetailLayout, DetailPageTemplate, DetailSections, DetailSplit;
+export 'src/templates/form_page_template.dart' show FormPageTemplate, FormSections;
+export 'src/templates/list_page_template.dart' show ListPageTemplate;

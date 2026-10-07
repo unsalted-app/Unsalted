@@ -12,3 +12,4 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 - Komponenten II: `AppTextField`, `AppSearchField`, `AppSelect`, `AppListItem`, `AppItemList`, `AppSwipeToDelete`, `AppReorderableList`, `AppChoiceChip`, `AppChip` (C07).
 - Komponenten III: `AppNotice`, `AppEmptyState`, `AppErrorState`, `AppLoading`, `AppProgressBar`, `AppSkeleton`, `AppMessenger`/`showAppMessage`, Dialoge (C08).
 - Komponenten IV: `AppTopBar`, `AppOverflowMenu`, `AppNavigationBar`, `AppBottomActionBar`, `AppKeyValueTable`, `AppCodeBlock` (C09).
+- Templates: `ListPageTemplate`, `DetailPageTemplate` mit `DetailSections`/`DetailSplit`/`DetailLayout`, `FormPageTemplate` mit `FormSections` (C10).
