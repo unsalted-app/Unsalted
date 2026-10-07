@@ -1269,3 +1269,18 @@ Breite), `AppWindowSize` + `ResponsiveBuilder` (statt des im Plan genannten
 `AppSection` folgt in C06, weil sie `AppText` und `AppDivider` nutzt. Tests
 DS-10 bis DS-13 laufen über `test/support/design_harness.dart` in vier
 Varianten (hell/dunkel × Handy 390×844 / Tablet 1024×1366).
+
+**C06 — Komponenten I.** `AppButton` (`primary`/`secondary`/`tertiary` →
+`ElevatedButton`/`OutlinedButton`/`TextButton`, mit Symbol die `.icon`-
+Varianten), `AppIconButton` und `AppFab` mit Pflicht-Tooltip
+(Screenreader-Text; heute haben FABs und die Entfernen-Knöpfe der Zeilen
+keinen — kommt mit der Umstellung hinzu), `AppFab` mit Ladezustand
+(Ladekreis in `onPrimaryContainer` statt `Colors.white`, das auf dem hellen
+FAB kaum zu sehen war). `AppIcons` mit Figma-Namen; DS-06 ignoriert jetzt
+Material-Symbolnamen (`Icons.no_food` ist kein eigener Fachbegriff).
+`AppText` (`body` = schlichter `Text` ohne Stil, `strong` = fett wie die
+bisherigen Überschriften, `title`, `caption`) und `AppTone` (normal, muted,
+primary, error aus dem ColorScheme). `AppSurface` (Töne low/medium/high),
+`AppDivider` (Höhe als Stufe, `.flush()`, `.vertical()`), `AppCard`,
+`AppSection` (Trennlinie `space/xxl` + fette Überschrift = bisheriges Muster
+„Divider(height: 32) + fetter Text“). Tests DS-14 bis DS-22.

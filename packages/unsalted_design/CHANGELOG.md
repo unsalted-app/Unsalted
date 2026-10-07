@@ -8,3 +8,4 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 - Tokens: Farbe (hell/dunkel, 46 Material-3-Rollen), Typografie, Abstand, Radius, Höhe, Bewegung, Breakpoints; Werte = Flutter-Standard (C03).
 - Theme: `AppTheme.light()`/`.dark()` nur aus Tokens, entspricht dem Flutter-Standard (C04).
 - Layout: `AppSpace`, `AppGap`, `AppStack`, `AppPadding`, `AppPage`, `AppGrid`, `AppWindowSize`, `ResponsiveBuilder` (C05).
+- Komponenten I: `AppButton`, `AppIconButton`, `AppFab`, `AppIcon`, `AppIcons`, `AppText`, `AppTone`, `AppCard`, `AppSurface`, `AppDivider`; Layout `AppSection` (C06).

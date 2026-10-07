@@ -192,7 +192,8 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C03 | Tokens, DS-02/04/05 | fertig |
 | C04 | Theme, DS-07 | fertig |
 | C05 | Layout, DS-10–13 | fertig |
-| C06–C09 | Komponenten I–IV | offen |
+| C06 | Komponenten I: Buttons, Symbole, Text, Flächen, `AppSection`; DS-14–22 | fertig |
+| C07–C09 | Komponenten II–IV | offen |
 | C10 | Templates | offen |
 | C11 | Widgetbook, WB-01 | offen |
 | C12 | Doku `docs/design/*`, README/CHANGELOG | offen |

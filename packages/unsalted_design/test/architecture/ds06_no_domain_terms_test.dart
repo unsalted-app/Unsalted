@@ -1,7 +1,8 @@
 // test/architecture/ds06_no_domain_terms_test.dart
 //
 // DS-06 (Teil 1.2, Kapitel 28.9): Das Design-Paket kennt keine Fachbegriffe.
-// lib/ enthält (auch in Kommentaren) keinen Begriff aus der Wortliste; lib/
+// lib/ enthält (auch in Kommentaren) keinen Begriff aus der Wortliste —
+// ausgenommen Namen von Material-Symbolen (`Icons.no_food`); lib/
 // und test/ enthalten die verbotene Energieeinheit nicht (R7, wie AT-12). Der
 // Suchbegriff wird aus Zeichencodes gebaut, damit diese Datei sich nicht
 // selbst meldet.
@@ -18,6 +19,8 @@ final _domainTerms = RegExp(
   caseSensitive: false,
 );
 
+final _materialIconName = RegExp(r'\bIcons\.\w+');
+
 final _energyUnit = String.fromCharCodes([0x6b, 0x4a]);
 
 /// Zeilen von [source] mit Fachbegriff, als (Zeile, Text).
@@ -25,7 +28,7 @@ List<(int, String)> findDomainTerms(String source) {
   final lines = source.split('\n');
   return [
     for (var i = 0; i < lines.length; i++)
-      if (_domainTerms.hasMatch(lines[i])) (i + 1, lines[i].trim()),
+      if (_domainTerms.hasMatch(lines[i].replaceAll(_materialIconName, ''))) (i + 1, lines[i].trim()),
   ];
 }
 
@@ -54,5 +57,7 @@ void main() {
   test('DS-06: der Detektor erkennt Fachbegriffe', () {
     expect(findDomainTerms('final recipeTitle = 1;\n// Zutaten\nconst x = Nutrients();'), hasLength(3));
     expect(findDomainTerms('class AppButton {}\nfinal spacing = 8;'), isEmpty);
+    expect(findDomainTerms('static const IconData emptyPlate = Icons.no_food;'), isEmpty);
+    expect(findDomainTerms('// Icons.no_food für leere Lebensmittel'), hasLength(1));
   });
 }
