@@ -65,11 +65,14 @@ unsalted/
 ├─ docs/
 │  ├─ spezifikation.md             VERBINDLICHE Spezifikation (Quelle der Wahrheit)
 │  ├─ status.md                    Phase/Schritt-Tracker
-│  └─ decisions.md                 Protokoll technischer Entscheidungen
+│  ├─ decisions.md                 Protokoll technischer Entscheidungen
+│  └─ design/                      Teil 1.2: plan.md, design_system.md, components.md, screens.md
 ├─ tool/
 │  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
-├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Core und App (Nachtrag 0.1a)
+├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Design, Core, App, Widgetbook
 ├─ apps/
+│  ├─ unsalted_widgetbook/         Komponenten-Katalog (Teil 1.2, C11), Rang 99, nur macOS;
+│  │                               lib/catalog/ je Design-Ordner eine Datei, Tests WB-01–03
 │  └─ unsalted_app/                App-Hülle (Schritt 8.8)
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
 │     │                            flutter_riverpod, go_router
@@ -78,6 +81,8 @@ unsalted/
 │     │                            mit NavigationBar (/, /foods, /settings)
 │     └─ test/widget_test.dart     App-Start-Rauchtest
 └─ packages/
+   ├─ unsalted_design/             Design-System (Teil 1.2), Rang 0, nur Flutter, Tür mit show
+   │  └─ lib/src/  tokens/ theme/ layout/ components/<gruppe>/ templates/; Tests DS-01–48
    └─ unsalted_core/
       ├─ pubspec.yaml
       ├─ drift_schemas/
@@ -169,10 +174,11 @@ unsalted/
       │        └─ shared/undoable_deletion.dart                Löschen mit 5 s „Rückgängig“ (Teil 1.1b),
       │                                                        UI-interne Provider, nicht exportiert
       └─ test/
-         ├─ architecture/                    AT-01 bis AT-12, alle fertig und grün
-         │  ├─ at01_no_upper_imports_test.dart … at12_no_kj_text_test.dart
+         ├─ architecture/                    AT-01 bis AT-15, alle grün (AT-13–15 seit Teil 1.2)
+         │  ├─ at01_no_upper_imports_test.dart … at15_design_only_in_ui_test.dart
          │  ├─ public_api_golden.txt
-         │  └─ support/architecture_test_utils.dart
+         │  └─ support/  architecture_test_utils.dart, ui_rules.dart (Detektoren AT-13/14),
+         │               design_transition.dart (Übergangsliste bis C27)
          ├─ nutrition/                       6 Testdateien, Phase 2
          ├─ recipe/
          │  ├─ recipe_test.dart
@@ -468,6 +474,13 @@ C28/C27b/C29 (`docs/status.md`).
 - Fachliche Zahlen: `Decimal`, intern `Rational`, niemals `double`.
 - Energie ausschließlich `energy_kcal`, kein kJ.
 - Rundung ausschließlich im `NutritionFormatter`.
+- **Aussehen nur im Design-System (Teil 1.2):** `packages/unsalted_design`
+  (Rang 0, nur Flutter, keine Fachbegriffe, keine UI-Texte). In
+  `lib/src/ui/` keine Material-Bausteine, für die es eine Design-Komponente
+  gibt, keine festen Farben, keine Stile, keine Zahlen für Abstände (AT-13,
+  AT-14, Liste in `test/architecture/support/ui_rules.dart`);
+  `package:unsalted_design/` nur in `lib/src/ui/` (AT-15). Regeln:
+  `docs/design/design_system.md`.
 - Fachmodell ≠ Persistenzmodell — welches Standardfeld (`id`,
   `created_at`, `updated_at`, `deleted_at`) in welches Fachmodell gehört,
   legt Kapitel 10 der Spezifikation pro Modell einzeln fest.

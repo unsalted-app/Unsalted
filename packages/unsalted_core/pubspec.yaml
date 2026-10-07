@@ -2,6 +2,7 @@ name: unsalted_core
 description: "A new Flutter package project."
 version: 0.0.1
 homepage:
+publish_to: 'none'
 
 environment:
   sdk: ^3.13.4
@@ -17,6 +18,8 @@ dependencies:
   go_router: ^18.0.1
   intl: ^0.20.3
   rational: ^2.2.3
+  unsalted_design:
+    path: ../unsalted_design
   uuid: ^4.6.0
 
 dev_dependencies:

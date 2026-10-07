@@ -553,6 +553,13 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  unsalted_design:
+    dependency: transitive
+    description:
+      path: "../../packages/unsalted_design"
+      relative: true
+    source: path
+    version: "0.1.0"
   uuid:
     dependency: transitive
     description:

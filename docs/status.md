@@ -199,7 +199,7 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C10 | Templates, DS-46–48 | fertig |
 | C11 | Widgetbook (macOS), WB-01–03 | fertig |
 | C12 | Doku `docs/design/*`, README/CHANGELOG | fertig |
-| C13 | Core-Anbindung, AT-13/14/15 mit Übergangsliste | offen |
+| C13 | Core-Anbindung, AT-13/14/15 mit Übergangsliste (18 Dateien) | fertig |
 | C14–C25 | Bildschirme umstellen | offen |
 | C26 | App-Hülle: Theme hell/dunkel, Navigationsleiste | offen |
 | C27 | Abschluss Übergangslisten | offen |

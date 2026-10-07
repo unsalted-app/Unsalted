@@ -1,8 +1,9 @@
 // test/architecture/at01_no_upper_imports_test.dart
 //
 // AT-01: unsalted_core importiert kein Paket mit höherem Rang (R1 in PROJECT.md,
-// architecture.yaml). Da unsalted_core Rang 1 hat (der niedrigste), bedeutet das
-// praktisch: kein Import irgendeines anderen Projektpakets.
+// architecture.yaml). unsalted_core hat Rang 1; erlaubt ist nur das
+// Design-System unsalted_design (Rang 0, Teil 1.2) — und das nur unter
+// lib/src/ui/ (AT-15).
 
 import 'package:test/test.dart';
 import 'support/architecture_test_utils.dart';

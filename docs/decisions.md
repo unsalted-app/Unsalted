@@ -1360,3 +1360,33 @@ Figma-Name | Datei | Status | Test, dazu die fachlichen Bausteine in Core),
 `screens.md` (je Bildschirm Zweck, Daten, Aktionen, Zustände, Template,
 Abschnitte; Spalte „Umgestellt“ wird mit C14–C26 nachgeführt), README und
 CHANGELOG des Pakets.
+
+**C13 — Core-Anbindung.** `flutter pub add unsalted_design --path
+../unsalted_design` in Core; dazu `publish_to: 'none'` in Core-`pubspec.yaml`,
+weil der Analyzer Pfad-Abhängigkeiten in veröffentlichbaren Paketen meldet
+(`invalid_dependency`). Die App-`pubspec.lock` ändert sich transitiv.
+Neue Architekturtests mit gemeinsamen Detektoren in
+`test/architecture/support/ui_rules.dart`:
+- **AT-13** (feste Farben) wie auf `design/1.1`.
+- **AT-14** (nur Design-Komponenten, F1 „streng“). Gegenüber der Liste im
+  Plan zusätzlich verboten, weil es eine Komponente dafür gibt: `Icon`
+  (`AppIcon`), `InputDecoration` (`AppTextField`), `ListView`
+  (`AppItemList`/Templates), `Container`, `DecoratedBox`, `ColoredBox`
+  (`AppSurface`), `Padding` (`AppPadding`), `NavigationDestination`,
+  `TableRow`, `ScaffoldMessenger.` (`AppMessenger`), `SizedBox.square` und
+  `SizedBox(width: double.…)`. Erlaubt bleiben Struktur-Widgets (`Text`
+  ohne Stil, `Column`, `Row`, `Expanded`, `Flexible`, `Stack`, `Center`,
+  `SingleChildScrollView`, Builder, `PopScope`, `Navigator`,
+  `MaterialPageRoute`). Detektor mit Selbsttest (20 Verstöße, 12 erlaubte
+  Fälle).
+- **AT-15** (Design-Import nur in `lib/src/ui/`).
+- **Übergangsliste** `support/design_transition.dart`: die 18 noch nicht
+  umgestellten UI-Dateien (alle außer `change_descriptions.dart`, die schon
+  sauber ist). Ein zweiter AT-14-Test schlägt fehl, wenn eine Datei ohne
+  Verstoß auf der Liste steht oder es sie nicht gibt.
+AT-01 inhaltlich unverändert (Rang 0 < 1), Kopfkommentar korrigiert.
+*Gegenproben:* `Colors.red` in einer neuen Datei unter `src/ui/` → AT-13 rot;
+`settings_screen.dart` von der Liste gestrichen → AT-14 rot
+(`settings_screen.dart:25 → return Scaffold(`); Design-Import in
+`src/recipe/` → AT-15 rot; alles zurückgesetzt, grün. Core 386 Tests
+(+6), App 1, Design 184, Widgetbook 6; `check_architecture` Exit 0.
