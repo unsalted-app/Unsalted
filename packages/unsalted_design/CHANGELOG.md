@@ -14,3 +14,4 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 - Komponenten IV: `AppTopBar`, `AppOverflowMenu`, `AppNavigationBar`, `AppBottomActionBar`, `AppKeyValueTable`, `AppCodeBlock` (C09).
 - Templates: `ListPageTemplate`, `DetailPageTemplate` mit `DetailSections`/`DetailSplit`/`DetailLayout`, `FormPageTemplate` mit `FormSections` (C10).
 - Katalog `apps/unsalted_widgetbook` (widgetbook 3.25.0) mit allen Komponenten (C11).
+- Dokumentation: README, `docs/design/design_system.md`, `components.md`, `screens.md` (C12).

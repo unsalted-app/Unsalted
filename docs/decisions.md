@@ -1353,3 +1353,10 @@ globale Konfiguration wurde nicht geändert; Web lässt sich nachrüsten mit
 `flutter config --enable-web` und `flutter create --platforms=web .` im
 App-Ordner. CI prüft die App (analyze + test). Rang 99 in
 `architecture.yaml` seit C01.
+
+**C12 — Doku.** `docs/design/design_system.md` (Ebenen, acht Regeln,
+Benennung = Figma-Namen, Ablauf Figma → Code), `components.md` (Komponente |
+Figma-Name | Datei | Status | Test, dazu die fachlichen Bausteine in Core),
+`screens.md` (je Bildschirm Zweck, Daten, Aktionen, Zustände, Template,
+Abschnitte; Spalte „Umgestellt“ wird mit C14–C26 nachgeführt), README und
+CHANGELOG des Pakets.
