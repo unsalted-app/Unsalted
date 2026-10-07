@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../recipe/recipe_snapshot_v1.dart';
+import '../shared/unit_labels.dart';
 
 /// Inhalt eines Snapshots in einer Vergleichsspalte.
 class SnapshotColumn extends StatelessWidget {
@@ -29,7 +30,7 @@ class SnapshotColumn extends StatelessWidget {
             AppText.strong(snapshot.recipe.title),
             const AppGap(AppSpace.s),
             for (final ingredient in snapshot.ingredients)
-              AppText('${ingredient.name}: ${ingredient.quantity} ${ingredient.unit}'),
+              AppText('${ingredient.name}: ${formatAmount(ingredient.quantity, ingredient.unit)}'),
             const AppGap(AppSpace.s),
             for (final step in snapshot.steps) AppText('${step.position}. ${step.instruction}'),
           ],

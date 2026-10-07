@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../../recipe/recipe_version.dart';
+import '../../shared/unit_labels.dart';
 
 /// Schreibgeschützte Ansicht einer eingefrorenen Version.
 class RecipeEditorFrozenSection extends StatelessWidget {
@@ -35,7 +36,7 @@ class RecipeEditorFrozenSection extends StatelessWidget {
           ),
           const AppGap(AppSpace.l),
           for (final ingredient in version.ingredients)
-            AppListItem(title: ingredient.displayName, subtitle: '${ingredient.quantity} ${ingredient.unitCode}'),
+            AppListItem(title: ingredient.displayName, subtitle: formatAmount(ingredient.quantity, ingredient.unitCode)),
           const AppDivider(),
           for (final step in version.steps) AppListItem(title: step.instruction),
         ],

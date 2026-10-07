@@ -1701,3 +1701,24 @@ in Z. 516, 519), `version_list_screen_test.dart:198`
 dafür gibt es kein Design-Widget. Symbol-Finder (`find.byIcon(Icons.…)`)
 sind keine Typ-Finder und bleiben. Der App-Test nutzt keine
 Material-Typ-Finder. Core 386 Tests grün.
+
+**C27b — deutsche Einheiten (F3).** `lib/src/ui/shared/unit_labels.dart`
+aus `design/1.1` übernommen (`unitLabel`, `formatQuantity`, `formatAmount`).
+Eingesetzt: Zutaten im Rezeptdetail („0,5 l“, „2 Stück · Notiz“,
+„3 Prisen“), eingefrorene Ansicht des Editors, Vergleichsspalten
+(„Ei: 2 Stück“), Zutatenzeile (Auswahlliste „Stück“ statt `piece`,
+Mengenfeld startet mit Dezimalkomma; die Eingabe akzeptierte Komma schon
+vorher). Gespeichert bleibt der Code. Neue Tests: UI-59
+(`test/ui/shared/unit_labels_test.dart`, 6 Fälle) und UI-60 bis UI-63
+(`test/ui/shared/german_units_display_test.dart`). *Gegenprobe:*
+`unitLabel` liefert vorübergehend den Code → UI-60 bis UI-63 rot;
+zurückgesetzt, grün. Kein bestehender Test erwartet einen englischen Code
+als Anzeigetext; bestehende Tests unverändert.
+*Bewusst nicht umgestellt (Abweichung, zur Entscheidung):*
+`versions/change_descriptions.dart` nennt Einheiten seit 9.2a schon deutsch,
+zeigt Mengen aber mit Dezimalpunkt („Mehl: 500 g → 0.5 kg“). Eine
+Umstellung auf `formatAmount` würde `change_descriptions_test.dart:78`
+ändern (erwartet „0.5 kg“) — das deckt die freigegebene Ausnahme
+(englischer Code als Anzeigetext) nicht. Ebenso unverändert: Zahlenfelder
+ohne Einheitencode (Backverlust, Fertiggewicht, Verpackungsformular).
+Core 396 Tests grün.

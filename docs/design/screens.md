@@ -169,4 +169,5 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
 ## Gemeinsam
 
 - `shared/undoable_deletion.dart` — Fristen und Provider bleiben; Meldung über `AppMessenger` (C15), Wischen über `AppSwipeToDelete` (C16).
+- `shared/unit_labels.dart` — Einheiten deutsch, Mengen mit Dezimalkomma (C27b); eingesetzt in Bildschirm 3 (Zutatenzeile, eingefrorene Ansicht), 4 (Zutaten) und 8 (Vergleichsspalten).
 - App-Hülle `apps/unsalted_app/lib/main.dart` — Theme hell/dunkel aus `AppTheme` (folgt dem System), Navigation über `AppNavigationBar` (C26).

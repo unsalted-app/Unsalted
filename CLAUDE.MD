@@ -164,8 +164,9 @@ unsalted/
       │        ├─ versions/change_descriptions.dart     Texte der Änderungsliste (9.2a)
       │        ├─ settings/export_screen.dart / import_screen.dart  Lücken: kein Teilen-Dialog,
       │        │                                                    keine Datei-Auswahl
-      │        └─ shared/undoable_deletion.dart         Löschen mit 5 s „Rückgängig“ (Teil 1.1b),
-      │                                                 UI-interne Provider, nicht exportiert
+      │        ├─ shared/undoable_deletion.dart         Löschen mit 5 s „Rückgängig“ (Teil 1.1b),
+      │        │                                        UI-interne Provider, nicht exportiert
+      │        └─ shared/unit_labels.dart               Einheiten deutsch, Dezimalkomma (Teil 1.2 C27b)
       └─ test/
          ├─ architecture/                    AT-01 bis AT-15, alle grün (AT-13–15 seit Teil 1.2)
          │  ├─ at01_no_upper_imports_test.dart … at15_design_only_in_ui_test.dart

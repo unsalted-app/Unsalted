@@ -17,6 +17,7 @@ import 'package:unsalted_design/unsalted_design.dart';
 import '../../food/food_variant.dart';
 import '../../nutrition/unit_catalog.dart';
 import '../../providers/core_providers.dart';
+import '../shared/unit_labels.dart';
 import 'food_variant_picker_dialog.dart';
 
 /// Zutatenzeile im UI-State des Editors. `id` ist stabil (Kapitel 10.7:
@@ -102,7 +103,7 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.data.displayName);
-    _quantityController = TextEditingController(text: widget.data.quantity.toString());
+    _quantityController = TextEditingController(text: formatQuantity(widget.data.quantity));
     _noteController = TextEditingController(text: widget.data.note ?? '');
   }
 
@@ -178,7 +179,7 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
           AppSelect<String>(
             value: widget.data.unitCode,
             onChanged: widget.readOnly ? null : (value) => _emit((d) => d.copyWith(unitCode: value)),
-            items: [for (final unit in UnitCatalog.all) AppSelectItem(unit.code, unit.code)],
+            items: [for (final unit in UnitCatalog.all) AppSelectItem(unit.code, unitLabel(unit.code))],
           ),
           const AppGap(AppSpace.s),
           Expanded(
