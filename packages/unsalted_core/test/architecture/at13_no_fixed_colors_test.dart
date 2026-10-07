@@ -5,14 +5,13 @@
 // `CupertinoColors.*`, `Color(…)`/`Color.from…(…)` und ein `TextStyle(…)` mit
 // eigenem `color`, `backgroundColor` oder `decorationColor` verboten. Farben
 // kommen aus dem Design-System (`unsalted_design`). Übernommen aus
-// `design/1.1`; ausgenommen sind bis C27 die Dateien der Übergangsliste.
+// `design/1.1`; seit C27c ohne Ausnahmen.
 
 import 'dart:io';
 
 import 'package:test/test.dart';
 
 import 'support/architecture_test_utils.dart';
-import 'support/design_transition.dart';
 import 'support/ui_rules.dart';
 
 void main() {
@@ -27,7 +26,6 @@ void main() {
     final violations = <String>[];
     for (final file in uiFiles) {
       final path = file.path.substring(root.path.length + 1).replaceAll(Platform.pathSeparator, '/');
-      if (designTransitionList.contains(path)) continue;
       for (final (line, text) in findFixedColors(file.readAsStringSync())) {
         violations.add('$path:$line → $text');
       }

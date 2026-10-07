@@ -1,7 +1,7 @@
 // test/architecture/support/ui_rules.dart
 //
 // Detektoren für AT-13 (keine festen Farben) und AT-14 (nur
-// Design-Komponenten) sowie die gemeinsame Übergangsliste (Teil 1.2, C13).
+// Design-Komponenten) (Teil 1.2, C13).
 // Geprüft wird Quelltext ohne Kommentare, Zeile für Zeile; mehrzeilige
 // Aufrufe (`TextStyle(…)`, `SizedBox(…)`) werden über den ganzen Text gesucht.
 

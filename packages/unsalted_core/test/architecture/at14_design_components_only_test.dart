@@ -5,15 +5,13 @@
 // Komponente in `unsalted_design` gibt, und keine Stil-Angaben (`Icons.`,
 // `Theme.of(`, `TextStyle(`, `FontWeight.`, `EdgeInsets…`, `BorderRadius.`,
 // `SizedBox` mit Zahl) — Antwort F1 „streng“. Liste und Muster in
-// `support/ui_rules.dart`. Dateien der Übergangsliste sind bis C27
-// ausgenommen; steht eine Datei ohne Verstoß darauf, ist sie zu streichen.
+// `support/ui_rules.dart`. Seit C27c ohne Ausnahmen.
 
 import 'dart:io';
 
 import 'package:test/test.dart';
 
 import 'support/architecture_test_utils.dart';
-import 'support/design_transition.dart';
 import 'support/ui_rules.dart';
 
 void main() {
@@ -27,25 +25,11 @@ void main() {
     final violations = <String>[];
     for (final file in uiFiles) {
       final path = projectPath(file);
-      if (designTransitionList.contains(path)) continue;
       for (final (line, text) in findDesignViolations(file.readAsStringSync())) {
         violations.add('$path:$line → $text');
       }
     }
     expect(violations, isEmpty, reason: 'Material-Bausteine oder Stil-Angaben:\n${violations.join('\n')}');
-  });
-
-  test('AT-14: die Übergangsliste enthält nur nicht umgestellte Dateien', () {
-    final byPath = {for (final f in uiFiles) projectPath(f): f};
-    final unknown = designTransitionList.where((p) => !byPath.containsKey(p)).toList();
-    expect(unknown, isEmpty, reason: 'Dateien auf der Übergangsliste gibt es nicht: $unknown');
-    final clean = [
-      for (final path in designTransitionList)
-        if (byPath[path] case final file?)
-          if (findDesignViolations(file.readAsStringSync()).isEmpty && findFixedColors(file.readAsStringSync()).isEmpty)
-            path,
-    ];
-    expect(clean, isEmpty, reason: 'Umgestellt, bitte von der Übergangsliste streichen: $clean');
   });
 
   test('AT-14: der Detektor erkennt Verstöße', () {

@@ -170,8 +170,7 @@ unsalted/
          ├─ architecture/                    AT-01 bis AT-15, alle grün (AT-13–15 seit Teil 1.2)
          │  ├─ at01_no_upper_imports_test.dart … at15_design_only_in_ui_test.dart
          │  ├─ public_api_golden.txt
-         │  └─ support/  architecture_test_utils.dart, ui_rules.dart (Detektoren AT-13/14),
-         │               design_transition.dart (Übergangsliste bis C27)
+         │  └─ support/  architecture_test_utils.dart, ui_rules.dart (Detektoren AT-13/14)
          ├─ nutrition/                       6 Testdateien, Phase 2
          ├─ recipe/
          │  ├─ recipe_test.dart

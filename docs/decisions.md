@@ -1599,3 +1599,15 @@ beobachtbaren Unterschied, UI-58). (4) Dunkelmodus nach System (F4, C26).
 Keine weiteren: Reihenfolge, Texte, Abstände und Verhalten unverändert.
 Stand: Design 212, Core 387, App 3, Widgetbook 6 Tests grün;
 `check_architecture` Exit 0.
+
+## 2026-10-07 — Teil 1.2, Etappe 3 (freigegeben)
+
+Reihenfolge nach Vorgabe: C27c, C28, C27b, C29; je ein Commit.
+
+**C27c — Übergangsmechanismus entfernt.** `test/architecture/support/
+design_transition.dart` gelöscht; AT-13 und AT-14 ohne Ausnahmeprüfung;
+der zweite AT-14-Test („Übergangsliste enthält nur nicht umgestellte
+Dateien“) entfällt mit der Liste. Regeln und Detektoren unverändert streng.
+*Gegenprobe:* `Color(…)` und `Divider()` vorübergehend in
+`lib/src/ui/foods/food_tile.dart` → AT-13 und AT-14 rot mit genau diesen
+Zeilen; zurückgesetzt, grün. Core 386 Tests (−1).
