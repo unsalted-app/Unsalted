@@ -554,7 +554,7 @@ packages:
     source: path
     version: "0.0.1"
   unsalted_design:
-    dependency: transitive
+    dependency: "direct main"
     description:
       path: "../../packages/unsalted_design"
       relative: true

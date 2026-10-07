@@ -1560,3 +1560,15 @@ Auswahldialog bleibt ohne Lupe (`AppTextField` mit Platzhalter statt
 Speicherfehler in `color/error`; Tooltips „Zutat entfernen“ und „Schritt
 entfernen“ an den Entfernen-Knöpfen. Die Übergangsliste ist damit leer.
 Bestehende Tests unverändert, Core 387 grün.
+
+**C26 — App-Hülle.** `apps/unsalted_app/pubspec.yaml` + `unsalted_design`
+(per `flutter pub add … --path`). `MaterialApp.router` bekommt
+`theme: AppTheme.light()` und `darkTheme: AppTheme.dark()`, `themeMode`
+bleibt `system` (Antwort F4). Die Navigationsschale baut `AppPage` mit
+`AppNavigationBar` (gleiche Ziele, Symbole und Beschriftungen). Import nur
+über die Tür (AT-09). Neuer Test **APP-02** (`test/theme_test.dart`):
+Themes aus dem Design-Paket, `ThemeMode.system`, hell und dunkel je nach
+Systemeinstellung, Navigationsleiste mit drei Zielen. *Gegenprobe:* ohne
+`darkTheme` → APP-02 rot; zurückgesetzt, grün. *Sichtbare Änderung
+(freigegeben, F4):* Die App folgt jetzt dem Dunkelmodus des Systems. Der
+bestehende App-Test ist unverändert; App 3 Tests grün.

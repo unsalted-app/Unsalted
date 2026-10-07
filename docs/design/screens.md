@@ -130,4 +130,4 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 ## Gemeinsam
 
 - `shared/undoable_deletion.dart` — Fristen und Provider bleiben; Meldung über `AppMessenger` (C15), Wischen über `AppSwipeToDelete`. **Umgestellt:** C15 (Meldung), C16 (Wischen).
-- App-Hülle `apps/unsalted_app/lib/main.dart` — Theme hell/dunkel aus `AppTheme`, Navigation über `AppNavigationBar`. **Umgestellt:** offen (C26).
+- App-Hülle `apps/unsalted_app/lib/main.dart` — Theme hell/dunkel aus `AppTheme`, Navigation über `AppNavigationBar`. **Umgestellt:** C26.
