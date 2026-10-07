@@ -11,9 +11,12 @@
 // Beim Bearbeiten im AppBar-Menü „Löschen“ (Teil 1.1b): zurück zur Liste,
 // dort 5 s „Rückgängig“, erst dann softDeleteVariant; ungespeicherte
 // Änderungen sind damit hinfällig, deshalb ohne Verwerfen-Dialog.
+// Seit Teil 1.2 (C24) aus Design-Komponenten: FormPageTemplate; Formular in
+// package_form.dart mit Abschnitten unter sections/.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../contracts/core_exceptions.dart';
 import '../../contracts/input_models.dart';
@@ -46,18 +49,13 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
   bool get _hasUnsavedChanges => !_leaving && (_formKey.currentState?.hasChanges ?? false);
 
   Future<bool> _confirmDiscard() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Änderungen verwerfen?'),
-        content: const Text('Deine Eingaben sind noch nicht gespeichert.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Abbrechen')),
-          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Verwerfen')),
-        ],
-      ),
+    return showAppConfirmDialog(
+      context,
+      title: 'Änderungen verwerfen?',
+      message: 'Deine Eingaben sind noch nicht gespeichert.',
+      confirmLabel: 'Verwerfen',
+      cancelLabel: 'Abbrechen',
     );
-    return result ?? false;
   }
 
   @override
@@ -159,33 +157,30 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
   }
 
   Widget _buildScaffold(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEditing ? 'Lebensmittel bearbeiten' : 'Lebensmittel anlegen'),
-        actions: [
-          if (_isEditing)
-            PopupMenuButton<VoidCallback>(
-              itemBuilder: (context) => [
-                PopupMenuItem(value: _delete, enabled: _existing != null, child: const Text('Löschen')),
-              ],
-              onSelected: (callback) => callback(),
-            ),
-        ],
-      ),
+    return FormPageTemplate(
+      title: _isEditing ? 'Lebensmittel bearbeiten' : 'Lebensmittel anlegen',
+      actions: [
+        if (_isEditing)
+          AppOverflowMenu(entries: [
+            AppMenuEntry(label: 'Löschen', enabled: _existing != null, onSelected: _delete),
+          ]),
+      ],
+      messages: [if (_saveError != null) AppText(_saveError!, tone: AppTone.error)],
       body: FutureBuilder<FoodVariant?>(
         future: _loadFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoading();
           }
           if (snapshot.hasError) {
-            return _ErrorState(
+            return AppErrorState(
               message: snapshot.error.toString(),
+              retryLabel: 'Erneut versuchen',
               onRetry: () => setState(() => _loadFuture = _load()),
             );
           }
           if (_isEditing && _existing == null) {
-            return const _ErrorState(message: 'Lebensmittel nicht gefunden.');
+            return const AppErrorState(message: 'Lebensmittel nicht gefunden.');
           }
 
           final PackageFormValue? initial = _existing == null
@@ -200,54 +195,18 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
                   nutrients: _existing!.nutrients,
                 );
 
-          return Column(
-            children: [
-              if (_saveError != null)
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(_saveError!, style: const TextStyle(color: Colors.red)),
-                ),
-              Expanded(
-                child: PackageForm(
-                  key: _formKey,
-                  initial: initial,
-                  onChanged: () => setState(() {}),
-                ),
-              ),
-            ],
+          return PackageForm(
+            key: _formKey,
+            initial: initial,
+            onChanged: () => setState(() {}),
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (_saving || _formKey.currentState?.value == null) ? null : _save,
-        child: _saving
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-              )
-            : const Icon(Icons.check),
-      ),
-    );
-  }
-}
-
-class _ErrorState extends StatelessWidget {
-  final String message;
-  final VoidCallback? onRetry;
-
-  const _ErrorState({required this.message, this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(message),
-          if (onRetry != null)
-            TextButton(onPressed: onRetry, child: const Text('Erneut versuchen')),
-        ],
+      primaryAction: AppFab(
+        icon: AppIcons.check,
+        tooltip: 'Lebensmittel speichern',
+        loading: _saving,
+        onPressed: _formKey.currentState?.value == null ? null : _save,
       ),
     );
   }

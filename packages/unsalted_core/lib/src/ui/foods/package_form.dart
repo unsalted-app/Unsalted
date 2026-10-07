@@ -15,14 +15,23 @@
 // den daraus berechneten Wert (`salt_g = sodium_mg / 1000 * 2.5`) -- die
 // Umrechnung passiert hier (einzige Stelle), nicht im Rechenkern und nicht
 // nochmal beim Speichern in food_editor_screen.dart.
+//
+// Seit Teil 1.2 (C24) aus Design-Komponenten: Darstellung in den Abschnitten
+// sections/package_*_section.dart; Zustand, Prüfung und Umrechnung bleiben
+// hier.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../contracts/core_exceptions.dart';
 import '../../nutrition/decimal_math.dart';
 import '../../nutrition/nutrient_set.dart';
 import '../../nutrition/nutrient_validator.dart';
+import 'sections/package_identity_section.dart';
+import 'sections/package_measures_section.dart';
+import 'sections/package_nutrients_section.dart';
+import 'sections/package_validation_section.dart';
 
 /// Ergebnis eines gültigen Formularzustands -- `null`-Felder bedeuten
 /// "nicht angegeben", nicht "0".
@@ -238,93 +247,40 @@ class PackageFormState extends State<PackageForm> {
 
   @override
   Widget build(BuildContext context) {
-    final error = blockingError;
-    final currentWarnings = warnings;
     final sodiumFilled = _sodiumController.text.trim().isNotEmpty;
+    PackageNumberField field(TextEditingController controller, String label, {bool enabled = true, String? helper}) =>
+        PackageNumberField(
+          controller: controller,
+          label: label,
+          error: _tryParse(controller.text).error,
+          helper: helper,
+          enabled: enabled,
+        );
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    return FormSections(
       children: [
-        TextField(
-          controller: _nameController,
-          decoration: const InputDecoration(labelText: 'Name'),
+        PackageIdentitySection(name: _nameController, brand: _brandController, barcode: _barcodeController),
+        PackageMeasuresSection(
+          density: _densityController,
+          gramsPerPiece: _gramsPerPieceController,
+          servingSize: _servingSizeController,
         ),
-        TextField(
-          controller: _brandController,
-          decoration: const InputDecoration(labelText: 'Marke'),
+        PackageNutrientsSection(fields: [
+          field(_energyKcalController, 'Kalorien (kcal)'),
+          field(_fatController, 'Fett (g)'),
+          field(_saturatedFatController, 'davon gesättigte Fettsäuren (g)'),
+          field(_carbsController, 'Kohlenhydrate (g)'),
+          field(_sugarsController, 'davon Zucker (g)'),
+          field(_fiberController, 'Ballaststoffe (g)'),
+          field(_proteinController, 'Eiweiß (g)'),
+          field(_saltController, 'Salz (g)', enabled: !sodiumFilled),
+          field(_sodiumController, 'oder: Natrium (mg)', helper: 'Ersetzt die Salz-Eingabe (Kapitel 8.2).'),
+        ]),
+        PackageValidationSection(
+          warnings: [for (final warning in warnings) warning.message],
+          error: blockingError,
         ),
-        TextField(
-          controller: _barcodeController,
-          decoration: const InputDecoration(labelText: 'Barcode'),
-        ),
-        const Divider(height: 32),
-        TextField(
-          controller: _densityController,
-          decoration: const InputDecoration(labelText: 'Dichte (g/ml)'),
-        ),
-        TextField(
-          controller: _gramsPerPieceController,
-          decoration: const InputDecoration(labelText: 'Stückgewicht (g)'),
-        ),
-        TextField(
-          controller: _servingSizeController,
-          decoration: const InputDecoration(labelText: 'Portionsgröße (g)'),
-        ),
-        const Divider(height: 32),
-        const Text('Nährwerte pro 100 g', style: TextStyle(fontWeight: FontWeight.bold)),
-        _nutrientField(_energyKcalController, 'Kalorien (kcal)'),
-        _nutrientField(_fatController, 'Fett (g)'),
-        _nutrientField(_saturatedFatController, 'davon gesättigte Fettsäuren (g)'),
-        _nutrientField(_carbsController, 'Kohlenhydrate (g)'),
-        _nutrientField(_sugarsController, 'davon Zucker (g)'),
-        _nutrientField(_fiberController, 'Ballaststoffe (g)'),
-        _nutrientField(_proteinController, 'Eiweiß (g)'),
-        _nutrientField(_saltController, 'Salz (g)', enabled: !sodiumFilled),
-        _nutrientField(
-          _sodiumController,
-          'oder: Natrium (mg)',
-          helperText: 'Ersetzt die Salz-Eingabe (Kapitel 8.2).',
-        ),
-        const SizedBox(height: 16),
-        for (final warning in currentWarnings)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Container(
-              key: const Key('package_form_warning'),
-              padding: const EdgeInsets.all(8),
-              color: Colors.yellow.shade100,
-              child: Text(warning.message),
-            ),
-          ),
-        if (error != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Container(
-              key: const Key('package_form_error'),
-              padding: const EdgeInsets.all(8),
-              color: Colors.red.shade100,
-              child: Text(error, style: const TextStyle(color: Colors.red)),
-            ),
-          ),
       ],
-    );
-  }
-
-  Widget _nutrientField(
-    TextEditingController controller,
-    String label, {
-    bool enabled = true,
-    String? helperText,
-  }) {
-    final result = _tryParse(controller.text);
-    return TextField(
-      controller: controller,
-      enabled: enabled,
-      decoration: InputDecoration(
-        labelText: label,
-        errorText: result.error,
-        helperText: helperText,
-      ),
     );
   }
 }

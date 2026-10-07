@@ -96,7 +96,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · nicht gefunden · Eingabe mit Warnungen/Fehlern · speichert · Speicherfehler.
 - **Template:** `FormPageTemplate` mit Hauptaktion und Menü.
 - **Abschnitte:** `package_identity_section.dart` · `package_measures_section.dart` · `package_nutrients_section.dart` · `package_validation_section.dart`.
-- **Umgestellt:** offen (C24).
+- **Umgestellt:** C24.
 
 ## 11 Export — `settings/export_screen.dart`
 

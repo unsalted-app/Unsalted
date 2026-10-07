@@ -1520,3 +1520,21 @@ keinen Test für Menü-Aktionen): gültiger Kontext unter `RecipeDetailScreen`,
 richtiger `RecipeContext`, gesperrte Aktion wird nicht ausgeführt; er ist
 mit altem und neuem Bildschirm grün. Keine weitere sichtbare Änderung.
 Bestehende Tests unverändert, Core 387 grün.
+
+**C24 — Lebensmittel bearbeiten (Bildschirm 10).** `FormPageTemplate`
+(Menü „Löschen“ über `AppOverflowMenu`, Speicherfehler als Meldung über dem
+Formular, Hauptaktion `AppFab`); Laden, Fehler und „nicht gefunden“ über
+`AppLoading`/`AppErrorState`. `PackageForm` behält Controller,
+`hasChanges` (10.0), Prüfung und Natrium-Umrechnung; dargestellt in
+`package_identity_section.dart`, `package_measures_section.dart`,
+`package_nutrients_section.dart` (Feldbeschreibung `PackageNumberField`)
+und `package_validation_section.dart`. Warn- und Fehlerkasten sind
+`AppSurface` mit den Tönen `warning`/`error`, gleicher Innen- und
+Außenabstand, Keys `package_form_warning`/`package_form_error` unverändert.
+`PopScope` und `addPostFrameCallback` bleiben im Bildschirm.
+*Sichtbare Änderungen (freigegeben):* Warnkasten in
+`color/tertiary-container` statt `Colors.yellow.shade100`, Fehlerkasten in
+`color/error-container` mit `color/on-error-container` statt
+`Colors.red.shade100`/`Colors.red`, Speicherfehler in `color/error`,
+Ladekreis im FAB in `onPrimaryContainer`; Tooltip „Lebensmittel speichern“.
+Bestehende Tests unverändert, Core 387 grün.
