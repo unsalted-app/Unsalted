@@ -197,7 +197,7 @@ Plan, Abschnitte und Antworten F1–F12: `docs/design/plan.md`. Etappen mit Stop
 | C08 | Komponenten III: Hinweise, Zustände, Meldungen, Dialoge; DS-32–39 | fertig |
 | C09 | Komponenten IV: Navigation, Daten; DS-40–45 | fertig |
 | C10 | Templates, DS-46–48 | fertig |
-| C11 | Widgetbook, WB-01 | offen |
+| C11 | Widgetbook (macOS), WB-01–03 | fertig |
 | C12 | Doku `docs/design/*`, README/CHANGELOG | offen |
 | C13 | Core-Anbindung, AT-13/14/15 mit Übergangsliste | offen |
 | C14–C25 | Bildschirme umstellen | offen |

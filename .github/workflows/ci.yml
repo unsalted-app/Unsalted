@@ -56,3 +56,13 @@ jobs:
       - name: unsalted_app — test
         working-directory: apps/unsalted_app
         run: flutter test
+
+      - name: unsalted_widgetbook — pub get
+        working-directory: apps/unsalted_widgetbook
+        run: flutter pub get
+      - name: unsalted_widgetbook — analyze
+        working-directory: apps/unsalted_widgetbook
+        run: flutter analyze
+      - name: unsalted_widgetbook — test
+        working-directory: apps/unsalted_widgetbook
+        run: flutter test

@@ -1335,3 +1335,21 @@ mit festem Key, damit erscheinende Meldungen Eingaben nicht verwerfen.
 Tests DS-46 bis DS-48. *Gegenprobe DS-47:* `Stack` nur bei sichtbarem
 Ladebalken → alle vier Varianten rot (Scrollposition 0, Inhalt neu
 erzeugt); zurückgesetzt, grün.
+
+**C11 — Widgetbook.** `apps/unsalted_widgetbook`, `widgetbook` 3.25.0 per
+`flutter pub add`; API im Pub-Cache geprüft (`Widgetbook.material`,
+`MaterialThemeAddon` + `WidgetbookTheme`, `ViewportAddon` mit
+`IosViewports.iPhone13`/`iPadPro11Inches`, `WidgetbookFolder`/
+`WidgetbookCategory`/`WidgetbookComponent`/`WidgetbookUseCase`). Katalog von
+Hand (kein Generator, F8), je Ordner des Design-Pakets eine Datei;
+Komponentenname = Dart-Klasse, Anwendungsfall = Figma-Variante. Tests WB-01
+(alle 63 Anwendungsfälle bauen in hell/dunkel × Handy/Tablet ohne Fehler und
+ohne Überlauf), WB-02 (jedes Symbol der Tür ist Katalogeintrag oder
+ausdrücklich ausgenommen, z. B. Tokens und Parametertypen), WB-03 (die App
+startet). *Abweichung von F8:* Nur macOS — `flutter create
+--platforms=web,macos` hat keinen `web/`-Ordner angelegt, weil Web in der
+lokalen Flutter-Konfiguration abgeschaltet ist (`enable-web: false`). Die
+globale Konfiguration wurde nicht geändert; Web lässt sich nachrüsten mit
+`flutter config --enable-web` und `flutter create --platforms=web .` im
+App-Ordner. CI prüft die App (analyze + test). Rang 99 in
+`architecture.yaml` seit C01.
