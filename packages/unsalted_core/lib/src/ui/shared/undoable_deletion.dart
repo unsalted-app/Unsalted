@@ -7,6 +7,9 @@
 // Wiederherstellen-Methode gibt es nicht und braucht es nicht: Bis zum Ablauf
 // ist nichts gelöscht.
 //
+// Seit Teil 1.2 zeigt `AppMessenger` die Meldung, den Wisch-Hintergrund
+// liefert `AppSwipeToDelete` (unsalted_design).
+//
 // Die ausstehenden Löschungen liegen in einem UI-internen Provider (nicht über
 // die Tür exportiert), damit sie das Schließen eines Bildschirms überleben --
 // das Rezeptdetail startet die Löschung und kehrt zur Liste zurück, die den
@@ -129,26 +132,4 @@ void _scheduleWithUndo({
   // Mit Ablauf der Frist verschwindet auch „Rückgängig“ -- danach wäre es
   // wirkungslos.
   pending.schedule(id, delete, onExpired: snackbar.close);
-}
-
-/// Hintergrund beim Wischen nach links: Löschsymbol rechts, Farben aus dem
-/// Theme.
-class DeleteSwipeBackground extends StatelessWidget {
-  /// Erzeugt den Hintergrund.
-  const DeleteSwipeBackground({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return ColoredBox(
-      color: colors.errorContainer,
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Icon(Icons.delete, color: colors.onErrorContainer),
-        ),
-      ),
-    );
-  }
 }

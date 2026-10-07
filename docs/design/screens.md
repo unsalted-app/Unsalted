@@ -15,7 +15,7 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · leer („Noch keine Rezepte.“ + „Erstes Rezept anlegen“) · keine Treffer · Liste.
 - **Template:** `ListPageTemplate`.
 - **Abschnitte:** `recipe_list_search_section.dart` · `recipe_list_empty_section.dart` · `recipe_list_results_section.dart`; Baustein `recipe_card.dart`.
-- **Umgestellt:** offen (C16).
+- **Umgestellt:** C16.
 
 ## 2 Rezept erstellen — `recipe_editor/recipe_create_screen.dart`
 
@@ -129,5 +129,5 @@ dem der Bildschirm auf Design-Komponenten umgestellt wurde.
 
 ## Gemeinsam
 
-- `shared/undoable_deletion.dart` — Fristen und Provider bleiben; Meldung über `AppMessenger` (C15), Wischen über `AppSwipeToDelete`. **Umgestellt:** offen (C16, mit der Rezeptliste).
+- `shared/undoable_deletion.dart` — Fristen und Provider bleiben; Meldung über `AppMessenger` (C15), Wischen über `AppSwipeToDelete`. **Umgestellt:** C15 (Meldung), C16 (Wischen).
 - App-Hülle `apps/unsalted_app/lib/main.dart` — Theme hell/dunkel aus `AppTheme`, Navigation über `AppNavigationBar`. **Umgestellt:** offen (C26).

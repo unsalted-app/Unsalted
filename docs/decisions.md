@@ -1413,3 +1413,16 @@ der Rezeptliste benutzt wird; es entfällt mit C16. *Sichtbare Änderung
 bewusst nicht „Lebensmittel anlegen“, weil ein bestehender Test nach dem
 Öffnen des Editors genau einen solchen Text erwartet. Bestehende Tests
 unverändert, Core 386 grün.
+
+**C16 — Rezeptliste (Bildschirm 1).** `ListPageTemplate`; Abschnitte
+`recipe_list_search_section.dart`, `recipe_list_empty_section.dart`,
+`recipe_list_results_section.dart`, Baustein `recipe_list/recipe_card.dart`
+(vorerst `AppListItem`, damit die Liste aussieht wie bisher).
+`DeleteSwipeBackground` entfällt in `undoable_deletion.dart` (jetzt
+`AppSwipeToDelete`); beide Dateien sind von der Übergangsliste gestrichen.
+Im leeren Zustand „Keine Treffer.“ steht statt der Aktion ein leerer
+Platzhalter, damit der Abstand unter dem Satz bleibt wie bisher (keine
+Verschiebung). *Sichtbare Änderung (freigegeben):* Tooltip „Neues Rezept“
+an der Hauptaktion — nicht „Rezept erstellen“, weil ein bestehender Test
+diesen Text nach dem Öffnen genau einmal erwartet. Bestehende Tests
+unverändert, Core 386 grün.
