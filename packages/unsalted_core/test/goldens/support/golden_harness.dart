@@ -10,8 +10,10 @@
 //
 // Schriften lädt nur diese Harness, nicht global über
 // `flutter_test_config.dart`: Sonst änderten sich die Textmaße aller übrigen
-// Tests, die mit der Testschrift rechnen. Bis die Schrift des Design-Systems
-// im Theme steht, ist es Roboto (Material-Standard) aus dem Flutter-SDK.
+// Tests, die mit der Testschrift rechnen. Geladen werden die Schrift des
+// Design-Systems (Atkinson Hyperlegible Next, ab D02 im Paket) unter dem
+// Namen, den das Theme verwendet, sowie Roboto und die Material-Symbole aus
+// dem Flutter-SDK (Material-Standard bis D03).
 //
 // Schatten zeichnet flutter_test absichtlich als schwarze Kontur
 // (`debugDisableShadows`, Vorgabe des Test-Bindings für stabile Bilder);
@@ -61,6 +63,12 @@ Future<void> loadGoldenFonts() async {
   }
   await roboto.load();
   await (FontLoader('MaterialIcons')..addFont(read('$sdkFonts/MaterialIcons-Regular.otf'))).load();
+
+  final atkinson = FontLoader(AppFonts.qualifiedFamily);
+  for (final file in ['Regular', 'SemiBold', 'Bold']) {
+    atkinson.addFont(read('../unsalted_design/lib/fonts/AtkinsonHyperlegibleNext-$file.ttf'));
+  }
+  await atkinson.load();
   _fontsLoaded = true;
 }
 

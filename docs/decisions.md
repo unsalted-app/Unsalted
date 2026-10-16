@@ -1871,3 +1871,46 @@ Gerät aus der Systemschrift) — wird mit D14 Symbol. (3) Bei 200 % schneiden
 Editor-Zeilen und Nährwertkopf ab (D12). Mac: Design 212, Core 412, App 6,
 Widgetbook 6 Tests grün (Goldens dort nicht geladen); `check_architecture`
 Exit 0.
+
+**D02 — Schrift und Lizenz.** Die drei WOFF2 der Übergabe
+(`docs/design/system/fonts/`) mit fontTools 4.60.2 (`woff2.decompress`, mit
+brotli) verlustfrei in TTF umgewandelt. Gemessen an WOFF2 und TTF gleich: je
+392 Glyphen, 362 Zeichen, Version „Version 2.001; ttfautohint
+(v1.8.4.7-5d5b)“, `tnum` vorhanden, alle Tabellen außer `head` inhaltlich
+identisch; Gewicht (OS/2) 400/600/700. SHA-256 der TTF:
+
+| Datei | Bytes | SHA-256 |
+|---|---|---|
+| `AtkinsonHyperlegibleNext-Regular.ttf` | 64 656 | `4b3bfd9de494d727fd0c3459a438b290b108c5684debe2258a93f142a6b479ff` |
+| `AtkinsonHyperlegibleNext-SemiBold.ttf` | 66 268 | `ad0d0607aebc2b4715149d88dae2a1713b8e5f4272715feb729276ae97731d20` |
+| `AtkinsonHyperlegibleNext-Bold.ttf` | 66 400 | `fb0fb12e976161da3d9ae0eebe9c66137431922b660b2b0129965d48b946ea88` |
+
+Quelle (WOFF2, SHA-256): Regular `378aea0f5c1d179f4e0b5382c06bfc87571b98cfcc4fd1352bc979e2e2259c54`,
+SemiBold `4ab00275cc496a478fce7baafe89ed44af875acf57655dfd1183ff22bd23829a`,
+Bold `dda449f0f556a595cffd0a9ce479bb1210beba286cb4c2f5aeca6975f9c85a3b`.
+`OFL.txt` = `docs/design/system/assets/Lizenzen/OFL-Atkinson-Hyperlegible-Next.txt`.
+Der Schrift fehlen → ← ↑ ↓ ✓ ★ µ und U+202F; vorhanden sind u. a. U+00A0,
+– — „ “ … · × €. `pubspec.yaml` des Design-Pakets deklariert die Familie
+`AtkinsonHyperlegibleNext` (Gewichte aus den Dateien) und `lib/fonts/OFL.txt`
+als Asset; Abhängigkeiten unverändert nur `flutter`. `AppFonts`
+(`lib/src/theme/app_fonts.dart`, über die Tür): `family`, `package`,
+`qualifiedFamily` (`packages/unsalted_design/AtkinsonHyperlegibleNext`),
+`licenseAsset`, `registerLicenses()` (`LicenseRegistry`, Text erst beim
+Öffnen der Lizenzseite gelesen); aufgerufen in `apps/unsalted_app/lib/main.dart`.
+Katalog: Eintrag `AppFonts` (drei Schnitte), damit WB-02 ohne neue Ausnahme
+grün bleibt. Golden-Harness (Design und Core) lädt die Schrift zusätzlich
+unter `qualifiedFamily`; das Theme nutzt sie erst ab D03, die Bilder bleiben
+gleich. Neue Tests: DS-49 (`test/typography/ds49_glyph_coverage_test.dart`,
+Zeichentabelle per eigenem `cmap`-Leser, Format 4 und 12): drei Schnitte mit
+gleicher Tabelle (362 Zeichen), fehlende und vorhandene Zeichen wie oben,
+und alle Zeichen außerhalb von Kommentaren — wörtlich oder `\uXXXX` — in
+`unsalted_design/lib/` und `unsalted_core/lib/src/ui/` haben eine Glyphe;
+einzige Ausnahme der Pfeil in `versions/change_descriptions.dart` (bis D14
+noch als Text gezeichnet). DS-50 (`ds50_font_license_test.dart`): Schriften
+und Lizenz in `pubspec.yaml` deklariert, `registerLicenses` lädt genau
+`packages/unsalted_design/lib/fonts/OFL.txt` (Asset-Kanal im Test bedient,
+weil das Paket im eigenen Test die Wurzel ist und der Schlüssel dort kein
+Präfix hätte) und registriert die OFL. *Gegenprobe DS-49:* „★“ vorübergehend
+in `version_tile.dart` → rot mit genau dieser Zeile; zurückgesetzt, grün.
+Gefundene Zeichen außerhalb von ASCII heute (alle mit Glyphe): Umlaute, ß,
+– — „ “ … · ×, U+00A0.

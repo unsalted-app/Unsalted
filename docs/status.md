@@ -245,7 +245,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | — | Figma-Abgleich Variablen ↔ `tokens.json` (nur gelesen): 158 Werte gleich, Abweichungen A1–A4 im Plan | fertig |
 | — | Plan `docs/design/plan-1.3.md` | fertig, freigegeben 2026-10-17 (F1–F14) |
 | D01 | Golden-Grundlage und Grundstand: `goldens.yml` (Hilfsbranch `goldens/**`), `ci.yml` auf `ubuntu-24.04`, GL-01 (13 Motive, 104 Bilder), GL-02 (5 Bildschirme, 40 Bilder); Prüflauf 0 Abweichungen, Gegenprobe 24 | fertig |
-| D02 | Schrift und Lizenz (DS-49, DS-50) | offen |
+| D02 | Schrift und Lizenz: Atkinson Hyperlegible Next als TTF (392 Glyphen, Version 2.001) mit OFL im Design-Paket, `AppFonts`, Lizenz in der App registriert; DS-49 (Glyphen), DS-50 (Lizenz) | fertig |
 | D03 | Token-Datei, Generator, Theme-Zuordnung (DS-04/05/07 neu, DS-51) | offen |
 | D04 | Komponenten-Themes (DS-52) | offen |
 | D05a | Symbol-Finder in Tests | offen |

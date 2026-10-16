@@ -11,6 +11,7 @@ src/tokens/radius_tokens.dart show AppRadius
 src/tokens/spacing_tokens.dart show AppSpace, AppSpacing
 src/tokens/typography_tokens.dart show AppTypography
 src/theme/app_theme.dart show AppTheme
+src/theme/app_fonts.dart show AppFonts
 src/layout/app_grid.dart show AppGrid
 src/layout/app_page.dart show AppPage
 src/layout/app_stack.dart show AppGap, AppPadding, AppStack

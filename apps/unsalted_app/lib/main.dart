@@ -7,6 +7,7 @@
 // `UnsaltedModule.routes`. Seit Teil 1.2 (C26): Theme hell/dunkel aus
 // unsalted_design (folgt der Systemeinstellung), Hauptnavigation über
 // AppNavigationBar. Anzeige-Schalter aus config/ui_options.dart (C29).
+// Seit Teil 1.3 (D02): Lizenz der Schrift des Design-Systems registriert.
 
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ import 'package:unsalted_design/unsalted_design.dart';
 import 'config/ui_options.dart';
 
 void main() {
+  AppFonts.registerLicenses();
   final modules = <UnsaltedModule>[CoreModule()];
   runApp(ProviderScope(
     overrides: appOverrides(database: CoreDatabase(driftDatabase(name: 'unsalted')), modules: modules),

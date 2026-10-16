@@ -25,6 +25,15 @@ final tokensFolder = WidgetbookFolder(name: 'Tokens', children: [
     useCase('light', (_) => _colorTable(AppColorTokens.light)),
     useCase('dark', (_) => _colorTable(AppColorTokens.dark)),
   ]),
+  component('AppFonts', [
+    useCase('Atkinson Hyperlegible Next', (_) => AppStack(gap: AppSpace.s, children: [
+          for (final weight in [FontWeight.w400, FontWeight.w600, FontWeight.w700])
+            Text(
+              'Weizenmehl 0O 1lI 5S – 2,5 g',
+              style: TextStyle(fontFamily: AppFonts.family, package: AppFonts.package, fontWeight: weight),
+            ),
+        ])),
+  ]),
   component('Typografie', [
     useCase('type', (_) => AppStack(gap: AppSpace.s, children: [
           for (final MapEntry(key: name, value: style) in AppTypography.byFigmaName.entries) Text(name, style: style),
