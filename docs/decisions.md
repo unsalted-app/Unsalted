@@ -2046,3 +2046,30 @@ Typografie, Text/Symbole und Daten. Bekannter Zwischenstand bis D08: Die
 schwebenden Beschriftungen sitzen in der Kontur der Felder, und gestapelte
 Felder liegen ohne Abstand aneinander (Beschriftung über dem Feld folgt mit
 `AppTextField`).
+
+**D05a — Symbol-Finder in Tests (F12).** Vor der Umstellung auf
+Outlined-Symbole zeigen die Finder auf `AppIcons` statt auf `Icons`, damit
+D05b keinen Test berührt. Geänderte Zeilen (je nur der Symbolname,
+maschinell geprüft: ohne Symbolnamen sind alte und neue Zeile gleich, 11
+Zeilen):
+- `packages/unsalted_core/test/ui/versions/version_list_screen_test.dart:133`
+  `Icons.copy` → `AppIcons.copy`; `:166` `Icons.delete_outline` →
+  `AppIcons.deleteOutline`; `:198` `Icons.compare_arrows` → `AppIcons.compare`
+  (Typ `IconButton` in `widget<…>` bleibt, Plan d3)
+- `packages/unsalted_core/test/ui/recipe_editor/ingredient_row_test.dart:120`
+  `Icons.search` → `AppIcons.search`
+- `packages/unsalted_core/test/ui/recipe_editor/recipe_editor_screen_test.dart:176`
+  `Icons.delete_outline` → `AppIcons.deleteOutline`; `:348, 349`
+  `Icons.drag_handle` → `AppIcons.dragHandle`; `:396` `Icons.search` →
+  `AppIcons.search`
+- `apps/unsalted_app/test/widget_test.dart`: Import
+  `package:unsalted_design/unsalted_design.dart` ergänzt (neue Z. 12, die
+  folgenden Zeilen rücken um eins); Z. 39 (vorher 38) `Icons.restaurant` →
+  `AppIcons.restaurant`, Z. 44 (43) `Icons.settings` → `AppIcons.settings`,
+  Z. 50 (49) `Icons.menu_book` → `AppIcons.book`.
+Die drei übrigen Core-Testdateien importieren die Design-Tür schon seit C28.
+`Icons.star` in `version_list_screen_test.dart:96, 249, 254, 281` bleibt
+(Master-Stern, ändert sich mit D13); `Icons.info` in
+`recipe_detail_menu_context_test.dart:78, 90` ist Eingabe einer
+Modul-Aktion, kein Finder. Vorher und nachher grün (Core 412, App 6), weil bis
+D05b `AppIcons.x == Icons.x` gilt.

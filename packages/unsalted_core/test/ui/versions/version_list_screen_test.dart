@@ -130,7 +130,7 @@ void main() {
 
     await _pumpList(tester, database, recipeId);
 
-    await tester.tap(find.widgetWithIcon(AppIconButton, Icons.copy));
+    await tester.tap(find.widgetWithIcon(AppIconButton, AppIcons.copy));
     await _settle(tester);
     await tester.pumpAndSettle();
 
@@ -163,7 +163,7 @@ void main() {
     var versions = await tester.runAsync(() => recipeDao.watchVersions(recipeId).first);
     expect(versions, hasLength(2));
 
-    await tester.tap(find.widgetWithIcon(AppIconButton, Icons.delete_outline).first);
+    await tester.tap(find.widgetWithIcon(AppIconButton, AppIcons.deleteOutline).first);
     await tester.pump();
     expect(find.text('Version löschen?'), findsOneWidget);
 
@@ -195,7 +195,7 @@ void main() {
     await _pumpList(tester, database, recipeId!);
 
     final compareButton =
-        tester.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.compare_arrows));
+        tester.widget<IconButton>(find.widgetWithIcon(IconButton, AppIcons.compare));
     expect(compareButton.onPressed, isNull, reason: 'Draft ist nicht vergleichbar (Kapitel 13.7)');
 
     await _disposeWidgetTree(tester);

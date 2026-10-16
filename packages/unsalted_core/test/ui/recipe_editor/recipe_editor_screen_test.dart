@@ -173,7 +173,7 @@ void main() {
     await tester.pump();
     expect(find.widgetWithText(AppTextField, 'Name'), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.delete_outline).first);
+    await tester.tap(find.byIcon(AppIcons.deleteOutline).first);
     await tester.pump();
     expect(find.widgetWithText(AppTextField, 'Name'), findsNothing);
 
@@ -345,8 +345,8 @@ void main() {
     await tester.pumpAndSettle();
 
     // "Butter" per Long-Press-Drag an Position 1 ziehen.
-    final from = tester.getCenter(find.byIcon(Icons.drag_handle).at(1));
-    final to = tester.getCenter(find.byIcon(Icons.drag_handle).first);
+    final from = tester.getCenter(find.byIcon(AppIcons.dragHandle).at(1));
+    final to = tester.getCenter(find.byIcon(AppIcons.dragHandle).first);
     final gesture = await tester.startGesture(from);
     await tester.pump(const Duration(seconds: 1));
     for (var i = 1; i <= 10; i++) {
@@ -393,7 +393,7 @@ void main() {
     final seed = await seedDeletedLink(tester, database);
 
     await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
-    await tester.tap(find.byIcon(Icons.search).at(1));
+    await tester.tap(find.byIcon(AppIcons.search).at(1));
     await tester.pump();
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
     await tester.pump();
