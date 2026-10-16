@@ -1,0 +1,35 @@
+{
+  "duration": {
+    "short": {
+      "$type": "duration",
+      "$value": {
+        "value": 0.15,
+        "unit": "s"
+      },
+      "$description": "Zustandswechsel: Hover, Drücken, Auswahlbalken. (150 ms)"
+    },
+    "medium": {
+      "$type": "duration",
+      "$value": {
+        "value": 0.25,
+        "unit": "s"
+      },
+      "$description": "Ein-/Ausblenden, Marker-Strich beim Küren der Master-Fassung. (250 ms)"
+    },
+    "long": {
+      "$type": "duration",
+      "$value": {
+        "value": 0.4,
+        "unit": "s"
+      },
+      "$description": "Einfrieren: Strichlinie schließt sich zur durchgezogenen Linie. (400 ms)"
+    }
+  },
+  "easing": {
+    "standard": {
+      "$type": "string",
+      "$value": "cubic-bezier(0.2, 0, 0, 1)",
+      "$description": "Alle Übergänge (entspricht Easing.standard in Flutter)."
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "xxs": {
+    "$type": "dimension",
+    "$value": {
+      "value": 2,
+      "unit": "px"
+    },
+    "$description": "Feinabstand: Marker-Innenrand, Symbol zu Hochzeichen."
+  },
+  "xs": {
+    "$type": "dimension",
+    "$value": {
+      "value": 4,
+      "unit": "px"
+    },
+    "$description": "Zellabstand in Tabellen; Symbol zu Beschriftung in Tags, Chips und Fassungsmarken; Beschriftung zu Feld."
+  },
+  "s": {
+    "$type": "dimension",
+    "$value": {
+      "value": 8,
+      "unit": "px"
+    },
+    "$description": "Abstand Symbol–Text in Buttons, zwischen Chips, Überschrift zu Inhalt; seitlicher Innenabstand von Fassungsmarke und Tag."
+  },
+  "m": {
+    "$type": "dimension",
+    "$value": {
+      "value": 12,
+      "unit": "px"
+    },
+    "$description": "Innenabstand von Feldern und Hinweisen, Abstand 3-px-Linie zu Überschrift."
+  },
+  "l": {
+    "$type": "dimension",
+    "$value": {
+      "value": 16,
+      "unit": "px"
+    },
+    "$description": "Seitenrand am Handy, Innenabstand von Listeneinträgen, Karten und Leisten."
+  },
+  "xl": {
+    "$type": "dimension",
+    "$value": {
+      "value": 24,
+      "unit": "px"
+    },
+    "$description": "Seitenrand ab Tablet, Innenabstand von Dialogen."
+  },
+  "xxl": {
+    "$type": "dimension",
+    "$value": {
+      "value": 32,
+      "unit": "px"
+    },
+    "$description": "Abstand zwischen Abschnitten (vor der 3-px-Linie)."
+  }
+}

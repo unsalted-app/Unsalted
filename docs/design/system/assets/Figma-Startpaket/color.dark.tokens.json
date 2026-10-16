@@ -1,0 +1,640 @@
+{
+  "surface-page": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784,
+        0.098,
+        0.1451
+      ],
+      "alpha": 1,
+      "hex": "#141925"
+    },
+    "$description": "Seitengrund jeder Seite, Kopfleiste, Navigationsleiste, Fußleiste. Listen, Tabellen, Leerstellen, Tags sowie Sekundär- und Tertiärbuttons haben keine eigene Fläche und liegen auf diesem Papier.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/900"
+      }
+    }
+  },
+  "surface-raised": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.1451,
+        0.1647,
+        0.2039
+      ],
+      "alpha": 1,
+      "hex": "#252a34"
+    },
+    "$description": "Erhöhte Flächen, hell weiß: Eingabefelder, Auswahl-Chips, Karten, Dialoge, Menüs – sonst nichts. Hebt sich durch Kontur (line-control) oder Haarlinie (line-hairline) ab, nicht durch Schatten.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/800"
+      }
+    }
+  },
+  "surface-sunken": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0471,
+        0.0627,
+        0.098
+      ],
+      "alpha": 1,
+      "hex": "#0c1019"
+    },
+    "$description": "Vertiefte Flächen: neutrale Hinweise (Info und Erfolg), Codeblock, deaktivierte Primärbuttons und Felder. Tabellenköpfe haben keine Fläche, nur die Tintenlinie.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/950"
+      }
+    }
+  },
+  "surface-inverse": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9765,
+        0.9686,
+        0.9451
+      ],
+      "alpha": 1,
+      "hex": "#f9f7f1"
+    },
+    "$description": "Umgekehrte Fläche: Snackbar, ausgewählter Chip. Text darauf: text-inverse.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/50"
+      }
+    }
+  },
+  "scrim": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0471,
+        0.0627,
+        0.098
+      ],
+      "alpha": 1,
+      "hex": "#0c1019"
+    },
+    "$description": "Abdunklung hinter Dialogen und Sheets, immer mit opacity-scrim.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/950"
+      }
+    }
+  },
+  "text-primary": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9765,
+        0.9686,
+        0.9451
+      ],
+      "alpha": 1,
+      "hex": "#f9f7f1"
+    },
+    "$description": "Haupttext auf surface-page, surface-raised, surface-sunken (hell 16,4 / 17,6 / 15,1 : 1; dunkel 16,4 / 13,4 / 17,8 : 1).",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/50"
+      }
+    }
+  },
+  "text-secondary": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.6078,
+        0.6235,
+        0.6392
+      ],
+      "alpha": 1,
+      "hex": "#9b9fa3"
+    },
+    "$description": "Sekundärtext, Metadaten, Einheiten, unbekannte Werte („—“) auf surface-page, surface-raised, surface-sunken (hell 5,7 / 6,1 / 5,3 : 1; dunkel 6,6 / 5,4 / 7,1 : 1). Ab 13 px.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/400"
+      }
+    }
+  },
+  "text-disabled": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.3686,
+        0.3843,
+        0.4118
+      ],
+      "alpha": 1,
+      "hex": "#5e6269"
+    },
+    "$description": "Text deaktivierter Bedienelemente (von WCAG 1.4.3 ausgenommen, 2,3–3,1 : 1). Nie für lesbare Inhalte.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/600"
+      }
+    }
+  },
+  "text-inverse": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784,
+        0.098,
+        0.1451
+      ],
+      "alpha": 1,
+      "hex": "#141925"
+    },
+    "$description": "Text und Symbole auf surface-inverse und action-primary (16,4 : 1 in beiden Modi).",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/900"
+      }
+    }
+  },
+  "text-on-marker": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784,
+        0.098,
+        0.1451
+      ],
+      "alpha": 1,
+      "hex": "#141925"
+    },
+    "$description": "Text und Symbole auf marker – in beiden Modi Tinte (13,8 : 1). Auch Kontur des Marker-Knopfs.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/900"
+      }
+    }
+  },
+  "text-error": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9569,
+        0.5686,
+        0.5569
+      ],
+      "alpha": 1,
+      "hex": "#f4918e"
+    },
+    "$description": "Fehlertext und Fehlersymbol auf surface-page, surface-raised, surface-sunken (hell ≥ 4,9 : 1; dunkel ≥ 6,4 : 1). Immer mit Symbol oder Wort.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "red/300"
+      }
+    }
+  },
+  "text-warning": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9529,
+        0.6784,
+        0.4
+      ],
+      "alpha": 1,
+      "hex": "#f3ad66"
+    },
+    "$description": "Warntext und Warnsymbol auf surface-page, surface-raised (hell 5,0 / 5,3 : 1; dunkel 9,2 / 7,5 : 1). Immer mit Symbol oder Wort.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "orange/300"
+      }
+    }
+  },
+  "line-hairline": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.2627,
+        0.2824,
+        0.3176
+      ],
+      "alpha": 1,
+      "hex": "#434851"
+    },
+    "$description": "Dekorative Haarlinien: Listentrenner, Kanten von Karten und Leisten. Nie die einzige Kante eines Bedienelements.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/700"
+      }
+    }
+  },
+  "line-dot": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.1451,
+        0.1647,
+        0.2039
+      ],
+      "alpha": 1,
+      "hex": "#252a34"
+    },
+    "$description": "Punktraster wie im Notizbuch – nur auf leeren Flächen: Leerstellen (leere Listen, leere Fotoplätze), Startbild, Cover. Punkt size-dot (2 px), Abstand space-xl (24 px), an der Inhaltskante ausgerichtet. Rein dekorativ (1,24 : 1 hell, 1,22 : 1 dunkel); nie hinter Text, Tabellen, Feldern oder Fassungsmarken.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/800"
+      }
+    }
+  },
+  "line-control": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.4902,
+        0.502,
+        0.5255
+      ],
+      "alpha": 1,
+      "hex": "#7d8086"
+    },
+    "$description": "Konturen von Eingabefeldern, Chips, Tags, Checkboxen – mindestens 3 : 1 auf allen Flächen (hell 3,4–4,0; dunkel 3,6–4,8).",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/500"
+      }
+    }
+  },
+  "line-strong": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9765,
+        0.9686,
+        0.9451
+      ],
+      "alpha": 1,
+      "hex": "#f9f7f1"
+    },
+    "$description": "Tintenlinien: 3-px-Abschnittslinie, durchgezogener Rahmen eingefrorener Inhalte, Kontur des Sekundärbuttons, Auswahlbalken.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/50"
+      }
+    }
+  },
+  "line-focus": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9765,
+        0.9686,
+        0.9451
+      ],
+      "alpha": 1,
+      "hex": "#f9f7f1"
+    },
+    "$description": "Fokusring (2 px, 2 px Abstand) auf allen Flächen ≥ 13 : 1. Alias-Bedeutung: Tinte.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/50"
+      }
+    }
+  },
+  "action-primary": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9765,
+        0.9686,
+        0.9451
+      ],
+      "alpha": 1,
+      "hex": "#f9f7f1"
+    },
+    "$description": "Fläche des Primärbuttons. Beschriftung: action-on-primary.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/50"
+      }
+    }
+  },
+  "action-on-primary": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784,
+        0.098,
+        0.1451
+      ],
+      "alpha": 1,
+      "hex": "#141925"
+    },
+    "$description": "Beschriftung und Symbol auf action-primary (16,4 : 1).",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/900"
+      }
+    }
+  },
+  "action-inverse": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.0784,
+        0.098,
+        0.1451
+      ],
+      "alpha": 1,
+      "hex": "#141925"
+    },
+    "$description": "Aktion auf inverser Fläche, z. B. „Rückgängig“ in der Snackbar (hell Marker auf Tinte 13,8 : 1; dunkel Tinte auf Papier 16,4 : 1).",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/900"
+      }
+    }
+  },
+  "marker": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9294,
+        0.8196,
+        0.2392
+      ],
+      "alpha": 1,
+      "hex": "#edd13d"
+    },
+    "$description": "Textmarker: hinterlegt Geändertes, Treffer und die Master-Fassung; Fläche des Marker-Knopfs (FAB). Nie als Textfarbe, nie für Warnungen, nie großflächig. Text darauf: text-on-marker (13,8 : 1 hell, 11,5 : 1 dunkel).",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "marker/500"
+      }
+    }
+  },
+  "state-draft": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.6078,
+        0.6235,
+        0.6392
+      ],
+      "alpha": 1,
+      "hex": "#9b9fa3"
+    },
+    "$description": "Entwurf (vorläufig): gestrichelte 1,5-px-Linie, ≥ 3 : 1 auf surface-page und surface-raised. Bedeutung immer zusätzlich als Wort.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/400"
+      }
+    }
+  },
+  "state-frozen": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9765,
+        0.9686,
+        0.9451
+      ],
+      "alpha": 1,
+      "hex": "#f9f7f1"
+    },
+    "$description": "Eingefroren (fest): durchgezogene 1,5-px-Linie in Tinte.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "neutral/50"
+      }
+    }
+  },
+  "state-master": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9294,
+        0.8196,
+        0.2392
+      ],
+      "alpha": 1,
+      "hex": "#edd13d"
+    },
+    "$description": "Master (gekürt): Markerfläche mit text-on-marker.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "marker/500"
+      }
+    }
+  },
+  "feedback-error-surface": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.302,
+        0.1098,
+        0.102
+      ],
+      "alpha": 1,
+      "hex": "#4d1c1a"
+    },
+    "$description": "Fläche von Fehlerhinweisen und Wisch-zum-Löschen-Hintergrund. Inhalt: feedback-on-error-surface.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "red/900"
+      }
+    }
+  },
+  "feedback-on-error-surface": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9922,
+        0.9137,
+        0.9098
+      ],
+      "alpha": 1,
+      "hex": "#fde9e8"
+    },
+    "$description": "Text und Symbol auf feedback-error-surface (hell 8,5 : 1; dunkel 12,0 : 1).",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "red/100"
+      }
+    }
+  },
+  "feedback-warning-surface": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.2863,
+        0.1569,
+        0.0667
+      ],
+      "alpha": 1,
+      "hex": "#492811"
+    },
+    "$description": "Fläche von Warnhinweisen (z. B. „Nicht berechenbar“). Inhalt: feedback-on-warning-surface.",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "orange/900"
+      }
+    }
+  },
+  "feedback-on-warning-surface": {
+    "$type": "color",
+    "$value": {
+      "colorSpace": "srgb",
+      "components": [
+        0.9961,
+        0.9294,
+        0.851
+      ],
+      "alpha": 1,
+      "hex": "#feedd9"
+    },
+    "$description": "Text und Symbol auf feedback-warning-surface (hell 7,7 : 1; dunkel 11,5 : 1).",
+    "$extensions": {
+      "com.figma.aliasData": {
+        "targetVariableSetName": "primitives",
+        "targetVariableName": "orange/100"
+      }
+    }
+  },
+  "shadow": {
+    "overlay-1-y": {
+      "$type": "dimension",
+      "$value": {
+        "value": 8,
+        "unit": "px"
+      },
+      "$description": "Schatten shadow-overlay, Ebene 1: Versatz Y."
+    },
+    "overlay-1-blur": {
+      "$type": "dimension",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
+      "$description": "Schatten shadow-overlay, Ebene 1: Unschärfe."
+    },
+    "overlay-1-color": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alpha": 0.702,
+        "hex": "#000000"
+      },
+      "$description": "Schatten shadow-overlay, Ebene 1: Farbe."
+    },
+    "overlay-2-y": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1,
+        "unit": "px"
+      },
+      "$description": "Schatten shadow-overlay, Ebene 2: Versatz Y."
+    },
+    "overlay-2-blur": {
+      "$type": "dimension",
+      "$value": {
+        "value": 3,
+        "unit": "px"
+      },
+      "$description": "Schatten shadow-overlay, Ebene 2: Unschärfe."
+    },
+    "overlay-2-color": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alpha": 0.0,
+        "hex": "#000000"
+      },
+      "$description": "Schatten shadow-overlay, Ebene 2: Farbe. Im dunklen Modus unsichtbar (nur eine Ebene)."
+    },
+    "focus-gap": {
+      "$type": "dimension",
+      "$value": {
+        "value": 2,
+        "unit": "px"
+      },
+      "$description": "Fokusring, innere Ebene: Ausdehnung (Spread) = Abstand in Seitenfarbe (surface-page). Gleich stroke/focus."
+    },
+    "focus-ring": {
+      "$type": "dimension",
+      "$value": {
+        "value": 4,
+        "unit": "px"
+      },
+      "$description": "Fokusring, äußere Ebene: Ausdehnung (Spread) = Abstand plus Ring in line-focus (2 × stroke/focus)."
+    }
+  }
+}

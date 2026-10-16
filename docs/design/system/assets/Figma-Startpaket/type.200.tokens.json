@@ -1,0 +1,229 @@
+{
+  "family": {
+    "sans": {
+      "$type": "fontFamily",
+      "$value": "Atkinson Hyperlegible Next",
+      "$description": "Schrift für alles außer Code (SIL OFL 1.1). Schnitte 400, 600, 700."
+    },
+    "mono": {
+      "$type": "fontFamily",
+      "$value": "Roboto Mono",
+      "$description": "Nur Figma-Platzhalter für den Stil code: Im Code gilt die Monospace-Systemschrift (ui-monospace, SF Mono, Menlo, Consolas, monospace)."
+    }
+  },
+  "weight": {
+    "regular": {
+      "$type": "number",
+      "$value": 400,
+      "$description": "Schnitt 400."
+    },
+    "semibold": {
+      "$type": "number",
+      "$value": 600,
+      "$description": "Schnitt 600."
+    },
+    "bold": {
+      "$type": "number",
+      "$value": 700,
+      "$description": "Schnitt 700."
+    }
+  },
+  "display": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 56,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/display (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 72,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/display (doppelt)."
+    }
+  },
+  "title-page": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/title-page (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 56,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/title-page (doppelt)."
+    }
+  },
+  "heading": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 36,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/heading (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/heading (doppelt)."
+    }
+  },
+  "body": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/body (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/body (doppelt)."
+    }
+  },
+  "body-strong": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/body-strong (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/body-strong (doppelt)."
+    }
+  },
+  "body-small": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 28,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/body-small (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/body-small (doppelt)."
+    }
+  },
+  "label-small": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 26,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/label-small (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/label-small (doppelt)."
+    }
+  },
+  "caption": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 26,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/caption (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 36,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/caption (doppelt)."
+    }
+  },
+  "data": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/data (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/data (doppelt)."
+    }
+  },
+  "data-strong": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 32,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/data-strong (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/data-strong (doppelt)."
+    }
+  },
+  "code": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 26,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/code (doppelt, zum Prüfen von 200 % Textgröße)."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 40,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/code (doppelt)."
+    }
+  }
+}

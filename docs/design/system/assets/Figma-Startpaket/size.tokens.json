@@ -1,0 +1,130 @@
+{
+  "target": {
+    "$type": "dimension",
+    "$value": {
+      "value": 48,
+      "unit": "px"
+    },
+    "$description": "Mindestgröße jedes Tippziels (über WCAG 2.5.8 hinaus; Android-Richtwert 48, iOS 44)."
+  },
+  "control": {
+    "$type": "dimension",
+    "$value": {
+      "value": 48,
+      "unit": "px"
+    },
+    "$description": "Höhe von Buttons und Eingabefeldern."
+  },
+  "fab": {
+    "$type": "dimension",
+    "$value": {
+      "value": 56,
+      "unit": "px"
+    },
+    "$description": "Marker-Knopf (Hauptaktion einer Seite)."
+  },
+  "icon": {
+    "$type": "dimension",
+    "$value": {
+      "value": 24,
+      "unit": "px"
+    },
+    "$description": "Standardsymbol; Ladekreis auf Seiten."
+  },
+  "icon-small": {
+    "$type": "dimension",
+    "$value": {
+      "value": 20,
+      "unit": "px"
+    },
+    "$description": "Symbole in Buttons, Hinweisen und Feldern; Ladekreis in Buttons."
+  },
+  "mark": {
+    "$type": "dimension",
+    "$value": {
+      "value": 24,
+      "unit": "px"
+    },
+    "$description": "Höhe der Fassungsmarke und von Tags."
+  },
+  "content-max": {
+    "$type": "dimension",
+    "$value": {
+      "value": 720,
+      "unit": "px"
+    },
+    "$description": "Maximale Inhaltsbreite für Lesetext (ca. 70 Zeichen); zentriert ab Tablet."
+  },
+  "dot": {
+    "$type": "dimension",
+    "$value": {
+      "value": 2,
+      "unit": "px"
+    },
+    "$description": "Durchmesser der Punkte im Punktraster (line-dot)."
+  },
+  "icon-xs": {
+    "$type": "dimension",
+    "$value": {
+      "value": 16,
+      "unit": "px"
+    },
+    "$description": "Kleine Symbole in Chips, Tags, Fassungsmarken, Hilfetexten und Änderungszeilen."
+  },
+  "control-small": {
+    "$type": "dimension",
+    "$value": {
+      "value": 32,
+      "unit": "px"
+    },
+    "$description": "Höhe kleiner Bedienelemente: Auswahl-Chip, Aktion in einem Hinweis. Das Tippziel bleibt size-target."
+  },
+  "list-item": {
+    "$type": "dimension",
+    "$value": {
+      "value": 56,
+      "unit": "px"
+    },
+    "$description": "Mindesthöhe eines Listeneintrags."
+  },
+  "top-bar": {
+    "$type": "dimension",
+    "$value": {
+      "value": 56,
+      "unit": "px"
+    },
+    "$description": "Höhe der Kopfleiste."
+  },
+  "nav-bar": {
+    "$type": "dimension",
+    "$value": {
+      "value": 64,
+      "unit": "px"
+    },
+    "$description": "Höhe der Navigationsleiste; der Marker-Knopf sitzt space-l darüber."
+  },
+  "dialog": {
+    "$type": "dimension",
+    "$value": {
+      "value": 328,
+      "unit": "px"
+    },
+    "$description": "Breite von Dialogen und Höchstbreite der Snackbar (Handy 360 px minus zweimal space-l)."
+  },
+  "value-column": {
+    "$type": "dimension",
+    "$value": {
+      "value": 96,
+      "unit": "px"
+    },
+    "$description": "Feste, rechtsbündige Spalte für Mengen und Werte (Zutaten, Menge im Editor)."
+  },
+  "index-column": {
+    "$type": "dimension",
+    "$value": {
+      "value": 32,
+      "unit": "px"
+    },
+    "$description": "Spalte für Schrittnummern."
+  }
+}

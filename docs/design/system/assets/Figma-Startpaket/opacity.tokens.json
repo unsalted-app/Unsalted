@@ -1,0 +1,17 @@
+{
+  "hover": {
+    "$type": "number",
+    "$value": 6,
+    "$description": "Überlagerung in text-primary bei Hover (macOS) und Fokus. In Figma als Prozent (6 % entspricht 0,06), im Code 0.06."
+  },
+  "pressed": {
+    "$type": "number",
+    "$value": 12,
+    "$description": "Überlagerung in text-primary beim Drücken. In Figma als Prozent (12 % entspricht 0,12), im Code 0.12."
+  },
+  "scrim": {
+    "$type": "number",
+    "$value": 48,
+    "$description": "Deckkraft von scrim hinter Dialogen. In Figma als Prozent (48 % entspricht 0,48), im Code 0.48."
+  }
+}

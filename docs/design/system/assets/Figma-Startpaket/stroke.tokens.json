@@ -1,0 +1,50 @@
+{
+  "hairline": {
+    "$type": "dimension",
+    "$value": {
+      "value": 1,
+      "unit": "px"
+    },
+    "$description": "Trennlinien und Kanten (line-hairline), Konturen von Feldern und Tags (line-control)."
+  },
+  "frame": {
+    "$type": "dimension",
+    "$value": {
+      "value": 1.5,
+      "unit": "px"
+    },
+    "$description": "Rahmen von Fassungsmarke und Zustandsrahmen, Sekundärbutton, Marker-Knopf, Symbolstrich."
+  },
+  "focus": {
+    "$type": "dimension",
+    "$value": {
+      "value": 2,
+      "unit": "px"
+    },
+    "$description": "Fokusring und Fokus-/Fehlerkontur von Eingabefeldern; Strich des Ladekreises."
+  },
+  "rule": {
+    "$type": "dimension",
+    "$value": {
+      "value": 3,
+      "unit": "px"
+    },
+    "$description": "Abschnittslinie über Überschriften, Auswahlbalken in Navigation und Fassungsleiste, Ladebalken."
+  },
+  "dash": {
+    "$type": "dimension",
+    "$value": {
+      "value": 4,
+      "unit": "px"
+    },
+    "$description": "Strichlänge der Entwurfslinie."
+  },
+  "gap": {
+    "$type": "dimension",
+    "$value": {
+      "value": 3,
+      "unit": "px"
+    },
+    "$description": "Lücke der Entwurfslinie."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "medium": {
+    "$type": "dimension",
+    "$value": {
+      "value": 600,
+      "unit": "px"
+    },
+    "$description": "Ab hier mittel (kleines Tablet, Handy quer): Seitenrand 24 px."
+  },
+  "expanded": {
+    "$type": "dimension",
+    "$value": {
+      "value": 840,
+      "unit": "px"
+    },
+    "$description": "Ab hier erweitert (Tablet): Detailseite zweispaltig möglich."
+  },
+  "large": {
+    "$type": "dimension",
+    "$value": {
+      "value": 1200,
+      "unit": "px"
+    },
+    "$description": "Ab hier groß (macOS, Desktop)."
+  }
+}
