@@ -36,7 +36,7 @@ final _number = r'-?\d+(?:\.\d+)?';
 final _rules = <RegExp>[
   RegExp(r'\bEdgeInsets(?:Directional)?\.\w+\([^;]*?(?<![\w.])(?!0(?:\.0)?\b)\d'),
   RegExp(r'\b(?:Border)?Radius\.(?:circular|elliptical)\(\s*(?!0(?:\.0)?\b)\d'),
-  RegExp(r'\b(?:Size|Offset)\(\s*(?!0(?:\.0)?\s*,\s*0(?:\.0)?\s*\))-?\d'),
+  RegExp(r'\b(?:Size|Offset)\([^)]*?(?<![\w.])(?!0(?:\.0)?\b)\d'),
   RegExp(r'\bSize\.(?:square|fromHeight|fromWidth|fromRadius)\(\s*(?!0(?:\.0)?\b)\d'),
   RegExp(r'\bDuration\(\s*(?:milliseconds|seconds|microseconds|minutes)\s*:\s*(?!0\b)\d'),
   RegExp(
@@ -116,6 +116,7 @@ void main() {
       'child: SizedBox(width: AppSize.dialog, child: x),',
       'elevation: 0,',
       'offset: Offset(0, 0),',
+      'minimumSize: Size(0, AppSize.control),',
       'maxLines: 2,',
       'flex: 2,',
       'final columns = width >= AppBreakpoints.large ? 3 : 1;',

@@ -7,13 +7,16 @@
 // (docs/design/system/01-farbe.md) und „Zuordnung zu Material 3“
 // (02-typografie.md) auf die 28 Farbrollen und elf Textstile abgebildet —
 // so zeigt kein Widget unbemerkt Platzhalter-Lila. DS-07 prüft die Zuordnung.
-// Komponenten-Themes folgen in D04.
+// Seit D04 dazu die Komponenten-Themes aus `component_themes.dart` (DS-52);
+// Dichte und Tippziele fest, damit Maße auf allen Plattformen den Tokens
+// entsprechen.
 
 import 'package:flutter/material.dart';
 
 import '../tokens/color_tokens.g.dart';
 import '../tokens/typography_tokens.g.dart';
 import 'app_fonts.dart';
+import 'component_themes.dart';
 
 /// Die Themes der App.
 abstract final class AppTheme {
@@ -23,12 +26,35 @@ abstract final class AppTheme {
   /// Dunkles Theme (Figma-Modus `dark`).
   static ThemeData dark() => _build(AppColorTokens.dark);
 
-  static ThemeData _build(AppColorTokens c) => ThemeData(
-        useMaterial3: true,
-        colorScheme: colorSchemeOf(c),
-        textTheme: textTheme,
-        fontFamily: AppFonts.qualifiedFamily,
-      );
+  static ThemeData _build(AppColorTokens c) {
+    final themes = AppComponentThemes(c);
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorSchemeOf(c),
+      textTheme: textTheme,
+      fontFamily: AppFonts.qualifiedFamily,
+      visualDensity: VisualDensity.standard,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      elevatedButtonTheme: themes.elevatedButton,
+      outlinedButtonTheme: themes.outlinedButton,
+      textButtonTheme: themes.textButton,
+      iconButtonTheme: themes.iconButton,
+      floatingActionButtonTheme: themes.fab,
+      inputDecorationTheme: themes.input,
+      chipTheme: themes.chip,
+      listTileTheme: themes.listTile,
+      dividerTheme: themes.divider,
+      dividerColor: c.lineHairline,
+      snackBarTheme: themes.snackBar,
+      dialogTheme: themes.dialog,
+      popupMenuTheme: themes.popupMenu,
+      cardTheme: themes.card,
+      progressIndicatorTheme: themes.progress,
+      appBarTheme: themes.appBar,
+      navigationBarTheme: themes.navigationBar,
+      tooltipTheme: themes.tooltip,
+    );
+  }
 
   /// Material-Farbrollen nach 01-farbe, „Abbildung auf Material 3“.
   static ColorScheme colorSchemeOf(AppColorTokens c) {

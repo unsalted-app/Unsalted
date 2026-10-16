@@ -247,7 +247,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D01 | Golden-Grundlage und Grundstand: `goldens.yml` (Hilfsbranch `goldens/**`), `ci.yml` auf `ubuntu-24.04`, GL-01 (13 Motive, 104 Bilder), GL-02 (5 Bildschirme, 40 Bilder); Prüflauf 0 Abweichungen, Gegenprobe 24 | fertig |
 | D02 | Schrift und Lizenz: Atkinson Hyperlegible Next als TTF (392 Glyphen, Version 2.001) mit OFL im Design-Paket, `AppFonts`, Lizenz in der App registriert; DS-49 (Glyphen), DS-50 (Lizenz) | fertig |
 | D03 | Token-Datei und Generator (`tool/generate_tokens.dart`, alle Token-Dateien generiert), Theme-Zuordnung nach 01/02, Schrift Atkinson im Theme; DS-04/05/07 neu gefasst, DS-51 mit Übergangsliste (8 Dateien); Kapitel 28.10 (Punkte 1, 12, 13) | fertig |
-| D04 | Komponenten-Themes (DS-52) | offen |
+| D04 | Komponenten-Themes aus Tokens (`component_themes.dart`): Buttons, Marker-Knopf, Symbol-Schaltfläche, Eingabe, Chips, Liste, Trenner, Meldung, Dialog, Menü, Karte, Laden, Kopfleiste, Navigation, Tooltip; DS-52; Kapitel 28.10.2 | fertig |
 | D05a | Symbol-Finder in Tests | offen |
 | D05b | Symbole Outlined + neue Namen | offen |
 | D06–D18 | Etappen 2–4 nach Plan | offen |

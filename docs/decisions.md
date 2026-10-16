@@ -1987,3 +1987,62 @@ Tests grün; `check_architecture` Exit 0. *Goldens:* Lauf `38978048474`
 Komponenten-Themes folgen in D04). Der Stil `code` erscheint in den
 Linux-Bildern als Ersatzkasten, weil der Runner keine Monospace-Systemschrift
 hat (Folge von F7, auf Geräten die Systemschrift).
+
+**D04 — Komponenten-Themes.** Neu `lib/src/theme/component_themes.dart`
+(`AppComponentThemes`, nicht über die Tür): je Material-Widget, das die
+Komponenten bauen, Fläche, Kontur, Ecke, Innenabstand, Mindesthöhe,
+Schrift und Zustände aus Tokens nach 07 (Abschnitt 7) und den
+Komponentenkarten. Zustände: Überlagerung in der Inhaltsfarbe mit
+`opacity-hover` (Hover, Fokus) bzw. `opacity-pressed` (Drücken);
+deaktiviert `surface-sunken`/`text-disabled` bzw. Kontur `line-hairline`.
+Primärbutton `ElevatedButton` (Tintenfläche, elevation 0), Sekundär
+`OutlinedButton` (Kontur `line-strong`, `stroke-frame`), Tertiär `TextButton`
+(Innenabstand `space-m`), alle `radius-s`, Mindesthöhe `size-control`,
+`body-strong`, Symbol `size-icon-small`. Marker-Knopf: Markerfläche,
+Tintenkontur `stroke-frame` in `text-on-marker`, alle Höhen 0,
+`size-fab`. Eingabefeld gefüllt (`surface-raised`, deaktiviert
+`surface-sunken`), Kontur `line-control` 1 px, Fokus `line-focus` und Fehler
+`text-error` in `stroke-focus`, Innenabstand `space-m` (48 = `size-control`
+bei `body`). Chips: `surface-raised` mit Kontur `line-control`, gewählt
+`surface-inverse` mit `text-inverse` und Häkchen; Innenabstand `space-xs` +
+Beschriftung `space-s` = `space-m`. Listeneintrag: Titel `body-strong`,
+Untertitel `body-small`/`text-secondary` (02), `size-list-item`, Innenabstand
+`space-l`/`space-m`; bewusst ohne `textColor` — `ListTile` färbt damit auch
+den Untertitel (im ersten Golden-Lauf `38978822725` gesehen: Untertitel in
+Tinte; Lauf verworfen, nicht eingecheckt). Trenner Haarlinie (`dividerTheme` und `dividerColor` —
+`ThemeData` leitet sie sonst aus `outline` ab). Meldung: invers,
+`action-inverse`, `radius-s`, `SnackBarBehavior.floating` mit Breite
+`size-dialog` (Snackbar-Karte „höchstens size-dialog breit“; schwebend steht
+sie über dem FAB statt ihn zu verschieben). Dialog `surface-raised`,
+Haarlinie, `radius-m`, Scrim `scrim` mit `opacity-scrim`. Menü und Karte
+`surface-raised`, Haarlinie, flach. Ladekreis/-balken `text-primary`, Spur
+`line-hairline`, Balken `stroke-rule`, Kreis `stroke-focus`. Kopfleiste
+`surface-page`, flach, `size-top-bar`, Haarlinie unten als `shape`.
+Navigationsleiste `surface-page`, `size-nav-bar`, Pille in Seitenfarbe (also
+unsichtbar), gewählt `text-primary`, sonst `text-secondary` — der
+Auswahlbalken kommt mit der eigenen Komponente in D10. Tooltip invers,
+`label-small`. `VisualDensity.standard` und `MaterialTapTargetSize.padded`
+fest, damit Maße auf macOS (Widgetbook) wie auf dem Handy den Tokens
+entsprechen. *Nicht mit Material-Themes ausdrückbar* und deshalb in den
+Komponenten (D06–D10): `shadow-overlay` an Menü, Dialog und Meldung (Material
+kennt nur `elevation`), Fokusring mit Spalt (`shadow-focus`), Beschriftung über
+dem Feld, Auswahlbalken der Navigation, Tag mit `radius-xs`. Farben ohne
+`Colors.*` (DS-02): wo ein durchsichtiger Wert nötig wäre, steht die
+Seitenfarbe (Pille der Navigationsleiste). Neu DS-52
+(`test/theme/ds52_component_themes_test.dart`): Werte der Themes je Modus
+gegen die Tokens, ein gebauter Listeneintrag (Untertitel `text-secondary`,
+Titel `text-primary`) und ein gebauter Primärbutton (Fläche `action-primary`,
+Höhe ≥ `size-control`) in allen vier Varianten; *Gegenprobe:* `textColor`
+vorübergehend wieder im Theme → der Listeneintrag-Fall rot. DS-51: Die Regel für
+`Size(…)`/`Offset(…)` meldet nur noch Literale ungleich 0 (vorher auch
+`Size(0, AppSize.control)`), Selbsttest um diesen Fall ergänzt — Änderung an
+einem in D03 eingeführten Test. Keine bestehende Testzeile geändert: Die
+Komponenten bauen dieselben Widgets, die Material-Prüfungen aus C28 bleiben
+(Plan d3). Kapitel 28.10.2. Mac: Design 240, Core 412, App 6, Widgetbook 6
+Tests grün; `check_architecture` Exit 0. *Goldens:* Lauf `38979853362`
+(`goldens/d04`): 112 Bilder geändert — alle Motive mit Buttons, Feldern,
+Chips, Listen, Meldung oder Kopfleiste; unverändert nur Farbtabelle,
+Typografie, Text/Symbole und Daten. Bekannter Zwischenstand bis D08: Die
+schwebenden Beschriftungen sitzen in der Kontur der Felder, und gestapelte
+Felder liegen ohne Abstand aneinander (Beschriftung über dem Feld folgt mit
+`AppTextField`).
