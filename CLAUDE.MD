@@ -254,13 +254,17 @@ Spezifikation Kapitel 28.9. Der frühere Design-Pass `design/1.1` wurde nicht
 übernommen und ist gelöscht. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03,
 AT-13–15, UI-58–66, UC-01–07, APP-02.
 
-**Teil 1.3 – Gestaltung aus Figma (in Arbeit, Branch `design-1.3`):**
-Übergabe aus Figma liegt unter `docs/design/` (`UEBERGABE.md`, `system/`,
-`figma/`). Plan mit Commit-Reihenfolge D01–D18, Testzeilen und offenen
-Fragen F1–F14: `docs/design/plan-1.3.md`.
+**Teil 1.3 – Gestaltung aus Figma (in Arbeit, Branch `design-1.3`,
+Entwurfs-PR #2):** Übergabe aus Figma unter `docs/design/` (`UEBERGABE.md`,
+`system/`, `figma/`). Plan (freigegeben, Antworten F1–F14):
+`docs/design/plan-1.3.md`; Entscheidungen: `docs/decisions.md`, „Teil 1.3“;
+Nachträge: Spezifikation Kapitel 28.10. Etappe 1 fertig: D01 Goldens (GL-01,
+GL-02, nur Linux), D02 Schrift Atkinson mit OFL, D03 Token-Datei + Generator +
+Theme-Zuordnung, D04 Komponenten-Themes, D05a/b Symbole Outlined. Test-IDs
+neu: GL-01/02, DS-49–52.
 
-**Nächster Schritt:** Freigabe des Plans `docs/design/plan-1.3.md` (Antworten
-auf F1–F14) durch den Projektverantwortlichen; erst danach Code (D01).
+**Nächster Schritt:** Bericht zu Etappe 1 an den Projektverantwortlichen;
+danach Etappe 2 (D06–D12) nach Plan.
 
 ---
 

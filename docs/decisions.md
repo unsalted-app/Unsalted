@@ -2073,3 +2073,34 @@ Die drei übrigen Core-Testdateien importieren die Design-Tür schon seit C28.
 `recipe_detail_menu_context_test.dart:78, 90` ist Eingabe einer
 Modul-Aktion, kein Finder. Vorher und nachher grün (Core 412, App 6), weil bis
 D05b `AppIcons.x == Icons.x` gilt.
+
+**D05b — Symbole Outlined (F12).** `AppIcons` zeigt auf die
+Outlined-Varianten der mitgelieferten Material Icons (UEBERGABE Punkt 4: bis
+zum eigenen Linienset; Material Symbols bräuchten eine eigene Schriftdatei)
+und führt alle 32 Namen der Figma-Bibliothek in der Reihenfolge von
+`docs/design/figma/figma-ids.json`; neu `timer` (`timer_outlined`), `arrow`
+(`arrow_forward_outlined`), `back` (`arrow_back_outlined`), `lock`
+(`lock_outlined`), `more` (`more_vert_outlined`), `close`
+(`close_outlined`), `undo` (`undo_outlined`), `chevron`
+(`expand_more_outlined`, für das Auswahlfeld), `link` (`link_outlined`),
+`photo` (`photo_outlined`), `swap` (`swap_horiz_outlined`). Alle Namen im SDK
+geprüft. `delete-outline`, `info`, `error` und `star-outline` waren schon
+Umrisse und bleiben; `star` bleibt gefüllt als Gegenstück zu `star-outline`
+(markiert/markieren; der Master-Stern entfällt ohnehin mit D13). DS-17 um
+einen Fall ergänzt (bestehende Zeilen unverändert, nur Importe und Kopf
+erweitert): Namen = die 32 Symbole aus `figma-ids.json`, Stichproben
+Outlined. Keine Testzeile in Core oder App geändert (dank D05a).
+*Gegenprobe:* `widget_test.dart:39` vorübergehend wieder `Icons.restaurant`
+→ App-Rauchtest rot; zurückgesetzt, grün. *Figma-Abgleich:* Namen 32/32
+(DS-17); ein Sichtvergleich der Symbolseite (`21:388`) per Bild war nicht
+aussagekräftig (schwarze Symbole auf dunkler Seite). Bekannte, in der
+Übergabe festgelegte Abweichung: Figma zeigt Material Symbols mit Gewicht
+300, der Code die Material Icons Outlined (Strich etwas kräftiger). Mac:
+Design 241, Core 412, App 6, Widgetbook 6 Tests grün;
+`check_architecture` Exit 0. *Goldens:* Lauf `38982743613` (`goldens/d05b`):
+48 Bilder geändert (Aktionen, Navigation, Rückmeldung, Detail-Template,
+Text/Symbole, Rezeptdetail); Motive, deren Symbole in der Outlined-Variante
+gleich aussehen (`add`, `search`, `drag-handle`), unverändert. Beobachtung:
+`delete` (`delete_outlined`) und `delete-outline` (`delete_outline`) sehen
+jetzt gleich aus (Papierkorb-Umriss); beide Namen bleiben, bis das eigene
+Linienset sie unterscheidet.

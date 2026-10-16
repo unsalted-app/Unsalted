@@ -1,15 +1,30 @@
 // test/components/ds17_icons_test.dart
 //
 // DS-17 (Teil 1.2): AppIcon setzt Größe und Farbton; AppIcons führt jedes
-// Symbol unter einem Figma-Namen.
+// Symbol unter einem Figma-Namen. Seit Teil 1.3 (D05b): genau die 32 Symbole
+// der Figma-Bibliothek (docs/design/figma/figma-ids.json), als Outlined-Variante.
+
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:unsalted_design/unsalted_design.dart';
 
+import '../architecture/support/design_test_utils.dart';
 import '../support/design_harness.dart';
 
 void main() {
+  test('DS-17: alle Symbole der Figma-Bibliothek, Outlined', () {
+    final ids = File('${findPackageRoot().parent.parent.path}/docs/design/figma/figma-ids.json').readAsStringSync();
+    final figma = ((jsonDecode(ids) as Map<String, dynamic>)['bibliothek']['symbole'] as Map<String, dynamic>).keys;
+    expect(AppIcons.byFigmaName.keys.toList(), figma.toList());
+    expect(AppIcons.byFigmaName, hasLength(32));
+    expect(AppIcons.search, Icons.search_outlined);
+    expect(AppIcons.restaurant, Icons.restaurant_outlined);
+    expect(AppIcons.star, Icons.star, reason: 'gefüllt als Gegenstück zu star-outline');
+  });
+
   test('DS-17: Figma-Namen der Symbole', () {
     expect(AppIcons.byFigmaName.keys.every((k) => RegExp(r'^Icon/[a-z]+(-[a-z]+)*$').hasMatch(k)), isTrue);
     expect(AppIcons.byFigmaName.values.toSet(), hasLength(AppIcons.byFigmaName.length));

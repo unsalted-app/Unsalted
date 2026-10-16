@@ -249,7 +249,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D03 | Token-Datei und Generator (`tool/generate_tokens.dart`, alle Token-Dateien generiert), Theme-Zuordnung nach 01/02, Schrift Atkinson im Theme; DS-04/05/07 neu gefasst, DS-51 mit Übergangsliste (8 Dateien); Kapitel 28.10 (Punkte 1, 12, 13) | fertig |
 | D04 | Komponenten-Themes aus Tokens (`component_themes.dart`): Buttons, Marker-Knopf, Symbol-Schaltfläche, Eingabe, Chips, Liste, Trenner, Meldung, Dialog, Menü, Karte, Laden, Kopfleiste, Navigation, Tooltip; DS-52; Kapitel 28.10.2 | fertig |
 | D05a | Symbol-Finder in Tests auf `AppIcons` (11 Zeilen in 4 Dateien, nur der Symbolname) | fertig |
-| D05b | Symbole Outlined + neue Namen | offen |
+| D05b | Symbole Outlined, alle 32 Namen der Figma-Bibliothek (11 neu); DS-17 gegen `figma-ids.json` | fertig |
 | D06–D18 | Etappen 2–4 nach Plan | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)
