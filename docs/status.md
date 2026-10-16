@@ -234,17 +234,23 @@ Stand nach Etappe 1 (C01–C13): Design 208 Tests, Core 386, App 1, Widgetbook 6
 
 - ~~Ladebalken im Rezeptdetail erst nach ~300 ms Verzögerung zeigen (blitzt bei schnellem Laden kurz auf).~~ → umgesetzt in Teil 1.1c.
 
-## Teil 1.3 — Gestaltung aus Figma — in Arbeit (Phase A: Plan)
+## Teil 1.3 — Gestaltung aus Figma — in Arbeit (Phase B, Etappe 1)
 
-Branch `design-1.3` von `main` @ `1022185`. Plan, Commit-Reihenfolge D01–D18 und offene Fragen F1–F14: `docs/design/plan-1.3.md`.
+Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenfolge D01–D18 und Antworten F1–F14: `docs/design/plan-1.3.md`; Entscheidungen: `docs/decisions.md`, „Teil 1.3“.
 
 | Schritt | Beschreibung | Status |
 |---|---|---|
 | — | Aufräumen: `.DS_Store` aus dem Repository, in `.gitignore` (`571da1e`) | fertig |
 | — | Design-Übergabe aus Figma nach `docs/design/` (`UEBERGABE.md`, `system/`, `figma/`; `c8bdfe3`) | fertig |
 | — | Figma-Abgleich Variablen ↔ `tokens.json` (nur gelesen): 158 Werte gleich, Abweichungen A1–A4 im Plan | fertig |
-| — | Plan `docs/design/plan-1.3.md` | fertig, wartet auf Freigabe |
-| D01–D18 | Umsetzung nach Plan, Etappen mit Stopp | offen |
+| — | Plan `docs/design/plan-1.3.md` | fertig, freigegeben 2026-10-17 (F1–F14) |
+| D01 | Golden-Grundlage und Grundstand (GL-01, GL-02) | offen |
+| D02 | Schrift und Lizenz (DS-49, DS-50) | offen |
+| D03 | Token-Datei, Generator, Theme-Zuordnung (DS-04/05/07 neu, DS-51) | offen |
+| D04 | Komponenten-Themes (DS-52) | offen |
+| D05a | Symbol-Finder in Tests | offen |
+| D05b | Symbole Outlined + neue Namen | offen |
+| D06–D18 | Etappen 2–4 nach Plan | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)
 

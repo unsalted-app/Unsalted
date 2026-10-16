@@ -1783,3 +1783,47 @@ Eingabe mit Komma und Punkt, `hasChanges` false bei Vorbelegung), UI-66
 drei Produktivdateien vorübergehend auf C29 → UI-64 bis UI-66 rot;
 zurückgesetzt, grün. Stand: Design 212, Core 412, App 6, Widgetbook 6 Tests
 grün; `check_architecture` Exit 0.
+
+## 2026-10-17 — Teil 1.3: Gestaltung aus Figma (Plan freigegeben)
+
+**Betroffenes Kapitel:** 4, 22, 23, 28 (neues 28.10 „Teil 1.3 – Gestaltung
+aus Figma“, entsteht mit D03–D18).
+
+**Ausgangslage.** Branch `design-1.3` von `main` @ `1022185`; vorab
+`571da1e` (`.DS_Store` aus dem Repository, in `.gitignore`), Übergabe aus
+Figma `c8bdfe3` (`docs/design/UEBERGABE.md`, `system/`, `figma/`), Plan
+`docs/design/plan-1.3.md` (`af4ebbd`), Entwurfs-PR #2 `design-1.3` → `main`.
+Figma-Abgleich Variablen ↔ `tokens.json` (nur gelesen): 158 Werte gleich,
+Abweichungen A1–A4 (Plan, Abschnitt „Figma-Abgleich“).
+
+**Entscheidung (Projektverantwortlicher, 2026-10-17):** Plan freigegeben.
+F1 `material_ui` nicht vorher, eigener kleiner Teil nach 1.3. F2 deutsche
+Systemtexte ja, eigener Commit in der App-Hülle (D17b). F3 Golden-Grundstand
+ja (D01). F4 Seitenleiste ab 600 in 1.3; Liste/Detail nebeneinander als
+eigener Teil 1.4; Rezeptdetail zweispaltig ab 1200 in 1.3. F5 Figma ist die
+Quelle der `reflow`-Werte: Werte aus A1/A2 in beide Token-Dateien (Format
+`"value": {"100": …, "200": …}`), eigener Commit D12a vor D12 mit
+Figma-Abgleich; D12 nicht mehr gesperrt. F6 Die WOFF2 der Übergabe sind
+vollständig (je 392 Glyphen, 362 Zeichen, Version 2.001 mit ttfautohint,
+tnum); verlustfrei mit fontTools in TTF umwandeln, SHA-256, Version und
+Glyphenzahl hier festhalten; R6 im Plan korrigiert. F7 Code-Schrift =
+Systemschrift-Stapel, keine weitere Datei. F8 zwei Token-Dateien mit
+Gleichheitstest. F9 Master = Markerfläche + Wort „Master“. F10 Pfeil als
+Symbol, `describeChanges` unverändert. F11 Golden-Umfang ~136 Bilder. F12
+Outlined-Symbole mit vorgezogenem Finder-Commit D05a. F13 Entwurfs-PR. F14
+Versionen `unsalted_design` 0.2.0 und Tags `part1-v1.3.0`/`design-v0.2.0`
+erst nach Freigabe.
+
+**Zusätzlich vorgegeben:** (1) Goldens müssen vom Branch aus erzeugt werden
+können, weil `workflow_dispatch` erst wirkt, wenn die Workflow-Datei auf
+`main` liegt. *Gewählt:* `goldens.yml` reagiert auf `push` nach `goldens/**`;
+GitHub liest den Workflow bei `push` aus dem gepushten Commit. Ein Commit
+wird zuerst auf einen Hilfsbranch `goldens/dNN` gepusht, die Bilder kommen
+als Artefakt zurück, werden mit `--amend` in denselben Commit gelegt, erst
+dann geht der Commit nach `design-1.3`; der Hilfsbranch wird gelöscht.
+*Verworfen:* Markierung „[goldens]“ in der Commit-Nachricht auf
+`design-1.3` — der Code-Commit käme vor seinen Bildern in den PR, die CI des
+PRs wäre für diesen Commit rot, und die Bilder bräuchten einen zweiten
+Commit. Ablauf Schritt für Schritt: Plan, Abschnitt (d4). (2) DS-51: Die
+Übergangsliste ist am Ende von Etappe 2 (D12) leer und der Mechanismus
+entfernt, wie C27c.

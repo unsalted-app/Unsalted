@@ -1,12 +1,13 @@
 # Teil 1.3 – Gestaltung aus Figma: Plan
 
 Phase A · Stand 2026-10-17 · Branch `design-1.3` (von `main` @ `1022185`) ·
-**zur Freigabe** — offene Fragen F1–F14 in Abschnitt (f)
+Entwurfs-PR #2 · **freigegeben 2026-10-17** — Antworten auf F1–F14 in
+Abschnitt (f) und in `docs/decisions.md`, „Teil 1.3“
 
-Dieses Dokument ist nur der Plan, Code gibt es noch keinen. Phase B beginnt
-erst nach Freigabe und läuft Commit für Commit nach Abschnitt (e), in vier
-Etappen mit Stopp. Offene Fragen haben Nummern (F1 …), damit sie sich einzeln
-beantworten lassen.
+Phase B läuft Commit für Commit nach Abschnitt (e), in vier Etappen mit
+Stopp. Die Antworten des Projektverantwortlichen stehen bei jeder Frage
+(„**Antwort:**“); wo sie den Plan ändern, ist der Plan angepasst (R6, b3,
+d4, D12a, D17).
 
 Grundlage: `docs/design/UEBERGABE.md` und `docs/design/system/` (Commit
 `c8bdfe3`), Figma-Bibliothek `5er28Cr7EMMcPzvusWjNyR`, App-Datei
@@ -99,7 +100,7 @@ geschrieben (nie von Hand), `WEG` = gelöscht. Commit in Klammern.
 unsalted/
 ├─ .github/workflows/
 │  ├─ ci.yml                              ÄNDERN  runs-on fest auf ubuntu-24.04 (D01)
-│  └─ goldens.yml                         NEU     workflow_dispatch: Goldens unter Linux erzeugen, als Artefakt (D01)
+│  └─ goldens.yml                         NEU     push auf goldens/** (+ workflow_dispatch): Goldens unter Linux erzeugen, als Artefakt (D01)
 ├─ docs/
 │  ├─ spezifikation.md                    ÄNDERN  Kapitel 28.10 (D03, ergänzt bis D18)
 │  ├─ status.md, decisions.md             ÄNDERN  je Commit
@@ -146,7 +147,7 @@ unsalted/
 │     ├─ typography/                      NEU     ds49_glyph_coverage_test.dart, ds50_font_license_test.dart, support/cmap.dart (D02)
 │     ├─ tokens/ds04_…, ds05_…            ÄNDERN  auf die Token-Datei umgestellt (D03)
 │     ├─ theme/ds07_neutral_theme_test.dart   WEG → ds07_theme_mapping_test.dart NEU (D03)
-│     ├─ architecture/ds51_no_numbers_in_components_test.dart   NEU, mit Übergangsliste (D03, leer in D12)
+│     ├─ architecture/ds51_no_numbers_in_components_test.dart   NEU, mit Übergangsliste (D03; Liste und Mechanismus in D12 entfernt)
 │     └─ components/, layout/, templates/ ÄNDERN/NEU  je Commit (Zeilen in d2)
 ├─ packages/unsalted_core/
 │  ├─ dart_test.yaml                      NEU     Tag `golden` (D01)
@@ -219,10 +220,12 @@ unsalted/
 
 ### b3 Schrift
 
-- Quelle: vollständige statische TTF aus der Originalquelle der Schrift, nicht
-  die WOFF2 der Übergabe (F6). Version, Herkunft und SHA-256 je Datei in
-  `decisions.md`. Ablage `packages/unsalted_design/lib/fonts/` mit `OFL.txt`
-  (aus `docs/design/system/assets/Lizenzen/OFL-Atkinson-Hyperlegible-Next.txt`).
+- Quelle (F6): die WOFF2 der Übergabe (`docs/design/system/fonts/`), verlustfrei
+  mit fontTools in statische TTF umgewandelt. Sie sind vollständig (je 392
+  Glyphen, 362 Zeichen, Version 2.001, tnum). SHA-256, Version und
+  Glyphenzahl je Datei in `decisions.md`. Ablage
+  `packages/unsalted_design/lib/fonts/` mit `OFL.txt` (aus
+  `docs/design/system/assets/Lizenzen/OFL-Atkinson-Hyperlegible-Next.txt`).
 - `pubspec.yaml`: `flutter: fonts:` (Familie `AtkinsonHyperlegibleNext`,
   Schnitte 400/600/700) und `assets: [lib/fonts/OFL.txt]`.
 - `AppFonts.registerLicenses()` registriert die OFL über `LicenseRegistry`
@@ -441,12 +444,30 @@ DS-38 (`AlertDialog`), DS-40:30, 46, 113, 124, DS-46 übrige Zeilen.
 ### d4 Goldens, Schrift im Test, Glyphen
 
 - **Wo erzeugt:** nur unter Linux, im Workflow `.github/workflows/goldens.yml`
-  (manuell, Eingabe Branch; `ubuntu-24.04`, Flutter 3.47.5 wie `ci.yml`):
-  `flutter test --tags golden --update-goldens` in Design und Core, Bilder
-  als Artefakt. Bilder werden heruntergeladen, durchgesehen und mit dem Commit
-  eingecheckt, der sie verursacht. Verglichen wird in `ci.yml` (gleicher
-  Runner, fest auf `ubuntu-24.04` statt `ubuntu-latest`). Lokal gibt es kein
-  Docker; ein Mac erzeugt andere Bilder.
+  (`ubuntu-24.04`, Flutter 3.47.5 wie `ci.yml`): `flutter test --tags golden
+  --update-goldens` in Design und Core, alle Golden-Bilder als Artefakt
+  `goldens`. Verglichen wird in `ci.yml` (gleicher Runner, fest auf
+  `ubuntu-24.04` statt `ubuntu-latest`). Lokal gibt es kein Docker; ein Mac
+  erzeugt andere Bilder.
+- **Auslösung vom Branch aus** (`workflow_dispatch` ginge erst, wenn die Datei
+  auf `main` liegt): Push auf einen Hilfsbranch `goldens/<commit>`, z. B.
+  `git push origin HEAD:refs/heads/goldens/d03`. Bei `push` liest GitHub den
+  Workflow aus dem gepushten Commit, der Lauf braucht also nichts auf `main`.
+  `ci.yml` reagiert auf diesen Branch nicht (nur `main` und PRs nach `main`),
+  `design-1.3` bekommt so keinen roten Zwischenstand. `workflow_dispatch`
+  bleibt zusätzlich eingetragen (für später, auf `main`).
+- **Weg der Bilder in den Commit:** (1) Commit lokal fertig, alle Tests auf dem
+  Mac grün. (2) `git push origin HEAD:refs/heads/goldens/dNN`. (3) Lauf
+  abwarten (`gh run watch`), Artefakt holen: `gh run download <id> -n goldens
+  -D <scratchpad>`. (4) Bilder an ihre Pfade unter `test/goldens/` kopieren,
+  `git status` zeigt genau die geänderten Bilder; jedes geänderte Bild
+  ansehen. (5) Bilder mit `git commit --amend` in denselben Commit (der Inhalt
+  außer den Bildern ist identisch mit dem gerenderten Stand). (6) `git push`
+  auf `design-1.3` — erst jetzt, der Commit war dort noch nie, also kein
+  Force-Push. (7) Hilfsbranch löschen (`git push origin --delete goldens/dNN`).
+  (8) CI des PRs vergleicht die eingecheckten Bilder; grün = Nachweis.
+  Lauf-ID und Zahl der geänderten Bilder stehen im Bericht und in
+  `decisions.md`.
 - **Auf dem Mac:** Golden-Dateien tragen `@TestOn('linux')` und
   `@Tags(['golden'])` — `flutter test` bleibt grün und überspringt sie.
 - **Varianten:** hell/dunkel × Handy 390 × 844 / Tablet 1024 × 1366 ×
@@ -635,14 +656,24 @@ DS-40–45, DS-59, APP-02 und App-Rauchtest (`widget_test.dart`); Figma
 Tests aus (d2) D11. Abnahme: DS-46–48 (Stabilität 1.1a/1.1c), DS-60;
 UI-33/34/45/46 unverändert grün; Figma `Template/*`, Tablet-Seiten.
 
-**D12 — Große Schrift (nur nach F5).**
-Ändern: `tokens/unsalted.tokens.json` + `docs/design/system/tokens.json`
-(Nachtrag aus F5), Generator (Werte je Textgröße), `size_tokens.g.dart`;
+**D12a — Token-Nachtrag `reflow` (F5).**
+Ändern: `packages/unsalted_design/tokens/unsalted.tokens.json` und
+`docs/design/system/tokens.json` gleich (F8): die fünf Maße aus A1 im Format
+`"value": {"100": "96px", "200": "160px"}`, dazu `reflow-rule-inline`,
+`reflow-rule-stacked`, `reflow-inset-inline` (A2), Werte aus Figma
+(Sammlung `type`, Modi 100/200); Generator liest beide Formen. Abnahme:
+Figma-Abgleich (nur gelesen) im Bericht — alle `reflow/*` in beiden Modi
+gleich; DS-04 grün.
+
+**D12 — Große Schrift.**
+Ändern: Generator (Werte je Textgröße), `size_tokens.g.dart`;
 Neu: `lib/src/theme/app_reflow.dart`; Komponenten mit `Wrap`/`LayoutBuilder`
 (Nährwert-Kopf, Mengenrechner, Zutatenzeile, untere Leiste); Mindesthöhen
-statt fester Höhen. Widgetbook: Textgröße als Addon, WB-04. DS-51
-Übergangsliste leer und entfernt. Abnahme: WB-04 grün; Goldens 200 % ohne
-Abschneiden; Figma „Bildschirme · Schrift 200“ (`73:3778`).
+statt fester Höhen. Widgetbook: Textgröße als Addon, WB-04. DS-51:
+Übergangsliste leer **und der Mechanismus entfernt** (wie C27c: Liste und
+Ausnahmeprüfung gelöscht, Regel ohne Ausnahme). Abnahme: WB-04 grün; Goldens
+200 % ohne Abschneiden; Gegenprobe DS-51 (Zahl in einer Komponente → rot);
+Figma „Bildschirme · Schrift 200“ (`73:3778`).
 
 ### Etappe 3 — Core-Bausteine (Stopp nach D16)
 
@@ -666,9 +697,10 @@ Punkte 3, 8; Bildschirme 03 (`7:895`), 10 (`23:1492`).
 
 ### Etappe 4 — App-Hülle und Abschluss
 
-**D17 — App-Hülle.** Nur nach F4: Seitenleiste ab 600 einschalten. Nur nach
-F2: `apps/unsalted_app/pubspec.yaml` (+ `flutter_localizations`),
-`lib/main.dart` (Delegates, `Locale('de')`), APP-03. Abnahme: App-Tests grün;
+**D17 — App-Hülle.** Seitenleiste ab 600 einschalten (F4). Deutsche
+Systemtexte als eigener Commit D17b (F2): `apps/unsalted_app/pubspec.yaml`
+(+ `flutter_localizations`), `lib/main.dart` (Delegates, `Locale('de')`),
+APP-03. Abnahme: App-Tests grün;
 28.10 Punkte 10, 14; Figma Tablet (`147:9746`) und quer (`148:3817`).
 
 **D18 — Abschluss.** `docs/design/design_system.md` (Weg der Werte mit
@@ -692,7 +724,7 @@ Goldens), Exit 0, Figma-Abgleich je Hauptbildschirm dokumentiert.
 | R3 | Geladene Schriften ändern Textmaße in allen Tests | Laden nur in der Golden-Harness, nie global |
 | R4 | `reflow`-Werte bei 200 % fehlen in `tokens.json` (A1, A2) | D12 wartet auf F5; bis dahin keine Handwerte |
 | R5 | Schrift ohne → ✓ ★ µ | Pfeil als Symbol, ✓/★ nur als Symbol, DS-49; Nutzertexte über Systemrückfall |
-| R6 | WOFF2 der Übergabe sind vermutlich ein Teilsatz (ungepackt rund 65 KB, 17 Tabellen) und tragen im Kopf „2.66“, 02 nennt Version 2.001 | vollständige TTF aus der Originalquelle (F6), Version und Glyphen messen und protokollieren |
+| R6 | ~~WOFF2 der Übergabe vermutlich ein Teilsatz~~ — **korrigiert:** Die WOFF2 sind vollständig (je 392 Glyphen, 362 Zeichen, Version 2.001 mit ttfautohint, tnum; ungepackt rund 65 KB je Schnitt ist normal). „2.66“ im WOFF2-Kopf ist die Version des Containers, nicht der Schrift. Rest-Risiko: Umwandlung verändert Daten | verlustfrei mit fontTools umwandeln; Glyphenzahl, Zeichenzahl, Version und tnum der TTF nach dem Umwandeln gegen die WOFF2 prüfen; SHA-256 in `decisions.md` |
 | R7 | Seitenleiste ab 600: die Testfläche ist 800 × 600 | betrifft nur App-Tests (`theme_test.dart:52`); Core-Bildschirme enthalten keine Navigation |
 | R8 | Seitenrand und Inhaltsbreite ab 600 ändern das Layout der Core-Tests (800 breit) | Positionen werden in Core-Tests relativ ermittelt (`getCenter`); volle Läufe je Commit |
 | R9 | Umfang: ~19 Commits, ~136 Golden-Bilder, Repo-Größe wächst je Bildänderung | Etappen mit Stopp; Bildumfang nach F11 begrenzbar |
@@ -702,7 +734,7 @@ Goldens), Exit 0, Figma-Abgleich je Hauptbildschirm dokumentiert.
 | R13 | Eigene Navigationskomponente verliert Material-Semantik | Semantik je Ziel (`selected`, Tab-Rolle), DS-59 mit `SemanticsHandle` |
 | R14 | Strichlinie per `CustomPainter` bei Textgröße 200 % und Rundungen | Pfad entlang der abgerundeten Kontur, Goldens 200 % |
 
-### Offene Fragen (je mit Empfehlung)
+### Fragen F1–F14 (mit Empfehlung und Antwort vom 2026-10-17)
 
 - **F1 — (a) Umstieg auf `material_ui` vorher** (`dart fix --apply
   --code=migrate_design_widgets`, ohne sichtbare Änderung)? Lage in Flutter
@@ -715,18 +747,19 @@ Goldens), Exit 0, Figma-Abgleich je Hauptbildschirm dokumentiert.
   als eigener kleiner Teil nach 1.3 (bzw. mit der Veraltung in einer späteren
   Flutter-Version). Der Umstieg ist mechanisch und von der Gestaltung
   unabhängig; vorher gemacht, vermischt er zwei Änderungen und ändert die
-  Architekturregeln ohne Not.
+  Architekturregeln ohne Not. **Antwort:** nicht vorher — eigener kleiner Teil
+  nach 1.3.
 - **F2 — (b) Deutsche Systemtexte gleich mit?** Heute fehlt jede
   Lokalisierung: Tooltips wie „Back“, das Textauswahlmenü („Copy“, „Paste“)
   und die Lizenzseite sind englisch. *Empfehlung:* **ja, als eigener Commit
   in der App-Hülle (D17)** mit `flutter_localizations` aus dem SDK und
   `Locale('de')`. Core und Design bleiben unberührt (Core-Tests pumpen ohne
   Lokalisierung weiter). Mit F1 später auf die Klassen aus `material_ui`
-  umstellen.
+  umstellen. **Antwort:** ja, eigener Commit in der App-Hülle (D17b).
 - **F3 — (c) Golden-Grundstand mit dem heutigen Aussehen?** *Empfehlung:*
   **ja (D01).** Dann zeigt jeder folgende Commit seine Wirkung als
   Bilddifferenz im PR, und die Golden-Technik (Schriften laden, Linux-Runner)
-  ist geprüft, bevor sich etwas ändert.
+  ist geprüft, bevor sich etwas ändert. **Antwort:** ja (D01).
 - **F4 — (d) Seitenleiste ab 600 und Liste/Detail ab 840.** *Empfehlung:*
   **Seitenleiste in 1.3** (nur Design-Komponente und App-Hülle, keine
   Bildschirm-Datei; Nachtrag 28.10.10). **Liste/Detail nebeneinander als
@@ -735,7 +768,8 @@ Goldens), Exit 0, Figma-Abgleich je Hauptbildschirm dokumentiert.
   28.4.1) und damit Bildschirm-Dateien und Routen — gegen die Leitplanke
   dieses Teils. Das Rezeptdetail zweispaltig ab 1200 bleibt in 1.3 (nur
   `DetailLayout` im Template, die Abschnitte sind schon in Haupt/Neben
-  geteilt).
+  geteilt). **Antwort:** wie empfohlen — Seitenleiste ab 600 in 1.3,
+  Liste/Detail als Teil 1.4, Rezeptdetail zweispaltig ab 1200 in 1.3.
 - **F5 — Werte bei 200 % für `reflow-*` fehlen in `tokens.json`.**
   *Empfehlung:* Nachtrag der Token-Datei durch die Gestaltung (Format
   `"value": {"100": "96px", "200": "160px"}` für die fünf Maße, dazu
@@ -743,32 +777,46 @@ Goldens), Exit 0, Figma-Abgleich je Hauptbildschirm dokumentiert.
   Werten aus Figma (A1, A2), vom Projektverantwortlichen bestätigt, als
   eigener Commit vor D12. Zwischenstufen linear zwischen 100 und 200 %,
   oberhalb von 200 % (iOS erlaubt mehr) der 200-%-Wert. Bis dahin ist D12
-  gesperrt; Etappe 3 hängt nicht davon ab.
+  gesperrt; Etappe 3 hängt nicht davon ab. **Antwort:** Figma ist die Quelle.
+  Werte aus A1/A2 aus Figma in beide Token-Dateien übernehmen (Format wie
+  vorgeschlagen), als eigener Commit vor D12 (D12a), mit Figma-Abgleich im
+  Bericht. D12 ist damit nicht mehr gesperrt.
 - **F6 — Herkunft der TTF.** *Empfehlung:* vollständige statische TTF aus der
   Originalquelle der Schrift (Release mit Versionsnummer), nicht die
   Umwandlung der WOFF2 aus der Übergabe (vermutlich Teilsatz, R6). Herkunft,
-  Version, SHA-256 und Glyphenliste in `decisions.md`.
+  Version, SHA-256 und Glyphenliste in `decisions.md`. **Antwort:** Die WOFF2
+  der Übergabe sind vollständig (je 392 Glyphen, 362 Zeichen, Version 2.001
+  mit ttfautohint, tnum vorhanden). Verlustfrei mit fontTools in TTF
+  umwandeln; SHA-256, Version und Glyphenzahl in `decisions.md`; R6
+  korrigiert.
 - **F7 — Schrift für `code`.** *Empfehlung:* Systemschrift über den Stapel aus
   `tokens.json` (`ui-monospace`, `SF Mono`, `Menlo`, `Consolas`, `monospace`),
   keine weitere Datei. Folge: In den Linux-Goldens erscheint der Codeblock in
   der Ersatzschrift. Alternative: eine Monospace-Schrift (OFL) bündeln.
+  **Antwort:** Systemschrift-Stapel, keine weitere Datei.
 - **F8 — Token-Datei an zwei Orten.** *Empfehlung:* DS-04 erzwingt, dass
   `docs/design/system/tokens.json` und `packages/unsalted_design/tokens/unsalted.tokens.json`
   gleich sind; eine neue Übergabe ändert beide im selben Commit.
+  **Antwort:** ja.
 - **F9 — Master sichtbar.** *Empfehlung:* Markerfläche der Marke **und** das
   Wort „Master“ im Untertitel (nicht nur Semantik), damit Farbe nie allein
-  trägt (README, Barrierefreiheit).
+  trägt (README, Barrierefreiheit). **Antwort:** ja.
 - **F10 — Pfeil in der Änderungsliste.** *Empfehlung:* als Symbol in
   `AppChangeText`, Text mit → nur als Semantik; `describeChanges` bleibt
   unverändert (keine Testzeile in `change_descriptions_test.dart`).
+  **Antwort:** ja.
 - **F11 — Umfang der Goldens.** *Empfehlung:* GL-01 je Komponentengruppe,
   GL-02 fünf Musterbildschirme (1, 3, 4, 8, 10), je 8 Varianten (~136
-  Bilder). Weitere Bildschirme nur bei Bedarf.
+  Bilder). Weitere Bildschirme nur bei Bedarf. **Antwort:** ja.
 - **F12 — Symbole Outlined.** *Empfehlung:* ja, mit vorgezogenem
   Finder-Commit D05a, damit die Umstellung keinen Test berührt.
+  **Antwort:** ja.
 - **F13 — CI für den Branch.** *Empfehlung:* Entwurfs-PR `design-1.3` → `main`
   (CI läuft für PRs nach `main`), Runner fest `ubuntu-24.04`, Goldens per
-  `goldens.yml`.
+  `goldens.yml`. **Antwort:** ja; Entwurfs-PR #2 angelegt. Auslösung der
+  Goldens vom Branch aus über Hilfsbranch `goldens/<commit>` (d4), weil
+  `workflow_dispatch` erst auf `main` wirkt.
 - **F14 — Versionen und Status.** *Empfehlung:* `unsalted_design` 0.2.0;
   nach Freigabe Tags `part1-v1.3.0` und `design-v0.2.0`; erst dann der Status
-  „freigegeben“ in `docs/design/system/README.md`.
+  „freigegeben“ in `docs/design/system/README.md`. **Antwort:** ja, erst nach
+  Freigabe.
