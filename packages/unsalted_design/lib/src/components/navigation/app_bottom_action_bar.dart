@@ -7,7 +7,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../layout/app_stack.dart';
-import '../../tokens/spacing_tokens.dart';
+import '../../tokens/spacing_tokens.g.dart';
 
 /// Aktionsleiste unten.
 class AppBottomActionBar extends StatelessWidget {

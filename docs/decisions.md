@@ -1914,3 +1914,76 @@ Präfix hätte) und registriert die OFL. *Gegenprobe DS-49:* „★“ vorüberg
 in `version_tile.dart` → rot mit genau dieser Zeile; zurückgesetzt, grün.
 Gefundene Zeichen außerhalb von ASCII heute (alle mit Glyphe): Umlaute, ß,
 – — „ “ … · ×, U+00A0.
+*Nachtrag zu D02:* Golden-Lauf `38977364693` (Hilfsbranch `goldens/d02`):
+0 abweichende Bilder, neu erzeugte Bilder byte-gleich — die Schrift lädt
+unter Linux, das Theme nutzt sie noch nicht.
+
+**D03 — Token-Datei, Generator, Theme-Zuordnung.**
+`packages/unsalted_design/tokens/unsalted.tokens.json` = Kopie von
+`docs/design/system/tokens.json` (byte-gleich, F8). Generator
+`tool/generate_tokens.dart` (nur `dart:convert`/`dart:io`, außerhalb von
+`lib/`; DS-01 und `check_architecture` prüfen nur `lib/`): liest die JSON,
+löst Aliase auf und schreibt zehn Dateien `lib/src/tokens/*_tokens.g.dart`;
+nicht mehr erzeugte Dateien löscht er. *Abweichung vom Plan:* Statt
+Hand-Dateien neben dem Generat ist der ganze Ordner `lib/src/tokens/`
+generiert — die Hilfslogik (`AppSpace`, `AppMotion.reduceMotion`/`durationOf`)
+kommt als feste Vorlage aus dem Generator, dazu
+`AppMotion.emphasized = Curves.easeInOutCubicEmphasized`, das laut Hinweis
+der Token-Datei (`easing.note`) nur im Code bleibt, bis eine Komponente es
+braucht. *Abweichung vom Plan:* Die `reflow-*`-Grundwerte stehen in einer
+eigenen Klasse `AppReflow`, weil `reflow-value-column` und
+`size-value-column` sonst beide `AppSize.valueColumn` hießen. Umrechnung:
+`px` → `double`, `ms` → `Duration`, `cubic-bezier` → `Cubic`, CSS-Farbe
+`#rrggbbaa` → `0xAARRGGBB`, CSS-Schatten → `List<BoxShadow>` in umgekehrter
+Reihenfolge (CSS zeichnet den ersten oben, Flutter den letzten; der
+Fokusring hat so den Spalt in Papierfarbe oben). Tabellarische Ziffern
+(`FontFeature.tabularFigures()`) für die Gruppe „Daten“ und jeden Stil,
+dessen Hinweis `tnum` nennt — ergibt display, label-small, data,
+data-strong wie in 02. `code` nutzt den Systemschrift-Stapel der JSON
+(`ui-monospace` mit Rückfall `SF Mono`, `Menlo`, `Consolas`, `monospace`;
+F7). Die Verwendungshinweise der JSON kommen nicht in die Doku-Kommentare:
+sie nennen Fachbegriffe, DS-06 prüft auch Kommentare. Primitive stehen in
+`AppColorPrimitives` (nicht über die Tür), Rollen in `AppColorTokens`
+(28 Rollen, `light`/`dark`, `byFigmaName`). Tür: `*.g.dart`-Pfade; neu
+`AppStroke`, `AppSize`, `AppReflow`, `AppOpacity`, `AppShadow`; `AppElevation`
+entfällt (Golden-Liste DS-03 bewusst nachgeführt, CHANGELOG). `AppTheme`
+(`lib/src/theme/app_theme.dart`): `colorSchemeOf` bildet alle 46
+Material-Rollen nach der Tabelle in 01 ab (Primitive nur, wo 01 sie nennt:
+`secondaryFixed…`, `tertiaryFixed…`, `surfaceBright` hell, `onTertiary`/
+`onError` dunkel), `textTheme` die 15 Textrollen nach 02;
+`fontFamily: AppFonts.qualifiedFamily`. Komponenten importieren die
+`*.g.dart`-Dateien; `AppRadius.m`/`.xs` in `AppNotice` und `AppSkeleton`
+behalten ihre Namen, bekommen aber die neuen Werte (8 bzw. 2).
+*Tests:* DS-04 neu gefasst (`ds04_tokens_complete_test.dart`, Z. 1–76
+ersetzt, „Bewegung reduzieren“ unverändert): Token-Datei = Übergabe,
+`lib/src/tokens/` = Generat (Dateien und Inhalt), Farbrollen und Textstile
+gegen die JSON, Zahlengruppen und Namensregel 05, Fokusring-Reihenfolge,
+Generator stabil. DS-05 neu gefasst: die 24 Paare aus 01 mit Mindestwert
+(Text 4,5, Kontur 3) und dem in 01 genannten Wert (±0,01) je Modus, dazu die
+zwei begründeten Ausnahmen (Marker auf Papier hell 1,19; Punktraster).
+DS-07 neu (`test/theme/ds07_theme_mapping_test.dart`, ersetzt
+`ds07_neutral_theme_test.dart`): 46 Farbrollen und 15 Textrollen gegen die
+Tabellen; `dividerColor` leitet Flutter 3.47.5 aus `outline` ab — die
+Trennerfarbe setzen die Komponenten-Themes (D04, DS-52). DS-51 neu
+(`test/architecture/ds51_no_numbers_in_components_test.dart`): keine Zahlen
+für Maße in `components/`, `layout/`, `templates/`, `theme/` (benannte
+Maß-Parameter, `EdgeInsets`, `Radius`, `Size`, `Offset`, `Duration`,
+`FlexColumnWidth`, Literale ab zwei Stellen, Bruchzahlen; 0 und einstellige
+Zählwerte erlaubt), Selbsttest mit 17 Verstößen und 14 erlaubten Fällen;
+Übergangsliste (8 Dateien, 12 Stellen): `app_fab.dart`,
+`app_key_value_table.dart`, `app_dialog.dart`, `app_notice.dart`,
+`app_skeleton.dart`, `app_icon.dart`, `app_text_field.dart`,
+`app_top_bar.dart`. Geänderte bestehende Testzeilen (Plan d2 D03):
+`apps/unsalted_widgetbook/test/catalog_test.dart:22–23` (Ausnahmeliste:
+neue Token-Klassen statt `AppElevation`), `apps/unsalted_app/test/theme_test.dart:48`
+(`expected.surface` → `expected.surfacePage`), dazu die drei DS-Dateien
+oben. Katalog `catalog/tokens.dart`: Linie, Größe, Deckkraft, Schatten statt
+Höhe. *Gegenprobe DS-04:* `space-l` in der Token-Datei auf 18px, nicht neu
+generiert → drei DS-04-Tests rot (Übergabe, Generat, Zahlengruppen);
+zurückgesetzt, grün; Generator zweimal → kein Unterschied. Kapitel 28.10
+angelegt (Punkte 1, 12, 13). Mac: Design 224, Core 412, App 6, Widgetbook 6
+Tests grün; `check_architecture` Exit 0. *Goldens:* Lauf `38978048474`
+(`goldens/d03`): 144 von 144 Bildern geändert (Farben, Schrift, Radien;
+Komponenten-Themes folgen in D04). Der Stil `code` erscheint in den
+Linux-Bildern als Ersatzkasten, weil der Runner keine Monospace-Systemschrift
+hat (Folge von F7, auf Geräten die Systemschrift).

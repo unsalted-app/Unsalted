@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../tokens/spacing_tokens.dart';
+import '../../tokens/spacing_tokens.g.dart';
 
 /// Trennlinie.
 class AppDivider extends StatelessWidget {

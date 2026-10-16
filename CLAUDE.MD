@@ -84,8 +84,12 @@ unsalted/
 │     │                            mit NavigationBar (/, /foods, /settings)
 │     └─ test/widget_test.dart     App-Start-Rauchtest
 └─ packages/
-   ├─ unsalted_design/             Design-System (Teil 1.2), Rang 0, nur Flutter, Tür mit show
-   │  └─ lib/src/  tokens/ theme/ layout/ components/<gruppe>/ templates/; Tests DS-01–48
+   ├─ unsalted_design/             Design-System (Teil 1.2/1.3), Rang 0, nur Flutter, Tür mit show
+   │  ├─ tokens/unsalted.tokens.json  Token-Datei aus Figma (= docs/design/system/tokens.json, DS-04)
+   │  ├─ tool/generate_tokens.dart    schreibt lib/src/tokens/*.g.dart — nie von Hand ändern
+   │  ├─ lib/fonts/                   Atkinson Hyperlegible Next 400/600/700 (TTF) + OFL.txt
+   │  └─ lib/src/  tokens/ (generiert) theme/ layout/ components/<gruppe>/ templates/;
+   │               Tests DS-01–51, GL-01 (test/goldens/, nur Linux)
    └─ unsalted_core/
       ├─ pubspec.yaml
       ├─ drift_schemas/
@@ -466,6 +470,22 @@ auf F1–F14) durch den Projektverantwortlichen; erst danach Code (D01).
   Nachtrag 1.1a):** Die Ausnahmen prüfen Pfade relativ zu `lib/`
   (`src/ui/`, `src/module/`, `src/data/`). Das Tool ist seitdem grün und
   sollte bei jedem Schritt zusätzlich zu AT-01–AT-12 mit Exit 0 enden.
+- **Token-Werte nie von Hand (seit Teil 1.3 D03):** Alle Dateien unter
+  `packages/unsalted_design/lib/src/tokens/` schreibt
+  `dart run tool/generate_tokens.dart` aus `tokens/unsalted.tokens.json`; DS-04
+  schlägt an, sobald Generat und JSON auseinanderlaufen. Eine neue Übergabe
+  ändert beide Token-Dateien (Paket und `docs/design/system/`) im selben
+  Commit. Generierte Doku-Kommentare enthalten bewusst keine
+  Verwendungshinweise der JSON — die nennen Fachbegriffe, und DS-06 prüft
+  auch Kommentare.
+- **Golden-Bilder nur unter Linux (seit Teil 1.3 D01):** Golden-Tests tragen
+  `@TestOn('linux')` und werden auf dem Mac nicht geladen. Bilder entstehen
+  über einen Hilfsbranch (`git push origin HEAD:refs/heads/goldens/dNN`,
+  Workflow `goldens.yml`, Artefakt `goldens`), kommen per `--amend` in den
+  Commit, erst dann geht der Commit auf den Arbeitsbranch (Ablauf:
+  `docs/design/plan-1.3.md`, d4). `flutter_test` lädt keine gebündelten
+  Schriften; die Golden-Harness lädt sie selbst — nie global über
+  `flutter_test_config.dart`, sonst ändern sich die Textmaße aller Tests.
 
 ---
 

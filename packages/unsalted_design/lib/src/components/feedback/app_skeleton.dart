@@ -8,9 +8,9 @@
 import 'package:flutter/material.dart';
 
 import '../../layout/app_stack.dart';
-import '../../tokens/motion_tokens.dart';
-import '../../tokens/radius_tokens.dart';
-import '../../tokens/spacing_tokens.dart';
+import '../../tokens/motion_tokens.g.dart';
+import '../../tokens/radius_tokens.g.dart';
+import '../../tokens/spacing_tokens.g.dart';
 
 /// [count] Platzhalterblöcke.
 class AppSkeleton extends StatefulWidget {

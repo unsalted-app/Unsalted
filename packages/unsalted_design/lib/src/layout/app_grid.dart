@@ -7,7 +7,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../tokens/spacing_tokens.dart';
+import '../tokens/spacing_tokens.g.dart';
 import 'app_stack.dart';
 import 'responsive.dart';
 

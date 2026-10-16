@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 
 import '../../layout/app_stack.dart';
-import '../../tokens/spacing_tokens.dart';
+import '../../tokens/spacing_tokens.g.dart';
 
 /// Kopfleiste.
 class AppTopBar extends StatelessWidget implements PreferredSizeWidget {

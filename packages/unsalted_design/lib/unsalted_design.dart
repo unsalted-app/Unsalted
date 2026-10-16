@@ -7,13 +7,16 @@
 library;
 
 // Tokens
-export 'src/tokens/breakpoint_tokens.dart' show AppBreakpoints;
-export 'src/tokens/color_tokens.dart' show AppColorTokens;
-export 'src/tokens/elevation_tokens.dart' show AppElevation;
-export 'src/tokens/motion_tokens.dart' show AppMotion;
-export 'src/tokens/radius_tokens.dart' show AppRadius;
-export 'src/tokens/spacing_tokens.dart' show AppSpace, AppSpacing;
-export 'src/tokens/typography_tokens.dart' show AppTypography;
+export 'src/tokens/breakpoint_tokens.g.dart' show AppBreakpoints;
+export 'src/tokens/color_tokens.g.dart' show AppColorTokens;
+export 'src/tokens/motion_tokens.g.dart' show AppMotion;
+export 'src/tokens/opacity_tokens.g.dart' show AppOpacity;
+export 'src/tokens/radius_tokens.g.dart' show AppRadius;
+export 'src/tokens/shadow_tokens.g.dart' show AppShadow;
+export 'src/tokens/size_tokens.g.dart' show AppReflow, AppSize;
+export 'src/tokens/spacing_tokens.g.dart' show AppSpace, AppSpacing;
+export 'src/tokens/stroke_tokens.g.dart' show AppStroke;
+export 'src/tokens/typography_tokens.g.dart' show AppTypography;
 
 // Theme
 export 'src/theme/app_theme.dart' show AppTheme;

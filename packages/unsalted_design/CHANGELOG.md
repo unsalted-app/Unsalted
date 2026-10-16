@@ -4,6 +4,7 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 
 ## design-v0.2.0 — unveröffentlicht (Teil 1.3, Gestaltung aus Figma)
 
+- Tokens aus der Figma-Übergabe: `tokens/unsalted.tokens.json`, Generator `tool/generate_tokens.dart`, alle Dateien unter `lib/src/tokens/` generiert (`*.g.dart`). `AppColorTokens` mit den 28 semantischen Rollen (statt 46 Material-Rollen), `AppTypography` mit elf Stilen (statt 15), `AppRadius` none/xs/s/m/full; neu `AppStroke`, `AppSize`, `AppReflow`, `AppOpacity`, `AppShadow`; `AppElevation` entfällt. `AppTheme` bildet Material-Rollen nach 01-farbe/02-typografie ab, Schrift Atkinson. DS-04/05/07 neu gefasst, DS-51 neu (D03).
 - Schrift Atkinson Hyperlegible Next 400/600/700 (TTF, verlustfrei aus den WOFF2 der Übergabe) mit `OFL.txt` unter `lib/fonts/`; `AppFonts` (Familie, Lizenz-Registrierung); Tests DS-49 (Glyphenabdeckung), DS-50 (Lizenz) (D02).
 
 ## design-v0.1.0 — unveröffentlicht

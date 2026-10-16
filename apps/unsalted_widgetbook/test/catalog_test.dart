@@ -19,8 +19,8 @@ import 'package:widgetbook/widgetbook.dart';
 /// Symbole ohne eigenen Katalogeintrag.
 const _notCatalogued = {
   // Tokens (Ordner „Tokens“) und Theme (Theme-Addon).
-  'AppBreakpoints', 'AppColorTokens', 'AppElevation', 'AppMotion', 'AppRadius', 'AppSpace', 'AppSpacing',
-  'AppTypography', 'AppTheme', 'AppTone', 'AppIcons',
+  'AppBreakpoints', 'AppColorTokens', 'AppMotion', 'AppOpacity', 'AppRadius', 'AppReflow', 'AppShadow', 'AppSize',
+  'AppSpace', 'AppSpacing', 'AppStroke', 'AppTypography', 'AppTheme', 'AppTone', 'AppIcons',
   // Parameter- und Datentypen.
   'AppButtonVariant', 'AppIconSize', 'AppTextRole', 'AppSurfaceTone', 'AppFieldWidth', 'AppSelectItem',
   'AppNoticeKind', 'AppSnackbarHandle', 'AppMenuEntry', 'AppNavigationDestination', 'AppTableRow',

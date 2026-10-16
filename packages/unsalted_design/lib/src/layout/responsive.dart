@@ -5,7 +5,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../tokens/breakpoint_tokens.dart';
+import '../tokens/breakpoint_tokens.g.dart';
 
 /// Fenstergröße nach Material 3.
 enum AppWindowSize {

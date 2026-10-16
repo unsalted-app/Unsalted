@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 
 import '../components/surfaces/app_divider.dart';
 import '../components/text/app_text.dart';
-import '../tokens/spacing_tokens.dart';
+import '../tokens/spacing_tokens.g.dart';
 import 'app_stack.dart';
 
 /// Abschnitt.

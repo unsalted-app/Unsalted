@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 
 import '../../layout/app_stack.dart';
-import '../../tokens/spacing_tokens.dart';
+import '../../tokens/spacing_tokens.g.dart';
 import '../text/app_text.dart';
 
 /// Eine Zeile einer [AppKeyValueTable].

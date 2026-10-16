@@ -1,0 +1,921 @@
+{
+  "version": 1,
+  "color": {
+    "themes": [
+      {
+        "id": "light",
+        "name": "Hell"
+      },
+      {
+        "id": "dark",
+        "name": "Dunkel"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "neutral-0",
+        "value": {
+          "light": "#ffffff"
+        },
+        "usage": "Primitiv „Weiß“. Nur über `surface-raised` (hell) verwenden, nie direkt in Komponenten."
+      },
+      {
+        "name": "neutral-50",
+        "value": {
+          "light": "#f9f7f1"
+        },
+        "usage": "Primitiv „Papier“ (Markenfarbe), ein Hauch warm (OKLCH 0.976 0.008 91) – bewusst kein Creme. Seitengrund hell, Text dunkel. Nur über semantische Tokens verwenden."
+      },
+      {
+        "name": "neutral-100",
+        "value": {
+          "light": "#f0eee9"
+        },
+        "usage": "Primitiv. Vertiefte Flächen hell (`surface-sunken`)."
+      },
+      {
+        "name": "neutral-150",
+        "value": {
+          "light": "#e2dfda"
+        },
+        "usage": "Primitiv. Haarlinien und Punktraster hell (`line-hairline`, `line-dot`)."
+      },
+      {
+        "name": "neutral-400",
+        "value": {
+          "light": "#9b9fa3"
+        },
+        "usage": "Primitiv. Sekundärtext und Entwurfslinie dunkel, deaktivierter Text hell."
+      },
+      {
+        "name": "neutral-500",
+        "value": {
+          "light": "#7d8086"
+        },
+        "usage": "Primitiv. Bedienelement-Kontur (`line-control`) in beiden Modi, Entwurfslinie hell."
+      },
+      {
+        "name": "neutral-600",
+        "value": {
+          "light": "#5e6269"
+        },
+        "usage": "Primitiv „Graphit“ (Markenfarbe). Sekundärtext hell, deaktivierter Text dunkel."
+      },
+      {
+        "name": "neutral-700",
+        "value": {
+          "light": "#434851"
+        },
+        "usage": "Primitiv. Haarlinien dunkel."
+      },
+      {
+        "name": "neutral-800",
+        "value": {
+          "light": "#252a34"
+        },
+        "usage": "Primitiv. Erhöhte Flächen und Punktraster dunkel (`surface-raised`, `line-dot`)."
+      },
+      {
+        "name": "neutral-900",
+        "value": {
+          "light": "#141925"
+        },
+        "usage": "Primitiv „Tinte“ (Markenfarbe, Blauschwarz). Text und Primäraktion hell, Seitengrund dunkel."
+      },
+      {
+        "name": "neutral-950",
+        "value": {
+          "light": "#0c1019"
+        },
+        "usage": "Primitiv. Vertiefte Flächen dunkel, Scrim."
+      },
+      {
+        "name": "marker-400",
+        "value": {
+          "light": "#fee545"
+        },
+        "usage": "Primitiv „Marker“ (Markenfarbe, Textmarker-Gelb), heller Modus. Nur über `marker`, `state-master` und `action-inverse` verwenden; niemals als Textfarbe."
+      },
+      {
+        "name": "marker-500",
+        "value": {
+          "light": "#edd13d"
+        },
+        "usage": "Primitiv „Marker“ für den dunklen Modus: etwas dunkler, damit er auf Tinte nicht blendet (Tinte darauf 11,5 : 1)."
+      },
+      {
+        "name": "red-100",
+        "value": {
+          "light": "#fde9e8"
+        },
+        "usage": "Primitiv. Fehlerfläche hell."
+      },
+      {
+        "name": "red-300",
+        "value": {
+          "light": "#f4918e"
+        },
+        "usage": "Primitiv. Fehlertext dunkel."
+      },
+      {
+        "name": "red-600",
+        "value": {
+          "light": "#c32a28"
+        },
+        "usage": "Primitiv. Fehlertext hell."
+      },
+      {
+        "name": "red-800",
+        "value": {
+          "light": "#831a18"
+        },
+        "usage": "Primitiv. Text auf Fehlerfläche hell."
+      },
+      {
+        "name": "red-900",
+        "value": {
+          "light": "#4d1c1a"
+        },
+        "usage": "Primitiv. Fehlerfläche dunkel."
+      },
+      {
+        "name": "orange-100",
+        "value": {
+          "light": "#feedd9"
+        },
+        "usage": "Primitiv. Warnfläche hell."
+      },
+      {
+        "name": "orange-300",
+        "value": {
+          "light": "#f3ad66"
+        },
+        "usage": "Primitiv. Warntext dunkel."
+      },
+      {
+        "name": "orange-700",
+        "value": {
+          "light": "#a6560a"
+        },
+        "usage": "Primitiv. Warntext hell."
+      },
+      {
+        "name": "orange-800",
+        "value": {
+          "light": "#763a0d"
+        },
+        "usage": "Primitiv. Text auf Warnfläche hell."
+      },
+      {
+        "name": "orange-900",
+        "value": {
+          "light": "#492811"
+        },
+        "usage": "Primitiv. Warnfläche dunkel."
+      },
+      {
+        "name": "surface-page",
+        "value": {
+          "light": "{neutral-50}",
+          "dark": "{neutral-900}"
+        },
+        "usage": "Seitengrund jeder Seite, Kopfleiste, Navigationsleiste, Fußleiste. Listen, Tabellen, Leerstellen, Tags sowie Sekundär- und Tertiärbuttons haben keine eigene Fläche und liegen auf diesem Papier."
+      },
+      {
+        "name": "surface-raised",
+        "value": {
+          "light": "{neutral-0}",
+          "dark": "{neutral-800}"
+        },
+        "usage": "Erhöhte Flächen, hell weiß: Eingabefelder, Auswahl-Chips, Karten, Dialoge, Menüs – sonst nichts. Hebt sich durch Kontur (`line-control`) oder Haarlinie (`line-hairline`) ab, nicht durch Schatten."
+      },
+      {
+        "name": "surface-sunken",
+        "value": {
+          "light": "{neutral-100}",
+          "dark": "{neutral-950}"
+        },
+        "usage": "Vertiefte Flächen: neutrale Hinweise (Info und Erfolg), Codeblock, deaktivierte Primärbuttons und Felder. Tabellenköpfe haben keine Fläche, nur die Tintenlinie."
+      },
+      {
+        "name": "surface-inverse",
+        "value": {
+          "light": "{neutral-900}",
+          "dark": "{neutral-50}"
+        },
+        "usage": "Umgekehrte Fläche: Snackbar, ausgewählter Chip. Text darauf: `text-inverse`."
+      },
+      {
+        "name": "scrim",
+        "value": {
+          "light": "{neutral-950}",
+          "dark": "{neutral-950}"
+        },
+        "usage": "Abdunklung hinter Dialogen und Sheets, immer mit `opacity-scrim`."
+      },
+      {
+        "name": "text-primary",
+        "value": {
+          "light": "{neutral-900}",
+          "dark": "{neutral-50}"
+        },
+        "usage": "Haupttext auf `surface-page`, `surface-raised`, `surface-sunken` (hell 16,4 / 17,6 / 15,1 : 1; dunkel 16,4 / 13,4 / 17,8 : 1)."
+      },
+      {
+        "name": "text-secondary",
+        "value": {
+          "light": "{neutral-600}",
+          "dark": "{neutral-400}"
+        },
+        "usage": "Sekundärtext, Metadaten, Einheiten, unbekannte Werte („—“) auf `surface-page`, `surface-raised`, `surface-sunken` (hell 5,7 / 6,1 / 5,3 : 1; dunkel 6,6 / 5,4 / 7,1 : 1). Ab 13 px."
+      },
+      {
+        "name": "text-disabled",
+        "value": {
+          "light": "{neutral-400}",
+          "dark": "{neutral-600}"
+        },
+        "usage": "Text deaktivierter Bedienelemente (von WCAG 1.4.3 ausgenommen, 2,3–3,1 : 1). Nie für lesbare Inhalte."
+      },
+      {
+        "name": "text-inverse",
+        "value": {
+          "light": "{neutral-50}",
+          "dark": "{neutral-900}"
+        },
+        "usage": "Text und Symbole auf `surface-inverse` und `action-primary` (16,4 : 1 in beiden Modi)."
+      },
+      {
+        "name": "text-on-marker",
+        "value": {
+          "light": "{neutral-900}",
+          "dark": "{neutral-900}"
+        },
+        "usage": "Text und Symbole auf `marker` – in beiden Modi Tinte (13,8 : 1). Auch Kontur des Marker-Knopfs."
+      },
+      {
+        "name": "text-error",
+        "value": {
+          "light": "{red-600}",
+          "dark": "{red-300}"
+        },
+        "usage": "Fehlertext und Fehlersymbol auf `surface-page`, `surface-raised`, `surface-sunken` (hell ≥ 4,9 : 1; dunkel ≥ 6,4 : 1). Immer mit Symbol oder Wort."
+      },
+      {
+        "name": "text-warning",
+        "value": {
+          "light": "{orange-700}",
+          "dark": "{orange-300}"
+        },
+        "usage": "Warntext und Warnsymbol auf `surface-page`, `surface-raised` (hell 5,0 / 5,3 : 1; dunkel 9,2 / 7,5 : 1). Immer mit Symbol oder Wort."
+      },
+      {
+        "name": "line-hairline",
+        "value": {
+          "light": "{neutral-150}",
+          "dark": "{neutral-700}"
+        },
+        "usage": "Dekorative Haarlinien: Listentrenner, Kanten von Karten und Leisten. Nie die einzige Kante eines Bedienelements."
+      },
+      {
+        "name": "line-dot",
+        "value": {
+          "light": "{neutral-150}",
+          "dark": "{neutral-800}"
+        },
+        "usage": "Punktraster wie im Notizbuch – nur auf leeren Flächen: Leerstellen (leere Listen, leere Fotoplätze), Startbild, Cover. Punkt `size-dot` (2 px), Abstand `space-xl` (24 px), an der Inhaltskante ausgerichtet. Rein dekorativ (1,24 : 1 hell, 1,22 : 1 dunkel); nie hinter Text, Tabellen, Feldern oder Fassungsmarken."
+      },
+      {
+        "name": "line-control",
+        "value": {
+          "light": "{neutral-500}",
+          "dark": "{neutral-500}"
+        },
+        "usage": "Konturen von Eingabefeldern, Chips, Tags, Checkboxen – mindestens 3 : 1 auf allen Flächen (hell 3,4–4,0; dunkel 3,6–4,8)."
+      },
+      {
+        "name": "line-strong",
+        "value": {
+          "light": "{neutral-900}",
+          "dark": "{neutral-50}"
+        },
+        "usage": "Tintenlinien: 3-px-Abschnittslinie, durchgezogener Rahmen eingefrorener Inhalte, Kontur des Sekundärbuttons, Auswahlbalken."
+      },
+      {
+        "name": "line-focus",
+        "value": {
+          "light": "{neutral-900}",
+          "dark": "{neutral-50}"
+        },
+        "usage": "Fokusring (2 px, 2 px Abstand) auf allen Flächen ≥ 13 : 1. Alias-Bedeutung: Tinte."
+      },
+      {
+        "name": "action-primary",
+        "value": {
+          "light": "{neutral-900}",
+          "dark": "{neutral-50}"
+        },
+        "usage": "Fläche des Primärbuttons. Beschriftung: `action-on-primary`."
+      },
+      {
+        "name": "action-on-primary",
+        "value": {
+          "light": "{neutral-50}",
+          "dark": "{neutral-900}"
+        },
+        "usage": "Beschriftung und Symbol auf `action-primary` (16,4 : 1)."
+      },
+      {
+        "name": "action-inverse",
+        "value": {
+          "light": "{marker-400}",
+          "dark": "{neutral-900}"
+        },
+        "usage": "Aktion auf inverser Fläche, z. B. „Rückgängig“ in der Snackbar (hell Marker auf Tinte 13,8 : 1; dunkel Tinte auf Papier 16,4 : 1)."
+      },
+      {
+        "name": "marker",
+        "value": {
+          "light": "{marker-400}",
+          "dark": "{marker-500}"
+        },
+        "usage": "Textmarker: hinterlegt Geändertes, Treffer und die Master-Fassung; Fläche des Marker-Knopfs (FAB). Nie als Textfarbe, nie für Warnungen, nie großflächig. Text darauf: `text-on-marker` (13,8 : 1 hell, 11,5 : 1 dunkel)."
+      },
+      {
+        "name": "state-draft",
+        "value": {
+          "light": "{neutral-500}",
+          "dark": "{neutral-400}"
+        },
+        "usage": "Entwurf (vorläufig): gestrichelte 1,5-px-Linie, ≥ 3 : 1 auf `surface-page` und `surface-raised`. Bedeutung immer zusätzlich als Wort."
+      },
+      {
+        "name": "state-frozen",
+        "value": {
+          "light": "{neutral-900}",
+          "dark": "{neutral-50}"
+        },
+        "usage": "Eingefroren (fest): durchgezogene 1,5-px-Linie in Tinte."
+      },
+      {
+        "name": "state-master",
+        "value": {
+          "light": "{marker-400}",
+          "dark": "{marker-500}"
+        },
+        "usage": "Master (gekürt): Markerfläche mit `text-on-marker`."
+      },
+      {
+        "name": "feedback-error-surface",
+        "value": {
+          "light": "{red-100}",
+          "dark": "{red-900}"
+        },
+        "usage": "Fläche von Fehlerhinweisen und Wisch-zum-Löschen-Hintergrund. Inhalt: `feedback-on-error-surface`."
+      },
+      {
+        "name": "feedback-on-error-surface",
+        "value": {
+          "light": "{red-800}",
+          "dark": "{red-100}"
+        },
+        "usage": "Text und Symbol auf `feedback-error-surface` (hell 8,5 : 1; dunkel 12,0 : 1)."
+      },
+      {
+        "name": "feedback-warning-surface",
+        "value": {
+          "light": "{orange-100}",
+          "dark": "{orange-900}"
+        },
+        "usage": "Fläche von Warnhinweisen (z. B. „Nicht berechenbar“). Inhalt: `feedback-on-warning-surface`."
+      },
+      {
+        "name": "feedback-on-warning-surface",
+        "value": {
+          "light": "{orange-800}",
+          "dark": "{orange-100}"
+        },
+        "usage": "Text und Symbol auf `feedback-warning-surface` (hell 7,7 : 1; dunkel 11,5 : 1)."
+      }
+    ]
+  },
+  "type": {
+    "fonts": [
+      {
+        "family": "Atkinson Hyperlegible Next",
+        "file": "fonts/AtkinsonHyperlegibleNext-Regular.woff2",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Atkinson Hyperlegible Next",
+        "file": "fonts/AtkinsonHyperlegibleNext-SemiBold.woff2",
+        "weight": "600",
+        "style": "normal"
+      },
+      {
+        "family": "Atkinson Hyperlegible Next",
+        "file": "fonts/AtkinsonHyperlegibleNext-Bold.woff2",
+        "weight": "700",
+        "style": "normal"
+      }
+    ],
+    "families": {
+      "sans": "\"Atkinson Hyperlegible Next\", system-ui, sans-serif",
+      "mono": "ui-monospace, \"SF Mono\", Menlo, Consolas, monospace"
+    },
+    "groups": [
+      {
+        "name": "Text",
+        "family": "sans",
+        "note": "Eine Familie, drei Schnitte (400, 600, 700). Fließtext nie unter 16 px, nichts unter 13 px. Zeilenhöhen auf dem 4-px-Raster. Satzschreibung, keine Versalien.",
+        "styles": [
+          {
+            "name": "display",
+            "fontSize": "28px",
+            "lineHeight": "36px",
+            "fontWeight": "700",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "Hefezopf klassisch",
+            "usage": "Rezepttitel im Detail und Kennzahlen (z. B. „3.500 kcal“) – Ziffern dann mit tnum. Höchstens einmal pro Bildschirm."
+          },
+          {
+            "name": "title-page",
+            "fontSize": "20px",
+            "lineHeight": "28px",
+            "fontWeight": "700",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "Versionen vergleichen",
+            "usage": "Seitentitel in der Kopfleiste, Dialogtitel."
+          },
+          {
+            "name": "heading",
+            "fontSize": "18px",
+            "lineHeight": "24px",
+            "fontWeight": "700",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "Zutaten",
+            "usage": "Abschnittsüberschrift, immer unter der 3-px-Linie (`stroke-rule`)."
+          },
+          {
+            "name": "body",
+            "fontSize": "16px",
+            "lineHeight": "24px",
+            "fontWeight": "400",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "Alles 10 Minuten kneten, dann abgedeckt ruhen lassen.",
+            "usage": "Fließtext, Schrittanweisungen, Beschreibungen, Eingabetext."
+          },
+          {
+            "name": "body-strong",
+            "fontSize": "16px",
+            "lineHeight": "24px",
+            "fontWeight": "600",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "Weizenmehl Type 550",
+            "usage": "Listentitel, Button-Beschriftungen, Zutatennamen, Hervorhebung im Text."
+          },
+          {
+            "name": "body-small",
+            "fontSize": "14px",
+            "lineHeight": "20px",
+            "fontWeight": "400",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "Eingefroren · 12.09.2026, 14:30",
+            "usage": "Untertitel in Listen, sekundäre Angaben."
+          },
+          {
+            "name": "label-small",
+            "fontSize": "13px",
+            "lineHeight": "16px",
+            "fontWeight": "600",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "V3 · Entwurf",
+            "usage": "Fassungsmarke, Tags, Feldbeschriftungen über Eingabefeldern, Beschriftungen der Navigationsleiste. Ziffern mit tnum."
+          },
+          {
+            "name": "caption",
+            "fontSize": "13px",
+            "lineHeight": "18px",
+            "fontWeight": "400",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "* unvollständig berechnet",
+            "usage": "Hilfe- und Fehlertexte unter Feldern, Fußnoten, Zeitstempel."
+          }
+        ]
+      },
+      {
+        "name": "Daten",
+        "family": "sans",
+        "note": "Immer mit tabellarischen Ziffern (OpenType tnum) – die Schrift hat proportionale Standardziffern. Werte rechtsbündig, Einheit nach geschütztem Leerzeichen (U+00A0) in `text-secondary`.",
+        "styles": [
+          {
+            "name": "data",
+            "fontSize": "16px",
+            "lineHeight": "24px",
+            "fontWeight": "400",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "600 g   1,80 g   343 kcal",
+            "usage": "Werte in Tabellen und Zutatenlisten, Mengen, Eingaben in Zahlenfeldern."
+          },
+          {
+            "name": "data-strong",
+            "fontSize": "16px",
+            "lineHeight": "24px",
+            "fontWeight": "700",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "3.500 kcal",
+            "usage": "Hervorgehobene Werte: kcal-Zeile, Summen, Ergebnis des Mengenrechners."
+          }
+        ]
+      },
+      {
+        "name": "Code",
+        "family": "mono",
+        "note": "Nur für den JSON-Export und -Import.",
+        "styles": [
+          {
+            "name": "code",
+            "fontSize": "13px",
+            "lineHeight": "20px",
+            "fontWeight": "400",
+            "letterSpacing": "0",
+            "fontStyle": "normal",
+            "opticalSize": null,
+            "family": "",
+            "sample": "\"format\": \"unsalted_recipe_snapshot\"",
+            "usage": "Codeblock (Export, Import)."
+          }
+        ]
+      }
+    ]
+  },
+  "spacing": {
+    "note": "4-px-Basis. Skala unverändert aus `AppSpacing` (Repository); Bildschirme nennen Stufen, nie Zahlen (AT-14).",
+    "tokens": [
+      {
+        "name": "space-xxs",
+        "value": "2px",
+        "usage": "Feinabstand: Marker-Innenrand, Symbol zu Hochzeichen."
+      },
+      {
+        "name": "space-xs",
+        "value": "4px",
+        "usage": "Zellabstand in Tabellen; Symbol zu Beschriftung in Tags, Chips und Fassungsmarken; Beschriftung zu Feld."
+      },
+      {
+        "name": "space-s",
+        "value": "8px",
+        "usage": "Abstand Symbol–Text in Buttons, zwischen Chips, Überschrift zu Inhalt; seitlicher Innenabstand von Fassungsmarke und Tag."
+      },
+      {
+        "name": "space-m",
+        "value": "12px",
+        "usage": "Innenabstand von Feldern und Hinweisen, Abstand 3-px-Linie zu Überschrift."
+      },
+      {
+        "name": "space-l",
+        "value": "16px",
+        "usage": "Seitenrand am Handy, Innenabstand von Listeneinträgen, Karten und Leisten."
+      },
+      {
+        "name": "space-xl",
+        "value": "24px",
+        "usage": "Seitenrand ab Tablet, Innenabstand von Dialogen."
+      },
+      {
+        "name": "space-xxl",
+        "value": "32px",
+        "usage": "Abstand zwischen Abschnitten (vor der 3-px-Linie)."
+      }
+    ]
+  },
+  "radius": {
+    "note": "Kanten statt Kapseln: kleine Radien, keine Pillen außer Schalter und Avatare.",
+    "tokens": [
+      {
+        "name": "radius-none",
+        "value": "0px",
+        "usage": "Abschnittslinien, Tabellen, Leisten."
+      },
+      {
+        "name": "radius-xs",
+        "value": "2px",
+        "usage": "Fassungsmarke, Tags, Marker-Hinterlegung."
+      },
+      {
+        "name": "radius-s",
+        "value": "4px",
+        "usage": "Buttons, Marker-Knopf, Eingabefelder, Chips, Hinweise, Snackbar."
+      },
+      {
+        "name": "radius-m",
+        "value": "8px",
+        "usage": "Karten, Dialoge, Menüs, Sheets (obere Ecken)."
+      },
+      {
+        "name": "radius-full",
+        "value": "9999px",
+        "usage": "Nur Schalter (Switch), Radio und spätere Avatare (Teil 5)."
+      }
+    ]
+  },
+  "shadow": {
+    "note": "Flach: Ebenen trennen sich durch Linien. Schatten nur für Überlagerungen.",
+    "tokens": [
+      {
+        "name": "shadow-overlay",
+        "value": {
+          "light": "0 4px 16px #0c101929, 0 1px 3px #0c10191f",
+          "dark": "0 8px 24px #000000b3"
+        },
+        "usage": "Menüs, Dialoge, Snackbar – zusätzlich zur Haarlinie."
+      },
+      {
+        "name": "shadow-focus",
+        "value": {
+          "light": "0 0 0 2px #f9f7f1, 0 0 0 4px #141925",
+          "dark": "0 0 0 2px #141925, 0 0 0 4px #f9f7f1"
+        },
+        "usage": "Fokusring: 2 px Abstand in Seitenfarbe, dann 2 px `line-focus`. Die beiden Werte je Modus sind `surface-page` und `line-focus` – nur gemeinsam ändern."
+      }
+    ]
+  },
+  "stroke": {
+    "note": "Linie trägt Bedeutung: gestrichelt = vorläufig, durchgezogen = fest.",
+    "tokens": [
+      {
+        "name": "stroke-hairline",
+        "value": "1px",
+        "usage": "Trennlinien und Kanten (`line-hairline`), Konturen von Feldern und Tags (`line-control`)."
+      },
+      {
+        "name": "stroke-frame",
+        "value": "1.5px",
+        "usage": "Rahmen von Fassungsmarke und Zustandsrahmen, Sekundärbutton, Marker-Knopf, Symbolstrich."
+      },
+      {
+        "name": "stroke-focus",
+        "value": "2px",
+        "usage": "Fokusring und Fokus-/Fehlerkontur von Eingabefeldern; Strich des Ladekreises."
+      },
+      {
+        "name": "stroke-rule",
+        "value": "3px",
+        "usage": "Abschnittslinie über Überschriften, Auswahlbalken in Navigation und Fassungsleiste, Ladebalken."
+      },
+      {
+        "name": "stroke-dash",
+        "value": "4px",
+        "usage": "Strichlänge der Entwurfslinie."
+      },
+      {
+        "name": "stroke-gap",
+        "value": "3px",
+        "usage": "Lücke der Entwurfslinie."
+      }
+    ]
+  },
+  "size": {
+    "note": "Ziele, die man in der Küche trifft – und die festen Maße der Komponenten. Jede Höhe und Breite einer Komponente steht hier, nie als Zahl im Bildschirm. Die Einträge `reflow-*` sind Grundwerte für Maße, die mit der Schrift wachsen; in Figma liegen sie in der Sammlung `type` (Modi `100`/`200`).",
+    "tokens": [
+      {
+        "name": "size-target",
+        "value": "48px",
+        "usage": "Mindestgröße jedes Tippziels (über WCAG 2.5.8 hinaus; Android-Richtwert 48, iOS 44)."
+      },
+      {
+        "name": "size-control",
+        "value": "48px",
+        "usage": "Höhe von Buttons und Eingabefeldern."
+      },
+      {
+        "name": "size-fab",
+        "value": "56px",
+        "usage": "Marker-Knopf (Hauptaktion einer Seite)."
+      },
+      {
+        "name": "size-icon",
+        "value": "24px",
+        "usage": "Standardsymbol; Ladekreis auf Seiten."
+      },
+      {
+        "name": "size-icon-small",
+        "value": "20px",
+        "usage": "Symbole in Buttons, Hinweisen und Feldern; Ladekreis in Buttons."
+      },
+      {
+        "name": "size-mark",
+        "value": "24px",
+        "usage": "Höhe der Fassungsmarke und von Tags."
+      },
+      {
+        "name": "size-content-max",
+        "value": "720px",
+        "usage": "Maximale Inhaltsbreite für Lesetext (ca. 70 Zeichen); zentriert ab Tablet."
+      },
+      {
+        "name": "size-dot",
+        "value": "2px",
+        "usage": "Durchmesser der Punkte im Punktraster (`line-dot`)."
+      },
+      {
+        "name": "size-icon-xs",
+        "value": "16px",
+        "usage": "Kleine Symbole in Chips, Tags, Fassungsmarken, Hilfetexten und Änderungszeilen."
+      },
+      {
+        "name": "size-control-small",
+        "value": "32px",
+        "usage": "Höhe kleiner Bedienelemente: Auswahl-Chip, Aktion in einem Hinweis. Das Tippziel bleibt `size-target`."
+      },
+      {
+        "name": "size-list-item",
+        "value": "56px",
+        "usage": "Mindesthöhe eines Listeneintrags."
+      },
+      {
+        "name": "size-top-bar",
+        "value": "56px",
+        "usage": "Höhe der Kopfleiste."
+      },
+      {
+        "name": "size-nav-bar",
+        "value": "64px",
+        "usage": "Höhe der Navigationsleiste; der Marker-Knopf sitzt `space-l` darüber."
+      },
+      {
+        "name": "size-dialog",
+        "value": "328px",
+        "usage": "Breite von Dialogen und Höchstbreite der Snackbar (Handy 360 px minus zweimal `space-l`)."
+      },
+      {
+        "name": "size-value-column",
+        "value": "96px",
+        "usage": "Feste, rechtsbündige Spalte für Mengen und Werte (Zutaten, Menge im Editor)."
+      },
+      {
+        "name": "size-index-column",
+        "value": "32px",
+        "usage": "Spalte für Schrittnummern."
+      },
+      {
+        "name": "size-nav-rail",
+        "value": "96px",
+        "usage": "Breite der seitlichen Navigationsleiste ab `breakpoint-medium` (Material 3 Expressive: eingeklappte Navigation Rail 96 dp); unter `breakpoint-medium` bleibt die Leiste unten (`size-nav-bar`)."
+      },
+      {
+        "name": "size-list-pane",
+        "value": "360px",
+        "usage": "Feste Breite der Listenspalte, wenn Liste und Detail ab `breakpoint-expanded` nebeneinander stehen (Material 3: feste Spalte 360 dp); das Detail füllt den Rest."
+      },
+      {
+        "name": "reflow-value-column",
+        "value": "96px",
+        "usage": "Wertspalte in Tabellen, wächst mit der Schrift: bei Textgröße 200 % 160 px (Figma `reflow/value-column`, Modus `200`). Code: Breite über den TextScaler skalieren, wie `@ScaledMetric`."
+      },
+      {
+        "name": "reflow-label-min",
+        "value": "120px",
+        "usage": "Mindestbreite der Bezeichnung neben Wertspalten (200 %: 200 px). Passt sie nicht mehr daneben, bricht die Zeile um: Bezeichnung oben, Werte darunter rechtsbündig."
+      },
+      {
+        "name": "reflow-stat-min",
+        "value": "96px",
+        "usage": "Mindestbreite einer Kennzahl im Nährwert-Kopf (200 %: 240 px). Was nicht mehr nebeneinander passt, steht untereinander; die senkrechte Haarlinie wird dann zur waagerechten."
+      },
+      {
+        "name": "reflow-field-min",
+        "value": "120px",
+        "usage": "Mindestbreite eines Felds oder Buttons in einer Reihe (Mengenrechner, Leiste unten; 200 %: 240 px). Bei großer Schrift stehen sie untereinander, jedes in voller Breite – Wörter werden nie getrennt."
+      },
+      {
+        "name": "reflow-select-min",
+        "value": "104px",
+        "usage": "Mindestbreite eines Auswahlfelds: kürzester Eintrag („Gramm“), Innenabstand und `chevron` ohne Umbruch (200 %: 208 px)."
+      }
+    ]
+  },
+  "opacity": {
+    "note": "Zustandsebenen statt eigener Farben.",
+    "tokens": [
+      {
+        "name": "opacity-hover",
+        "value": "0.06",
+        "usage": "Überlagerung in `text-primary` bei Hover (macOS) und Fokus."
+      },
+      {
+        "name": "opacity-pressed",
+        "value": "0.12",
+        "usage": "Überlagerung in `text-primary` beim Drücken."
+      },
+      {
+        "name": "opacity-scrim",
+        "value": "0.48",
+        "usage": "Deckkraft von `scrim` hinter Dialogen."
+      }
+    ]
+  },
+  "breakpoint": {
+    "note": "Unverändert aus `AppBreakpoints` (Material-Fenstergrößen).",
+    "tokens": [
+      {
+        "name": "breakpoint-medium",
+        "value": "600px",
+        "usage": "Ab hier mittel (kleines Tablet, Handy quer): Seitenrand 24 px."
+      },
+      {
+        "name": "breakpoint-expanded",
+        "value": "840px",
+        "usage": "Ab hier erweitert (Tablet): Detailseite zweispaltig möglich."
+      },
+      {
+        "name": "breakpoint-large",
+        "value": "1200px",
+        "usage": "Ab hier groß (macOS, Desktop)."
+      }
+    ]
+  },
+  "duration": {
+    "note": "Unverändert aus `AppMotion`. Bei „Bewegung reduzieren“ immer 0.",
+    "tokens": [
+      {
+        "name": "duration-short",
+        "value": "150ms",
+        "usage": "Zustandswechsel: Hover, Drücken, Auswahlbalken."
+      },
+      {
+        "name": "duration-medium",
+        "value": "250ms",
+        "usage": "Ein-/Ausblenden, Marker-Strich beim Küren der Master-Fassung."
+      },
+      {
+        "name": "duration-long",
+        "value": "400ms",
+        "usage": "Einfrieren: Strichlinie schließt sich zur durchgezogenen Linie."
+      }
+    ]
+  },
+  "easing": {
+    "note": "Keine Federn, kein Nachschwingen. Im Code gibt es zusätzlich `motion/easing/emphasized` (`Curves.easeInOutCubicEmphasized`), heute ungenutzt; es bleibt, bis eine Komponente es braucht.",
+    "tokens": [
+      {
+        "name": "easing-standard",
+        "value": "cubic-bezier(0.2, 0, 0, 1)",
+        "usage": "Alle Übergänge (entspricht `Easing.standard` in Flutter)."
+      }
+    ]
+  },
+  "name": "unsalted",
+  "meta": {
+    "source": "github",
+    "repo": "unsalted-app/Unsalted",
+    "ref": "main@1022185",
+    "package": "packages/unsalted_design",
+    "paths": {
+      "tokens": [
+        "packages/unsalted_design/lib/src/tokens/"
+      ],
+      "fonts": [],
+      "assets": [],
+      "docs": [
+        "docs/design/design_system.md",
+        "docs/design/components.md",
+        "docs/design/screens.md",
+        "docs/design/plan.md"
+      ]
+    },
+    "synced": "2026-10-09",
+    "status": "Vorschlag (Entwurf zur Freigabe). Die Werte sind NICHT aus dem Code übernommen: dort stehen Material-3-Platzhalter. Aus dem Code stammen Namensschema, Komponenteninventar, Abstands- und Breakpoint-Skala."
+  }
+}

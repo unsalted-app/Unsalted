@@ -17,7 +17,7 @@ import '../components/surfaces/app_divider.dart';
 import '../layout/app_page.dart';
 import '../layout/app_stack.dart';
 import '../layout/responsive.dart';
-import '../tokens/spacing_tokens.dart';
+import '../tokens/spacing_tokens.g.dart';
 
 /// Detailseite.
 class DetailPageTemplate extends StatelessWidget {

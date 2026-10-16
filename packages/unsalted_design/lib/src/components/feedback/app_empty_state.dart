@@ -7,7 +7,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../layout/app_stack.dart';
-import '../../tokens/spacing_tokens.dart';
+import '../../tokens/spacing_tokens.g.dart';
 import '../icons/app_icon.dart';
 import '../text/app_text.dart';
 

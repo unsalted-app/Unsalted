@@ -8,8 +8,8 @@
 import 'package:flutter/material.dart';
 
 import '../../layout/app_stack.dart';
-import '../../tokens/radius_tokens.dart';
-import '../../tokens/spacing_tokens.dart';
+import '../../tokens/radius_tokens.g.dart';
+import '../../tokens/spacing_tokens.g.dart';
 import '../icons/app_icons.dart';
 
 /// Art eines Hinweises.

@@ -14,7 +14,7 @@ import 'package:flutter/widgets.dart';
 import '../components/navigation/app_top_bar.dart';
 import '../layout/app_page.dart';
 import '../layout/app_stack.dart';
-import '../tokens/spacing_tokens.dart';
+import '../tokens/spacing_tokens.g.dart';
 
 /// Formularseite.
 class FormPageTemplate extends StatelessWidget {

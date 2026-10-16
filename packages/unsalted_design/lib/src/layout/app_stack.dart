@@ -6,7 +6,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../tokens/spacing_tokens.dart';
+import '../tokens/spacing_tokens.g.dart';
 
 /// Ein Abstand der Stufe [space], waagrecht und senkrecht gleich groß.
 class AppGap extends StatelessWidget {
