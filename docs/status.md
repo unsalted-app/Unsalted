@@ -234,6 +234,18 @@ Stand nach Etappe 1 (C01–C13): Design 208 Tests, Core 386, App 1, Widgetbook 6
 
 - ~~Ladebalken im Rezeptdetail erst nach ~300 ms Verzögerung zeigen (blitzt bei schnellem Laden kurz auf).~~ → umgesetzt in Teil 1.1c.
 
+## Teil 1.3 — Gestaltung aus Figma — in Arbeit (Phase A: Plan)
+
+Branch `design-1.3` von `main` @ `1022185`. Plan, Commit-Reihenfolge D01–D18 und offene Fragen F1–F14: `docs/design/plan-1.3.md`.
+
+| Schritt | Beschreibung | Status |
+|---|---|---|
+| — | Aufräumen: `.DS_Store` aus dem Repository, in `.gitignore` (`571da1e`) | fertig |
+| — | Design-Übergabe aus Figma nach `docs/design/` (`UEBERGABE.md`, `system/`, `figma/`; `c8bdfe3`) | fertig |
+| — | Figma-Abgleich Variablen ↔ `tokens.json` (nur gelesen): 158 Werte gleich, Abweichungen A1–A4 im Plan | fertig |
+| — | Plan `docs/design/plan-1.3.md` | fertig, wartet auf Freigabe |
+| D01–D18 | Umsetzung nach Plan, Etappen mit Stopp | offen |
+
 ## Bekannte offene Lücken (nicht blockierend)
 
 - `foodVariantToInsertCompanion`/`foodVariantToUpdateCompanion` in
