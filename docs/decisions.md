@@ -1827,3 +1827,47 @@ PRs wäre für diesen Commit rot, und die Bilder bräuchten einen zweiten
 Commit. Ablauf Schritt für Schritt: Plan, Abschnitt (d4). (2) DS-51: Die
 Übergangsliste ist am Ende von Etappe 2 (D12) leer und der Mechanismus
 entfernt, wie C27c.
+
+**D01 — Golden-Grundlage und Grundstand (F3).** Neu: `.github/workflows/goldens.yml`
+(Push auf `goldens/**`, zusätzlich `workflow_dispatch`; `ubuntu-24.04`,
+Flutter 3.47.5: erst Vergleich mit den eingecheckten Bildern — Liste der
+abweichenden Bilder in der Zusammenfassung und im Artefakt
+`golden-vergleich` —, dann `flutter test --tags golden --update-goldens` in
+Design und Core, Bilder als Artefakt `goldens`); `ci.yml` läuft fest auf
+`ubuntu-24.04`. `dart_test.yaml` (Tag `golden`) in Design und Core. Harness
+`test/goldens/support/golden_harness.dart` (in Core als Kopie, Pakete teilen
+keine Testdateien): acht Varianten hell/dunkel × Handy 390 × 844 / Tablet
+1024 × 1366 × Text 100/200 % über `textScaleFactorTestValue`; Schriften per
+`FontLoader` nur hier (Roboto und Material-Symbole aus
+`$FLUTTER_ROOT/bin/cache/artifacts/material_fonts`, lokal und in CI
+geprüft), nicht global — sonst änderten sich die Textmaße aller übrigen
+Tests. Überlauf ist in Goldens kein Fehler (er steht als Streifen im Bild),
+jede andere Ausnahme schon; streng geprüft wird Überlauf in WB-01 und ab D12
+in WB-04. Schatten bleiben wie von `flutter_test` vorgegeben schwarze Kontur
+(`debugDisableShadows`, für stabile Bilder). GL-01
+(`test/goldens/gl01_catalog_golden_test.dart`): 13 Motive aus dem Katalog
+(Farbe, Typo, Aktionen, Text/Symbole, Flächen, Eingaben, Listen/Chips,
+Rückmeldung, Navigation, Daten, drei Templates, auf der Listenseite mit
+„Rückgängig“-Meldung) = 104 Bilder; Plan F11 nannte 12 Motive, Farbe und
+Typo sind getrennt, weil beide zusammen am Handy nicht auf eine Seite passen.
+GL-02 (`test/goldens/gl02_screens_golden_test.dart`, Daten aus
+`support/screen_fixtures.dart`: Rezept „Hefezopf klassisch“ mit V1/V2
+eingefroren, V2 Master, V3 Entwurf, drei Lebensmittel, zweites Rezept):
+Bildschirme 1, 3, 4, 8, 10 = 40 Bilder. Alle Golden-Dateien tragen
+`@TestOn('linux')` und `@Tags(['golden'])`; auf dem Mac nicht geladen.
+*Bilder:* Lauf `38976239721` (Hilfsbranch `goldens/d01`), 144 Bilder, mit
+`--amend` in den Commit. *Prüflauf* (`goldens/d01-pruefung`, fertiger
+Commit, Lauf `38976710765`): 0 abweichende Bilder, die neu erzeugten 144 Bilder byte-gleich mit den eingecheckten — Erzeugen und Vergleichen unter Linux sind deterministisch. *Gegenprobe*
+(`goldens/d01-gegenprobe`, Wegwerf-Commit mit `primary` hell = `#00A000`,
+Lauf `38976726542`): 24 abweichende Bilder, genau die hellen Varianten von
+Aktionen, Rückmeldung, Formular-Template, Farbtabelle, Rezept-Editor und
+Versionsvergleich; dunkle Varianten und Motive ohne `primary` unverändert.
+Hilfsbranches danach gelöscht.
+*Befunde im Grundstand (heutiges Verhalten, nicht behoben):* (1)
+Versionsvergleich am Handy: die Spalte B läuft schon bei 100 % über
+(Streifen unter der Schrittliste). (2) Der Pfeil → der Änderungstexte
+erscheint als Ersatzzeichen, weil die Testschrift ihn nicht hat (auf dem
+Gerät aus der Systemschrift) — wird mit D14 Symbol. (3) Bei 200 % schneiden
+Editor-Zeilen und Nährwertkopf ab (D12). Mac: Design 212, Core 412, App 6,
+Widgetbook 6 Tests grün (Goldens dort nicht geladen); `check_architecture`
+Exit 0.
