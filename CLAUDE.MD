@@ -66,7 +66,9 @@ unsalted/
 │  ├─ spezifikation.md             VERBINDLICHE Spezifikation (Quelle der Wahrheit)
 │  ├─ status.md                    Phase/Schritt-Tracker
 │  ├─ decisions.md                 Protokoll technischer Entscheidungen
-│  └─ design/                      Teil 1.2: plan.md, design_system.md, components.md, screens.md
+│  └─ design/                      Teil 1.2: plan.md, design_system.md, components.md, screens.md;
+│                                   Teil 1.3: plan-1.3.md, UEBERGABE.md, system/ (Markenbuch, tokens.json,
+│                                   Komponentenkarten, Schrift-WOFF2, OFL), figma/figma-ids.json
 ├─ tool/
 │  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
 ├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Design, Core, App, Widgetbook
@@ -248,9 +250,13 @@ Spezifikation Kapitel 28.9. Der frühere Design-Pass `design/1.1` wurde nicht
 übernommen und ist gelöscht. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03,
 AT-13–15, UI-58–66, UC-01–07, APP-02.
 
-**Nächster Schritt:** neue Arbeitskarten (z. B. echtes Design aus Figma über
-die Tokens, Teil 2 `unsalted_experiments`) nach Vorgabe des
-Projektverantwortlichen.
+**Teil 1.3 – Gestaltung aus Figma (in Arbeit, Branch `design-1.3`):**
+Übergabe aus Figma liegt unter `docs/design/` (`UEBERGABE.md`, `system/`,
+`figma/`). Plan mit Commit-Reihenfolge D01–D18, Testzeilen und offenen
+Fragen F1–F14: `docs/design/plan-1.3.md`.
+
+**Nächster Schritt:** Freigabe des Plans `docs/design/plan-1.3.md` (Antworten
+auf F1–F14) durch den Projektverantwortlichen; erst danach Code (D01).
 
 ---
 
