@@ -671,7 +671,10 @@ void main() {
     await tester.tap(find.byType(AppOverflowMenu));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Rezept löschen'));
-    await tester.pumpAndSettle();
+    // Feste Pumps statt pumpAndSettle: Die Restzeitlinie der Meldung läuft bis zum Ablauf (Teil 1.3, D09b).
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
 
     expect(find.byType(RecipeDetailScreen), findsNothing);
     expect(find.byType(RecipeListScreen), findsOneWidget);

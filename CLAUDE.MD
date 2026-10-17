@@ -267,11 +267,15 @@ Markenelemente, Eingaben mit Beschriftung oben, Rückmeldung), D10 eigene
 Navigation (Balken, Seitenleiste über `AppPage.navigation`, in der App erst
 mit D17) und Deklaration, D11 Rahmen „Inhalt“ (Rand ab 600, höchstens 720),
 zweispaltig ab 1200, D12a `reflow-*` je Textgröße aus Figma, D12 große
-Schrift (`AppReflowMetric`), DS-51 ohne Übergangsliste. Test-IDs neu:
-GL-01/02, DS-49–60 (+ b/c), WB-04.
+Schrift (`AppReflowMetric`), DS-51 ohne Übergangsliste; Etappe 2
+freigegeben. Etappe 3 (D09b, D13–D16) in Arbeit: D09b fertig (Restzeitlinie
+der Meldung). Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
+**Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
+stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
+an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** Bericht zu Etappe 2 an den Projektverantwortlichen;
-danach Etappe 3 (D13–D16, Core-Bausteine) nach Plan.
+**Nächster Schritt:** D13 (Fassungsmarke, Fassungsleiste, Master); Stopp mit
+Bericht nach D16.
 
 ---
 

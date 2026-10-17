@@ -253,12 +253,17 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D06 | Komponenten I: Marker-Knopf (Ladekreis aus Tokens), Tag, Text-Stile, Abschnitt mit Abschnittslinie | fertig |
 | D07 | Markenelemente: `AppMark` (auch als Auswahlziel), `AppFrame`/`AppSlot`/`AppDashedUnderline`, `AppHighlight`/`AppChangeText`, `AppValue`; DS-53–58; GL-01-Motiv „marken“ | fertig |
 | D08 | Eingaben und Listen: Beschriftung über dem Feld, Zahl mit Einheit, Fehler mit Symbol, Auswahlfeld mit `chevron`, Listeneintrag mit Haarlinie und Auswahlbalken; Kontur des Tags behoben | fertig |
-| D09 | Rückmeldung: Hinweis mit Symbol (neutral/Warnung/Fehler/Erfolg), Leerstelle, Fehlerzustand mit Symbol, Dialog `size-dialog` mit primärem Verb, Symbolgrößen aus Tokens; Restzeitlinie der Meldung nicht gebaut (siehe decisions) | fertig |
+| D09 | Rückmeldung: Hinweis mit Symbol (neutral/Warnung/Fehler/Erfolg), Leerstelle, Fehlerzustand mit Symbol, Dialog `size-dialog` mit primärem Verb, Symbolgrößen aus Tokens; Restzeitlinie der Meldung nachgeholt in D09b | fertig |
 | D10 | Navigation und Daten: eigene Navigationsleiste (Balken statt Pille, Seitenleiste ab 600 über `AppPage.navigation`), Kopfleiste und Navigation ohne Textskalierung, Aktionsleiste, Deklarationstabelle, Codeblock; DS-59; DS-51-Liste leer | fertig |
 | D11 | Templates und Layout: Rahmen „Inhalt“ (Seitenrand ab 600, höchstens 720, mittig), Listen ohne Rand, Detail zweispaltig ab 1200, `DetailSplit` oben scrollend (Überlauf Versionsvergleich behoben); DS-60 | fertig |
 | D12a | Token-Nachtrag `reflow` aus Figma: acht Maße mit Werten für 100/200 % in beiden Token-Dateien, Generator liest beide Formen, Figma-Abgleich gleich | fertig |
 | D12 | Große Schrift: Werte je Textgröße (`AppReflowMetric`, linear 100–200 %), Deklaration bricht um, Aktionsleiste untereinander, Textgrößen-Addon im Katalog, WB-04; DS-51-Übergangsliste und Mechanismus entfernt | fertig |
-| D13–D18 | Etappen 3–4 nach Plan | offen |
+| D09b | Restzeitlinie der Meldung mit Aktion (`stroke-rule` in `action-inverse`, läuft ab dem Erscheinen in der Frist ab, bei „Bewegung reduzieren“ still); Inhalt der Meldung nach Snackbar-Karte, bei großer Schrift Aktion unter dem Text; drei Core-Test-Helfer mit festen Pumps (freigegeben); DS-38b | fertig |
+| D13 | Fassungsmarke, Fassungsleiste, Master | offen |
+| D14 | Änderungsliste; Versionsvergleich bei 200 % A über B | offen |
+| D15 | Nährwerte: Kennzahlenleiste, Deklaration, Mengenrechner | offen |
+| D16 | Editor und Formulare: Zutatenzeile, Schrittzeile, Zustandsrahmen, Hinweise, „Keine Treffer.“ ohne Punktraster, schmales Feld bei 200 % | offen |
+| D17–D18 | Etappe 4 nach Plan | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)
 

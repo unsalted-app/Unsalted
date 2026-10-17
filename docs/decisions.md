@@ -2551,3 +2551,87 @@ A/B im Versionsvergleich trennen lange Wörter („Weizenme|hl“) — dafür gi
 keine Arbeitskarte (Vorschlag im Bericht). Kein abgeschnittener Text in
 Komponenten des Design-Pakets; Ersatzkästchen der Code-Schrift wie in D03
 vermerkt.
+
+## 2026-10-17 — Teil 1.3, Etappe 3 (freigegeben)
+
+**Freigabe Etappe 2 und Entscheidungen (Projektverantwortlicher):** Etappe 2
+geprüft und freigegeben; weiter mit D13–D16, Stopp nach D16.
+1. Restzeitlinie: ja, als eigener Commit D09b zu Beginn von Etappe 3; die
+   drei Core-Test-Helfer dürfen `pumpAndSettle` durch feste Pumps ersetzen,
+   keine Erwartung ändert sich; bei „Bewegung reduzieren“ statisch;
+   Gegenprobe.
+2. „Keine Treffer.“ ohne Punktraster: in `recipe_list_empty_section.dart`
+   (Lebensmittelliste mitprüfen), mit Test, in D16.
+3. Versionsvergleich bei 200 %: A über B, sobald eine Spalte schmaler als
+   `reflow-label-min` würde, in `version_compare_columns_section.dart`, mit
+   Test, in D14.
+4. Hinweis mit Aktion bei 200 %: Aktion unter den Text (28.10.11), im
+   passenden Commit, mit Goldens.
+Außerdem: Umsortieren ohne Ziehen (28.10.3) prüfen — genügen die
+Bedienhilfe-Aktionen von `ReorderableListView` (deutsch nach D17)? Eine
+sichtbare Alternative änderte Bildschirm-Dateien → nur berichten (Kandidat
+Teil 1.4). `AppFieldWidth.narrow` bei 200 % in D16. **Regel ab jetzt:**
+Bestehende Testzeilen in Core, die nicht im Plan stehen → vorher Stopp und
+fragen; Testzeilen im Design-Paket dürfen an das neue Design angepasst
+werden, jede mit Grund hier. `CLAUDE.MD` Abschnitt 2 nach jedem Commit
+nachführen (Regel 8).
+
+**D09b — Restzeit der Meldung.** Snackbar-Karte und Figma `Feedback/Snackbar`
+(`136:50`, nur gelesen): Restzeit „absolut unten, Höhe stroke/rule, Fläche
+action-inverse, läuft in 5 s ab“; Innenabstand `space-xs`, links `space-l`,
+Abstand `space-m`; Aktion `space-m` seitlich, Mindesthöhe `size-target`,
+`body-strong` in `action-inverse`. Flutters `SnackBar` setzt Inhalt und
+Aktion in eine eigene Zeile mit festem Innenabstand; eine Linie über die
+ganze Breite am unteren Rand ist dort nicht möglich. Deshalb baut
+`showWithAction` den Inhalt selbst (`SnackBar(padding: EdgeInsets.zero)`,
+intern `_TimedMessage`): Zeile aus Text und Aktion, darunter in einem `Stack`
+die Linie, die die Rundung der Meldung beschneidet. Die Aktion bleibt eine
+`SnackBarAction` (schließt mit Grund `action`, Farbe aus dem Snackbar-Thema);
+die Meldung hat damit selbst keine `action` mehr. Ihr Ablauf hängt in Flutter
+3.47.5 nur an `persist` (`ScaffoldMessenger.build`, unabhängig von der
+Bedienhilfe-Navigation) und bleibt `persist: false` — Frist und Ablauf
+unverändert. Die Linie startet bei `SnackBar.onVisible`, also in dem Moment,
+in dem der Messenger seine Frist beginnt (nach dem Einblenden), und ist zum
+Ablauf leer. Bei „Bewegung reduzieren“ (`AppMotion.reduceMotion`) bleibt sie
+still in voller Breite; die Frist läuft trotzdem. `showMessage` (ohne Aktion,
+ohne Frist im Sinne von 1.1b) bleibt unverändert. *Große Schrift:* Der erste
+Golden-Lauf (39035743639) zeigte bei 200 % am Handy getrennte Wörter
+(„Eintra|g 3“), weil „Rückgängig“ den größten Teil der 328 breiten Meldung
+brauchte. Jetzt gilt die Regel aus 28.10.11: Bliebe dem Text neben der Aktion
+weniger als `reflow-label-min` (Breite der Aktion aus ihrer Beschriftung in
+`body-strong` bei der Textgröße des Kontexts, dazu `space-m` beidseitig),
+steht die Aktion rechtsbündig unter dem Text.
+*Geänderte Core-Testzeilen (freigegeben, Punkt 1):*
+`packages/unsalted_core/test/ui/recipe_list/recipe_list_screen_test.dart:110`
+und `packages/unsalted_core/test/ui/foods/food_list_screen_test.dart:105`
+(`_swipeAway`) sowie
+`packages/unsalted_core/test/ui/recipe_detail/recipe_detail_screen_test.dart:674`
+(nach „Rezept löschen“): `pumpAndSettle()` → zehn Pumps à 100 ms (1 s, mehr
+als Wischen, Schließen der Seite und Einblenden der Meldung brauchen), mit
+Kommentar; keine Erwartung geändert. `:672` (Menü öffnen, noch keine Meldung)
+blieb. Ohne die Änderung scheiterten UI-35 bis UI-39, UI-41 und UI-42
+(`pumpAndSettle` pumpt bis zum Ablauf der Linie, danach ist gelöscht); UI-40
+blieb zwar grün, spulte aber unbemerkt 5 s vor — deshalb auch dort feste
+Pumps. Die übrigen `pumpAndSettle` in diesen Dateien folgen erst nach dem
+Schließen der Meldung und bleiben.
+*Geänderte Design-Testzeilen:*
+`packages/unsalted_design/test/components/ds38_overlays_test.dart:25, 52, 55, 59`
+(`pumpAndSettle` → `_appear`: zwei Pumps, 500 ms; Grund wie oben — die Meldung
+soll sichtbar geprüft werden, nicht nach ihrem Ablauf). Neu dort DS-38b:
+Linie am unteren Rand, `stroke-rule`, `action-inverse`, eben erschienen voll,
+nach der halben Frist halb; Text `space-l` vom Rand; Aktion mindestens
+`size-target`; Frist unverändert; bei „Bewegung reduzieren“ still, Frist läuft.
+Weitere DS-38b-Fälle: Aktion bei 100 und 200 % neben bzw. unter dem Text,
+geprüft über die Regel selbst (die Testschrift ist etwa doppelt so breit wie
+Atkinson, „Rückgängig“ steht im Test schon bei 100 % unter dem Text), bei
+200 % am Handy immer darunter; eine kurze Aktion („Ja“) steht daneben.
+Gegenprobe: Linie ohne Ablauf → DS-38b rot (4 Fälle); ohne Rücksicht auf
+„Bewegung reduzieren“ → rot (4 Fälle); ohne Umbruch → rot (8 Fälle); danach
+grün. Kapitel 28.10.9 neu.
+Goldens: Die Meldung erscheint im GL-01-Motiv `template_liste` (Linie nach
+1 s bei rund 85 %). Mac: Design 405, Core 412, App 6, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.
+*Goldens:* Lauf 39040576908 (`goldens/d09b`, nach der Korrektur für große
+Schrift): abweichend genau die 8 Bilder von GL-01 `template_liste` — die
+Meldung mit Restzeitlinie (nach 1 s bei rund 85 %), bei 200 % „Rückgängig“
+rechtsbündig unter dem vollständigen Text.
