@@ -171,6 +171,7 @@ unsalted/
       │        │  versions/snapshot_column.dart, versions/change_list.dart,
       │        │  recipe_editor/ingredient_row.dart, recipe_editor/step_row.dart (StepRowData),
       │        │  recipe_editor/food_variant_picker_dialog.dart, recipe_detail/version_switcher.dart,
+      │        │  versions/version_mark.dart (Fassungsmarke, Teil 1.3),
       │        │  nutrition/*, foods/package_form.dart   fachliche Bausteine
       │        ├─ versions/change_descriptions.dart     Texte der Änderungsliste (9.2a)
       │        ├─ settings/export_screen.dart / import_screen.dart  Lücken: kein Teilen-Dialog,
@@ -271,13 +272,14 @@ zweispaltig ab 1200, D12a `reflow-*` je Textgröße aus Figma, D12 große
 Schrift (`AppReflowMetric`), DS-51 ohne Übergangsliste; Etappe 2
 freigegeben. Etappe 3 (D09b, D13–D16) in Arbeit: D09b fertig (Restzeitlinie
 der Meldung), D13a fertig (Tippaktion in der Semantik von Marke und
-Navigationsziel, Hinweis-Aktion unter dem Text bei großer Schrift). Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
+Navigationsziel, Hinweis-Aktion unter dem Text bei großer Schrift), D13
+fertig (Fassungsmarke `VersionMark`, Fassungsleiste, „Master“ als Wort). Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** D13 (Fassungsmarke, Fassungsleiste, Master); Stopp mit
-Bericht nach D16.
+**Nächster Schritt:** D14 (Änderungsliste; Versionsvergleich bei 200 % A über
+B); Stopp mit Bericht nach D16.
 
 ---
 

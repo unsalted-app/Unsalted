@@ -49,6 +49,7 @@ import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
 import 'package:unsalted_core/src/ui/recipe_list/recipe_list_screen.dart';
 import 'package:unsalted_core/src/ui/shared/undoable_deletion.dart';
 import 'package:unsalted_core/src/ui/versions/version_list_screen.dart';
+import 'package:unsalted_core/src/ui/versions/version_mark.dart';
 
 class _FakeModule implements UnsaltedModule {
   final List<RecipeDetailSection> sections;
@@ -226,15 +227,15 @@ Future<String> _addVersion(
 
 /// Beschriftung des gewählten Chips in der Versionsleiste.
 String _selectedVersionLabel(WidgetTester tester) {
-  final chip = tester.widgetList<ChoiceChip>(find.byType(ChoiceChip)).singleWhere((c) => c.selected);
-  return (chip.label as Text).data!;
+  final mark = tester.widgetList<AppMark>(find.byType(AppMark)).singleWhere((m) => m.selected);
+  return mark.label;
 }
 
 /// Tippt den Chip [label] der Versionsleiste an und lässt dessen
 /// Auswahl-Animation auslaufen -- `_settle` pumpt ohne Zeitvorschub, sonst
 /// verfehlt ein direkt folgender Tap den halb animierten Chip.
 Future<void> _tapVersion(WidgetTester tester, String label) async {
-  await tester.tap(find.widgetWithText(AppChoiceChip, label));
+  await tester.tap(find.widgetWithText(VersionMark, label));
   await _settle(tester);
   await tester.pump(const Duration(milliseconds: 500));
 }
@@ -718,7 +719,7 @@ void main() {
     await _pumpDetail(tester, database, recipeId);
     expect(find.text('Zucker V2'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(AppChoiceChip, 'V1'));
+    await tester.tap(find.widgetWithText(VersionMark, 'V1'));
     await tester.pump();
     // Der Wechsel läuft schon, der Ladebalken bleibt verborgen.
     expect(_selectedVersionLabel(tester), 'V1');
@@ -761,7 +762,7 @@ void main() {
 
     // V1 lädt langsam: erst nach 300 ms erscheint der Strich.
     final slowV1 = nutrition.hold(v1);
-    await tester.tap(find.widgetWithText(AppChoiceChip, 'V1'));
+    await tester.tap(find.widgetWithText(VersionMark, 'V1'));
     await _settle(tester);
     await tester.pump(const Duration(milliseconds: 250));
     expect(find.byType(AppProgressBar), findsNothing);
@@ -772,7 +773,7 @@ void main() {
     // Wechsel auf V2, während noch geladen wird: der Strich bleibt sofort stehen.
     final slowV2 = nutrition.hold(v2);
     await tester.pump(const Duration(milliseconds: 500));
-    await tester.tap(find.widgetWithText(AppChoiceChip, 'V2'));
+    await tester.tap(find.widgetWithText(VersionMark, 'V2'));
     await tester.pump();
     expect(_selectedVersionLabel(tester), 'V2');
     expect(find.byType(AppProgressBar), findsOneWidget);

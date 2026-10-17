@@ -2668,3 +2668,56 @@ DS-59b rot (je 4); ohne Umbruch → DS-32c rot (6); danach grün. Mac: Design
 `rueckmeldung` bei 200 % am Handy (hell, dunkel) — „Kopieren“ rechtsbündig
 unter „Hinweis mit Aktion.“ statt des auf drei Zeilen gedrängten Texts; die
 Tippaktion in der Semantik ist nicht sichtbar.
+
+**D13 — Fassungsmarke, Fassungsleiste, Master.** Neu
+`lib/src/ui/versions/version_mark.dart`: `VersionMark(version:, isMaster:)`
+aus `AppMark` — Entwurf `provisional`, eingefroren `fixed`, Master
+`highlighted`; optional `seal` (für D16), `selected`, `onTap`. Text wie
+bisher „V{versionIndex}“ bzw. „V{versionIndex} · label“. *Semantik:* „Version
+3 · mit Vorteig, eingefroren, Master“ — der Plan nennt „Version n,
+Entwurf/eingefroren[, Master]“; die Bezeichnung ist dazugekommen, weil der
+bisherige Auswahl-Chip sie vorlas und sie sonst für Screenreader verloren
+ginge. `VersionSwitcher` (Figma `Core/Version Switcher`, `Core/Version
+Target`): `Wrap` aus Fassungsmarken als Ziele, Abstand `space-s`, unten
+ausgerichtet; Auswahlbalken und Tippziel aus `AppMark`. Vorher scrollte die
+Reihe waagerecht; jetzt bricht sie um (bei 200 % am Handy lief sie in GL-02
+rechts aus dem Bild, D12-Bericht). Rückgabe und Callbacks unverändert.
+*Abweichung von Figma:* Figma hebt in der Leiste die Master-Version hervor
+(Markerfläche). Die Leiste bekommt nur die Versionen; `RecipeVersion` kennt
+den Master nicht, die Master-ID hat nur der Bildschirm
+(`recipe_detail_screen.dart`, gesperrt). Der Plan verlangt es für die Leiste
+nicht; alle Marken zeigen deshalb Entwurf oder eingefroren — Kandidat für
+Teil 1.4 (eine Zeile im Bildschirm: `masterVersionId` übergeben).
+`VersionTile`: vorn `VersionMark` statt Titeltext (genau ein „V{n}“ je
+Eintrag), Titel = Zustand als Wort („Entwurf“/„Eingefroren“), Untertitel =
+Zeitpunkt des Einfrierens; Master: Markerfläche und `AppText.labelSmall(
+'Master')` an der Stelle, an der sonst „Als Master markieren“ steht; Stern
+entfällt. Aktionen und Tooltips unverändert. Figma (Bildschirm 07,
+`20:1042`, nur gelesen) zeigt eine vereinfachte Liste (Titel „Version n“,
+Datum, Marke rechts, keine Aktionen) — maßgeblich ist der freigegebene Plan
+(Aktionen bleiben, 28.4.4).
+*Geänderte bestehende Testzeilen (alle geplant, (d2) D13):*
+`packages/unsalted_core/test/ui/recipe_detail/recipe_detail_screen_test.dart`
+Plan-Z. 229–230 (jetzt 230–231: gewähltes Ziel über `AppMark.selected` und
+`AppMark.label` statt `ChoiceChip`), 237 (jetzt 238), 718, 761, 772 (nach
+D09b 721, 764, 775; jetzt 722, 765, 776): `find.widgetWithText(AppChoiceChip,
+…)` → `find.widgetWithText(VersionMark, …)`. Dafür ist eine Importzeile
+hinzugekommen (Z. 52, `version_mark.dart`) — keine bestehende Zeile, aber
+nötig für den geplanten Finder. Die Kommentare Z. 227 und 233–235 sprechen
+noch vom „Chip“; nicht geändert (nicht im Plan, Regel für Etappe 3) —
+Vorschlag im Bericht. `packages/unsalted_core/test/ui/versions/version_list_screen_test.dart:96, 249, 254, 281`
+(`find.byIcon(Icons.star)` → `find.text('Master')`).
+Neue Tests `test/ui/versions/version_mark_test.dart`: UI-67 (Marken je
+Zustand, genau eine gewählt, Semantik mit Tippaktion, Tippziel mindestens
+`size-target`, Tippen meldet die Version; bei 200 % mit sechs Versionen
+mehrzeilig ohne Überlauf), UI-68 (genau ein „V{n}“ je Eintrag, Zustand als
+Wort, kein Stern, „Master“ genau im Master-Eintrag mit Markerfläche, „Als
+Master markieren“ nur bei eingefrorenen Nicht-Master-Versionen, Semantik der
+Marke vorn im Listeneintrag). Gegenprobe: Leiste als `Row` → UI-67 rot (200 %);
+ohne „Master“ → UI-68 rot; danach grün. Nachträge 28.10.4 (ergänzt) und
+28.10.6. Mac: Design 429, Core 415, App 6, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.
+*Goldens:* Lauf 39041664242 (`goldens/d13`): abweichend die 8 Bilder von
+GL-02 `04_rezeptdetail` — Fassungsleiste statt Auswahl-Chips (V3 gestrichelt,
+V2 gewählt mit Balken, V1 eingefroren), bei 200 % in zwei Zeilen statt rechts
+abgeschnitten. Bildschirm 7 ist kein GL-02-Motiv.

@@ -93,7 +93,7 @@ void main() {
 
     expect(find.textContaining('Eingefroren'), findsOneWidget);
     expect(find.textContaining('Entwurf'), findsOneWidget);
-    expect(find.byIcon(Icons.star), findsOneWidget);
+    expect(find.text('Master'), findsOneWidget);
 
     await _disposeWidgetTree(tester);
   });
@@ -246,12 +246,12 @@ void main() {
     expect(markAction('V1'), findsOneWidget);
     expect(markAction('V2'), findsOneWidget);
     expect(markAction('V3'), findsNothing, reason: 'Entwurf');
-    expect(find.byIcon(Icons.star), findsNothing);
+    expect(find.text('Master'), findsNothing);
 
     await tester.tap(markAction('V1'));
     await _settle(tester);
 
-    expect(find.descendant(of: tileOf('V1'), matching: find.byIcon(Icons.star)), findsOneWidget);
+    expect(find.descendant(of: tileOf('V1'), matching: find.text('Master')), findsOneWidget);
     expect(markAction('V1'), findsNothing, reason: 'schon Master');
     expect(markAction('V2'), findsOneWidget);
     final recipe = await tester.runAsync(() => DriftRecipeDao(database).getRecipe(recipeId));
@@ -278,7 +278,7 @@ void main() {
 
     expect(find.text('Die Master-Version kann nicht gelöscht werden.'), findsOneWidget);
     expect(tileOf('V2'), findsOneWidget);
-    expect(find.descendant(of: tileOf('V2'), matching: find.byIcon(Icons.star)), findsOneWidget);
+    expect(find.descendant(of: tileOf('V2'), matching: find.text('Master')), findsOneWidget);
 
     await _disposeWidgetTree(tester);
   });
