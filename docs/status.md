@@ -252,7 +252,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D05b | Symbole Outlined, alle 32 Namen der Figma-Bibliothek (11 neu); DS-17 gegen `figma-ids.json` | fertig |
 | D06 | Komponenten I: Marker-Knopf (Ladekreis aus Tokens), Tag, Text-Stile, Abschnitt mit Abschnittslinie | fertig |
 | D07 | Markenelemente: `AppMark` (auch als Auswahlziel), `AppFrame`/`AppSlot`/`AppDashedUnderline`, `AppHighlight`/`AppChangeText`, `AppValue`; DS-53–58; GL-01-Motiv „marken“ | fertig |
-| D08 | Eingaben und Listen | offen |
+| D08 | Eingaben und Listen: Beschriftung über dem Feld, Zahl mit Einheit, Fehler mit Symbol, Auswahlfeld mit `chevron`, Listeneintrag mit Haarlinie und Auswahlbalken; Kontur des Tags behoben | fertig |
 | D09 | Rückmeldung | offen |
 | D10 | Navigation und Daten | offen |
 | D11 | Templates und Layout | offen |

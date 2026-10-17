@@ -148,7 +148,7 @@ void main() {
       }),
       wrapInPage: false,
     );
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Brot');
+    await tester.enterText(find.descendant(of: find.widgetWithText(AppTextField, 'Name'), matching: find.byType(TextField)), 'Brot');
     setState(() => messages = [const AppText('Fehler', tone: AppTone.error)]);
     await tester.pump();
     expect(find.text('Fehler'), findsOneWidget);

@@ -29,22 +29,28 @@ class AppChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    return Chip(
-      avatar: icon == null ? null : Icon(icon, size: AppSize.iconXs, color: colors.textPrimary),
-      label: Text(label),
-      labelStyle: AppTypography.labelSmall.copyWith(color: colors.textPrimary),
-      labelPadding: icon == null ? EdgeInsets.zero : const EdgeInsets.only(left: AppSpacing.xs),
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s),
-      backgroundColor: colors.surfacePage.withValues(alpha: 0),
-      // Kontur über `shape`, nicht `side`: `side` rechnet Flutter als
-      // Innenabstand hinzu, der Tag würde 2 px höher als `size-mark`.
-      side: BorderSide.none,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.xs),
-        side: BorderSide(color: colors.lineControl, width: AppStroke.hairline),
+    final radius = BorderRadius.circular(AppRadius.xs);
+    // Kontur als Vordergrund um den Chip: Über `side` rechnet Flutter sie als
+    // Innenabstand hinzu (26 statt 24 hoch), und ein `side: none` löscht auch
+    // eine Kontur aus `shape` (Fehler aus D06, in D08 behoben).
+    return DecoratedBox(
+      position: DecorationPosition.foreground,
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        border: Border.all(color: colors.lineControl, width: AppStroke.hairline),
       ),
-      visualDensity: const VisualDensity(vertical: VisualDensity.minimumDensity),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      child: Chip(
+        avatar: icon == null ? null : Icon(icon, size: AppSize.iconXs, color: colors.textPrimary),
+        label: Text(label),
+        labelStyle: AppTypography.labelSmall.copyWith(color: colors.textPrimary),
+        labelPadding: icon == null ? EdgeInsets.zero : const EdgeInsets.only(left: AppSpacing.xs),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s),
+        backgroundColor: colors.surfacePage.withValues(alpha: 0),
+        side: BorderSide.none,
+        shape: RoundedRectangleBorder(borderRadius: radius),
+        visualDensity: const VisualDensity(vertical: VisualDensity.minimumDensity),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
     );
   }
 }

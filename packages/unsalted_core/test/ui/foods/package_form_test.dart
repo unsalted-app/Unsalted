@@ -115,7 +115,7 @@ void main() {
     final value = key.currentState!.value;
     expect(value!.nutrients.saltG, Decimal.parse('1'));
 
-    final saltField = tester.widget<TextField>(find.widgetWithText(TextField, 'Salz (g)'));
+    final saltField = tester.widget<TextField>(find.descendant(of: find.widgetWithText(AppTextField, 'Salz (g)'), matching: find.byType(TextField)));
     expect(saltField.enabled, isFalse);
   });
 

@@ -20,6 +20,7 @@ final listsFolder = WidgetbookFolder(name: 'lists, chips', children: [
             trailing: AppChip(label: '1:30'),
           ),
           AppListItem(title: 'Kompakt', dense: true),
+          AppListItem(title: 'Gewählt', subtitle: 'Auswahlbalken links', selected: true, onTap: noop),
         ])),
   ]),
   component('AppItemList', [

@@ -2217,3 +2217,51 @@ sich) — nicht übernommen. Vermutete Ursache: Die „marken“-Tests liefen im
 Vergleich rot (noch kein Bild), und nach einem roten Test lässt
 `flutter_test` den Widget-Baum stehen (CLAUDE.md, Abschnitt 4). Nachweis über
 die PR-CI, in der alle Bilder vorhanden sind.
+
+**D08 — Eingaben und Listen.** `AppTextField` (TextField-Karte): Beschriftung
+`space-xs` über dem Feld in `label-small`/`text-secondary` statt schwebend;
+semantisch hängt sie per `Semantics(label:)` am Feld, die sichtbare
+Beschriftung ist ausgenommen. Erster Versuch mit `MergeSemantics` verworfen:
+Er zog eine Schaltfläche am Feldende (`suffix`, z. B. Suche) in den Knoten des
+Textfelds, Flutter brach mit `node.isMergedIntoParent` ab (WB-01, „Input/Text
+Field“ mit Aktion). Zahlenfelder (`TextInputType.number`) in `data`,
+rechtsbündig; neu `unit` (Einheit im Feld, `text-secondary`, additiv); Fehler
+als Zeile mit Symbol `error` (`size-icon-xs`, Abstand `space-xs`) und Text
+`caption`/`text-error`; Hilfetext `caption`; schmal = `reflow-field-min`
+(120, von der DS-51-Liste gestrichen). `AppSelect`: Beschriftung über dem
+Feld wie oben, Symbol `chevron`. `AppSearchField` unverändert (Gestalt aus
+dem Theme). `AppListItem` (ListItem-Karte): Haarlinie unten in
+`line-hairline`; neu `selected` (additiv) mit Auswahlbalken `stroke-rule` in
+`line-strong` links — für Liste/Detail (Teil 1.4) vorbereitet. Umsortieren
+ohne Ziehen (WCAG 2.5.7): Flutters `ReorderableListView` bietet die
+Bedienhilfe-Aktionen „nach oben/unten/an den Anfang/an das Ende“ selbst (Texte
+aus `MaterialLocalizations`, mit D17b deutsch) — keine eigene Umsetzung,
+DS-29b sichert sie. *Fehler aus D06 behoben:* Der Tag zeigte keine Kontur —
+Flutters `Chip` ersetzt die Kontur aus `shape` durch den `side`-Parameter, und
+`BorderSide.none` entfernt sie; DS-31b prüfte nur den Parameter. Jetzt zeichnet
+eine Vordergrund-Dekoration um den Chip die Kontur (`line-control`,
+`stroke-hairline`, `radius-xs`), die Höhe bleibt `size-mark`; DS-31b prüft die
+gezeichnete Kontur. *Geänderte bestehende Testzeilen* (alle nur der Finder:
+das Material-Feld innerhalb der `App…`-Komponente mit der Beschriftung, weil
+die Beschriftung nicht mehr im Material-Feld steht):
+`packages/unsalted_core/test/ui/nutrition/amount_calculator_test.dart:38, 50, 76`,
+`packages/unsalted_core/test/ui/foods/package_form_test.dart:118`,
+`packages/unsalted_core/test/ui/recipe_detail/recipe_detail_screen_test.dart:512, 513`
+(alle geplant) und `packages/unsalted_design/test/components/ds23_inputs_test.dart:37`
+(geplant); zusätzlich, nicht im Plan, aus demselben Grund:
+`ds23_inputs_test.dart:31, 32, 33, 38` (DS-23, TextField/TextFormField mit
+Beschriftung), `ds23_inputs_test.dart:86` (DS-25,
+`DropdownButtonFormField<int>` mit Beschriftung) und
+`packages/unsalted_design/test/templates/ds46_templates_test.dart:151` (DS-48,
+Eingabe über die Beschriftung). Die `widget<TextField>`-Prüfungen selbst
+bleiben. Neue Tests: DS-23b (Beschriftung über dem Feld, nicht im Feld;
+Zahl rechtsbündig mit tnum und Einheit; Semantik Textfeld mit Beschriftung
+und Wert; Fehler mit Symbol), DS-25b (Auswahl: Beschriftung oben,
+`chevron`), DS-26b (Haarlinie, Auswahlbalken, Mindesthöhe), DS-29b
+(Bedienhilfe-Aktionen beim Umsortieren). Katalog: Zahlenfeld mit Einheit,
+gewählter Listeneintrag. DS-51: 6 Dateien auf der Liste. Mac: Design 301,
+Core 412, App 6, Widgetbook 6 Tests grün; `check_architecture` Exit 0. *Goldens:*
+Lauf `39011651009` (`goldens/d08`): 80 Bilder geändert (Felder, Listen,
+Tags, Templates, alle fünf Bildschirme). Sichtbar offen bis D16: Zwischen
+gestapelten Feldern setzen die Core-Abschnitte noch keinen Abstand
+(Verpackungsformular, Editor-Parameter).

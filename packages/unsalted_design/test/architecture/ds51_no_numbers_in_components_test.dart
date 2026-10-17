@@ -25,7 +25,6 @@ const transitionList = <String>{
   'src/components/feedback/app_notice.dart', // D09
   'src/components/feedback/app_skeleton.dart', // D09
   'src/components/icons/app_icon.dart', // D09
-  'src/components/inputs/app_text_field.dart', // D08
   'src/components/navigation/app_top_bar.dart', // D10
 };
 

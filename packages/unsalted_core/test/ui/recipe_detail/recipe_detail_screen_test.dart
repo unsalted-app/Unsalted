@@ -509,8 +509,8 @@ void main() {
       expect(tester.getTopLeft(find.byType(AmountCalculator)).dy,
           greaterThan(tester.getTopLeft(find.byType(NutritionTable)).dy));
 
-      final grams = find.widgetWithText(TextField, 'Gramm');
-      final kcal = find.widgetWithText(TextField, 'kcal');
+      final grams = find.descendant(of: find.widgetWithText(AppTextField, 'Gramm'), matching: find.byType(TextField));
+      final kcal = find.descendant(of: find.widgetWithText(AppTextField, 'kcal'), matching: find.byType(TextField));
       await tester.enterText(grams, '100');
       await tester.pump();
       expect(tester.widget<TextField>(kcal).controller!.text, '300');

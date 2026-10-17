@@ -3,8 +3,18 @@
 // Komponente (Teil 1.2): Auswahlliste (Figma `Input/Select`). Mit Label
 // baut sie ein `DropdownButtonFormField`, ohne Label ein `DropdownButton`
 // (Plan R1). Mit Label gilt [AppSelect.value] nur als Startwert.
+//
+// Seit Teil 1.3 (D08): Beschriftung über dem Feld wie bei `AppTextField`
+// (`label-small`/`text-secondary`, Abstand `space-xs`, semantisch am Feld),
+// Symbol `chevron`.
 
 import 'package:flutter/material.dart';
+
+import '../../layout/app_stack.dart';
+import '../../theme/app_colors.dart';
+import '../../tokens/spacing_tokens.g.dart';
+import '../../tokens/typography_tokens.g.dart';
+import '../icons/app_icons.dart';
 
 /// Ein Eintrag einer [AppSelect].
 @immutable
@@ -47,14 +57,22 @@ class AppSelect<T> extends StatelessWidget {
         : (T? selected) {
             if (selected != null) callback(selected);
           };
+    const chevron = Icon(AppIcons.chevron);
     if (label == null) {
-      return DropdownButton<T>(value: value, items: menuItems, onChanged: changed);
+      return DropdownButton<T>(value: value, items: menuItems, onChanged: changed, icon: chevron);
     }
-    return DropdownButtonFormField<T>(
-      initialValue: value,
-      decoration: InputDecoration(labelText: label),
-      items: menuItems,
-      onChanged: changed,
+    return AppStack(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      gap: AppSpace.xs,
+      children: [
+        ExcludeSemantics(
+          child: Text(label!, style: AppTypography.labelSmall.copyWith(color: AppColors.of(context).textSecondary)),
+        ),
+        Semantics(
+          label: label,
+          child: DropdownButtonFormField<T>(initialValue: value, items: menuItems, onChanged: changed, icon: chevron),
+        ),
+      ],
     );
   }
 }
