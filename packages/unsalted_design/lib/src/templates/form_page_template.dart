@@ -7,7 +7,9 @@
 // Eingaben erhalten bleiben.
 //
 // Inhalt-Layout: `FormSections` (scrollend) oder `FormSections.fixed` (fest,
-// für Inhalte mit `Expanded`).
+// für Inhalte mit `Expanded`). Seit Teil 1.3 (D11) im Rahmen „Inhalt“: Seitenrand
+// `space-l`, ab `breakpoint-medium` `space-xl`, höchstens `size-content-max`
+// breit, mittig (Figma `Template/Form Page`).
 
 import 'package:flutter/widgets.dart';
 
@@ -15,6 +17,7 @@ import '../components/navigation/app_top_bar.dart';
 import '../layout/app_page.dart';
 import '../layout/app_stack.dart';
 import '../tokens/spacing_tokens.g.dart';
+import 'page_content.dart';
 
 /// Formularseite.
 class FormPageTemplate extends StatelessWidget {
@@ -68,7 +71,7 @@ class FormPageTemplate extends StatelessWidget {
       );
 }
 
-/// Abschnitte einer Formularseite mit Innenabstand `space/l`.
+/// Abschnitte einer Formularseite im Rahmen „Inhalt“.
 class FormSections extends StatelessWidget {
   /// Scrollend.
   const FormSections({super.key, required this.children}) : scrolls = true;
@@ -83,10 +86,16 @@ class FormSections extends StatelessWidget {
   final bool scrolls;
 
   @override
-  Widget build(BuildContext context) => scrolls
-      ? ListView(padding: EdgeInsets.all(AppSpace.l.value), children: children)
-      : AppPadding.all(
-          AppSpace.l,
-          child: AppStack(mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
-        );
+  Widget build(BuildContext context) => PageContent(
+        builder: (context, padding) => scrolls
+            ? ListView(padding: padding, children: children)
+            : Padding(
+                padding: padding,
+                child: AppStack(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: children,
+                ),
+              ),
+      );
 }

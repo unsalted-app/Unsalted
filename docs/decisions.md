@@ -2373,3 +2373,62 @@ erwartet: GL-01 `daten`, `navigation`, `template_detail`, `template_formular`,
 `04_rezeptdetail`, `08_versionsvergleich` (je 8; Kopfleiste, Navigation,
 Aktionsleiste, Deklaration) und `10_lebensmittel_bearbeiten` nur bei 200 %
 (Kopfleiste folgt der Textgröße nicht mehr).
+
+**D11 — Templates und Layout.** Maße aus Figma (nur gelesen): `Template/Detail
+Page` und `Template/Form Page` beschreiben einen Rahmen „Inhalt“ (Fill, Max
+width `size-content-max`, Padding `space-l`, ab medium `space-xl`), die
+Tablet-Seiten (`147:9902`, `147:9935`, `147:10005`) zeigen ihn mit Innenabstand
+16/24/16/24 bei 720 Breite samt Rand, mittig; `Template/List Page` hat „Body
+ohne Seitenrand“ (Tablet: Einstellungen-Liste 928 breit). Umsetzung:
+`templates/page_content.dart` (nicht exportiert) rechnet den Innenabstand aus
+der verfügbaren Breite; `FormSections` (beide Formen), `DetailSections`
+(einspaltig) und der obere Bereich von `DetailSplit` stehen darin;
+`ListPageTemplate` bleibt ohne Rand. Der Seitenrand richtet sich nach der
+Fenstergröße (Material 3), neu `AppWindowSize.pageMargin` (additiv).
+`DetailLayout` bekommt `twoColumnsFromLarge` und `twoColumnsAt` (additiv);
+`DetailLayout.standard` = `twoColumnsFromLarge` (UEBERGABE 2, F4). Maßgeblich
+ist die Fenstergröße, nicht die Breite des Inhalts: In Figma Tablet quer
+(`148:4381`) ist der Detailbereich neben der Liste nur 910 breit und trotzdem
+zweispaltig — das gilt dann auch mit Liste/Detail (Teil 1.4). Damit nutzt
+`DetailSections` nicht mehr `ResponsiveBuilder`; für `twoColumnsFromExpanded`
+ändert sich in der App nichts, weil der Inhalt bis D17 fensterbreit ist. Je
+Spalte ein eigener Rahmen (Figma `Spalten`/`Haupt`/`Neben`: Innenabstand wie
+oben, höchstens `size-content-max`), beide Spalten zusammen mittig. Den
+Abstand `space-xxl` zwischen Abschnitten bringt `AppSection` selbst mit (D06);
+die Templates setzen keinen zusätzlichen.
+*Überlauf im Versionsvergleich (Auftrag Etappe 2):* Ursache war `DetailSplit`
+— der obere Bereich lag in einem `Expanded` (halbe Höhe) ohne Scrollen, die
+nicht scrollende Zeile aus zwei `SnapshotColumn` lief bei längeren Rezepten
+über. Behoben im Template ohne Änderung der Bildschirm-Datei: Der obere
+Bereich scrollt (`SingleChildScrollView` im Rahmen „Inhalt“; er darf selbst
+nicht scrollen), der untere ist höchstens `size-content-max` breit und mittig,
+die Fußzeile steht in voller Breite (vorher zentriert in eigener Breite).
+Gegenprobe: DS-60 mit nicht scrollendem oberem Bereich → rot („RenderFlex
+overflowed by 1087 pixels“), mit Fix grün.
+*Nicht umgesetzt (außerhalb des Dateiscopes):* In Figma füllt eine einzelne
+Aktion die Aktionsleiste (Karte „Buttons teilen die Breite“, Bildschirm 08
+Handy und Tablet); `AppBottomActionBar` lässt eine einzelne Aktion seit C09 in
+eigener Breite, und `version_compare_apply_section.dart` zentriert die Leiste.
+Vorschlag im Bericht.
+*Geänderte bestehende Testzeilen*
+(`packages/unsalted_design/test/templates/ds46_templates_test.dart`, Nummern
+vor der Änderung): `:177` (`field.left == AppSpacing.l` → linke Kante im
+Rahmen „Inhalt“) und `:178` (Breite entsprechend), beide geplant; zusätzlich
+`:97` (`DetailLayout.standard` ist jetzt `twoColumnsFromLarge` statt
+`oneColumn`) und `:98` (Position „Haupt“ im Rahmen „Inhalt“ statt fest
+`space-l`) — gleicher Grund. Neu dort die Hilfsfunktion `_contentLeft`.
+Neue Tests `test/templates/ds60_templates_test.dart` (DS-60, 16 Fälle):
+Seitenrand je Fenstergröße; Formular und Detailseite bei 390/600/1024/1600 im
+Rahmen „Inhalt“; Liste ohne Rand; zweispaltig erst ab 1200, je Spalte
+höchstens 720, mittig; `DetailSplit` mit hohem oberem Bereich ohne Überlauf,
+scrollbar, unterer Bereich mittig, Fußzeile voll breit. Nachträge 28.10.4,
+28.10.7, 28.10.9; dazu nachgeholt für D10: 28.10.5 (Deklaration) und
+28.10.10 (Navigation, Systemleisten ohne Textskalierung). Mac: Design 361,
+Core 412, App 6, Widgetbook 6 Tests grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39013130648 (`goldens/d11`); abweichend 32 Bilder, alle
+erwartet: auf dem Tablet (100 und 200 %) GL-01 `daten`, `template_detail`,
+`template_formular` und GL-02 `03_rezept_bearbeiten`, `04_rezeptdetail`,
+`10_lebensmittel_bearbeiten` (Inhalt 720 breit, mittig, Rand `space-xl`);
+GL-02 `08_versionsvergleich` in allen acht Varianten (oberer Bereich mit
+Seitenrand, scrollt statt überzulaufen). Handy sonst unverändert (Rand
+`space-l` wie bisher).

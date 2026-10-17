@@ -2,10 +2,12 @@
 //
 // Layout (Teil 1.2): Material-Fenstergrößen aus den Breakpoint-Tokens. Wer
 // nach Breite unterscheidet, fragt `AppWindowSize`, nie eine eigene Zahl.
+// Seit Teil 1.3 (D11) auch der Seitenrand je Fenstergröße (UEBERGABE Punkt 2).
 
 import 'package:flutter/widgets.dart';
 
 import '../tokens/breakpoint_tokens.g.dart';
+import '../tokens/spacing_tokens.g.dart';
 
 /// Fenstergröße nach Material 3.
 enum AppWindowSize {
@@ -41,6 +43,9 @@ enum AppWindowSize {
 
   /// `true` ab [other].
   bool isAtLeast(AppWindowSize other) => index >= other.index;
+
+  /// Seitenrand: kompakt `space-l`, ab `breakpoint-medium` `space-xl`.
+  AppSpace get pageMargin => this == compact ? AppSpace.l : AppSpace.xl;
 }
 
 /// Baut je nach verfügbarer Breite (nicht Fensterbreite) unterschiedlich.
