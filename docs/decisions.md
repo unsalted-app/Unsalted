@@ -2812,3 +2812,48 @@ App 6, Widgetbook 10 Tests grün; `check_architecture` Exit 0.
 *Goldens:* Lauf 39043775683 (`goldens/d15a`): abweichend die 8 Bilder von
 GL-01 `daten` — Kennzahlenleiste über der Tabelle, bei 200 % am Handy drei
 Kennzahlen untereinander mit Haarlinien.
+
+**D15 — Nährwerte.** `NutritionHeader` (Figma `Core/Nutrition Header`):
+`AppFigureRow` (D15a) mit „Fertiggewicht“, „Gesamt“ und — nur mit Portionen
+— „kcal/Portion“; Werte `AppValue.strong` mit der Zahl aus
+`NutritionFormatter` (einzige Rundungsstelle, ohne den eigenen „*“) und der
+Einheit „g“ bzw. „kcal“; unvollständige Energie als `AppCertainty.incomplete`
+(„*“ nach der Einheit, Value-Karte — vorher „2.868 * kcal“, jetzt „2.868
+kcal*“), fehlender Wert als `unknown` („—“). „Nicht berechenbar
+(fehlende Dichte/Stückgewicht): …“ als `AppNotice` (Warnung, mit Symbol)
+statt einer getönten Fläche, Text unverändert, Abstand `space-m`.
+*Abweichungen von Figma, wegen unveränderter Testzeilen und Texte:* Figma
+beschriftet „pro Portion“, der Bestand „kcal/Portion“
+(`nutrition_header_test.dart:47, 52` suchen den Text) — bleibt. Im
+Mengenrechner heißt das zweite Feld in Figma „Kalorien“ mit Einheit „kcal“;
+der Bestand beschriftet es „kcal“ (`amount_calculator_test.dart:38, 47, 76`)
+— bleibt, ohne zusätzliche Einheit im Feld (sonst stünde „kcal“ doppelt).
+`NutritionTable`: Linien, Ziffern und Ausrichtung kommen aus
+`AppKeyValueTable`; neu `isSub` für die zwei „davon“-Zeilen (eingerückt,
+zurückgenommen) und `strong` für die Kalorien-Zeile; Zeilen, Werte (weiter
+die Strings aus dem Formatter, z. B. „5,0 *“) und Fußnoten unverändert.
+`AmountCalculator` (Figma `Core/Amount Calculator`): zwei Zahlenfelder
+(`TextInputType.numberWithOptions(decimal: true)` — `AppTextField` zeigt
+Zahlen damit rechtsbündig in `data`; Tastatur mit Komma), Gramm mit Einheit
+„g“ im Feld, dazwischen `AppIcons.swap` in einem Rahmen `size-target`, Abstand
+`space-s`, unten ausgerichtet; das Symbol ist nur Darstellung. Würde ein Feld
+schmaler als `reflow-field-min`, steht das kcal-Feld in voller Breite unter
+dem Gramm-Feld mit Symbol (Figma „Schrift 200“, `73:3816`). Kopplung,
+Parsing und Rundung unverändert.
+*Geänderte bestehende Testzeilen:* keine (Plan (d2) sieht für D15 keine vor;
+UI-05–07, UC-01–06 und `amount_calculator_test.dart` unverändert grün). Neu
+`test/ui/nutrition/nutrition_design_test.dart`: UI-70 (Kennzahlenleiste mit
+Werten, Einheiten und Zuständen aus dem Formatter; ohne Portionen zwei
+Kennzahlen; unbekannt „—“; Hinweis als Warnung mit unverändertem Text; bei
+200 % untereinander ohne Überlauf), UI-71 (Deklaration: genau zwei
+„davon“-Zeilen eingerückt, nur die Kalorien-Zeile hervorgehoben;
+Mengenrechner bei 100 und 200 %: Felder, Einheit, rechtsbündig, Symbol,
+nebeneinander bzw. zweites Feld darunter). Gegenprobe: Mengenrechner ohne
+Umbruch → UI-71 (200 %) rot; danach grün. Nachträge 28.10.5 und 28.10.11
+(ergänzt). Mac: Design 441, Core 425, App 6, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.
+*Goldens:* Lauf 39044292470 (`goldens/d15`): abweichend die 8 Bilder von
+GL-02 `04_rezeptdetail` — Kennzahlenleiste („643,5 g“, „2.868 kcal*“, „287
+kcal*“), Warnhinweis mit Symbol, Kalorien-Zeile hervorgehoben, „davon“
+eingerückt; bei 200 % am Handy Kennzahlen untereinander. Der Mengenrechner
+liegt im Bild unterhalb des sichtbaren Ausschnitts.

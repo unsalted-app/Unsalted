@@ -263,7 +263,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D13 | Fassungsmarke (`VersionMark`), Fassungsleiste (Marken mit Auswahlbalken, Umbruch statt Abschneiden), Versionseintrag mit Marke, Zustand als Wort und „Master“ statt Stern; UI-67/68 | fertig |
 | D14 | Änderungsliste in Abschnitten, je Änderung `AppChangeText` (alt durchgestrichen, Pfeil-Symbol, neu markiert), Semantik = bisheriger Text; Versionsvergleich bei großer Schrift A über B; UI-69, UI-75 | fertig |
 | D15a | Kennzahlenleiste als fachneutrale Design-Komponente `AppFigureRow` (Haarlinien, Einzug, bei großer Schrift untereinander; freigegeben); DS-61, Katalog, GL-01 `daten` | fertig |
-| D15 | Nährwerte: Kennzahlenleiste, Deklaration, Mengenrechner | offen |
+| D15 | Nährwerte: Kopf als Kennzahlenleiste, Hinweis als Warnung, Deklaration („davon“ eingerückt, kcal hervorgehoben), Mengenrechner mit Einheit und Tausch-Symbol, bei großer Schrift untereinander; UI-70/71 | fertig |
 | D16 | Editor und Formulare: Zutatenzeile, Schrittzeile, Zustandsrahmen, Hinweise, „Keine Treffer.“ ohne Punktraster, schmales Feld bei 200 % | offen |
 | D17–D18 | Etappe 4 nach Plan | offen |
 

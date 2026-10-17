@@ -14,6 +14,13 @@
 // intern für kcal/Gramm verwendet), nicht über NutritionFormatters
 // String-Ausgabe mit Tausenderpunkt -- die wäre für ein editierbares Feld
 // nicht mehr geparst werden können.
+//
+// Seit Teil 1.3 (D15, Figma `Core/Amount Calculator`): zwei Zahlenfelder
+// (rechtsbündig, tabellarische Ziffern; Gramm mit Einheit „g“ im Feld),
+// dazwischen das Symbol `swap` in einem Rahmen `size-target` breit, Abstand
+// `space-s`, unten ausgerichtet — nur Darstellung, keine Aktion. Würde ein
+// Feld schmaler als `reflow-field-min` (große Schrift), steht das zweite
+// Feld in voller Breite darunter (Figma „Schrift 200“).
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -99,29 +106,49 @@ class _AmountCalculatorState extends State<AmountCalculator> {
 
   @override
   Widget build(BuildContext context) {
-    return AppStack(
-      direction: Axis.horizontal,
-      gap: AppSpace.l,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Expanded(
-          child: AppTextField(
-            controller: _gramsController,
-            label: 'Gramm',
-            error: _gramsError,
-            onChanged: _onGramsChanged,
-          ),
-        ),
-        Expanded(
-          child: AppTextField(
-            controller: _kcalController,
-            label: 'kcal',
-            error: _kcalError,
-            onChanged: _onKcalChanged,
-          ),
-        ),
-      ],
+    const numeric = TextInputType.numberWithOptions(decimal: true);
+    final grams = AppTextField(
+      controller: _gramsController,
+      label: 'Gramm',
+      unit: 'g',
+      keyboardType: numeric,
+      error: _gramsError,
+      onChanged: _onGramsChanged,
     );
+    final kcal = AppTextField(
+      controller: _kcalController,
+      label: 'kcal',
+      keyboardType: numeric,
+      error: _kcalError,
+      onChanged: _onKcalChanged,
+    );
+    const swap = SizedBox.square(dimension: AppSize.target, child: Center(child: AppIcon(AppIcons.swap)));
+    final fieldMin = AppReflowMetric.fieldMin.of(context);
+    return LayoutBuilder(builder: (context, constraints) {
+      final share = (constraints.maxWidth - AppSize.target - 2 * AppSpacing.s) / 2;
+      if (share < fieldMin) {
+        return AppStack(
+          gap: AppSpace.s,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppStack(
+              direction: Axis.horizontal,
+              gap: AppSpace.s,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              children: [Expanded(child: grams), swap],
+            ),
+            kcal,
+          ],
+        );
+      }
+      return AppStack(
+        direction: Axis.horizontal,
+        gap: AppSpace.s,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.max,
+        children: [Expanded(child: grams), swap, Expanded(child: kcal)],
+      );
+    });
   }
 }

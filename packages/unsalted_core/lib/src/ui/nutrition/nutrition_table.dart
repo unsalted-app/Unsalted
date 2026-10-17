@@ -10,6 +10,11 @@
 // incomplete bekommen ein `*` plus Fußnote. NutritionFormatter ist die
 // einzige Rundungsstelle. Seit Teil 1.2 (C22) aus Design-Komponenten:
 // AppKeyValueTable, AppSelect für Spalte 2.
+//
+// Seit Teil 1.3 (D15): Deklaration — die Linien, tabellarischen Ziffern und
+// rechtsbündigen Werte kommen aus AppKeyValueTable (D10/D12); hier nur die
+// „davon“-Zeilen eingerückt (`sub`) und die kcal-Zeile in `data-strong`
+// (`strong`). Zeilen, Werte und Fußnoten unverändert.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -28,15 +33,18 @@ class _NutrientRowSpec {
   final Decimal? Function(NutrientSet) value;
   final bool isSalt;
 
-  const _NutrientRowSpec(this.label, this.fieldKey, this.value, {this.isSalt = false});
+  /// „davon“-Zeile, eingerückt.
+  final bool isSub;
+
+  const _NutrientRowSpec(this.label, this.fieldKey, this.value, {this.isSalt = false, this.isSub = false});
 }
 
 const List<_NutrientRowSpec> _rows = [
   _NutrientRowSpec('Kalorien (kcal)', 'energy_kcal', _energyKcal),
   _NutrientRowSpec('Fett (g)', 'fat_g', _fatG),
-  _NutrientRowSpec('davon gesättigte Fettsäuren (g)', 'saturated_fat_g', _saturatedFatG),
+  _NutrientRowSpec('davon gesättigte Fettsäuren (g)', 'saturated_fat_g', _saturatedFatG, isSub: true),
   _NutrientRowSpec('Kohlenhydrate (g)', 'carbs_g', _carbsG),
-  _NutrientRowSpec('davon Zucker (g)', 'sugars_g', _sugarsG),
+  _NutrientRowSpec('davon Zucker (g)', 'sugars_g', _sugarsG, isSub: true),
   _NutrientRowSpec('Ballaststoffe (g)', 'fiber_g', _fiberG),
   _NutrientRowSpec('Eiweiß (g)', 'protein_g', _proteinG),
   _NutrientRowSpec('Salz (g)', 'salt_g', _saltG, isSalt: true),
@@ -121,10 +129,15 @@ class _NutritionTableState extends State<NutritionTable> {
           rows: [
             for (final spec in _rows)
               if (widget.options.showsNutrient(spec.fieldKey))
-              AppTableRow(spec.label, [
-                _format(spec, result.per100g, result.incomplete),
-                _format(spec, column2Set, result.incomplete),
-              ]),
+              AppTableRow(
+                spec.label,
+                [
+                  _format(spec, result.per100g, result.incomplete),
+                  _format(spec, column2Set, result.incomplete),
+                ],
+                sub: spec.isSub,
+                strong: spec.fieldKey == 'energy_kcal',
+              ),
           ],
         ),
         if (_rows.any((spec) => result.incomplete.contains(spec.fieldKey) && widget.options.showsNutrient(spec.fieldKey)))
