@@ -62,6 +62,7 @@ export 'src/components/brand/app_highlight.dart' show AppChangeText, AppHighligh
 export 'src/components/brand/app_mark.dart' show AppMark, AppMarkState;
 export 'src/components/brand/app_value.dart' show AppCertainty, AppValue;
 export 'src/components/data/app_code_block.dart' show AppCodeBlock;
+export 'src/components/data/app_figure_row.dart' show AppFigure, AppFigureRow;
 export 'src/components/data/app_key_value_table.dart' show AppKeyValueTable, AppTableRow;
 export 'src/components/navigation/app_bottom_action_bar.dart' show AppBottomActionBar;
 export 'src/components/navigation/app_navigation_bar.dart' show AppNavigationBar, AppNavigationDestination;

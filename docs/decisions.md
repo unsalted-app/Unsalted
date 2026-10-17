@@ -2777,3 +2777,38 @@ danach grün. Nachträge 28.10.7 (ergänzt) und 28.10.15. Mac: Design 429, Core
 GL-02 `08_versionsvergleich` — Abschnitte „Parameter“ und „Zutaten“ mit
 Linie, „Portionen 8̶ → 10“, „Weizenmehl Type 550 500 g → 550 g“, „neu Salz ·
 5 g“ (markiert); bei 200 % am Handy A über B.
+
+**D15a — Kennzahlenleiste als Design-Komponente (Nachtrag, freigegeben).**
+Die Kennzahlenleiste aus Figma (Bibliothek `Core/Nutrition Header` `142:57`,
+`Core/Nutrition Field` `142:56`, nur gelesen: Felder auf Fill, Haarlinie oben
+und unten, ab dem zweiten Feld links Haarlinie und `space-m` Einzug; Feld
+`space-s` oben und unten, Beschriftung `caption`/`text-secondary`, Wert
+`data-strong` mit Einheit `data`/`text-secondary`; Mindestbreite
+`reflow-stat-min`) braucht Linien, die Core nicht zeichnen darf (AT-14), und
+das Design-Paket hatte dafür keine Komponente. Vorgelegt (Rückfrage zu
+D15, Regel 7) und vom Projektverantwortlichen entschieden (2026-10-17): neue
+fachneutrale Komponente als eigener Commit. Neu
+`lib/src/components/data/app_figure_row.dart`: `AppFigure(label:, value:)`
+und `AppFigureRow(figures:)`, über die Tür exportiert (additiv,
+`public_api_golden.txt` ergänzt). Die Linien und der Einzug kommen aus
+`AppReflowMetric.arranged` (`rule-inline` 1/0, `rule-stacked` 0/1,
+`inset-inline` 12/0 — genau dafür sind die Tokens aus D12a da). Bei großer
+Schrift stehen alle Felder untereinander, sobald eines schmaler als
+`reflow-stat-min` würde (Figma „Schrift 200“, Bildschirm 03: drei Kennzahlen
+untereinander mit Haarlinien). Je Feld `MergeSemantics`: Beschriftung und
+Wert werden zusammen vorgelesen („Gesamt, 3.500 kcal*“). Katalog:
+`AppFigureRow` · „Kennzahlenleiste“; `AppFigure` als Parametertyp in der
+Ausnahmeliste von WB-02 (`apps/unsalted_widgetbook/test/catalog_test.dart`,
+eine Zeile ergänzt). GL-01 `daten` zeigt die Leiste über der Tabelle
+(`gl01_catalog_golden_test.dart`, Motiv ergänzt). DS-06 schlug zuerst auf den
+Figma-Namen im Kommentar an (englisches Fachwort) — der Kommentar nennt jetzt
+die Figma-IDs. *Geänderte bestehende Testzeilen:* keine. Neu
+`test/components/ds61_figure_row_test.dart` (DS-61, 12 Fälle): Haarlinien,
+Beschriftung `caption`/`text-secondary`, bei 100 % nebeneinander mit Linie
+und Einzug, bei 200 % am Handy untereinander mit Linie ohne Einzug,
+gemeinsame Semantik. Gegenprobe: ohne Umbruch → 2 Fälle rot (200 %, Handy);
+ohne gemeinsame Semantik → 4 rot; danach grün. Mac: Design 441, Core 419,
+App 6, Widgetbook 10 Tests grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39043775683 (`goldens/d15a`): abweichend die 8 Bilder von
+GL-01 `daten` — Kennzahlenleiste über der Tabelle, bei 200 % am Handy drei
+Kennzahlen untereinander mit Haarlinien.

@@ -25,7 +25,7 @@ const _notCatalogued = {
   'AppSpace', 'AppSpacing', 'AppStroke', 'AppTypography', 'AppTheme', 'AppTone', 'AppIcons', 'AppReflowMetric',
   // Parameter- und Datentypen.
   'AppButtonVariant', 'AppIconSize', 'AppTextRole', 'AppSurfaceTone', 'AppFieldWidth', 'AppSelectItem',
-  'AppNoticeKind', 'AppSnackbarHandle', 'AppMenuEntry', 'AppNavigationDestination', 'AppTableRow',
+  'AppNoticeKind', 'AppSnackbarHandle', 'AppMenuEntry', 'AppNavigationDestination', 'AppTableRow', 'AppFigure',
   'AppWindowSize', 'DetailLayout',
   'AppMarkState', 'AppCertainty', // Teil 1.3 D07
   // Teil eines anderen Eintrags.

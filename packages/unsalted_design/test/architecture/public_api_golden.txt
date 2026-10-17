@@ -52,6 +52,7 @@ src/components/brand/app_highlight.dart show AppChangeText, AppHighlight
 src/components/brand/app_mark.dart show AppMark, AppMarkState
 src/components/brand/app_value.dart show AppCertainty, AppValue
 src/components/data/app_code_block.dart show AppCodeBlock
+src/components/data/app_figure_row.dart show AppFigure, AppFigureRow
 src/components/data/app_key_value_table.dart show AppKeyValueTable, AppTableRow
 src/components/navigation/app_bottom_action_bar.dart show AppBottomActionBar
 src/components/navigation/app_navigation_bar.dart show AppNavigationBar, AppNavigationDestination

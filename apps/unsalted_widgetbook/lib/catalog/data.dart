@@ -20,6 +20,16 @@ final dataFolder = WidgetbookFolder(name: 'data', children: [
           ],
         )),
   ]),
+  component('AppFigureRow', [
+    useCase('Kennzahlenleiste', (_) => const AppFigureRow(figures: [
+          AppFigure(label: 'Erste', value: AppValue.strong(value: '1.250', unit: 'g')),
+          AppFigure(label: 'Zweite', value: AppValue.strong(value: '3.500', unit: 'Einh.')),
+          AppFigure(
+            label: 'Dritte',
+            value: AppValue.strong(value: '875', unit: 'Einh.', certainty: AppCertainty.incomplete),
+          ),
+        ])),
+  ]),
   component('AppCodeBlock', [
     pageUseCase('Data/Code Block', (_) => Scaffold(
           body: FormSections.fixed(children: [

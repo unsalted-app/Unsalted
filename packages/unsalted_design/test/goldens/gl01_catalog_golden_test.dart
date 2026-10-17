@@ -212,6 +212,12 @@ Widget _navigation() => Scaffold(
 
 Widget _data() => Scaffold(
       body: FormSections.fixed(children: [
+        const AppFigureRow(figures: [
+          AppFigure(label: 'Erste', value: AppValue.strong(value: '1.250', unit: 'g')),
+          AppFigure(label: 'Zweite', value: AppValue.strong(value: '3.500', unit: 'Einh.')),
+          AppFigure(label: 'Dritte', value: AppValue.strong(value: '875', unit: 'Einh.', certainty: AppCertainty.incomplete)),
+        ]),
+        const AppGap(AppSpace.l),
         const AppKeyValueTable(
           headers: ['Spalte A', 'Spalte B'],
           rows: [
