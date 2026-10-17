@@ -7,12 +7,16 @@
 // Teil 1.3 (D09, Notice-Karte): Fehler und Warnung auf den
 // feedback-Flächen, Info und Erfolg neutral auf `surface-sunken` mit Symbol in
 // `text-secondary`; `radius-s`, Innenabstand und Abstand `space-m`, Symbol
-// `size-icon-small` um `space-xxs` abgesenkt, Text `body`.
+// `size-icon-small` um `space-xxs` abgesenkt, Text `body`. Seit D13a steht
+// eine Aktion rechtsbündig unter dem Text, sobald dem Text daneben weniger
+// als `reflow-label-min` bliebe (große Schrift, 28.10.11).
 
 import 'package:flutter/material.dart';
 
 import '../../layout/app_stack.dart';
+import '../../layout/reflow_row.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_reflow.dart';
 import '../../tokens/radius_tokens.g.dart';
 import '../../tokens/size_tokens.g.dart';
 import '../../tokens/typography_tokens.g.dart';
@@ -58,6 +62,7 @@ class AppNotice extends StatelessWidget {
       AppNoticeKind.info => (c.surfaceSunken, c.textPrimary, c.textSecondary, AppIcons.info),
       AppNoticeKind.success => (c.surfaceSunken, c.textPrimary, c.textSecondary, AppIcons.check),
     };
+    final text = Text(message, style: AppTypography.body.copyWith(color: foreground));
     return Semantics(
       container: true,
       liveRegion: kind == AppNoticeKind.error,
@@ -76,8 +81,16 @@ class AppNotice extends StatelessWidget {
                 top: AppSpace.xxs,
                 child: Icon(icon, color: iconColor, size: AppSize.iconSmall),
               ),
-              Expanded(child: Text(message, style: AppTypography.body.copyWith(color: foreground))),
-              ?action,
+              Expanded(
+                child: action == null
+                    ? text
+                    : ReflowRow(
+                        main: text,
+                        trailing: action!,
+                        gap: AppSpacing.m,
+                        mainMin: AppReflowMetric.labelMin.of(context),
+                      ),
+              ),
             ],
           ),
         ),

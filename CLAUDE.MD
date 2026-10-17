@@ -89,7 +89,8 @@ unsalted/
    │  ├─ tool/generate_tokens.dart    schreibt lib/src/tokens/*.g.dart — nie von Hand ändern
    │  ├─ lib/fonts/                   Atkinson Hyperlegible Next 400/600/700 (TTF) + OFL.txt
    │  └─ lib/src/  tokens/ (generiert) theme/ (inkl. app_reflow.dart: Maße je Textgröße)
-   │               layout/ components/<gruppe>/ templates/ (page_content.dart: Rahmen „Inhalt“);
+   │               layout/ (reflow_row.dart: Aktion daneben oder darunter) components/<gruppe>/
+   │               templates/ (page_content.dart: Rahmen „Inhalt“);
    │               Tests DS-01–60 (+ b/c), GL-01 (test/goldens/, nur Linux)
    └─ unsalted_core/
       ├─ pubspec.yaml
@@ -269,7 +270,8 @@ mit D17) und Deklaration, D11 Rahmen „Inhalt“ (Rand ab 600, höchstens 720),
 zweispaltig ab 1200, D12a `reflow-*` je Textgröße aus Figma, D12 große
 Schrift (`AppReflowMetric`), DS-51 ohne Übergangsliste; Etappe 2
 freigegeben. Etappe 3 (D09b, D13–D16) in Arbeit: D09b fertig (Restzeitlinie
-der Meldung). Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
+der Meldung), D13a fertig (Tippaktion in der Semantik von Marke und
+Navigationsziel, Hinweis-Aktion unter dem Text bei großer Schrift). Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.

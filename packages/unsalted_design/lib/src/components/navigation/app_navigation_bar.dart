@@ -9,7 +9,8 @@
 // `size-icon`, Abstand `space-xs`, Beschriftung `label-small`; gewählt
 // `text-primary`, sonst `text-secondary`; Mindesthöhe `size-nav-bar`.
 // Als Systemleiste folgt sie der Textgröße nicht; langes Drücken zeigt das
-// Ziel als Tooltip. [AppNavigationBar.rail] ist dieselbe Navigation als
+// Ziel als Tooltip; die Tippaktion steht auch in der Semantik (D13a).
+// [AppNavigationBar.rail] ist dieselbe Navigation als
 // seitliche Leiste (Figma `Navigation/Navigation Rail`, Breite
 // `size-nav-rail`, Haarlinie rechts) — `AppPage` wählt die Form nach der
 // Fensterbreite.
@@ -121,6 +122,7 @@ class _Destination extends StatelessWidget {
       button: true,
       selected: selected,
       label: destination.label,
+      onTap: onTap,
       child: ExcludeSemantics(
         child: Tooltip(
           message: destination.label,

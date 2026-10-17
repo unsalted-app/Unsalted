@@ -259,6 +259,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D12a | Token-Nachtrag `reflow` aus Figma: acht Maße mit Werten für 100/200 % in beiden Token-Dateien, Generator liest beide Formen, Figma-Abgleich gleich | fertig |
 | D12 | Große Schrift: Werte je Textgröße (`AppReflowMetric`, linear 100–200 %), Deklaration bricht um, Aktionsleiste untereinander, Textgrößen-Addon im Katalog, WB-04; DS-51-Übergangsliste und Mechanismus entfernt | fertig |
 | D09b | Restzeitlinie der Meldung mit Aktion (`stroke-rule` in `action-inverse`, läuft ab dem Erscheinen in der Frist ab, bei „Bewegung reduzieren“ still); Inhalt der Meldung nach Snackbar-Karte, bei großer Schrift Aktion unter dem Text; drei Core-Test-Helfer mit festen Pumps (freigegeben); DS-38b | fertig |
+| D13a | Bedienhilfe und große Schrift in Komponenten: Tippaktion in der Semantik von Marke (Ziel) und Navigationsziel (Fehler aus D07/D10), Text in der Marke bricht um, Hinweis-Aktion unter dem Text (Entscheidung 4, `ReflowRow`); DS-53b, DS-59b, DS-32c | fertig |
 | D13 | Fassungsmarke, Fassungsleiste, Master | offen |
 | D14 | Änderungsliste; Versionsvergleich bei 200 % A über B | offen |
 | D15 | Nährwerte: Kennzahlenleiste, Deklaration, Mengenrechner | offen |

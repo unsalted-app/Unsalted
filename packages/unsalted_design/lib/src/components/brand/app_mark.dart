@@ -9,6 +9,8 @@
 // Semantik, nie nur in Farbe oder Linie). Mit [AppMark.onTap] ist die Marke
 // ein Auswahlziel (mindestens `size-target`); gewählt zeigt ein Balken
 // `stroke-rule` in `line-strong` unter der Marke die Auswahl — nie die Füllung.
+// Seit D13a trägt das Ziel die Tippaktion auch in der Semantik (vorher nur im
+// ausgeschlossenen `InkWell`), und ein langer Text bricht in der Marke um.
 
 import 'package:flutter/material.dart';
 
@@ -81,7 +83,7 @@ class AppMark extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (seal) Icon(AppIcons.lock, size: AppSize.iconXs, color: foreground),
-          Text(label, style: AppTypography.labelSmall.copyWith(color: foreground)),
+          Flexible(child: Text(label, style: AppTypography.labelSmall.copyWith(color: foreground))),
         ],
       ),
     );
@@ -112,6 +114,7 @@ class AppMark extends StatelessWidget {
       label: semantics,
       button: true,
       selected: selected,
+      onTap: onTap,
       child: ExcludeSemantics(
         child: InkWell(
           onTap: onTap,

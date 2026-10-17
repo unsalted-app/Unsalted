@@ -2635,3 +2635,36 @@ Goldens: Die Meldung erscheint im GL-01-Motiv `template_liste` (Linie nach
 Schrift): abweichend genau die 8 Bilder von GL-01 `template_liste` — die
 Meldung mit Restzeitlinie (nach 1 s bei rund 85 %), bei 200 % „Rückgängig“
 rechtsbündig unter dem vollständigen Text.
+
+**D13a — Bedienhilfe und große Schrift in Komponenten (Nachtrag, Design-Paket).**
+Gefunden beim Schreiben von UI-67 (D13), behoben vor D13, weil die
+Fassungsleiste darauf aufbaut. *Fehler aus D07 und D10:* `AppMark` mit `onTap`
+und das Ziel der `AppNavigationBar` setzen ihre Semantik selbst
+(`Semantics(button, selected, label)`) und schließen die Kinder aus
+(`ExcludeSemantics`) — damit fiel auch die Tippaktion des `InkWell` weg. Der
+Knoten war für Screenreader eine Schaltfläche ohne Aktion. Jetzt
+`Semantics(onTap: onTap)`; die Aktion löst dieselbe Rückmeldung aus wie ein
+Tippen. Die übrigen Merkmale (Beschriftung, Schaltfläche, gewählt) bleiben.
+*Große Schrift:* Der Text einer `AppMark` steht in einem `Flexible` und
+bricht um, statt bei schmaler Fläche überzulaufen (UI-67 bei 200 %).
+*Entscheidung 4 (Hinweis mit Aktion bei 200 %):* `AppNotice` stellt die Aktion
+rechtsbündig unter den Text, sobald dem Text daneben weniger als
+`reflow-label-min` bliebe. Weil die Aktion ein beliebiges Widget ist (ihre
+Breite ist erst beim Layout bekannt), misst ein kleines internes Layout
+`lib/src/layout/reflow_row.dart` (`ReflowRow`, nicht exportiert) zuerst die
+Aktion und entscheidet dann (mit Dry-Layout und Intrinsic-Maßen). Die
+Meldung (D09b) rechnet die Breite aus ihrer Beschriftung, weil sie nur Text
+als Aktion kennt.
+*Geänderte bestehende Testzeilen:* keine. Neue Tests
+`test/components/ds53b_semantics_reflow_test.dart`: DS-53b (Marke als Ziel —
+Tippaktion in der Semantik, Auslösen über die Semantik; langer Text bricht in
+`size-target` Breite um, ohne Überlauf), DS-59b (Navigationsziel über die
+Semantik antippen), DS-32c (Hinweis bei 100 und 200 %, geprüft über die Regel;
+bei 200 % am Handy darunter, auf dem Tablet bei 100 % daneben; schmaler
+Hinweis auch bei 100 % darunter). Gegenprobe: ohne Tippaktion → DS-53b und
+DS-59b rot (je 4); ohne Umbruch → DS-32c rot (6); danach grün. Mac: Design
+429 Tests grün.
+*Goldens:* Lauf 39041140045 (`goldens/d13a`): abweichend nur GL-01
+`rueckmeldung` bei 200 % am Handy (hell, dunkel) — „Kopieren“ rechtsbündig
+unter „Hinweis mit Aktion.“ statt des auf drei Zeilen gedrängten Texts; die
+Tippaktion in der Semantik ist nicht sichtbar.
