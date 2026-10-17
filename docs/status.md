@@ -256,7 +256,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D09 | Rückmeldung: Hinweis mit Symbol (neutral/Warnung/Fehler/Erfolg), Leerstelle, Fehlerzustand mit Symbol, Dialog `size-dialog` mit primärem Verb, Symbolgrößen aus Tokens; Restzeitlinie der Meldung nicht gebaut (siehe decisions) | fertig |
 | D10 | Navigation und Daten: eigene Navigationsleiste (Balken statt Pille, Seitenleiste ab 600 über `AppPage.navigation`), Kopfleiste und Navigation ohne Textskalierung, Aktionsleiste, Deklarationstabelle, Codeblock; DS-59; DS-51-Liste leer | fertig |
 | D11 | Templates und Layout: Rahmen „Inhalt“ (Seitenrand ab 600, höchstens 720, mittig), Listen ohne Rand, Detail zweispaltig ab 1200, `DetailSplit` oben scrollend (Überlauf Versionsvergleich behoben); DS-60 | fertig |
-| D12a | Token-Nachtrag `reflow` aus Figma | offen |
+| D12a | Token-Nachtrag `reflow` aus Figma: acht Maße mit Werten für 100/200 % in beiden Token-Dateien, Generator liest beide Formen, Figma-Abgleich gleich | fertig |
 | D12 | Große Schrift, DS-51-Mechanismus entfernt, WB-04 | offen |
 | D13–D18 | Etappen 3–4 nach Plan | offen |
 

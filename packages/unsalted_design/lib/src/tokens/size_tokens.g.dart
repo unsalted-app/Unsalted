@@ -7,9 +7,9 @@
 /// Feste Maße der Komponenten: Tippziele, Höhen, Breiten, Spalten.
 ///
 /// Ziele, die man in der Küche trifft – und die festen Maße der Komponenten. Jede Höhe und Breite
-/// einer Komponente steht hier, nie als Zahl im Bildschirm. Die Einträge `reflow-*` sind Grundwerte
-/// für Maße, die mit der Schrift wachsen; in Figma liegen sie in der Sammlung `type` (Modi
-/// `100`/`200`).
+/// einer Komponente steht hier, nie als Zahl im Bildschirm. Die Einträge `reflow-*` sind Maße, die
+/// mit der Schrift wachsen: je ein Wert für Textgröße `100` und `200` wie die Modi der
+/// Figma-Sammlung `type`; dazwischen linear, über 200 % der Wert bei 200.
 abstract final class AppSize {
   /// `size/target`
   static const double target = 48;
@@ -106,6 +106,15 @@ abstract final class AppReflow {
   /// `reflow/select-min`
   static const double selectMin = 104;
 
+  /// `reflow/rule-inline`
+  static const double ruleInline = 1;
+
+  /// `reflow/rule-stacked`
+  static const double ruleStacked = 0;
+
+  /// `reflow/inset-inline`
+  static const double insetInline = 12;
+
   /// Alle Werte mit ihrem Figma-Namen.
   static const byFigmaName = <String, double>{
     'reflow/value-column': valueColumn,
@@ -113,5 +122,8 @@ abstract final class AppReflow {
     'reflow/stat-min': statMin,
     'reflow/field-min': fieldMin,
     'reflow/select-min': selectMin,
+    'reflow/rule-inline': ruleInline,
+    'reflow/rule-stacked': ruleStacked,
+    'reflow/inset-inline': insetInline,
   };
 }

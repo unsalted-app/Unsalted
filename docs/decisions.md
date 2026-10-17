@@ -2432,3 +2432,36 @@ erwartet: auf dem Tablet (100 und 200 %) GL-01 `daten`, `template_detail`,
 GL-02 `08_versionsvergleich` in allen acht Varianten (oberer Bereich mit
 Seitenrand, scrollt statt überzulaufen). Handy sonst unverändert (Rand
 `space-l` wie bisher).
+
+**D12a — Token-Nachtrag `reflow` (F5).** Quelle Figma, nur gelesen
+(Bibliothek `5er28Cr7EMMcPzvusWjNyR`, Variablensammlung `type`, Modi `100`
+und `200`, gelesen am 2026-10-17). In beiden Token-Dateien (byteweise gleich,
+F8) stehen die Maße jetzt im Format `"value": {"100": "…px", "200": "…px"}`:
+
+| Token | 100 | 200 | Figma |
+|---|---|---|---|
+| `reflow-value-column` | 96 | 160 | `reflow/value-column` 96 / 160 |
+| `reflow-label-min` | 120 | 200 | `reflow/label-min` 120 / 200 |
+| `reflow-stat-min` | 96 | 240 | `reflow/stat-min` 96 / 240 |
+| `reflow-field-min` | 120 | 240 | `reflow/field-min` 120 / 240 |
+| `reflow-select-min` | 104 | 208 | `reflow/select-min` 104 / 208 |
+| `reflow-rule-inline` (neu, A2) | 1 | 0 | `reflow/rule-inline` 1 / 0 |
+| `reflow-rule-stacked` (neu, A2) | 0 | 1 | `reflow/rule-stacked` 0 / 1 |
+| `reflow-inset-inline` (neu, A2) | 12 | 0 | `reflow/inset-inline` 12 / 0 |
+
+Figma-Abgleich: Die Sammlung hat genau diese acht `reflow/*`-Variablen, alle
+in beiden Modi gleich der Token-Datei; die übrigen Einträge der Sammlung
+(Schriftgrößen und Zeilenhöhen 100/200, Familien, Schnitte) betrifft der
+Nachtrag nicht. Die Verwendungstexte der drei neuen Einträge sind die
+Figma-Beschreibungen; die bestehenden Texte bleiben. Die Notiz der Gruppe
+`size` nennt jetzt das Format und die Regel aus F5 (zwischen 100 und 200 %
+linear, darüber der Wert bei 200). Generator: `_baseValue` liest beide Formen
+und schreibt vorerst den Wert bei 100 % (Werte je Textgröße folgen mit D12);
+`AppReflow` bekommt `ruleInline`, `ruleStacked`, `insetInline` (additiv).
+Keine sichtbare Änderung, daher kein eigener Golden-Lauf (die PR-CI vergleicht
+alle Bilder). *Geänderte Testzeile:*
+`packages/unsalted_design/test/tokens/ds04_tokens_complete_test.dart:93`
+(`px` liest bei einem Wert je Textgröße den Wert bei 100 %; geplant als
+„DS-04-Anpassung“). Neu dort: „DS-04: reflow-Werte je Textgröße 100 und 200“
+(Namen und Reihenfolge der acht Einträge, je genau `100` und `200` in `px`;
+`size-*` bleiben einfache Werte). Mac: Design 362, Core 412, App 6, Widgetbook 6 Tests grün; `check_architecture` Exit 0.

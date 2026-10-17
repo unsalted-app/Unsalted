@@ -90,7 +90,7 @@ void main() {
   });
 
   test('DS-04: Zahlengruppen wie in der Token-Datei, Namen nach 05', () {
-    double px(Object v) => double.parse((v as String).replaceAll('px', ''));
+    double px(Object v) => double.parse(((v is Map ? v['100'] : v) as String).replaceAll('px', ''));
     void check(String group, String prefix, String figma, Map<String, double> actual) {
       final expected = {
         for (final t in tokens(group))
@@ -119,6 +119,30 @@ void main() {
     expect(AppShadow.focus(Brightness.light).last.spreadRadius, 2, reason: 'Spalt in Papierfarbe zuletzt (oben)');
     expect(AppShadow.focus(Brightness.light).last.color, AppColorTokens.light.surfacePage);
     expect(AppShadow.focus(Brightness.light).first.color, AppColorTokens.light.lineFocus);
+  });
+
+  test('DS-04: reflow-Werte je Textgröße 100 und 200 (D12a)', () {
+    final reflow = [for (final t in tokens('size')) if ((t['name'] as String).startsWith('reflow-')) t];
+    expect([for (final t in reflow) t['name']], [
+      'reflow-value-column',
+      'reflow-label-min',
+      'reflow-stat-min',
+      'reflow-field-min',
+      'reflow-select-min',
+      'reflow-rule-inline',
+      'reflow-rule-stacked',
+      'reflow-inset-inline',
+    ]);
+    for (final t in reflow) {
+      final value = t['value'] as Map<String, dynamic>;
+      expect(value.keys, ['100', '200'], reason: t['name'] as String);
+      for (final v in value.values) {
+        expect(v, matches(RegExp(r'^\d+px$')), reason: t['name'] as String);
+      }
+    }
+    for (final t in tokens('size')) {
+      if ((t['name'] as String).startsWith('size-')) expect(t['value'], isA<String>(), reason: t['name'] as String);
+    }
   });
 
   test('DS-04: der Generator ist stabil (zweimal gleich)', () {

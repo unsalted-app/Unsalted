@@ -78,6 +78,16 @@ String _number(String value) {
   return n == n.roundToDouble() ? n.toInt().toString() : n.toString();
 }
 
+/// Wert eines Maßes: entweder ein Wert (`"16px"`) oder je Textgröße
+/// (`{"100": "96px", "200": "160px"}`, D12a); bei Letzterem der Wert bei 100 %.
+String _baseValue(Object value) {
+  if (value is String) return value;
+  if (value is Map && value.length == 2 && value['100'] is String && value['200'] is String) {
+    return value['100'] as String;
+  }
+  throw FormatException('Wert nicht lesbar: $value');
+}
+
 /// `#f9f7f1` → `0xFFF9F7F1`, `#0c101929` (CSS RGBA) → `0x290C1019`.
 String _color(String hex) {
   final h = hex.replaceFirst('#', '').toUpperCase();
@@ -178,7 +188,7 @@ String _sizes(Map<String, dynamic> data) {
     final name = (t['name'] as String).substring(prefix.length);
     b
       ..writeln('  /// `$figma/$name`${_doc(t['usage'])}')
-      ..writeln('  static const double ${_camel(name)} = ${_number(t['value'] as String)};')
+      ..writeln('  static const double ${_camel(name)} = ${_number(_baseValue(t['value'] as Object))};')
       ..writeln();
   }
 
