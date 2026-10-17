@@ -8,6 +8,13 @@
 // [onChanged] und baut daraus RecipeVersionDraft. Seit Teil 1.2 (C25) aus
 // Design-Komponenten; der Auswahldialog liegt in
 // food_variant_picker_dialog.dart.
+//
+// Seit Teil 1.3 (D16, Figma Bildschirm 03 `_Zeile/Zutat bearbeiten`):
+// zweizeilig — oben Ziehgriff, Name (füllt) und Entfernen, darunter
+// eingerückt Menge in `reflow-value-column`, Einheit und Notiz (teilen sich
+// den Rest; bei großer Schrift untereinander). Eine nicht verknüpfte Zutat
+// (ohne Lebensmittel) ist gestrichelt unterstrichen (Mark-/Frame-Karte,
+// `AppDashedUnderline`). Beschriftungen, Aktionen und Logik unverändert.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -131,71 +138,132 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
 
   @override
   Widget build(BuildContext context) {
-    return AppPadding.symmetric(
-      vertical: AppSpace.xs,
+    final name = AppTextField(
+      controller: _nameController,
+      enabled: !widget.readOnly,
+      label: 'Name',
+      helper: widget.data.hasUnresolvedVariant ? deletedVariantHint : null,
+      helperTone: AppTone.error,
+      suffix: widget.readOnly
+          ? null
+          : AppIconButton(icon: AppIcons.search, tooltip: 'Lebensmittel verknüpfen', onPressed: _pickVariant),
+      onChanged: (value) {
+        // Freie Texteingabe löst eine zuvor verknüpfte Variante,
+        // weil der angezeigte Name nicht mehr zu ihr passt.
+        _emit((d) => d.copyWith(displayName: value, variant: () => null));
+      },
+    );
+    final quantity = AppTextField(
+      controller: _quantityController,
+      enabled: !widget.readOnly,
+      label: 'Menge',
+      onChanged: (value) {
+        try {
+          final parsed = Decimal.parse(value.trim().replaceAll(',', '.'));
+          _emit((d) => d.copyWith(quantity: parsed));
+        } on FormatException {
+          // Ungültige Eingabe -- letzter gültiger Wert bleibt
+          // erhalten, bis eine gültige Zahl eingegeben wird.
+        }
+      },
+    );
+    final unit = AppSelect<String>(
+      expand: true,
+      value: widget.data.unitCode,
+      onChanged: widget.readOnly ? null : (value) => _emit((d) => d.copyWith(unitCode: value)),
+      items: [for (final unit in UnitCatalog.all) AppSelectItem(unit.code, unitLabel(unit.code))],
+    );
+    final note = AppTextField(
+      controller: _noteController,
+      enabled: !widget.readOnly,
+      label: 'Notiz',
+      onChanged: (value) {
+        _emit((d) => d.copyWith(note: () => value.trim().isEmpty ? null : value));
+      },
+    );
+    final valueColumn = AppReflowMetric.valueColumn.of(context);
+    final selectMin = AppReflowMetric.selectMin.of(context);
+
+    return AppPadding.only(
+      top: AppSpace.s,
+      bottom: AppSpace.m,
       child: AppStack(
-        direction: Axis.horizontal,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
+        gap: AppSpace.xs,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const AppIcon(AppIcons.dragHandle),
-          const AppGap(AppSpace.s),
-          Expanded(
-            flex: 3,
-            child: AppTextField(
-              controller: _nameController,
-              enabled: !widget.readOnly,
-              label: 'Name',
-              helper: widget.data.hasUnresolvedVariant ? deletedVariantHint : null,
-              helperTone: AppTone.error,
-              suffix: widget.readOnly
-                  ? null
-                  : AppIconButton(icon: AppIcons.search, tooltip: 'Lebensmittel verknüpfen', onPressed: _pickVariant),
-              onChanged: (value) {
-                // Freie Texteingabe löst eine zuvor verknüpfte Variante,
-                // weil der angezeigte Name nicht mehr zu ihr passt.
-                _emit((d) => d.copyWith(displayName: value, variant: () => null));
-              },
-            ),
+          AppStack(
+            direction: Axis.horizontal,
+            gap: AppSpace.s,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const AppPadding.only(bottom: AppSpace.m, child: AppIcon(AppIcons.dragHandle)),
+              Expanded(child: widget.data.foodVariantId == null ? AppDashedUnderline(child: name) : name),
+              if (!widget.readOnly)
+                AppIconButton(icon: AppIcons.deleteOutline, tooltip: 'Zutat entfernen', onPressed: widget.onRemove),
+            ],
           ),
-          const AppGap(AppSpace.s),
-          Expanded(
-            child: AppTextField(
-              controller: _quantityController,
-              enabled: !widget.readOnly,
-              label: 'Menge',
-              onChanged: (value) {
-                try {
-                  final parsed = Decimal.parse(value.trim().replaceAll(',', '.'));
-                  _emit((d) => d.copyWith(quantity: parsed));
-                } on FormatException {
-                  // Ungültige Eingabe -- letzter gültiger Wert bleibt
-                  // erhalten, bis eine gültige Zahl eingegeben wird.
-                }
-              },
-            ),
+          AppStack(
+            direction: Axis.horizontal,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const SizedBox(width: _indent),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) => _details(
+                    width: constraints.maxWidth,
+                    quantity: quantity,
+                    unit: unit,
+                    note: note,
+                    valueColumn: valueColumn,
+                    selectMin: selectMin,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const AppGap(AppSpace.s),
-          AppSelect<String>(
-            value: widget.data.unitCode,
-            onChanged: widget.readOnly ? null : (value) => _emit((d) => d.copyWith(unitCode: value)),
-            items: [for (final unit in UnitCatalog.all) AppSelectItem(unit.code, unitLabel(unit.code))],
-          ),
-          const AppGap(AppSpace.s),
-          Expanded(
-            child: AppTextField(
-              controller: _noteController,
-              enabled: !widget.readOnly,
-              label: 'Notiz',
-              onChanged: (value) {
-                _emit((d) => d.copyWith(note: () => value.trim().isEmpty ? null : value));
-              },
-            ),
-          ),
-          if (!widget.readOnly)
-            AppIconButton(icon: AppIcons.deleteOutline, tooltip: 'Zutat entfernen', onPressed: widget.onRemove),
         ],
       ),
+    );
+  }
+
+  /// Einzug der zweiten Zeile: Breite des Ziehgriffs und Abstand (Figma `Einzug`).
+  static const double _indent = AppSize.icon + AppSpacing.s;
+
+  /// Zweite Zeile (Figma `Zeile 2`): Menge in `reflow-value-column`, Einheit
+  /// und Notiz teilen sich den Rest. Bliebe der Einheit weniger als
+  /// `reflow-select-min` (große Schrift), stehen sie untereinander.
+  static Widget _details({
+    required double width,
+    required Widget quantity,
+    required Widget unit,
+    required Widget note,
+    required double valueColumn,
+    required double selectMin,
+  }) {
+    final amount = SizedBox(width: valueColumn, child: quantity);
+    Widget row(List<Widget> children) => AppStack(
+          direction: Axis.horizontal,
+          gap: AppSpace.s,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.max,
+          children: children,
+        );
+    if ((width - valueColumn - 2 * AppSpacing.s) / 2 >= selectMin) {
+      return row([amount, Expanded(child: unit), Expanded(child: note)]);
+    }
+    return AppStack(
+      gap: AppSpace.xs,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (width - valueColumn - AppSpacing.s >= selectMin)
+          row([amount, Expanded(child: unit)])
+        else ...[
+          Align(alignment: Alignment.centerLeft, child: amount),
+          unit,
+        ],
+        note,
+      ],
     );
   }
 }

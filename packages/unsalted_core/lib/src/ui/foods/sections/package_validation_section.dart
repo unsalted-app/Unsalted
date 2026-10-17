@@ -3,7 +3,8 @@
 // Bildschirm 10, Abschnitt „Prüfung“ (Teil 1.2): Warnungen des
 // NutrientValidator (Speichern trotzdem möglich) und ein blockierender Fehler
 // (Kapitel 22). Die Keys `package_form_warning`/`package_form_error` bleiben
-// für Tests erhalten.
+// für Tests erhalten. Seit Teil 1.3 (D16, 28.10.8) als `AppNotice` (Warnung
+// bzw. Fehler, mit Symbol) statt getönter Fläche; Texte unverändert.
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -27,22 +28,12 @@ class PackageValidationSection extends StatelessWidget {
           for (final warning in warnings)
             AppPadding.symmetric(
               vertical: AppSpace.xs,
-              child: AppSurface(
-                key: const Key('package_form_warning'),
-                tone: AppSurfaceTone.warning,
-                padding: AppSpace.s,
-                child: AppText(warning),
-              ),
+              child: AppNotice(warning, key: const Key('package_form_warning'), kind: AppNoticeKind.warning),
             ),
           if (error != null)
             AppPadding.symmetric(
               vertical: AppSpace.xs,
-              child: AppSurface(
-                key: const Key('package_form_error'),
-                tone: AppSurfaceTone.error,
-                padding: AppSpace.s,
-                child: AppText(error!),
-              ),
+              child: AppNotice(error!, key: const Key('package_form_error'), kind: AppNoticeKind.error),
             ),
         ],
       );

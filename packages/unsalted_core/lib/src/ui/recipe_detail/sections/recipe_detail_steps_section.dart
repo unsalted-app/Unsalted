@@ -2,6 +2,9 @@
 //
 // Bildschirm 4, Abschnitt „Schritte“ (Teil 1.2): Anweisung je Schritt, bei
 // gesetztem timerSeconds ein Timer-Chip (nur Anzeige, keine Timer-Engine).
+// Seit Teil 1.3 (D16, Figma `Core/Step Row`): je Schritt die Nummer in
+// `size-index-column` (`data-strong`), daneben die Anweisung und darunter der
+// Timer als Tag mit Symbol `timer`; Haarlinie unter jedem Schritt.
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -26,11 +29,32 @@ class RecipeDetailStepsSection extends StatelessWidget {
   Widget build(BuildContext context) => AppSection(
         title: 'Schritte',
         children: [
-          for (final step in steps)
-            AppListItem(
-              title: step.instruction,
-              trailing: step.timerSeconds == null ? null : AppChip(label: _formatTimer(step.timerSeconds!)),
+          for (final (index, step) in steps.indexed) ...[
+            AppPadding.symmetric(
+              vertical: AppSpace.s,
+              child: AppStack(
+                direction: Axis.horizontal,
+                gap: AppSpace.s,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(width: AppSize.indexColumn, child: AppText.dataStrong('${index + 1}')),
+                  Expanded(
+                    child: AppStack(
+                      gap: AppSpace.s,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppText(step.instruction),
+                        if (step.timerSeconds != null)
+                          AppChip(label: _formatTimer(step.timerSeconds!), icon: AppIcons.timer),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
+            const AppDivider.flush(),
+          ],
         ],
       );
 }

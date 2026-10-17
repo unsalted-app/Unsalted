@@ -3,12 +3,18 @@
 // Bildschirm 3, Abschnitt „eingefroren“ (Teil 1.2): Hinweis „Eingefroren —
 // als neuen Entwurf kopieren?“ mit Aktion (createDraftFrom), darunter
 // schreibgeschützt Zutaten und Schritte (Kapitel 22).
+//
+// Seit Teil 1.3 (D16, 28.10.3; Figma Bildschirm 03 „Eingefroren“): der
+// Hinweis als `AppNotice` mit „Kopieren“ (Text unverändert), darunter der
+// schreibgeschützte Inhalt im Zustandsrahmen (`AppFrame.fixed`) mit der
+// Fassungsmarke samt Siegel und dem Zustandswort.
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
 
 import '../../../recipe/recipe_version.dart';
 import '../../shared/unit_labels.dart';
+import '../../versions/version_mark.dart';
 
 /// Schreibgeschützte Ansicht einer eingefrorenen Version.
 class RecipeEditorFrozenSection extends StatelessWidget {
@@ -25,20 +31,27 @@ class RecipeEditorFrozenSection extends StatelessWidget {
   Widget build(BuildContext context) => AppStack(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AppSurface(
-            tone: AppSurfaceTone.info,
-            child: Row(
+          AppNotice(
+            'Eingefroren — als neuen Entwurf kopieren?',
+            action: AppButton.tertiary(label: 'Kopieren', onPressed: onCopy),
+          ),
+          const AppGap(AppSpace.l),
+          AppFrame.fixed(
+            mark: VersionMark(version: version, isMaster: false, seal: true),
+            caption: 'Eingefroren',
+            child: AppStack(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Expanded(child: AppText('Eingefroren — als neuen Entwurf kopieren?')),
-                AppButton.tertiary(label: 'Kopieren', onPressed: onCopy),
+                for (final ingredient in version.ingredients)
+                  AppListItem(
+                    title: ingredient.displayName,
+                    subtitle: formatAmount(ingredient.quantity, ingredient.unitCode),
+                  ),
+                const AppDivider(),
+                for (final step in version.steps) AppListItem(title: step.instruction),
               ],
             ),
           ),
-          const AppGap(AppSpace.l),
-          for (final ingredient in version.ingredients)
-            AppListItem(title: ingredient.displayName, subtitle: formatAmount(ingredient.quantity, ingredient.unitCode)),
-          const AppDivider(),
-          for (final step in version.steps) AppListItem(title: step.instruction),
         ],
       );
 }

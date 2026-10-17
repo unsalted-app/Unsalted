@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 
 import '../../layout/app_stack.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_reflow.dart';
 import '../../theme/app_tone.dart';
 import '../../tokens/size_tokens.g.dart';
 import '../../tokens/spacing_tokens.g.dart';
@@ -28,7 +29,7 @@ enum AppFieldWidth {
   /// so breit wie der verfügbare Platz.
   fill,
 
-  /// schmal, für kurze Zahlen (`reflow-field-min`).
+  /// schmal, für kurze Zahlen (`reflow-field-min`, wächst seit D16 mit der Textgröße).
   narrow,
 }
 
@@ -175,6 +176,8 @@ class AppTextField extends StatelessWidget {
               if (expands) Expanded(child: semanticField) else semanticField,
             ],
           );
-    return width == AppFieldWidth.narrow ? SizedBox(width: AppReflow.fieldMin, child: labelled) : labelled;
+    return width == AppFieldWidth.narrow
+        ? SizedBox(width: AppReflowMetric.fieldMin.of(context), child: labelled)
+        : labelled;
   }
 }

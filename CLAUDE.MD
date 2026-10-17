@@ -276,14 +276,16 @@ Navigationsziel, Hinweis-Aktion unter dem Text bei großer Schrift), D13
 fertig (Fassungsmarke `VersionMark`, Fassungsleiste, „Master“ als Wort), D14
 fertig (Änderungsliste in Teilen, Semantik = bisheriger Text; Vergleich bei
 großer Schrift A über B), D15a fertig (Kennzahlenleiste `AppFigureRow`), D15
-fertig (Nährwert-Kopf als Kennzahlenleiste, Deklaration, Mengenrechner). Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
+fertig (Nährwert-Kopf als Kennzahlenleiste, Deklaration, Mengenrechner), D16
+fertig (Zutaten- und Schrittzeile, Zustandsrahmen, Hinweise, Nährwertfelder
+zweispaltig, „Keine Treffer.“ ohne Leerstelle). Etappe 3 fertig. Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** D16 (Editor und Lebensmittel: Zutaten- und Schrittzeile,
-Zustandsrahmen, Hinweise, „Keine Treffer.“, schmales Feld bei 200 %); danach
-Stopp mit Bericht zu Etappe 3.
+**Nächster Schritt:** Bericht zu Etappe 3 an den Projektverantwortlichen;
+danach Etappe 4 (D17 App-Hülle mit Seitenleiste, D17b deutsche Systemtexte,
+D18 Abschluss) nach Plan.
 
 ---
 

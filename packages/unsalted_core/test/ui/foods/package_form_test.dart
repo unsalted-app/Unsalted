@@ -65,10 +65,11 @@ void main() {
       'Salz (g)',
     ];
 
-    final positions = labels.map((l) => tester.getTopLeft(find.text(l)).dy).toList();
+    final positions = labels.map((l) => tester.getTopLeft(find.text(l))).toList();
     for (var i = 1; i < positions.length; i++) {
-      expect(positions[i], greaterThan(positions[i - 1]),
-          reason: '"${labels[i]}" sollte unter "${labels[i - 1]}" stehen');
+      final (before, after) = (positions[i - 1], positions[i]);
+      expect(after.dy > before.dy || (after.dy == before.dy && after.dx > before.dx), isTrue,
+          reason: '"${labels[i]}" sollte in Lesereihenfolge nach "${labels[i - 1]}" stehen (ab 600 zweispaltig)');
     }
   });
 

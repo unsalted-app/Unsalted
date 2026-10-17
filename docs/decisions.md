@@ -2857,3 +2857,91 @@ GL-02 `04_rezeptdetail` — Kennzahlenleiste („643,5 g“, „2.868 kcal*“, 
 kcal*“), Warnhinweis mit Symbol, Kalorien-Zeile hervorgehoben, „davon“
 eingerückt; bei 200 % am Handy Kennzahlen untereinander. Der Mengenrechner
 liegt im Bild unterhalb des sichtbaren Ausschnitts.
+
+**D16 — Editor und Lebensmittel.** *Rückfragen (Regel für Etappe 3),
+entschieden vom Projektverantwortlichen (2026-10-17):* (1) Die Nährwertfelder
+stehen ab `breakpoint-medium` zweispaltig (Plan);
+`package_form_test.dart:68–72` (nicht im Plan) prüfte auf 800 Breite „jedes
+Feld strikt unter dem vorigen“ und prüft jetzt die Lesereihenfolge (tiefer
+oder in derselben Zeile rechts daneben). (2) Die Schrittnummer im Editor
+braucht den Index aus `recipe_editor/sections/recipe_editor_steps_section.dart`
+(nicht im D16-Scope): freigegeben, eine Zeile (`number: index + 1`, additiver
+Parameter an `StepRow`).
+*Zutatenzeile* (`ingredient_row.dart`, Figma Bildschirm 03, `7:895` und
+Tablet `147:9935`, nur gelesen: `_Zeile/Zutat bearbeiten` immer zweizeilig):
+oben Ziehgriff, Name (füllt), Entfernen; darunter eingerückt
+(`size-icon` + `space-s`, Figma `Einzug`) die Menge in `reflow-value-column`,
+Einheit und Notiz teilen sich den Rest (Figma 96/107/107 am Handy). Bliebe
+der Einheit weniger als `reflow-select-min` (große Schrift), stehen Menge und
+Einheit bzw. Menge, Einheit und Notiz untereinander. Abstände aus Figma:
+`space-s` oben, `space-m` unten, `space-xs` zwischen den Zeilen. Eine nicht
+verknüpfte Zutat (ohne `foodVariantId`) ist gestrichelt unterstrichen
+(`AppDashedUnderline`, Plan; Figma zeigt im Editor stattdessen ein Tag
+„nicht verknüpft“ bzw. ein Verknüpfungs-Symbol — das wäre ein neuer Text).
+*Abweichungen von Figma, wegen unveränderter Testzeilen:* Die Felder behalten
+ihre Beschriftungen über dem Feld („Name“, „Menge“, „Notiz“; Figma ohne),
+Entfernen behält `deleteOutline` (Figma `close`). Damit die Einheit ihren
+Anteil füllt, bekommt `AppSelect` additiv `expand` (`isExpanded`, lange
+Einträge gekürzt) — ohne ihn war die Auswahl so breit wie „Messerspitze“ und
+lief über (erster Lauf von UI-72).
+*Schrittzeile* (`step_row.dart`): Nummer in `size-index-column`
+(`data-strong`), Anweisung füllt, das Timer-Feld steht darunter (wie der
+Timer in `Core/Step Row`); „Timer als Tag“ (Plan) geht im Editor nicht, weil
+der Timer dort ein Eingabefeld ist (Tests suchen „Timer (Min.)“) — als Tag
+erscheint er im Rezeptdetail. Das schmale Feld wächst seit D16 mit der
+Textgröße (`AppFieldWidth.narrow` = `reflow-field-min` der Textgröße,
+Entscheidung zu Etappe 2); in einer schmaleren Spalte wird es auf deren Breite
+begrenzt.
+*Eingefroren* (`recipe_editor_frozen_section.dart`, Figma 03 „Eingefroren“,
+`42:2010`): der Hinweis als `AppNotice` mit „Kopieren“ (Text unverändert,
+Figma-Text nicht übernommen), darunter der schreibgeschützte Inhalt in
+`AppFrame.fixed` mit `VersionMark(seal: true)` und dem Zustandswort
+„Eingefroren“ (Plan 28.10.3; Figma zeigt dort keinen Rahmen).
+*Verpackungsformular:* Warnung und Fehler als `AppNotice` (Warnung/Fehler,
+Keys `package_form_warning`/`package_form_error` am Hinweis); Nährwertfelder
+im `AppGrid` (1 Spalte unter, 2 ab `breakpoint-medium` der verfügbaren
+Breite; im Rahmen „Inhalt“ höchstens 672 breit, also nie 3), Abstand
+`space-m` — damit ist der offene Punkt aus D08 (kein Abstand zwischen
+gestapelten Feldern) hier erledigt; im Editor-Abschnitt „Parameter“ bleibt
+er offen (Datei nicht im Scope).
+*Rezeptdetail, Schritte* (`recipe_detail_steps_section.dart`, Figma
+`Core/Step Row`): Nummer in `size-index-column` (`data-strong`), Anweisung,
+darunter der Timer als Tag mit Symbol `timer`, Haarlinie je Schritt.
+*Entscheidung 2:* `recipe_list_empty_section.dart` übergibt bei „Keine
+Treffer.“ keine Aktion mehr (vorher ein leerer Platzhalter) — Symbol und Satz
+ohne Leerstelle. Die Lebensmittelliste geprüft: Sie zeigt für „leer“ und
+„keine Treffer“ denselben Abschnitt mit demselben Text und der Aktion
+„Eigenes Produkt anlegen“; ob gesucht wird, weiß nur der Bildschirm
+(gesperrt) — bleibt die Leerstelle mit Aktion (Bericht).
+*Umsortieren ohne Ziehen (Prüfauftrag):* `ReorderableListView` (hinter
+`AppReorderableList`) bietet je Eintrag die Bedienhilfe-Aktionen „an den
+Anfang“, „nach oben“, „nach unten“, „an das Ende“ (DS-29b, Texte aus
+`MaterialLocalizations`, deutsch mit D17b). Für Screenreader genügt das.
+WCAG 2.5.7 verlangt aber eine Bedienung mit einfachem Zeigen für alle, ohne
+Hilfstechnik — die gibt es nicht; eine sichtbare Alternative (z. B. „Nach
+oben“/„Nach unten“ im Menü der Zeile) bräuchte Bildschirm- und
+Callback-Änderungen → Kandidat Teil 1.4 (Bericht).
+*Geänderte bestehende Testzeilen:*
+`packages/unsalted_core/test/ui/foods/package_form_test.dart:68–72`
+(freigegeben, s. o.). Design-Paket: keine. Neue Tests
+`test/ui/recipe_editor/editor_design_test.dart`: UI-72 (zweizeilig, Menge in
+`reflow-value-column`, eingerückt; bei 200 % untereinander ohne Überlauf;
+gestrichelt nur ohne Verknüpfung), UI-73 (Hinweise mit Keys und Art;
+Nährwertfelder bei 390 einspaltig, bei 800 zweispaltig), UI-74 (Nummern 1, 2
+in `data-strong`, Timer unter der Anweisung, schmales Feld wächst bei 200 %;
+Detail mit Nummer und Timer-Tag; eingefrorene Ansicht im Rahmen mit Siegel,
+„Kopieren“ im Hinweis), UI-76 („Keine Treffer.“ ohne `AppSlot`, leere Liste
+mit `AppSlot` und Aktion); Design `test/components/ds23c_reflow_inputs_test.dart`:
+DS-23c (schmales Feld bei 100/150/200 %), DS-25c (Auswahl mit `expand` füllt
+ohne Überlauf, ohne bleibt sie inhaltsbreit). Gegenprobe: ohne Umbruch, ohne
+Unterstreichung → UI-72 rot (3); festes schmales Feld → UI-74 (200 %) und
+DS-23c (8) rot; ohne `expand` → DS-25c rot (4); danach grün. Nachträge
+28.10.3 (ergänzt), 28.10.8 (neu), 28.10.11 (ergänzt). Mac: Design 461, Core
+436, App 6, Widgetbook 10 Tests grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39052303892 (`goldens/d16`): abweichend 12 Bilder, alle
+erwartet: GL-02 `03_rezept_bearbeiten` (Handy 100 %, Tablet 100/200 %, je hell
+und dunkel: Zutatenzeile zweizeilig, „Milch“ ohne Verknüpfung gestrichelt
+unterstrichen; bei 200 % am Handy liegt die Zeile unterhalb des Ausschnitts)
+und `10_lebensmittel_bearbeiten` (Handy 100 %, Tablet 100/200 %: Abstand
+zwischen den Nährwertfeldern, auf dem Tablet zweispaltig). Die Schritte im
+Rezeptdetail liegen in `04_rezeptdetail` unterhalb des Ausschnitts.
