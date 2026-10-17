@@ -95,7 +95,7 @@ void main() {
     final right = tester.getSize(find.widgetWithText(ElevatedButton, 'Rechts')).width;
     expect(left, right);
     expect(left, (variant.size.width - 2 * AppSpacing.l - AppSpacing.m) / 2);
-    expect(alone, lessThan(left), reason: 'eine Aktion steht in ihrer eigenen Breite');
+    expect(alone, variant.size.width - 2 * AppSpacing.l, reason: 'auch eine Aktion füllt die Leiste (Teil 1.3, D12)');
   });
 
   testVariants('DS-44: AppKeyValueTable', (tester, variant) async {
@@ -115,8 +115,8 @@ void main() {
     for (final text in ['Erste', 'Zweite', '1', '2', '3', '4', 'pro Teil']) {
       expect(find.text(text), findsOneWidget);
     }
-    expect(tester.getSize(find.text('Erste')).width, closeTo(variant.size.width - 2 * (AppSpacing.m + AppSize.valueColumn), 1));
-    expect(tester.getTopRight(find.text('1')).dx, closeTo(variant.size.width - AppSpacing.m - AppSize.valueColumn, 1));
+    expect(tester.getSize(find.text('Erste')).width, closeTo(variant.size.width - 2 * AppSize.valueColumn, 1));
+    expect(tester.getTopRight(find.text('1')).dx, closeTo(variant.size.width - AppSize.valueColumn, 1));
   });
 
   testVariants('DS-45: AppCodeBlock auswählbar und scrollend', (tester, variant) async {

@@ -66,7 +66,9 @@ final surfacesFolder = WidgetbookFolder(name: 'text, icons, cards, surfaces', ch
           AppDivider(space: AppSpace.xxl),
           Text('bündig'),
           AppDivider.flush(),
-          SizedBox(height: 40, child: Row(children: [Text('links'), AppDivider.vertical(), Text('rechts')])),
+          IntrinsicHeight(
+            child: Row(children: [Expanded(child: Text('links')), AppDivider.vertical(), Expanded(child: Text('rechts'))]),
+          ),
         ])),
   ]),
 ]);

@@ -257,7 +257,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D10 | Navigation und Daten: eigene Navigationsleiste (Balken statt Pille, Seitenleiste ab 600 über `AppPage.navigation`), Kopfleiste und Navigation ohne Textskalierung, Aktionsleiste, Deklarationstabelle, Codeblock; DS-59; DS-51-Liste leer | fertig |
 | D11 | Templates und Layout: Rahmen „Inhalt“ (Seitenrand ab 600, höchstens 720, mittig), Listen ohne Rand, Detail zweispaltig ab 1200, `DetailSplit` oben scrollend (Überlauf Versionsvergleich behoben); DS-60 | fertig |
 | D12a | Token-Nachtrag `reflow` aus Figma: acht Maße mit Werten für 100/200 % in beiden Token-Dateien, Generator liest beide Formen, Figma-Abgleich gleich | fertig |
-| D12 | Große Schrift, DS-51-Mechanismus entfernt, WB-04 | offen |
+| D12 | Große Schrift: Werte je Textgröße (`AppReflowMetric`, linear 100–200 %), Deklaration bricht um, Aktionsleiste untereinander, Textgrößen-Addon im Katalog, WB-04; DS-51-Übergangsliste und Mechanismus entfernt | fertig |
 | D13–D18 | Etappen 3–4 nach Plan | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)

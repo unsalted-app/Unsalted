@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import '../../layout/app_stack.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_reflow.dart';
 import '../../tokens/motion_tokens.g.dart';
 import '../../tokens/opacity_tokens.g.dart';
 import '../../tokens/radius_tokens.g.dart';
@@ -84,7 +85,7 @@ class _AppSkeletonState extends State<AppSkeleton> with SingleTickerProviderStat
                     horizontal: AppSpace.l,
                     child: AppStack(gap: AppSpace.s, crossAxisAlignment: CrossAxisAlignment.start, children: [
                       bar(AppTypography.bodyStrong.fontSize!, width: AppSize.dialog),
-                      bar(AppTypography.bodySmall.fontSize!, width: AppReflow.labelMin),
+                      bar(AppTypography.bodySmall.fontSize!, width: AppReflowMetric.labelMin.of(context)),
                     ]),
                   ),
                 ),

@@ -39,7 +39,7 @@ final listsFolder = WidgetbookFolder(name: 'lists, chips', children: [
     useCase('List/Reorderable', (_) => _ReorderDemo()),
   ]),
   component('AppChoiceChip', [
-    useCase('Chip/Choice', (_) => const AppStack(direction: Axis.horizontal, gap: AppSpace.s, children: [
+    useCase('Chip/Choice', (_) => const Wrap(spacing: AppSpacing.s, runSpacing: AppSpacing.s, children: [
           AppChoiceChip(label: 'V2', selected: true, onSelected: noop),
           AppChoiceChip(label: 'V1 · Basis', selected: false, onSelected: noop),
         ])),

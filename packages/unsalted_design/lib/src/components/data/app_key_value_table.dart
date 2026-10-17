@@ -6,16 +6,22 @@
 // Seit Teil 1.3 (D10, KeyValueTable-Karte) als Deklaration: Kopf in
 // `label-small`/`text-secondary`, darunter `stroke-frame` in `line-strong`;
 // Zeilen in `data` mit Haarlinie darunter, Zellabstand `space-xs` oben und
-// unten, Wertspalten fest `size-value-column` mit `space-m` links, Werte
-// rechtsbündig mit tabellarischen Ziffern; Bezeichnung füllt den Rest.
-// Untergeordnete Zeilen ([AppTableRow.sub]) um `space-l` eingerückt in
-// `text-secondary`, hervorgehobene ([AppTableRow.strong]) in `data-strong`.
+// unten, Wertzellen fest `reflow-value-column` breit mit `space-m` links
+// innerhalb der Zelle (D12; vorher zusätzlich), Werte rechtsbündig mit
+// tabellarischen Ziffern; Bezeichnung füllt den Rest. Untergeordnete Zeilen
+// ([AppTableRow.sub]) um `space-l` eingerückt in `text-secondary`,
+// hervorgehobene ([AppTableRow.strong]) in `data-strong`.
+//
+// Große Schrift (D12): Die Wertspalte wächst mit der Textgröße
+// (`reflow-value-column`). Bliebe der Bezeichnung weniger als
+// `reflow-label-min`, bricht jede Zeile um: Bezeichnung oben in voller
+// Breite, Werte darunter rechtsbündig (Figma „Bildschirme · Schrift 200“).
 
 import 'package:flutter/material.dart';
 
 import '../../layout/app_stack.dart';
 import '../../theme/app_colors.dart';
-import '../../tokens/size_tokens.g.dart';
+import '../../theme/app_reflow.dart';
 import '../../tokens/spacing_tokens.g.dart';
 import '../../tokens/stroke_tokens.g.dart';
 import '../../tokens/typography_tokens.g.dart';
@@ -52,53 +58,96 @@ class AppKeyValueTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final column = AppReflowMetric.valueColumn.of(context);
+    final labelMin = AppReflowMetric.labelMin.of(context);
+    return LayoutBuilder(
+      builder: (context, constraints) => constraints.maxWidth - headers.length * column < labelMin
+          ? _stacked(context, column)
+          : _inline(context, column),
+    );
+  }
+
+  /// Bezeichnung und Werte nebeneinander.
+  Widget _inline(BuildContext context, double column) {
     final c = AppColors.of(context);
-    Widget cell(Widget child, {bool value = false, bool indent = false}) => AppPadding.only(
-          top: AppSpace.xs,
-          bottom: AppSpace.xs,
-          left: value ? AppSpace.m : (indent ? AppSpace.l : null),
-          child: value ? Align(alignment: Alignment.centerRight, child: child) : child,
-        );
-    final head = AppTypography.labelSmall.copyWith(color: c.textSecondary);
     return Table(
       columnWidths: {
         0: const FlexColumnWidth(),
-        for (var i = 1; i <= headers.length; i++) i: const FixedColumnWidth(AppSpacing.m + AppSize.valueColumn),
+        for (var i = 1; i <= headers.length; i++) i: FixedColumnWidth(column),
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
       children: [
         TableRow(
-          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.lineStrong, width: AppStroke.frame))),
-          children: [
-            const SizedBox.shrink(),
-            for (final header in headers) cell(Text(header, style: head, textAlign: TextAlign.end), value: true),
-          ],
+          decoration: _rule(c.lineStrong, AppStroke.frame),
+          children: [const SizedBox.shrink(), for (final header in headers) _value(_header(context, header))],
         ),
         for (final row in rows)
           TableRow(
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.lineHairline, width: AppStroke.hairline))),
-            children: [
-              cell(
-                Text(
-                  row.label,
-                  style: (row.strong ? AppTypography.dataStrong : AppTypography.data)
-                      .copyWith(color: row.sub ? c.textSecondary : c.textPrimary),
-                ),
-                indent: row.sub,
-              ),
-              for (final value in row.values)
-                cell(
-                  Text(
-                    value,
-                    textAlign: TextAlign.end,
-                    style: (row.strong ? AppTypography.dataStrong : AppTypography.data).copyWith(color: c.textPrimary),
-                  ),
-                  value: true,
-                ),
-            ],
+            decoration: _rule(c.lineHairline, AppStroke.hairline),
+            children: [_label(context, row), for (final value in row.values) _value(_cell(context, row, value))],
           ),
       ],
     );
   }
+
+  /// Je Zeile Bezeichnung oben, Werte darunter rechtsbündig.
+  Widget _stacked(BuildContext context, double column) {
+    final c = AppColors.of(context);
+    Widget values(List<Widget> cells) => Wrap(
+          alignment: WrapAlignment.end,
+          children: [for (final cell in cells) SizedBox(width: column, child: _value(cell))],
+        );
+    return AppStack(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        DecoratedBox(
+          decoration: _rule(c.lineStrong, AppStroke.frame),
+          child: values([for (final header in headers) _header(context, header)]),
+        ),
+        for (final row in rows)
+          DecoratedBox(
+            decoration: _rule(c.lineHairline, AppStroke.hairline),
+            child: AppStack(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [_label(context, row), values([for (final value in row.values) _cell(context, row, value)])],
+            ),
+          ),
+      ],
+    );
+  }
+
+  static BoxDecoration _rule(Color color, double width) =>
+      BoxDecoration(border: Border(bottom: BorderSide(color: color, width: width)));
+
+  static Widget _value(Widget child) => AppPadding.only(
+        top: AppSpace.xs,
+        bottom: AppSpace.xs,
+        left: AppSpace.m,
+        child: Align(alignment: Alignment.centerRight, child: child),
+      );
+
+  static Widget _header(BuildContext context, String text) => Text(
+        text,
+        textAlign: TextAlign.end,
+        style: AppTypography.labelSmall.copyWith(color: AppColors.of(context).textSecondary),
+      );
+
+  static TextStyle _style(AppTableRow row) => row.strong ? AppTypography.dataStrong : AppTypography.data;
+
+  static Widget _label(BuildContext context, AppTableRow row) {
+    final c = AppColors.of(context);
+    return AppPadding.only(
+      top: AppSpace.xs,
+      bottom: AppSpace.xs,
+      left: row.sub ? AppSpace.l : null,
+      child: Text(row.label, style: _style(row).copyWith(color: row.sub ? c.textSecondary : c.textPrimary)),
+    );
+  }
+
+  static Widget _cell(BuildContext context, AppTableRow row, String value) => Text(
+        value,
+        textAlign: TextAlign.end,
+        style: _style(row).copyWith(color: AppColors.of(context).textPrimary),
+      );
 }

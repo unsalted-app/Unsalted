@@ -12,7 +12,7 @@ import 'sample.dart';
 /// Ordner „brand“.
 final brandFolder = WidgetbookFolder(name: 'brand', children: [
   component('AppMark', [
-    useCase('Mark · state', (_) => const AppStack(direction: Axis.horizontal, gap: AppSpace.s, children: [
+    useCase('Mark · state', (_) => const Wrap(spacing: AppSpacing.s, runSpacing: AppSpacing.s, children: [
           AppMark(label: 'V3', state: AppMarkState.provisional),
           AppMark(label: 'V2', state: AppMarkState.fixed, seal: true),
           AppMark(label: 'V1 · Basis', state: AppMarkState.highlighted),

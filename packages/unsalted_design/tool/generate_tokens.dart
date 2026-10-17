@@ -80,10 +80,14 @@ String _number(String value) {
 
 /// Wert eines Maßes: entweder ein Wert (`"16px"`) oder je Textgröße
 /// (`{"100": "96px", "200": "160px"}`, D12a); bei Letzterem der Wert bei 100 %.
-String _baseValue(Object value) {
+String _baseValue(Object value) => _scaledValue(value, '100');
+
+/// Wert eines Maßes bei Textgröße [mode] (`100` oder `200`); ein einfacher
+/// Wert gilt für beide.
+String _scaledValue(Object value, String mode) {
   if (value is String) return value;
   if (value is Map && value.length == 2 && value['100'] is String && value['200'] is String) {
-    return value['100'] as String;
+    return value[mode] as String;
   }
   throw FormatException('Wert nicht lesbar: $value');
 }
@@ -209,14 +213,25 @@ String _sizes(Map<String, dynamic> data) {
   b
     ..writeln('}')
     ..writeln()
-    ..writeln('/// Maße neben Text, die mit der Textgröße wachsen: Grundwerte bei 100 %.')
-    ..writeln('/// In Figma liegen sie in der Sammlung `type` (Modi `100`/`200`).')
+    ..writeln('/// Maße neben Text, die mit der Textgröße wachsen: Felder und [byFigmaName]')
+    ..writeln('/// bei 100 %, [byFigmaNameAt200] bei 200 %. In Figma liegen sie in der')
+    ..writeln('/// Sammlung `type` (Modi `100`/`200`); Zwischenstufen über `AppReflowMetric`.')
     ..writeln('abstract final class AppReflow {');
   for (final t in reflow) {
     field(t, 'reflow-', 'reflow');
   }
   map(reflow, 'reflow-', 'reflow');
-  b.writeln('}');
+  b
+    ..writeln()
+    ..writeln('  /// Alle Werte bei Textgröße 200 % (Figma-Modus `200`) mit ihrem Figma-Namen.')
+    ..writeln('  static const byFigmaNameAt200 = <String, double>{');
+  for (final t in reflow) {
+    final name = (t['name'] as String).substring('reflow-'.length);
+    b.writeln("    'reflow/$name': ${_number(_scaledValue(t['value'] as Object, '200'))},");
+  }
+  b
+    ..writeln('  };')
+    ..writeln('}');
   return b.toString();
 }
 

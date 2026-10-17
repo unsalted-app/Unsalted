@@ -21,6 +21,7 @@ export 'src/tokens/typography_tokens.g.dart' show AppTypography;
 // Theme
 export 'src/theme/app_theme.dart' show AppTheme;
 export 'src/theme/app_fonts.dart' show AppFonts;
+export 'src/theme/app_reflow.dart' show AppReflowMetric;
 export 'src/theme/app_tone.dart' show AppTone;
 
 // Layout

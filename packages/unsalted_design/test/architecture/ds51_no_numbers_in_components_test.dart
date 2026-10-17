@@ -8,19 +8,15 @@
 // `Duration(…)` und nach benannten Maß-Parametern (`width:`, `height:`,
 // `fontSize:`, `elevation:` …).
 //
-// Übergangsliste wie AT-13/14 in Teil 1.2 (C13): Dateien, die heute noch
-// Zahlen enthalten. Jeder Commit der Etappe 2 streicht seine Dateien; mit D12
-// sind Liste und Ausnahmeprüfung entfernt (wie C27c).
+// Die Übergangsliste (D03–D11, wie AT-13/14 in Teil 1.2, C13) ist seit D12
+// mit ihrer Ausnahmeprüfung entfernt (wie C27c): Die Regel gilt ohne
+// Ausnahme.
 
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/design_test_utils.dart';
-
-/// Noch nicht umgestellte Dateien (relativ zu lib/), mit D12 leer und entfernt.
-const transitionList = <String>{
-};
 
 const _scanned = ['src/components', 'src/layout', 'src/templates', 'src/theme'];
 
@@ -65,20 +61,11 @@ void main() {
     final violations = <String>[];
     for (final file in files) {
       final path = relativePath(file, lib);
-      if (transitionList.contains(path)) continue;
       for (final (line, text) in findNumbers(file.readAsStringSync())) {
         violations.add('$path:$line → $text');
       }
     }
     expect(violations, isEmpty, reason: 'Zahlen statt Tokens:\n${violations.join('\n')}');
-  });
-
-  test('DS-51: die Übergangsliste enthält nur Dateien mit Zahlen', () {
-    for (final path in transitionList) {
-      final file = File('${lib.path}/$path');
-      expect(file.existsSync(), isTrue, reason: '$path existiert nicht');
-      expect(findNumbers(file.readAsStringSync()), isNotEmpty, reason: '$path ist umgestellt — von der Liste streichen');
-    }
   });
 
   test('DS-51: der Detektor erkennt Zahlen', () {

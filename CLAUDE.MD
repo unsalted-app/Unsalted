@@ -88,8 +88,9 @@ unsalted/
    │  ├─ tokens/unsalted.tokens.json  Token-Datei aus Figma (= docs/design/system/tokens.json, DS-04)
    │  ├─ tool/generate_tokens.dart    schreibt lib/src/tokens/*.g.dart — nie von Hand ändern
    │  ├─ lib/fonts/                   Atkinson Hyperlegible Next 400/600/700 (TTF) + OFL.txt
-   │  └─ lib/src/  tokens/ (generiert) theme/ layout/ components/<gruppe>/ templates/;
-   │               Tests DS-01–51, GL-01 (test/goldens/, nur Linux)
+   │  └─ lib/src/  tokens/ (generiert) theme/ (inkl. app_reflow.dart: Maße je Textgröße)
+   │               layout/ components/<gruppe>/ templates/ (page_content.dart: Rahmen „Inhalt“);
+   │               Tests DS-01–60 (+ b/c), GL-01 (test/goldens/, nur Linux)
    └─ unsalted_core/
       ├─ pubspec.yaml
       ├─ drift_schemas/
@@ -260,11 +261,17 @@ Entwurfs-PR #2):** Übergabe aus Figma unter `docs/design/` (`UEBERGABE.md`,
 `docs/design/plan-1.3.md`; Entscheidungen: `docs/decisions.md`, „Teil 1.3“;
 Nachträge: Spezifikation Kapitel 28.10. Etappe 1 fertig: D01 Goldens (GL-01,
 GL-02, nur Linux), D02 Schrift Atkinson mit OFL, D03 Token-Datei + Generator +
-Theme-Zuordnung, D04 Komponenten-Themes, D05a/b Symbole Outlined. Test-IDs
-neu: GL-01/02, DS-49–52.
+Theme-Zuordnung, D04 Komponenten-Themes, D05a/b Symbole Outlined. Etappe 2
+fertig: D06–D09 Komponenten (Marker-Knopf, Abschnitt mit Linie,
+Markenelemente, Eingaben mit Beschriftung oben, Rückmeldung), D10 eigene
+Navigation (Balken, Seitenleiste über `AppPage.navigation`, in der App erst
+mit D17) und Deklaration, D11 Rahmen „Inhalt“ (Rand ab 600, höchstens 720),
+zweispaltig ab 1200, D12a `reflow-*` je Textgröße aus Figma, D12 große
+Schrift (`AppReflowMetric`), DS-51 ohne Übergangsliste. Test-IDs neu:
+GL-01/02, DS-49–60 (+ b/c), WB-04.
 
-**Nächster Schritt:** Bericht zu Etappe 1 an den Projektverantwortlichen;
-danach Etappe 2 (D06–D12) nach Plan.
+**Nächster Schritt:** Bericht zu Etappe 2 an den Projektverantwortlichen;
+danach Etappe 3 (D13–D16, Core-Bausteine) nach Plan.
 
 ---
 
@@ -490,6 +497,22 @@ danach Etappe 2 (D06–D12) nach Plan.
   `docs/design/plan-1.3.md`, d4). `flutter_test` lädt keine gebündelten
   Schriften; die Golden-Harness lädt sie selbst — nie global über
   `flutter_test_config.dart`, sonst ändern sich die Textmaße aller Tests.
+- **Testschrift ist doppelt so breit (seit Teil 1.3 D12):** In Widget-Tests
+  ist jedes Zeichen ein volles Quadrat; Text ist dort etwa doppelt so breit wie
+  mit Atkinson. Prüfungen bei 200 % (WB-04, DS-43c/44c) sind damit strenger
+  als die echte Darstellung — Layouts robust machen (`Wrap`, `Expanded`), die
+  Prüfung nicht aufweichen. Zum Nachsehen eines Überlaufs, den WB-04 nur mit
+  der ersten Zeile meldet: den Anwendungsfall einzeln ohne `takeException`
+  pumpen, dann druckt Flutter den ganzen Fehler mit Ort.
+- **`dart format` formatiert alte Dateien um (seit Teil 1.3 D11):** Das SDK
+  formatiert im neuen Stil (Einrückung von `=>`-Ausdrücken, `switch`), der
+  Bestand ist im alten Stil. `dart format` nie auf bestehende Dateien
+  anwenden — sonst landen reine Formatänderungen im Diff; neuen Code von Hand
+  im Stil der Umgebung schreiben.
+- **`LayoutBuilder` in Komponenten (seit Teil 1.3 D11/D12):** `AppKeyValueTable`,
+  `AppBottomActionBar` und die Templates entscheiden über die verfügbare
+  Breite. Ein `LayoutBuilder` liefert keine Intrinsic-Maße — diese
+  Komponenten nie unter `IntrinsicHeight`/`IntrinsicWidth` setzen.
 
 ---
 

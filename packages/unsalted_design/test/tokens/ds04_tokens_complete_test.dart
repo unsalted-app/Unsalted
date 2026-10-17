@@ -143,6 +143,11 @@ void main() {
     for (final t in tokens('size')) {
       if ((t['name'] as String).startsWith('size-')) expect(t['value'], isA<String>(), reason: t['name'] as String);
     }
+    double px(String v) => double.parse(v.replaceAll('px', ''));
+    expect(AppReflow.byFigmaNameAt200, {
+      for (final t in reflow)
+        'reflow/${(t['name'] as String).substring('reflow-'.length)}': px((t['value'] as Map)['200'] as String),
+    });
   });
 
   test('DS-04: der Generator ist stabil (zweimal gleich)', () {

@@ -2421,8 +2421,9 @@ Neue Tests `test/templates/ds60_templates_test.dart` (DS-60, 16 Fälle):
 Seitenrand je Fenstergröße; Formular und Detailseite bei 390/600/1024/1600 im
 Rahmen „Inhalt“; Liste ohne Rand; zweispaltig erst ab 1200, je Spalte
 höchstens 720, mittig; `DetailSplit` mit hohem oberem Bereich ohne Überlauf,
-scrollbar, unterer Bereich mittig, Fußzeile voll breit. Nachträge 28.10.4,
-28.10.7, 28.10.9; dazu nachgeholt für D10: 28.10.5 (Deklaration) und
+scrollbar, unterer Bereich mittig, Fußzeile voll breit. Nachträge 28.10.1
+(ergänzt), 28.10.4, 28.10.7 (in D12 von 28.10.9 nach 28.10.1 verschoben —
+Punkt 9 ist laut Plan „Rückgängig“); dazu nachgeholt für D10: 28.10.5 (Deklaration) und
 28.10.10 (Navigation, Systemleisten ohne Textskalierung). Mac: Design 361,
 Core 412, App 6, Widgetbook 6 Tests grün; `check_architecture` Exit 0.
 *Goldens:* Lauf 39013130648 (`goldens/d11`); abweichend 32 Bilder, alle
@@ -2465,3 +2466,88 @@ alle Bilder). *Geänderte Testzeile:*
 „DS-04-Anpassung“). Neu dort: „DS-04: reflow-Werte je Textgröße 100 und 200“
 (Namen und Reihenfolge der acht Einträge, je genau `100` und `200` in `px`;
 `size-*` bleiben einfache Werte). Mac: Design 362, Core 412, App 6, Widgetbook 6 Tests grün; `check_architecture` Exit 0.
+
+**D12 — Große Schrift.** *Werte je Textgröße:* Der Generator schreibt
+zusätzlich `AppReflow.byFigmaNameAt200` (Modus `200` der Token-Datei); die
+Felder und `byFigmaName` bleiben die Werte bei 100 %. Neu
+`lib/src/theme/app_reflow.dart` mit `AppReflowMetric` (je `reflow-*`-Token
+ein Eintrag, Werte nur aus dem Generat): `at(scale)` zwischen 100 und 200 %
+linear, darüber der Wert bei 200 %, darunter der bei 100 % (F5);
+`of(context)` misst die Textgröße an `type/body`
+(`MediaQuery.textScalerOf(context).scale(16) / 16`), damit auch eine nicht
+lineare Skalierung des Systems einen Faktor ergibt; `arranged(stacked:)` für
+`rule-inline`, `rule-stacked`, `inset-inline` — die wechseln mit dem Umbruch,
+nicht stufenlos (eine halbe Linie bei 150 % wäre sinnlos). Über die Tür
+exportiert (additiv), im Katalog als Token ausgenommen (`catalog_test.dart`,
+Ausnahmeliste, geplant).
+*Komponenten:* `AppKeyValueTable` — Figma (`Data/Key Value Row`, nur gelesen)
+legt die Wertzelle als „Fixed size/value-column“ mit Innenabstand `space-m`
+*innerhalb* der Zelle fest; D10 hatte `space-m` zusätzlich addiert (108 statt
+96). Korrigiert: Wertspalte = `reflow-value-column` der Textgröße (96 … 160).
+Bliebe der Bezeichnung weniger als `reflow-label-min` (120 … 200), bricht
+jede Zeile um: Bezeichnung oben in voller Breite, Werte darunter rechtsbündig
+(`Wrap`, falls auch die Werte nicht nebeneinander passen); Kopf ebenso
+(Figma „Bildschirme · Schrift 200“, `73:3815`: Zeilen mit Umbruch, Werte am
+Ende, 160 breit). Am Handy bei 200 % bricht die Tabelle um, auf dem Tablet
+nicht. `AppBottomActionBar` — Aktionen teilen sich immer die volle Breite,
+auch eine einzelne (Karte „Buttons teilen die Breite“, Bildschirm 08 Handy
+und Tablet: `Primär` füllt die Leiste); das ersetzt C09 („eine Aktion in
+eigener Breite“) und erledigt den Befund aus D11 ohne Änderung von
+`version_compare_apply_section.dart`. Würde eine Aktion schmaler als
+`reflow-field-min` (120 … 240), stehen sie untereinander in der gegebenen
+Reihenfolge, je in voller Breite, Abstand `space-m` (Figma 03 bei 200 %:
+„Einfrieren“ über „Speichern“). `AppSkeleton`: Balkenbreite
+`reflow-label-min` der Textgröße. *Nicht geändert:* `AppTextField` mit
+`AppFieldWidth.narrow` bleibt bei `reflow-field-min` für 100 % (120): Mit
+mitwachsender Breite bliebe der Anweisung im `StepRow` bei 200 % am Handy nur
+rund 30 px; die Zeile wird mit D16 umgebaut (Timer als Tag) und erst dann
+umgestellt. Nährwert-Kopf, Mengenrechner und Zutatenzeile sind Core-Bausteine
+(D15/D16) und nutzen dann `AppReflowMetric`.
+*Katalog:* Textgrößen-Addon (`TextScaleAddon`, 100–200 %); WB-04 baut jeden
+Anwendungsfall bei 200 % in hell/dunkel × Handy/Tablet und sammelt alle
+Fehler. Drei Anwendungsfälle liefen über, alle wegen fester Reihen im Katalog
+(nicht in Komponenten): „Mark · state“ und „Chip/Choice“ jetzt als `Wrap`,
+„Divider“ ohne feste Höhe mit zwei Hälften. Hinweis: In Widget-Tests ist
+jedes Zeichen ein volles Quadrat (Testschrift), Text ist dort etwa doppelt so
+breit wie mit Atkinson — WB-04 ist damit strenger als die echte Darstellung.
+*DS-51:* Übergangsliste und Ausnahmeprüfung entfernt (wie C27c), Regel ohne
+Ausnahme; Gegenprobe mit `EdgeInsets.all(8)` in `app_code_block.dart` → rot,
+danach grün. Gegenprobe DS-43c/DS-44c mit abgeschaltetem Umbruch → 6 Fälle
+rot (Handy, 200 %).
+*Geänderte bestehende Testzeilen:*
+`packages/unsalted_design/test/components/ds40_navigation_test.dart:98`
+(eine Aktion füllt die Leiste statt eigener Breite — Figma, ersetzt C09),
+`:118` und `:119` (Wertspalte `size-value-column` statt `space-m` +
+`size-value-column` — Korrektur zu D10); beide nicht im Plan.
+`packages/unsalted_design/test/architecture/ds51_no_numbers_in_components_test.dart`
+Z. 11–13 (Kopfkommentar), 21–24 (Übergangsliste) und 68 (Ausnahme) entfernt
+bzw. umgeschrieben, Test „die Übergangsliste enthält nur Dateien mit Zahlen“
+(Z. 76–83) gelöscht (geplant).
+`apps/unsalted_widgetbook/test/catalog_test.dart:23` (`AppReflowMetric` in
+der Ausnahmeliste, geplant) und Z. 5 (Kopfkommentar). Ergänzt:
+`ds04_tokens_complete_test.dart` (Werte bei 200 % = Token-Datei),
+`public_api_golden.txt` (Export `AppReflowMetric`). Neue Tests:
+`test/theme/ds04b_reflow_test.dart` (DS-04b: Einträge = Generat, Interpolation
+und Grenzen, Wert aus dem Kontext bei 100/150/200/250 %, Anordnung),
+`test/components/ds44c_reflow_components_test.dart` (DS-43c, DS-44c bei 100
+und 200 %, Handy/Tablet), WB-04 (4 Fälle). Mac: Design 385, Core 412, App 6,
+Widgetbook 10 Tests grün; `check_architecture` Exit 0. Nachträge 28.10.7
+(ergänzt), 28.10.11, 28.10.13 (ergänzt).
+*Goldens:* erster Lauf 39014086466 zeigte bei 200 % am Handy in zwei Motiven
+von GL-01 noch Überlaufmarken — feste Chip-Reihen im Testcode
+(`gl01_catalog_golden_test.dart:158, 245`), jetzt `Wrap` wie im Katalog.
+Zweiter Lauf 39014482254 (`goldens/d12`): abweichend 36 Bilder, alle
+erwartet: GL-01 `daten` und `template_detail` (je 8; Wertspalte 96 statt 108,
+bei 200 % am Handy untereinander), `listen_chips` und `template_formular`
+(je Handy 200 %: Chips umbrochen bzw. Knöpfe untereinander); GL-02
+`04_rezeptdetail` (8; Nährwerttabelle), `03_rezept_bearbeiten` (Handy 200 %:
+„Einfrieren“ über „Speichern“ wie Figma), `08_versionsvergleich` (6; die
+Aktion füllt die Leiste — bei 200 % am Handy füllte sie schon vorher).
+*Abgleich mit Figma „Bildschirme · Schrift 200“ (`73:3778`):* Aktionsleiste
+(03) und Tabelle (04) entsprechen der Vorlage. Bei 200 % am Handy schneiden
+noch Core-Bausteine außerhalb von D12: die Versionsleiste läuft rechts über
+(D13, Fassungsleiste), die Zutatenzeile ist zu schmal (D16), und die Spalten
+A/B im Versionsvergleich trennen lange Wörter („Weizenme|hl“) — dafür gibt es
+keine Arbeitskarte (Vorschlag im Bericht). Kein abgeschnittener Text in
+Komponenten des Design-Pakets; Ersatzkästchen der Code-Schrift wie in D03
+vermerkt.

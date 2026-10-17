@@ -155,7 +155,7 @@ Widget _listsAndChips() => Scaffold(
         AppSwipeToDelete(key: const ValueKey('wischen'), onDelete: _noop, child: const AppListItem(title: 'Wischbar')),
         AppPadding.all(
           AppSpace.l,
-          child: const AppStack(direction: Axis.horizontal, gap: AppSpace.s, children: [
+          child: const Wrap(spacing: AppSpacing.s, runSpacing: AppSpacing.s, children: [
             AppChoiceChip(label: 'Gewählt', selected: true, onSelected: _noop),
             AppChoiceChip(label: 'Nicht gewählt', selected: false, onSelected: _noop),
             AppChip(label: '12:00'),
@@ -242,7 +242,7 @@ Widget _detailTemplate() => DetailPageTemplate(
       ],
       body: DetailSections(
         sections: const [
-          AppStack(direction: Axis.horizontal, gap: AppSpace.s, children: [
+          Wrap(spacing: AppSpacing.s, runSpacing: AppSpacing.s, children: [
             AppChoiceChip(label: 'V2', selected: true, onSelected: _noop),
             AppChoiceChip(label: 'V1', selected: false, onSelected: _noop),
           ]),

@@ -88,8 +88,9 @@ abstract final class AppSize {
   };
 }
 
-/// Maße neben Text, die mit der Textgröße wachsen: Grundwerte bei 100 %.
-/// In Figma liegen sie in der Sammlung `type` (Modi `100`/`200`).
+/// Maße neben Text, die mit der Textgröße wachsen: Felder und [byFigmaName]
+/// bei 100 %, [byFigmaNameAt200] bei 200 %. In Figma liegen sie in der
+/// Sammlung `type` (Modi `100`/`200`); Zwischenstufen über `AppReflowMetric`.
 abstract final class AppReflow {
   /// `reflow/value-column`
   static const double valueColumn = 96;
@@ -125,5 +126,17 @@ abstract final class AppReflow {
     'reflow/rule-inline': ruleInline,
     'reflow/rule-stacked': ruleStacked,
     'reflow/inset-inline': insetInline,
+  };
+
+  /// Alle Werte bei Textgröße 200 % (Figma-Modus `200`) mit ihrem Figma-Namen.
+  static const byFigmaNameAt200 = <String, double>{
+    'reflow/value-column': 160,
+    'reflow/label-min': 200,
+    'reflow/stat-min': 240,
+    'reflow/field-min': 240,
+    'reflow/select-min': 208,
+    'reflow/rule-inline': 0,
+    'reflow/rule-stacked': 1,
+    'reflow/inset-inline': 0,
   };
 }
