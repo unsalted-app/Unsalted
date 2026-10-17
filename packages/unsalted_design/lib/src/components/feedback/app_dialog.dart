@@ -7,6 +7,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../tokens/size_tokens.g.dart';
+
 import '../../layout/app_stack.dart';
 import '../../tokens/spacing_tokens.g.dart';
 import '../buttons/app_button.dart';
@@ -27,7 +29,7 @@ Future<bool> showAppConfirmDialog(
       content: Text(message),
       actions: [
         AppButton.tertiary(label: cancelLabel, onPressed: () => Navigator.of(context).pop(false)),
-        AppButton.tertiary(label: confirmLabel, onPressed: () => Navigator.of(context).pop(true)),
+        AppButton.primary(label: confirmLabel, onPressed: () => Navigator.of(context).pop(true)),
       ],
     ),
   );
@@ -85,13 +87,14 @@ class AppDialog extends StatelessWidget {
   /// Aktionen unten, z. B. `AppButton.tertiary`.
   final List<Widget> actions;
 
-  /// `true`: Inhalt in fester Größe (400 × 400), z. B. für Suche mit Liste.
+  /// `true`: Inhalt in fester Größe (`size-dialog` × `size-dialog`), z. B.
+  /// für Suche mit Liste.
   final bool fixedContentSize;
 
   @override
   Widget build(BuildContext context) => AlertDialog(
         title: Text(title),
-        content: fixedContentSize ? SizedBox(width: 400, height: 400, child: content) : content,
+        content: fixedContentSize ? SizedBox.square(dimension: AppSize.dialog, child: content) : content,
         actions: actions,
       );
 }

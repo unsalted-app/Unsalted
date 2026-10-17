@@ -36,7 +36,7 @@ final surfacesFolder = WidgetbookFolder(name: 'text, icons, cards, surfaces', ch
     useCase('Icon', (_) => const AppStack(direction: Axis.horizontal, gap: AppSpace.m, children: [
           AppIcon(AppIcons.star),
           AppIcon(AppIcons.star, tone: AppTone.primary),
-          AppIcon(AppIcons.book, size: AppIconSize.l),
+          AppIcon(AppIcons.book, size: AppIconSize.s),
         ])),
     useCase('AppIcons', (_) => Wrap(spacing: 16, runSpacing: 16, children: [
           for (final MapEntry(key: name, value: icon) in AppIcons.byFigmaName.entries)

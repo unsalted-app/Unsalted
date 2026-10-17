@@ -2,11 +2,16 @@
 //
 // Komponente (Teil 1.2): Fehlerzustand (Kapitel 22: Klartext + „Erneut
 // versuchen“; Figma `Feedback/Error State`). Ohne [onRetry] nur der Text.
+// Seit Teil 1.3 (D09, States-Karte) mit Symbol `error` in `text-error`.
 
 import 'package:flutter/widgets.dart';
 
 import '../../layout/app_stack.dart';
+import '../../theme/app_tone.dart';
+import '../../tokens/spacing_tokens.g.dart';
 import '../buttons/app_button.dart';
+import '../icons/app_icon.dart';
+import '../icons/app_icons.dart';
 import '../text/app_text.dart';
 
 /// Fehlerzustand, mittig.
@@ -26,12 +31,17 @@ class AppErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: AppStack(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            AppText(message),
-            if (onRetry != null) AppButton.tertiary(label: retryLabel!, onPressed: onRetry),
-          ],
+        child: AppPadding.all(
+          AppSpace.l,
+          child: AppStack(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            gap: AppSpace.s,
+            children: [
+              const AppIcon(AppIcons.error, tone: AppTone.error),
+              AppText(message, textAlign: TextAlign.center),
+              if (onRetry != null) AppButton.tertiary(label: retryLabel!, onPressed: onRetry),
+            ],
+          ),
         ),
       );
 }

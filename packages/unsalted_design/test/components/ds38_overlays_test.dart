@@ -77,7 +77,7 @@ void main() {
     var answer = ask();
     await tester.pumpAndSettle();
     expect(find.byType(AlertDialog), findsOneWidget);
-    await tester.tap(find.widgetWithText(TextButton, 'Verwerfen'));
+    await tester.tap(find.widgetWithText(AppButton, 'Verwerfen'));
     await tester.pumpAndSettle();
     expect(await answer, isTrue);
 
@@ -125,10 +125,30 @@ void main() {
     );
     await tester.pumpAndSettle();
     final box = tester.getSize(find.ancestor(of: find.text('Inhalt'), matching: find.byType(SizedBox)).first);
-    expect(box.height, 400);
-    expect(box.width, lessThanOrEqualTo(400), reason: 'auf dem Handy begrenzt der Dialog die Breite');
+    expect(box.height, AppSize.dialog);
+    expect(box.width, lessThanOrEqualTo(AppSize.dialog), reason: 'auf dem Handy begrenzt der Dialog die Breite');
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
     expect(await free, 'ok');
+  });
+
+  testVariants('DS-39b: Rückfrage mit primärem Verb (Teil 1.3)', (tester, variant) async {
+    await pumpVariant(
+      tester,
+      variant,
+      Builder(builder: (context) {
+        return AppButton.secondary(
+          label: 'Öffnen',
+          onPressed: () => showAppConfirmDialog(context,
+              title: 'Verwerfen?', message: 'Text', confirmLabel: 'Verwerfen', cancelLabel: 'Abbrechen'),
+        );
+      }),
+    );
+    await tester.tap(find.text('Öffnen'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(ElevatedButton, 'Verwerfen'), findsOneWidget);
+    expect(find.widgetWithText(TextButton, 'Abbrechen'), findsOneWidget);
+    await tester.tap(find.text('Abbrechen'));
+    await tester.pumpAndSettle();
   });
 }

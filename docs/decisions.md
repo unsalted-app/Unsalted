@@ -2265,3 +2265,56 @@ Lauf `39011651009` (`goldens/d08`): 80 Bilder geändert (Felder, Listen,
 Tags, Templates, alle fünf Bildschirme). Sichtbar offen bis D16: Zwischen
 gestapelten Feldern setzen die Core-Abschnitte noch keinen Abstand
 (Verpackungsformular, Editor-Parameter).
+
+**D09 — Rückmeldung.** `AppNotice` (Notice-Karte): Fehler und Warnung auf
+`feedback-error-surface`/`feedback-warning-surface` mit den passenden
+on-Farben, Info und neu `success` (additiv, Symbol `check`) neutral auf
+`surface-sunken` mit Text `text-primary` und Symbol `text-secondary` (die
+Material-Rolle `secondaryContainer` ist dunkel `surface-raised` — deshalb die
+Rolle direkt); `radius-s`, Innenabstand und Abstand `space-m`, Symbol
+`size-icon-small` um `space-xxs` abgesenkt, Text `body`. Nicht umgesetzt:
+Aktion in `size-control-small` (Tertiärbutton bleibt `size-control`).
+`AppEmptyState` (States-Karte): mit Aktion eine Leerstelle (`AppSlot`), ohne
+Aktion nur Symbol und Satz. *Befund, zur Entscheidung:* Die Rezeptliste
+übergibt bei „Keine Treffer.“ statt `null` einen leeren Platzhalter als
+Aktion (`recipe_list_empty_section.dart`, Teil 1.2: „hält den Abstand“), die
+Komponente kann den Fall nicht erkennen — „Keine Treffer.“ zeigt deshalb die
+Leerstelle mit Punktraster, die Karte will sie ohne. Behebbar mit einer
+Zeile im Abschnitt (`action: hasRecipes ? null : …`); die Datei liegt
+außerhalb des Dateiscopes von D09 und ist in Plan (c) nicht genannt — nicht
+geändert (CLAUDE.md Regel 7). `AppErrorState`: Symbol `error` in
+`text-error` über dem Klartext, Abstand `space-s`. Rückfrage
+(`showAppConfirmDialog`): Verb primär, „Abbrechen“ tertiär (Snackbar-Karte,
+Dialog). `AppDialog`: feste Inhaltsgröße `size-dialog` × `size-dialog` statt
+400 × 400 (keine Höhen-Token; quadratisch reicht für die Auswahlliste im
+Rezept-Editor). `AppIconSize`: `xs`/`s`/`m` = `size-icon-xs`/`-small`/
+`size-icon`; `l` (48) entfällt (die Leerstelle nutzt `size-icon`).
+`AppSkeleton`: Zeilen wie Listeneinträge mit Haarlinie, Balken
+`surface-sunken` in `body-strong`/`body-small`-Höhe, Breiten
+`size-dialog`/`reflow-label-min`, Puls `duration-long` bis `opacity-scrim`
+(weiter nicht eingesetzt, F3 aus Teil 1.2). Von der DS-51-Liste gestrichen:
+`app_dialog.dart`, `app_notice.dart`, `app_skeleton.dart`, `app_icon.dart`.
+*Restzeitlinie der Meldung nicht gebaut (Abweichung von Plan D09/28.10.9):*
+In drei Core-Tests ruft `_swipeAway` direkt nach dem Wischen
+`pumpAndSettle` auf, während die Meldung erscheint
+(`recipe_list_screen_test.dart:110`, `food_list_screen_test.dart:105`, dazu
+`recipe_detail_screen_test.dart:672–674` nach „Rezept löschen“); eine
+ablaufende 5-s-Animation hielte `pumpAndSettle` bis zum Ablauf fest, die
+Meldung wäre danach zu und das Löschen ausgeführt — die Tests würden
+scheitern. Die Snackbar-Karte nennt die Restzeit ausdrücklich „Vorschlag“;
+umsetzbar nur mit Änderung dieser Test-Helfer (`pumpAndSettle` → feste
+Dauer) — zur Entscheidung. *Geänderte bestehende Testzeilen:*
+`packages/unsalted_design/test/components/ds17_icons_test.dart:39`
+(`AppIconSize.l` → `AppIconSize.s`) und `:43` (`Size(48, 48)` →
+`Size(AppSize.iconSmall, AppSize.iconSmall)`) — geplant (Plan nannte Z. 24/29,
+durch D05b verschoben; statt `m` ist es `s`, damit der Fall sich vom Standard
+unterscheidet); `ds32_feedback_test.dart:54` (`Size(48, 48)` →
+`Size(AppSize.icon, AppSize.icon)`, geplant); zusätzlich, nicht im Plan:
+`ds38_overlays_test.dart:80` (`find.widgetWithText(TextButton, 'Verwerfen')` →
+`AppButton`: das Verb ist jetzt primär) und `:128, 129` (Dialoggröße 400 →
+`AppSize.dialog`). Neue Tests: DS-32b (Info/Erfolg neutral, Symbol, Radius),
+DS-33b (mit Aktion Leerstelle, ohne Aktion nicht), DS-34b (Symbol im
+Fehlerzustand), DS-39b (Verb primär). Mac: Design 317, Core 412, App 6,
+Widgetbook 6 Tests grün; `check_architecture` Exit 0. *Goldens:* Lauf
+`39012074968` (`goldens/d09`): 8 Bilder geändert (Motiv „rueckmeldung“); die
+fünf Bildschirme zeigen in GL-02 keinen Hinweis, Leer- oder Fehlerzustand.

@@ -36,11 +36,11 @@ void main() {
       variant,
       const Row(children: [
         AppIcon(AppIcons.info, key: Key('m')),
-        AppIcon(AppIcons.star, key: Key('l'), size: AppIconSize.l, tone: AppTone.primary, semanticLabel: 'Markiert'),
+        AppIcon(AppIcons.star, key: Key('l'), size: AppIconSize.s, tone: AppTone.primary, semanticLabel: 'Markiert'),
       ]),
     );
     expect(tester.getSize(find.byKey(const Key('m'))), const Size(24, 24));
-    expect(tester.getSize(find.byKey(const Key('l'))), const Size(48, 48));
+    expect(tester.getSize(find.byKey(const Key('l'))), const Size(AppSize.iconSmall, AppSize.iconSmall));
     final star = tester.widget<Icon>(find.byIcon(AppIcons.star));
     expect(star.color, variant.theme.colorScheme.primary);
     expect(find.bySemanticsLabel('Markiert'), findsOneWidget);

@@ -51,7 +51,7 @@ void main() {
       ]),
     );
     expect(find.byIcon(AppIcons.book), findsOneWidget);
-    expect(tester.getSize(find.byIcon(AppIcons.book)), const Size(48, 48));
+    expect(tester.getSize(find.byIcon(AppIcons.book)), const Size(AppSize.icon, AppSize.icon));
     await tester.tap(find.widgetWithText(ElevatedButton, 'Anlegen'));
     expect(taps, 1);
     expect(find.text('Keine Treffer.'), findsOneWidget);
@@ -100,4 +100,56 @@ void main() {
     expect(tester.widget<FadeTransition>(pulse).opacity.value, 1);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testVariants('DS-32b: AppNotice neutral für Info und Erfolg, Symbol oben (Teil 1.3)', (tester, variant) async {
+    await pumpVariant(
+      tester,
+      variant,
+      const Column(children: [
+        AppNotice('Info', key: Key('i')),
+        AppNotice('Erledigt', key: Key('s'), kind: AppNoticeKind.success),
+      ]),
+    );
+    final c = variant.theme.brightness == Brightness.dark ? AppColorTokens.dark : AppColorTokens.light;
+    BoxDecoration box(String key) => tester
+        .widget<DecoratedBox>(find.descendant(of: find.byKey(Key(key)), matching: find.byType(DecoratedBox)).first)
+        .decoration as BoxDecoration;
+    expect(box('i').color, c.surfaceSunken);
+    expect(box('i').borderRadius, BorderRadius.circular(AppRadius.s));
+    expect(box('s').color, c.surfaceSunken);
+    expect(tester.widget<Icon>(find.byIcon(AppIcons.info)).color, c.textSecondary);
+    expect(tester.widget<Icon>(find.byIcon(AppIcons.info)).size, AppSize.iconSmall);
+    expect(find.byIcon(AppIcons.check), findsOneWidget);
+    expect(tester.widget<Text>(find.text('Info')).style!.color, c.textPrimary);
+  });
+
+  testVariants('DS-33b: leerer Zustand — mit Aktion Leerstelle, ohne Aktion nur Satz (Teil 1.3)', (tester, variant) async {
+    await pumpVariant(
+      tester,
+      variant,
+      const Column(children: [
+        Expanded(
+          child: AppEmptyState(
+            key: Key('mit'),
+            icon: AppIcons.book,
+            message: 'Noch leer.',
+            action: AppButton.primary(label: 'Anlegen', onPressed: _noop),
+          ),
+        ),
+        Expanded(child: AppEmptyState(key: Key('ohne'), message: 'Nicht gefunden.')),
+      ]),
+    );
+    expect(find.descendant(of: find.byKey(const Key('mit')), matching: find.byType(AppSlot)), findsOneWidget);
+    expect(find.descendant(of: find.byKey(const Key('ohne')), matching: find.byType(AppSlot)), findsNothing);
+    expect(find.text('Nicht gefunden.'), findsOneWidget);
+  });
+
+  testVariants('DS-34b: AppErrorState mit Symbol in text-error (Teil 1.3)', (tester, variant) async {
+    await pumpVariant(tester, variant, AppErrorState(message: 'Fehler.', retryLabel: 'Erneut', onRetry: () {}));
+    final c = variant.theme.brightness == Brightness.dark ? AppColorTokens.dark : AppColorTokens.light;
+    expect(tester.widget<Icon>(find.byIcon(AppIcons.error)).color, c.textError);
+    expect(tester.getTopLeft(find.byIcon(AppIcons.error)).dy, lessThan(tester.getTopLeft(find.text('Fehler.')).dy));
+  });
 }
+
+void _noop() {}
