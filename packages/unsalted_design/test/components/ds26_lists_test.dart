@@ -124,4 +124,21 @@ void main() {
     await tester.tap(find.text('V1'));
     expect(selected, 1);
   });
+
+  testVariants('DS-31b: AppChip als Tag (Teil 1.3)', (tester, variant) async {
+    await pumpVariant(
+      tester,
+      variant,
+      const Align(alignment: Alignment.topLeft, child: AppChip(label: '10:00', icon: AppIcons.timer)),
+    );
+    final c = variant.theme.brightness == Brightness.dark ? AppColorTokens.dark : AppColorTokens.light;
+    final chip = tester.widget<Chip>(find.byType(Chip));
+    expect(tester.getSize(find.byType(Chip)).height, AppSize.mark);
+    final shape = chip.shape! as RoundedRectangleBorder;
+    expect(shape.side, BorderSide(color: c.lineControl, width: AppStroke.hairline));
+    expect(shape.borderRadius, BorderRadius.circular(AppRadius.xs));
+    expect(chip.labelStyle!.fontSize, AppTypography.labelSmall.fontSize);
+    expect(chip.labelStyle!.fontFeatures, AppTypography.labelSmall.fontFeatures);
+    expect(find.byIcon(AppIcons.timer), findsOneWidget);
+  });
 }

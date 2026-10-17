@@ -45,6 +45,7 @@ final listsFolder = WidgetbookFolder(name: 'lists, chips', children: [
   ]),
   component('AppChip', [
     useCase('Chip/Info', (_) => const AppChip(label: '12:00')),
+    useCase('mit Symbol', (_) => const AppChip(label: '10:00', icon: AppIcons.timer)),
   ]),
 ]);
 

@@ -250,7 +250,15 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D04 | Komponenten-Themes aus Tokens (`component_themes.dart`): Buttons, Marker-Knopf, Symbol-Schaltfläche, Eingabe, Chips, Liste, Trenner, Meldung, Dialog, Menü, Karte, Laden, Kopfleiste, Navigation, Tooltip; DS-52; Kapitel 28.10.2 | fertig |
 | D05a | Symbol-Finder in Tests auf `AppIcons` (11 Zeilen in 4 Dateien, nur der Symbolname) | fertig |
 | D05b | Symbole Outlined, alle 32 Namen der Figma-Bibliothek (11 neu); DS-17 gegen `figma-ids.json` | fertig |
-| D06–D18 | Etappen 2–4 nach Plan | offen |
+| D06 | Komponenten I: Marker-Knopf (Ladekreis aus Tokens), Tag, Text-Stile, Abschnitt mit Abschnittslinie | fertig |
+| D07 | Markenelemente: `AppMark`, `AppFrame`/`AppSlot`, `AppHighlight`/`AppChangeText`, `AppValue` | offen |
+| D08 | Eingaben und Listen | offen |
+| D09 | Rückmeldung | offen |
+| D10 | Navigation und Daten | offen |
+| D11 | Templates und Layout | offen |
+| D12a | Token-Nachtrag `reflow` aus Figma | offen |
+| D12 | Große Schrift, DS-51-Mechanismus entfernt, WB-04 | offen |
+| D13–D18 | Etappen 3–4 nach Plan | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)
 

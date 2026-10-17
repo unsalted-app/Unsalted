@@ -2104,3 +2104,69 @@ gleich aussehen (`add`, `search`, `drag-handle`), unverändert. Beobachtung:
 `delete` (`delete_outlined`) und `delete-outline` (`delete_outline`) sehen
 jetzt gleich aus (Papierkorb-Umriss); beide Namen bleiben, bis das eigene
 Linienset sie unterscheidet.
+
+## 2026-10-17 — Teil 1.3, Etappe 2 (freigegeben)
+
+**Freigabe Etappe 1 und Vorgaben für Etappe 2 (Projektverantwortlicher):**
+Etappe 1 geprüft und freigegeben; weiter mit D06–D12, D12a vor D12.
+Zusätzlich: Überlauf der Spalte B im Versionsvergleich am Handy — Ursache
+finden und, wenn ohne Änderung der Bildschirm-Datei möglich, im passenden
+Commit mit Test beheben; Papierkorb doppelt — in Figma prüfen, nur
+berichten, keinen Namen entfernen; Ersatzkästchen der Code-Schrift in den
+Linux-Goldens akzeptiert (Vermerk hier genügt: siehe D03); am Ende von D12
+DS-51-Übergangsliste leer und Mechanismus entfernt, WB-04 (200 %) grün;
+Hilfsbranches `goldens/*` nach jedem Lauf löschen.
+
+*Ursache Überlauf Versionsvergleich (Befund aus D01):* `DetailSplit` legt den
+oberen Bereich in ein `Expanded` (halbe Höhe); der Abschnitt
+`version_compare_columns_section.dart` ist eine `Row` aus zwei
+`SnapshotColumn` (`AppStack` ohne Scrollen). Sind die Spalten höher als die
+halbe Seite, laufen sie über. Behebbar im Template (`DetailSplit`: oberer
+Bereich scrollt), ohne Bildschirm-Datei → D11.
+
+**D06 — Komponenten I: Aktionen, Text, Flächen.** `AppFab`: Ladekreis
+`size-icon-small` mit Strich `stroke-focus` (vorher 20/2 von Hand; von der
+DS-51-Liste gestrichen). `AppChip` (Tag, Chip-Karte): weiter ein
+Material-`Chip` (DS-31 sucht ihn), aber Höhe `size-mark` über
+`VisualDensity(vertical: VisualDensity.minimumDensity)` — Flutters Chip ist
+mindestens `32 + Dichte/2` hoch —, Kontur `line-control` 1 px über `shape`
+(über `side` rechnet Flutter die Kontur als Innenabstand hinzu: 26 statt 24,
+gemessen), `radius-xs`, Fläche durchsichtig, `label-small` mit
+tabellarischen Ziffern, Innenabstand `space-s`, optional `icon`
+(`size-icon-xs`, Abstand `space-xs`) — additiv. `AppText`: alle elf Stile
+als benannte Konstruktoren (neu `display`, `titlePage`, `heading`,
+`bodySmall`, `labelSmall`, `data`, `dataStrong`, `code`; `AppTextRole`
+additiv erweitert); `strong` setzt nur noch den Schnitt von `body-strong`
+(600) und übernimmt Größe und Zeilenhöhe der Umgebung; `title` und
+`caption` lesen weiter die Material-Rollen (`titleMedium` = `body-strong`,
+`bodySmall` = `caption`). `AppDivider.rule()`: Abschnittslinie
+(`stroke-rule`, `line-strong`, ohne Abstand); `AppDivider.flush()` jetzt
+`stroke-hairline` hoch statt 1 von Hand. `AppSection` nach der Section-Karte:
+`space-xxl`, Abschnittslinie, `space-m`, Überschrift `heading`, optional
+`meta` rechts (`caption`, `text-secondary`, additiv), `space-s`, Inhalt;
+ohne Trennlinie entfallen Abstand und Linie. `AppStack` additiv mit
+`textBaseline` (Überschrift und Metadaten auf einer Grundlinie). Intern
+`lib/src/theme/app_colors.dart`: `AppColors.of(context)` liefert die
+Farbrollen passend zur Helligkeit des Themes (Rollen außerhalb des
+`ColorScheme`, z. B. `line-strong`); ohne ThemeExtension, damit es auch unter
+einem `MaterialApp` ohne Design-Theme gilt. *Nicht geändert:* `AppButton`,
+`AppIconButton`, `AppChoiceChip`, `AppCard` (Gestalt aus D04); `AppSurface`
+bleibt ohne Rundung, weil DS-19/DS-20b dort `ColoredBox` prüfen.
+*Geänderte bestehende Testzeilen:* `packages/unsalted_design/test/components/ds18_text_test.dart:30`
+`FontWeight.bold` → `FontWeight.w600` (geplant, `strong` = `body-strong`);
+zusätzlich, nicht im Plan: `packages/unsalted_design/test/components/ds40_navigation_test.dart:114`
+`FontWeight.bold` → `FontWeight.w600` — der Tabellenkopf nutzt `AppText.strong`
+und wird mit D10 `label-small`, ebenfalls 600. *Neue Tests:* DS-18b (die
+acht neuen Stile), DS-22b (Abschnittslinie `stroke-rule`/`line-strong`,
+Überschrift `heading`, Metadaten `text-secondary`, Abstände), DS-31b (Tag
+24 hoch, Kontur, Radius, `label-small` tnum, Symbol). Katalog: neue Stile,
+Tag mit Symbol, Abschnitt mit Metadaten. DS-51: 7 Dateien auf der Liste.
+Mac: Design 253, Core 412, App 6, Widgetbook 6 Tests grün;
+`check_architecture` Exit 0. *Goldens:* Lauf `39010713758` (`goldens/d06`): 80 Bilder
+geändert (Abschnittslinie und Überschriften in Formularen und Detail, Tag,
+Text-Stile). *Papierkorb doppelt (Figma, nur gelesen):* `Icon/delete`
+(`149:4`) und `Icon/delete-outline` (`205:2`) sind in Figma dasselbe Symbol —
+gleiche Vektordaten (Material Symbols Outlined 300, Papierkorb), byte-gleiches
+Bild; nur die Beschreibungen unterscheiden sich („Löschen (Papierkorb). In
+List/Swipe to Delete und Menüs“ bzw. „Material Symbols Outlined 300“). Der
+Code entspricht damit Figma; beide Namen bleiben.

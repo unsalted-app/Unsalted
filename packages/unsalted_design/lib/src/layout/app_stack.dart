@@ -30,6 +30,7 @@ class AppStack extends StatelessWidget {
     this.direction = Axis.vertical,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.mainAxisSize = MainAxisSize.min,
+    this.textBaseline,
   });
 
   /// Inhalt.
@@ -47,6 +48,9 @@ class AppStack extends StatelessWidget {
   /// Platzbedarf in Richtung.
   final MainAxisSize mainAxisSize;
 
+  /// Grundlinie bei `CrossAxisAlignment.baseline` (seit Teil 1.3).
+  final TextBaseline? textBaseline;
+
   @override
   Widget build(BuildContext context) {
     final spaced = <Widget>[
@@ -59,6 +63,7 @@ class AppStack extends StatelessWidget {
       direction: direction,
       crossAxisAlignment: crossAxisAlignment,
       mainAxisSize: mainAxisSize,
+      textBaseline: textBaseline,
       children: spaced,
     );
   }

@@ -2,9 +2,14 @@
 //
 // Komponente (Teil 1.2): Hauptaktion einer Seite (Figma `Button/FAB`), mit
 // Ladezustand. Während des Ladens ist sie deaktiviert und zeigt einen kleinen
-// Ladekreis in der Vordergrundfarbe des Buttons.
+// Ladekreis in der Vordergrundfarbe des Buttons. Gestalt (Marker-Knopf mit
+// Tintenkontur) aus dem Theme (Teil 1.3, D04); Ladekreis `size-icon-small` mit
+// Strich `stroke-focus` (D06).
 
 import 'package:flutter/material.dart';
+
+import '../../tokens/size_tokens.g.dart';
+import '../../tokens/stroke_tokens.g.dart';
 
 /// Hauptaktion einer Seite.
 class AppFab extends StatelessWidget {
@@ -29,9 +34,9 @@ class AppFab extends StatelessWidget {
         onPressed: loading ? null : onPressed,
         child: loading
             ? SizedBox.square(
-                dimension: 20,
+                dimension: AppSize.iconSmall,
                 child: CircularProgressIndicator(
-                  strokeWidth: 2,
+                  strokeWidth: AppStroke.focus,
                   color: Theme.of(context).colorScheme.onPrimaryContainer,
                 ),
               )

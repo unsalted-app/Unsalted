@@ -111,7 +111,7 @@ void main() {
       ),
     );
     expect(find.byType(Table), findsOneWidget);
-    expect(tester.widget<Text>(find.text('pro 100')).style!.fontWeight, FontWeight.bold);
+    expect(tester.widget<Text>(find.text('pro 100')).style!.fontWeight, FontWeight.w600);
     for (final text in ['Erste', 'Zweite', '1', '2', '3', '4', 'pro Teil']) {
       expect(find.text(text), findsOneWidget);
     }
