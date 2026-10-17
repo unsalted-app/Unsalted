@@ -2721,3 +2721,59 @@ ohne „Master“ → UI-68 rot; danach grün. Nachträge 28.10.4 (ergänzt) und
 GL-02 `04_rezeptdetail` — Fassungsleiste statt Auswahl-Chips (V3 gestrichelt,
 V2 gewählt mit Balken, V1 eingefroren), bei 200 % in zwei Zeilen statt rechts
 abgeschnitten. Bildschirm 7 ist kein GL-02-Motiv.
+
+**D14 — Änderungsliste.** *Rückfrage zu einer Core-Testzeile (Regel für
+Etappe 3):* Figma (Bildschirm 08, `3:595`, nur gelesen) zeichnet auch
+Hinzufügen und Entfernen geteilt („neu“ + markiert „Olivenöl · 20 ml“,
+„entfernt“ + durchgestrichen „Zucker · 5 g“). Damit steht „Salz hinzugefügt
+(5 g)“ nicht mehr als ein sichtbarer Text da, und
+`version_compare_screen_test.dart:153` (nicht im Plan) schlüge fehl.
+Vorgelegt und vom Projektverantwortlichen entschieden (2026-10-17): Z. 153
+wie die geplante Z. 152 auf `find.bySemanticsLabel` umstellen, alle
+Änderungsarten nach Figma geteilt.
+`change_descriptions.dart`: Dieselbe Schleife liefert zu jedem Text die
+sichtbaren Teile (`ChangePart`: Gegenstand, alt, neu, Zusatz);
+`describeChanges` gibt dieselben Strings zurück wie vorher
+(`change_descriptions_test.dart`, `decimal_comma_test.dart` unverändert grün)
+und hängt die Teile per `Expando` an die gelieferte Liste (`changePartsOf`).
+Grund: Der Abschnitt `version_compare_changes_section.dart` übergibt der
+`ChangeList` nur die Texte und liegt außerhalb des Dateiscopes von D14; so
+braucht es keinen neuen Parameter. Stammen die Texte nicht aus
+`describeChanges`, stehen sie unverändert da. Zuordnung (Gegenstände ohne
+Doppelpunkt wie in Figma): Titel/Notizen/Backverlust/Fertiggewicht-Override/
+Portionen alt → neu; Schritt geändert „Schritt n“ alte → neue Anweisung, Timer
+als eigener Teil „Timer“ alt → neu; Schritt hinzugefügt „Schritt n“ + markiert;
+Schritt entfernt „Schritt n“ + durchgestrichen; Menge „Name“ alt → neu;
+anderes Lebensmittel „Name“ + Klartext, sonst „alt → neu“ für den Namen, je
+mit Mengenteil; Zutat entfernt „entfernt“ + durchgestrichen „Name · Menge“
+(die Menge kommt aus der laufenden Liste; der Text nennt sie nicht); Zutat
+hinzugefügt „neu“ + markiert „Name · Menge“ (Wort „neu“ aus Figma);
+verschoben „Name verschoben“ Position alt → neu. Kein Teil enthält den Pfeil
+als Zeichen. `change_list.dart`: je Kategorie `AppSection` (Linie,
+Überschrift; ohne die Figma-Metadaten „n Änderungen“ — das wäre ein neuer
+Text), je Änderung eine Zeile mit `space-xs` oben und unten; die Teile stehen
+in einem `Wrap` aus `AppChangeText`, die Zeile trägt `Semantics(container:
+true, label: <bisheriger Text>)` — ohne `container` verschmolz der Knoten mit
+seinen Nachbarn und war für `find.bySemanticsLabel` nicht auffindbar.
+*Entscheidung 3 (Versionsvergleich bei 200 %):*
+`version_compare_columns_section.dart` stellt A über B (getrennt durch eine
+Haarlinie), sobald die halbe Breite kleiner als `reflow-label-min` wäre; die
+Spalten selbst (`SnapshotColumn`) sind unverändert.
+*Geänderte bestehende Testzeilen:*
+`packages/unsalted_core/test/ui/versions/version_compare_screen_test.dart:152`
+(geplant) und `:153` (freigegeben, s. o.): `find.textContaining(…)` →
+`find.bySemanticsLabel(…)`. Design-Paket:
+`packages/unsalted_design/test/typography/ds49_glyph_coverage_test.dart:11–14`
+(Kommentar: der Pfeil wird seit D14 als Symbol gezeichnet). Neue Tests
+`test/ui/versions/change_list_test.dart`: UI-69 (jede Änderung über ihren
+bisherigen Text auffindbar, vier `AppChangeText`, genau zwei Pfeile, kein
+sichtbarer Pfeil, alt durchgestrichen, neu markiert, Hinzugefügtes markiert,
+Entferntes durchgestrichen, Abschnitte; Texte ohne Teile unverändert), UI-75
+(bei 100 % am Handy nebeneinander, bei 200 % A über B, ohne Überlauf).
+Gegenprobe: ohne Teile → UI-69 rot; ohne Umbruch → UI-75 (200 %) rot;
+danach grün. Nachträge 28.10.7 (ergänzt) und 28.10.15. Mac: Design 429, Core
+419, App 6, Widgetbook 10 Tests grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39043006290 (`goldens/d14`): abweichend die 8 Bilder von
+GL-02 `08_versionsvergleich` — Abschnitte „Parameter“ und „Zutaten“ mit
+Linie, „Portionen 8̶ → 10“, „Weizenmehl Type 550 500 g → 550 g“, „neu Salz ·
+5 g“ (markiert); bei 200 % am Handy A über B.

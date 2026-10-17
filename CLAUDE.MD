@@ -273,13 +273,15 @@ Schrift (`AppReflowMetric`), DS-51 ohne Übergangsliste; Etappe 2
 freigegeben. Etappe 3 (D09b, D13–D16) in Arbeit: D09b fertig (Restzeitlinie
 der Meldung), D13a fertig (Tippaktion in der Semantik von Marke und
 Navigationsziel, Hinweis-Aktion unter dem Text bei großer Schrift), D13
-fertig (Fassungsmarke `VersionMark`, Fassungsleiste, „Master“ als Wort). Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
+fertig (Fassungsmarke `VersionMark`, Fassungsleiste, „Master“ als Wort), D14
+fertig (Änderungsliste in Teilen, Semantik = bisheriger Text; Vergleich bei
+großer Schrift A über B). Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** D14 (Änderungsliste; Versionsvergleich bei 200 % A über
-B); Stopp mit Bericht nach D16.
+**Nächster Schritt:** D15 (Nährwerte: Kennzahlenleiste, Deklaration,
+Mengenrechner); Stopp mit Bericht nach D16.
 
 ---
 

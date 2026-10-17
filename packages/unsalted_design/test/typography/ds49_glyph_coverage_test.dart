@@ -8,10 +8,9 @@
 // → ✓ ★ µ (docs/design/system/02-typografie.md); sie erscheinen als Symbol.
 //
 // Einzige Ausnahme: der Pfeil in den Texten der Änderungsliste
-// (`versions/change_descriptions.dart`). Bis D14 wird er noch als Text
-// gezeichnet (auf dem Gerät aus der Systemschrift), ab D14 zeichnet
-// `AppChangeText` ein Symbol und der Text dient nur noch als Semantik
-// (docs/design/plan-1.3.md, d4).
+// (`versions/change_descriptions.dart`). Seit D14 zeichnet `AppChangeText`
+// ein Symbol und der Text dient nur noch als Semantik; kein sichtbarer Teil
+// enthält den Pfeil (UI-69, docs/design/plan-1.3.md, d4).
 
 import 'dart:io';
 
