@@ -2318,3 +2318,58 @@ Fehlerzustand), DS-39b (Verb primär). Mac: Design 317, Core 412, App 6,
 Widgetbook 6 Tests grün; `check_architecture` Exit 0. *Goldens:* Lauf
 `39012074968` (`goldens/d09`): 8 Bilder geändert (Motiv „rueckmeldung“); die
 fünf Bildschirme zeigen in GL-02 keinen Hinweis, Leer- oder Fehlerzustand.
+
+**D10 — Navigation und Daten.** `AppNavigationBar` (NavigationBar-Karte) ist
+eine eigene Komponente statt des Material-`NavigationBar`, dessen Auswahl
+eine Pille um das Symbol ist: Ziele teilen die Breite, Auswahl als Balken
+`stroke-rule` in `line-strong` (Breite `size-target`) oben am Ziel, Ziel mit
+`space-m` oben/`space-s` unten, Symbol `size-icon`, Abstand `space-xs`,
+Beschriftung `label-small`, gewählt `text-primary`, sonst `text-secondary`,
+Mindesthöhe `size-nav-bar`, `surface-page` mit Haarlinie oben; Semantik je
+Ziel `button`/`selected`; Tooltip beim langen Drücken; folgt der Textgröße
+nicht (`MediaQuery.withNoTextScaling`, Systemleiste nach UEBERGABE 3).
+`AppNavigationBar.rail()`/`asRail()`: dieselbe Navigation als seitliche
+Leiste (`size-nav-rail`, Haarlinie rechts, Balken oben am Ziel). `AppPage`
+bekommt den Slot `navigation` (additiv): unter `breakpoint-medium` unten,
+sonst links neben dem Inhalt. Die App nutzt ihn erst mit D17 (Seitenleiste
+einschalten); bis dahin steht die Navigation über `bottomBar` unten, auch
+auf dem Tablet. `AppTopBar`: Gestalt aus dem Theme, ohne Textskalierung;
+`bottomHeight` = `space-s` + `size-control` + `space-m` (vorher 56 von Hand;
+von der DS-51-Liste gestrichen), Suchbereich mit `space-s` oben, `space-l`
+seitlich, `space-m` unten; Höhe aus `size-top-bar` statt `kToolbarHeight`
+(gleicher Wert). `AppOverflowMenu`: Symbol `more`. `AppBottomActionBar`:
+`surface-page`, Haarlinie oben, Innenabstand `space-m`/`space-l`, Abstand
+`space-m` (vorher `space-l`). `AppKeyValueTable` (KeyValueTable-Karte) als
+Deklaration: Kopf `label-small`/`text-secondary` rechtsbündig, darunter
+`stroke-frame` in `line-strong`; Zeilen `data` mit Haarlinie; Wertspalten fest
+`space-m` + `size-value-column` (vorher Verhältnis 2 : 1 : 1; von der
+DS-51-Liste gestrichen), Werte rechtsbündig mit tnum; neu `AppTableRow.sub`
+(um `space-l` eingerückt, `text-secondary`) und `.strong` (`data-strong`),
+additiv — `NutritionTable` setzt sie in D15. `AppCodeBlock`:
+`surface-sunken`, `radius-s`, `space-m`, Stil `code`. Die DS-51-Übergangsliste
+ist damit leer; der Mechanismus wird wie vorgegeben mit D12 entfernt.
+*Geänderte bestehende Testzeilen:*
+`packages/unsalted_design/test/components/ds40_navigation_test.dart:75`
+(`find.byType(NavigationBar)` → `AppNavigationBar`, geplant) und
+`apps/unsalted_app/test/theme_test.dart:52` (dto., geplant); zusätzlich,
+nicht im Plan: `ds40_navigation_test.dart:97` (Breite zweier Aktionen mit
+Abstand `space-m` statt `space-l`), `:118` (Breite der Bezeichnungsspalte =
+Rest neben zwei festen Wertspalten statt höchstens die Hälfte) und `:119`
+(rechte Kante des ersten Werts am Ende der ersten Wertspalte statt linke
+Kante bei der Hälfte) — die alte 2 : 1 : 1-Aufteilung ist durch die
+Deklaration ersetzt. `ds40_navigation_test.dart:29` bleibt (`kToolbarHeight`
+= `size-top-bar`). Neue Tests (`test/components/ds59_navigation_test.dart`):
+DS-59 (unten unter 600, links mit `size-nav-rail` ab 600, genau ein Balken
+`size-target` × `stroke-rule` in `line-strong`, Farben gewählt/nicht
+gewählt, Tippen, keine Material-`NavigationBar`; Systemleisten ohne
+Textskalierung, Inhalt mit; Semantik und Tooltip), DS-40b (Suchbereich aus
+Tokens), DS-43b (Haarlinie der Aktionsleiste), DS-44b (Tintenlinie,
+Haarlinie, `strong`, `sub` eingerückt), DS-45b (Codeblock). Katalog:
+`AppPage · navigation`. Mac: Design 345, Core 412, App 6, Widgetbook 6 Tests
+grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39012444464 (`goldens/d10`); abweichend 76 Bilder, alle
+erwartet: GL-01 `daten`, `navigation`, `template_detail`, `template_formular`,
+`template_liste` (je 8), GL-02 `01_rezeptliste`, `03_rezept_bearbeiten`,
+`04_rezeptdetail`, `08_versionsvergleich` (je 8; Kopfleiste, Navigation,
+Aktionsleiste, Deklaration) und `10_lebensmittel_bearbeiten` nur bei 200 %
+(Kopfleiste folgt der Textgröße nicht mehr).

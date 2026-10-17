@@ -47,6 +47,21 @@ final navigationFolder = WidgetbookFolder(name: 'navigation', children: [
           ),
         )),
   ]),
+  component('AppPage · navigation', [
+    pageUseCase('Navigation/Navigation Rail (ab 600 links)', (_) => AppPage(
+          topBar: const AppTopBar(title: 'Seite'),
+          body: const Center(child: Text('Inhalt')),
+          navigation: AppNavigationBar(
+            selectedIndex: 1,
+            onSelected: (_) {},
+            destinations: const [
+              AppNavigationDestination(icon: AppIcons.book, label: 'Eins'),
+              AppNavigationDestination(icon: AppIcons.restaurant, label: 'Zwei'),
+              AppNavigationDestination(icon: AppIcons.settings, label: 'Einstellungen'),
+            ],
+          ),
+        )),
+  ]),
   component('AppBottomActionBar', [
     pageUseCase('Navigation/Bottom Action Bar', (_) => const Scaffold(
           bottomNavigationBar: AppBottomActionBar(actions: [

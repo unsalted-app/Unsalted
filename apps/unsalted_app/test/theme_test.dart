@@ -49,7 +49,7 @@ void main() {
 
       expect(find.byType(AppNavigationBar), findsOneWidget);
       for (final label in ['Rezepte', 'Lebensmittel', 'Einstellungen']) {
-        expect(find.descendant(of: find.byType(NavigationBar), matching: find.text(label)), findsOneWidget);
+        expect(find.descendant(of: find.byType(AppNavigationBar), matching: find.text(label)), findsOneWidget);
       }
 
       await tester.pumpWidget(const SizedBox.shrink());

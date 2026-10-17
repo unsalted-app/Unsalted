@@ -254,7 +254,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D07 | Markenelemente: `AppMark` (auch als Auswahlziel), `AppFrame`/`AppSlot`/`AppDashedUnderline`, `AppHighlight`/`AppChangeText`, `AppValue`; DS-53–58; GL-01-Motiv „marken“ | fertig |
 | D08 | Eingaben und Listen: Beschriftung über dem Feld, Zahl mit Einheit, Fehler mit Symbol, Auswahlfeld mit `chevron`, Listeneintrag mit Haarlinie und Auswahlbalken; Kontur des Tags behoben | fertig |
 | D09 | Rückmeldung: Hinweis mit Symbol (neutral/Warnung/Fehler/Erfolg), Leerstelle, Fehlerzustand mit Symbol, Dialog `size-dialog` mit primärem Verb, Symbolgrößen aus Tokens; Restzeitlinie der Meldung nicht gebaut (siehe decisions) | fertig |
-| D10 | Navigation und Daten | offen |
+| D10 | Navigation und Daten: eigene Navigationsleiste (Balken statt Pille, Seitenleiste ab 600 über `AppPage.navigation`), Kopfleiste und Navigation ohne Textskalierung, Aktionsleiste, Deklarationstabelle, Codeblock; DS-59; DS-51-Liste leer | fertig |
 | D11 | Templates und Layout | offen |
 | D12a | Token-Nachtrag `reflow` aus Figma | offen |
 | D12 | Große Schrift, DS-51-Mechanismus entfernt, WB-04 | offen |

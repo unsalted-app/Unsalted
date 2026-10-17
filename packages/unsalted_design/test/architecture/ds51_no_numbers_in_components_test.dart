@@ -20,8 +20,6 @@ import 'support/design_test_utils.dart';
 
 /// Noch nicht umgestellte Dateien (relativ zu lib/), mit D12 leer und entfernt.
 const transitionList = <String>{
-  'src/components/data/app_key_value_table.dart', // D10
-  'src/components/navigation/app_top_bar.dart', // D10
 };
 
 const _scanned = ['src/components', 'src/layout', 'src/templates', 'src/theme'];

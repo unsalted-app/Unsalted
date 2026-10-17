@@ -72,7 +72,7 @@ void main() {
       ),
       wrapInPage: false,
     );
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(AppNavigationBar), findsOneWidget);
     await tester.tap(find.text('Zwei'));
     expect(selected, [1]);
   });
@@ -94,7 +94,7 @@ void main() {
     final left = tester.getSize(find.widgetWithText(OutlinedButton, 'Links')).width;
     final right = tester.getSize(find.widgetWithText(ElevatedButton, 'Rechts')).width;
     expect(left, right);
-    expect(left, (variant.size.width - 3 * AppSpacing.l) / 2);
+    expect(left, (variant.size.width - 2 * AppSpacing.l - AppSpacing.m) / 2);
     expect(alone, lessThan(left), reason: 'eine Aktion steht in ihrer eigenen Breite');
   });
 
@@ -115,8 +115,8 @@ void main() {
     for (final text in ['Erste', 'Zweite', '1', '2', '3', '4', 'pro Teil']) {
       expect(find.text(text), findsOneWidget);
     }
-    expect(tester.getSize(find.text('Erste')).width, lessThan(variant.size.width / 2));
-    expect(tester.getTopLeft(find.text('1')).dx, closeTo(variant.size.width / 2 + AppSpacing.xs, 1));
+    expect(tester.getSize(find.text('Erste')).width, closeTo(variant.size.width - 2 * (AppSpacing.m + AppSize.valueColumn), 1));
+    expect(tester.getTopRight(find.text('1')).dx, closeTo(variant.size.width - AppSpacing.m - AppSize.valueColumn, 1));
   });
 
   testVariants('DS-45: AppCodeBlock auswählbar und scrollend', (tester, variant) async {
