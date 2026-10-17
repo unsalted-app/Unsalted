@@ -1,6 +1,7 @@
 // test/goldens/gl01_catalog_golden_test.dart
 //
-// GL-01 (Teil 1.3, D01): Katalogbilder je Komponentengruppe, je acht
+// GL-01 (Teil 1.3, D01; Motiv „marken“ seit D07): Katalogbilder je
+// Komponentengruppe, je acht
 // Varianten (support/golden_harness.dart). Die Motive entsprechen den
 // Ordnern des Widgetbook-Katalogs; Inhalte sind Beispieltexte ohne
 // Fachbegriffe. Nur unter Linux (docs/design/plan-1.3.md, d4).
@@ -65,6 +66,39 @@ Widget _buttons() => _sheet(const [
         AppFab(icon: AppIcons.add, tooltip: 'Neu', onPressed: _noop),
         SizedBox(width: 16),
         AppFab(icon: AppIcons.check, tooltip: 'Speichern', loading: true, onPressed: _noop),
+      ]),
+    ]);
+
+Widget _brand() => _sheet(const [
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        AppMark(label: 'V3', state: AppMarkState.provisional),
+        AppMark(label: 'V2', state: AppMarkState.fixed, seal: true),
+        AppMark(label: 'V1 · Basis', state: AppMarkState.highlighted),
+      ]),
+      Row(children: [
+        AppMark(label: 'V3', state: AppMarkState.provisional, onTap: _noop),
+        AppMark(label: 'V2', state: AppMarkState.fixed, selected: true, onTap: _noop),
+        AppMark(label: 'V1', state: AppMarkState.highlighted, onTap: _noop),
+      ]),
+      AppFrame.provisional(
+        mark: AppMark(label: 'V4', state: AppMarkState.provisional),
+        caption: 'Entwurf · offen',
+        child: Text('Inhalt des Arbeitsstands'),
+      ),
+      AppFrame.fixed(
+        mark: AppMark(label: 'V3', state: AppMarkState.fixed, seal: true),
+        caption: 'fest',
+        child: Text('Inhalt des festen Stands'),
+      ),
+      AppSlot(icon: AppIcons.photo, message: 'Noch kein Bild.', action: AppButton.secondary(label: 'Hinzufügen', onPressed: _noop)),
+      AppDashedUnderline(child: Text('Eintrag ohne Verknüpfung')),
+      AppChangeText(semanticLabel: 'Eins: 500 g → 550 g', subject: 'Eins:', before: '500 g', after: '550 g'),
+      AppChangeText(semanticLabel: 'Zwei hinzugefügt', subject: 'Zwei', after: '5 g'),
+      Wrap(spacing: 16, children: [
+        AppValue(value: '1,80', unit: 'g'),
+        AppValue(value: '0', unit: 'g', certainty: AppCertainty.unknown),
+        AppValue.strong(value: '343', unit: 'g', certainty: AppCertainty.incomplete),
+        AppValue.display(value: '3.500', unit: 'x'),
       ]),
     ]);
 
@@ -258,6 +292,7 @@ void main() {
   testGolden('GL-01', 'tokens_typo', _type);
   testGolden('GL-01', 'aktionen', _buttons);
   testGolden('GL-01', 'text_symbole', _textAndIcons);
+  testGolden('GL-01', 'marken', _brand);
   testGolden('GL-01', 'flaechen', _surfaces);
   testGolden('GL-01', 'eingaben', _inputs);
   testGolden('GL-01', 'listen_chips', _listsAndChips);

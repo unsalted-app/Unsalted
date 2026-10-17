@@ -56,6 +56,10 @@ export 'src/components/feedback/app_loading.dart' show AppLoading, AppProgressBa
 export 'src/components/feedback/app_notice.dart' show AppNotice, AppNoticeKind;
 export 'src/components/feedback/app_skeleton.dart' show AppSkeleton;
 export 'src/components/feedback/app_snackbar.dart' show AppMessenger, AppSnackbarHandle, showAppMessage;
+export 'src/components/brand/app_frame.dart' show AppDashedUnderline, AppFrame, AppSlot;
+export 'src/components/brand/app_highlight.dart' show AppChangeText, AppHighlight;
+export 'src/components/brand/app_mark.dart' show AppMark, AppMarkState;
+export 'src/components/brand/app_value.dart' show AppCertainty, AppValue;
 export 'src/components/data/app_code_block.dart' show AppCodeBlock;
 export 'src/components/data/app_key_value_table.dart' show AppKeyValueTable, AppTableRow;
 export 'src/components/navigation/app_bottom_action_bar.dart' show AppBottomActionBar;

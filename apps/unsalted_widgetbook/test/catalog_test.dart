@@ -25,6 +25,7 @@ const _notCatalogued = {
   'AppButtonVariant', 'AppIconSize', 'AppTextRole', 'AppSurfaceTone', 'AppFieldWidth', 'AppSelectItem',
   'AppNoticeKind', 'AppSnackbarHandle', 'AppMenuEntry', 'AppNavigationDestination', 'AppTableRow',
   'AppWindowSize', 'DetailLayout',
+  'AppMarkState', 'AppCertainty', // Teil 1.3 D07
   // Teil eines anderen Eintrags.
   'AppGap', 'AppPadding', 'DetailSections', 'DetailSplit', 'FormSections',
   'showAppMessage', 'showAppConfirmDialog', 'showAppChoiceDialog', 'showAppDialog', 'showAppAboutDialog',

@@ -46,6 +46,10 @@ src/components/feedback/app_loading.dart show AppLoading, AppProgressBar
 src/components/feedback/app_notice.dart show AppNotice, AppNoticeKind
 src/components/feedback/app_skeleton.dart show AppSkeleton
 src/components/feedback/app_snackbar.dart show AppMessenger, AppSnackbarHandle, showAppMessage
+src/components/brand/app_frame.dart show AppDashedUnderline, AppFrame, AppSlot
+src/components/brand/app_highlight.dart show AppChangeText, AppHighlight
+src/components/brand/app_mark.dart show AppMark, AppMarkState
+src/components/brand/app_value.dart show AppCertainty, AppValue
 src/components/data/app_code_block.dart show AppCodeBlock
 src/components/data/app_key_value_table.dart show AppKeyValueTable, AppTableRow
 src/components/navigation/app_bottom_action_bar.dart show AppBottomActionBar

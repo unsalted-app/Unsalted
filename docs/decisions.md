@@ -2170,3 +2170,50 @@ gleiche Vektordaten (Material Symbols Outlined 300, Papierkorb), byte-gleiches
 Bild; nur die Beschreibungen unterscheiden sich („Löschen (Papierkorb). In
 List/Swipe to Delete und Menüs“ bzw. „Material Symbols Outlined 300“). Der
 Code entspricht damit Figma; beide Namen bleiben.
+
+**D07 — Markenelemente.** Neu unter `lib/src/components/brand/` (fachneutral
+wegen DS-06, Karten Mark, Frame, Highlight, Value): `AppMark` mit
+`AppMarkState` (`provisional`: Strichlinie `state-draft`, Text
+`text-secondary`; `fixed`: Kontur `state-frozen`, Text `text-primary`;
+`highlighted`: Fläche `state-master`, Text und Kontur `text-on-marker`), Höhe
+mindestens `size-mark`, `label-small` tnum, `radius-xs`, `stroke-frame`,
+optional Siegel `lock`; Semantik = `semanticLabel` des Aufrufers. Mit
+`onTap` ist sie ein Auswahlziel nach Figma `Core/Version Switcher`
+(mindestens `size-target`, oben `space-xs`, Abstand `space-xs`, gewählt ein
+Balken `stroke-rule` in `line-strong` in voller Zielbreite, Semantik
+`button`/`selected`) — damit baut Core in D13 die Fassungsleiste, ohne selbst
+zu zeichnen (AT-14). `AppFrame.provisional`/`.fixed` (benannte
+Konstruktoren statt Enum): Kontur gestrichelt bzw. durchgezogen,
+`radius-s`, Innenabstand `space-m`/`space-l`, Abstand `space-s`, Kopfzeile
+aus Marke und Zustandswort (`label-small`, `text-secondary`). `AppSlot`
+(Leerstelle): Strichlinie, Punktraster als Hintergrund (abschaltbar für
+„keine Treffer“), Symbol `size-icon`, Satz `body`, eine Aktion, Innenabstand
+`space-xl`/`space-l`. `AppDashedUnderline`: gestrichelte Unterstreichung für
+noch nicht verknüpfte Einträge (D16). `AppHighlight`: `marker`,
+`text-on-marker`, `radius-xs`, seitlich `space-xxs`. `AppChangeText`
+(Gegenstand `body-strong`, alt `text-secondary` durchgestrichen in
+`stroke-frame`, Symbol `arrow` `size-icon-xs`, neu als `AppHighlight`;
+hinzugefügt nur Marker, entfernt nur Strich, Klartext über `note`;
+Semantik = `semanticLabel`, Einzelteile ausgeschlossen). `AppValue` mit
+`AppCertainty` und `.strong`/`.display`: Zahl im Datenstil mit tnum, Einheit
+nach U+00A0 in `text-secondary` (400, bei `display` `body-strong`), unbekannt
+„—“, unvollständig „*“ fett. Intern `dashed_painter.dart` (Muster
+`stroke-dash`/`stroke-gap` per `PathMetric` entlang abgerundeter Kontur oder
+Unterstreichung) und `dot_pattern.dart` (Punkte `size-dot` in `line-dot`,
+Abstand `space-xl`, erster Punkt `space-l` von der Kante). Tür und
+Golden-Liste DS-03 um vier Zeilen ergänzt, CHANGELOG. Neue Tests DS-53 bis
+DS-58 (`test/components/ds53_brand_test.dart`, 32 Fälle; u. a. Punktraster
+dunkel in `line-dot` dunkel, Pfeil nur bei alt → neu, „—“ nie „0“).
+Katalog: Ordner `brand` mit allen Elementen; GL-01 neues Motiv „marken“
+(8 Bilder). *Geänderte bestehende Testzeile:* keine; in
+`apps/unsalted_widgetbook/test/catalog_test.dart` ist nur eine Zeile
+**hinzugekommen** (`'AppMarkState', 'AppCertainty'` in der Ausnahmeliste
+der Parametertypen für WB-02). Mac: Design 285, Core 412, App 6,
+Widgetbook 6 Tests grün; `check_architecture` Exit 0. *Goldens:* Lauf `39011115616`
+(`goldens/d07`): 8 neue Bilder (Motiv „marken“). Der Vergleichsschritt meldete
+zusätzlich „listen_chips“ (8 × 342 Pixel), die dort neu erzeugten Bilder sind
+aber pixelgleich mit den eingecheckten (nur die PNG-Bytes unterscheiden
+sich) — nicht übernommen. Vermutete Ursache: Die „marken“-Tests liefen im
+Vergleich rot (noch kein Bild), und nach einem roten Test lässt
+`flutter_test` den Widget-Baum stehen (CLAUDE.md, Abschnitt 4). Nachweis über
+die PR-CI, in der alle Bilder vorhanden sind.
