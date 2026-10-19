@@ -6,6 +6,8 @@
 // Hilfetext und ob gesperrt, entscheidet PackageForm. Seit Teil 1.3 (D16) im
 // Raster (`AppGrid`): ab `breakpoint-medium` der verfügbaren Breite
 // zweispaltig, mit Abstand `space-m`; Reihenfolge zeilenweise unverändert.
+// Seit D16c Zahlenfelder (Tastatur mit Komma; `AppTextField` zeigt sie
+// rechtsbündig in `data` mit tabellarischen Ziffern).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -55,6 +57,7 @@ class PackageNutrientsSection extends StatelessWidget {
             itemBuilder: (context, index) => AppTextField(
               controller: fields[index].controller,
               label: fields[index].label,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
               error: fields[index].error,
               helper: fields[index].helper,
               enabled: fields[index].enabled,

@@ -16,6 +16,8 @@
 // Rezepte.“ mit Leerstelle und Aktion.
 // UI-77 (D16b): Abstand `space-m` zwischen den Feldern des Abschnitts
 // „Parameter“.
+// UI-78 (D16c): Die Nährwertfelder des Verpackungsformulars sind Zahlenfelder
+// (Tastatur mit Komma, rechtsbündig, tabellarische Ziffern).
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -249,4 +251,28 @@ void main() {
       }
     });
   }
+
+  testWidgets('UI-78: Nährwertfelder als Zahlenfelder', (tester) async {
+    await _pump(tester, const PackageForm(), size: const Size(800, 3000), scrolls: false);
+    const labels = [
+      'Kalorien (kcal)',
+      'Fett (g)',
+      'davon gesättigte Fettsäuren (g)',
+      'Kohlenhydrate (g)',
+      'davon Zucker (g)',
+      'Ballaststoffe (g)',
+      'Eiweiß (g)',
+      'Salz (g)',
+    ];
+    for (final label in labels) {
+      final field = tester.widget<TextField>(
+        find.descendant(of: find.widgetWithText(AppTextField, label), matching: find.byType(TextField)),
+      );
+      expect(field.keyboardType, const TextInputType.numberWithOptions(decimal: true), reason: label);
+      expect(field.textAlign, TextAlign.end, reason: label);
+      expect(field.style!.fontFeatures, AppTypography.data.fontFeatures, reason: label);
+    }
+    await tester.enterText(find.widgetWithText(AppTextField, 'Fett (g)'), '2,5');
+    expect(find.text('2,5'), findsOneWidget, reason: 'Komma bleibt erhalten');
+  });
 }

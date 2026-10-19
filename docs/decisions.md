@@ -2983,3 +2983,24 @@ ohne Abstand → beide Fälle rot; danach grün. Nachtrag 28.10.3 ergänzt. Mac:
 Core 438 Tests grün; `check_architecture` Exit 0.
 *Goldens:* Lauf 39318263650 (`goldens/d16b`): abweichend die 8 Bilder von
 GL-02 `03_rezept_bearbeiten` (Abstand zwischen den Parameter-Feldern).
+
+**D16c — Nährwertfelder als Zahlenfelder (freigegeben, Punkt 5).**
+`foods/sections/package_nutrients_section.dart`: jedes Nährwertfeld (auch
+„oder: Natrium (mg)“) mit `keyboardType:
+TextInputType.numberWithOptions(decimal: true)` — Tastatur mit Komma;
+`AppTextField` zeigt Zahlenfelder rechtsbündig in `data` mit tabellarischen
+Ziffern (D08). Parsing und Prüfung unverändert (Eingabe mit Komma wie
+bisher). *Nicht Teil der Freigabe, nicht geändert:* die Maßfelder des
+Verpackungsformulars (Dichte, Stückgewicht, Portionsgröße,
+`package_measures_section.dart`) und die Zahlenfelder im Editor-Abschnitt
+„Parameter“ (Portionen, Backverlust, Fertiggewicht-Override) sind weiter
+linksbündig ohne Zahlentastatur (Bericht). *Geänderte bestehende
+Testzeilen:* keine. Neu in `test/ui/recipe_editor/editor_design_test.dart`:
+UI-78 (alle acht Nährwertfelder mit Zahlentastatur mit Komma, rechtsbündig,
+tabellarische Ziffern; „2,5“ bleibt so stehen). Gegenprobe: ohne
+Zahlentastatur → UI-78 rot; danach grün. Nachtrag 28.10.8 ergänzt. Mac: Core
+439 Tests grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39319020903 (`goldens/d16c`): abweichend 6 Bilder von GL-02
+`10_lebensmittel_bearbeiten` (Handy 100 %, Tablet 100/200 %; Werte der
+Nährwertfelder rechtsbündig mit tabellarischen Ziffern; bei 200 % am Handy
+liegen die Felder unterhalb des Ausschnitts).
