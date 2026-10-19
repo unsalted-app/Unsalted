@@ -3132,3 +3132,22 @@ APP-05 (liest beide `Info.plist` als Text: Entwicklungssprache „de“,
 mit `CFBundleLocalizations` nur „en“ → rot; danach grün. Nachtrag 28.10.14
 ergänzt, 28.10.13 um APP-05. Keine Golden-Bilder (App kein Golden-Motiv).
 Mac: App 12 Tests grün; `check_architecture` Exit 0.
+
+**D18c — Abstand zwischen den Maßfeldern.**
+`foods/sections/package_measures_section.dart`: die sichtbaren Maßfelder
+(Dichte, Stückgewicht, Portionsgröße; C29 kann sie ausblenden) stehen in
+`AppSection` jetzt in einem `AppStack` mit `gap: AppSpace.m` — derselbe
+Abstand wie im Editor-Abschnitt „Parameter“ (D16b), zwischen den
+Nährwertfeldern (D16) und in Bildschirm 2 (D18b). Der Abschnitt
+„Kennung“ (`package_identity_section.dart`: Name, Marke, Barcode) stapelt
+seine Felder weiter ohne Abstand — nicht Teil der Vorgabe, nicht geändert
+(Bericht). *Geänderte bestehende Testzeilen:* keine (Core vor dem neuen Test
+442 grün). Neu in `test/ui/recipe_editor/editor_design_test.dart`: UI-81
+(Abstand genau `space-m`, mit drei und mit zwei sichtbaren Feldern).
+Gegenprobe: ohne Abstand → beide Fälle rot (0 statt 12); danach grün.
+Nachträge 28.10.8 und 28.10.13 ergänzt; `screens.md` (Bildschirm 10) und
+`components.md` nachgeführt. Mac: Design 461, Core 444, App 12, Widgetbook 10
+Tests grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39330602936 (`goldens/d18c`): abweichend die 8 Bilder von
+GL-02 `10_lebensmittel_bearbeiten` (Abstand zwischen den Maßfeldern, der
+Rest rückt nach unten).

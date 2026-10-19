@@ -22,6 +22,8 @@
 // (Bildschirm 2).
 // UI-80 (D18b): Maßfelder des Verpackungsformulars und Editor-Parameter sind
 // Zahlenfelder; Portionen ohne Komma, die übrigen mit Komma.
+// UI-81 (D18c): Abstand `space-m` zwischen den Maßfeldern des
+// Verpackungsformulars.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -345,4 +347,26 @@ void main() {
     expect(notes.keyboardType.index, isNot(TextInputType.number.index), reason: 'Notizen bleiben Text');
     expect(notes.textAlign, TextAlign.start, reason: 'Notizen bleiben Text');
   });
+
+  for (final visible in [
+    {Measure.density, Measure.gramsPerPiece, Measure.servingSize},
+    {Measure.density, Measure.servingSize},
+  ]) {
+    testWidgets('UI-81: Abstand zwischen den Maßfeldern (${visible.length} Felder)', (tester) async {
+      await _pump(
+        tester,
+        PackageMeasuresSection(
+          density: TextEditingController(),
+          gramsPerPiece: TextEditingController(),
+          servingSize: TextEditingController(),
+          visible: visible,
+        ),
+      );
+      final fields = [for (final e in find.byType(AppTextField).evaluate()) tester.getRect(find.byWidget(e.widget))];
+      expect(fields, hasLength(visible.length));
+      for (var i = 1; i < fields.length; i++) {
+        expect(fields[i].top - fields[i - 1].bottom, AppSpacing.m);
+      }
+    });
+  }
 }

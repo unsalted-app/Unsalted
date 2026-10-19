@@ -135,11 +135,11 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Template:** `FormPageTemplate` mit Hauptaktion und `AppOverflowMenu`; Inhalt `PackageForm` (`FormSections`).
 - **Abschnitte (in `PackageForm`):**
   1. `foods/sections/package_identity_section.dart` — Name, Marke, Barcode
-  2. `foods/sections/package_measures_section.dart` — Dichte, Stückgewicht, Portionsgröße (Zahlenfelder; D18b)
+  2. `foods/sections/package_measures_section.dart` — Dichte, Stückgewicht, Portionsgröße (Zahlenfelder mit Abstand `space-m`; D18b, D18c)
   3. `foods/sections/package_nutrients_section.dart` — 8 Nährwerte (EU-Reihenfolge) + Natrium (`PackageNumberField`), als Zahlenfelder im `AppGrid` (ab 600 zweispaltig; D16, D16c)
   4. `foods/sections/package_validation_section.dart` — Warnungen und Fehler (`AppNotice` Warnung/Fehler, Keys `package_form_warning`/`package_form_error`; D16)
 - **Bausteine:** `foods/package_form.dart` (`PackageForm`: Zustand, Prüfung, Natrium-Umrechnung).
-- **Figma `23:1492`:** übereinstimmend Beschriftungen über dem Feld, Abschnitte mit Linie, Warnung und Fehler als Hinweise mit Symbol, Nährwert- und Maßfelder als Zahlenfelder (rechtsbündig; D16c, D18b), Nährwertfelder ab 600 zweispaltig. Golden `10_lebensmittel_bearbeiten`.
+- **Figma `23:1492`:** übereinstimmend Beschriftungen über dem Feld, Abschnitte mit Linie, Warnung und Fehler als Hinweise mit Symbol, Nährwert- und Maßfelder als Zahlenfelder (rechtsbündig; D16c, D18b) mit Abstand zwischen den Feldern (D16, D18c), Nährwertfelder ab 600 zweispaltig. Golden `10_lebensmittel_bearbeiten`.
 - **Umgestellt:** C24.
 
 ## 11 Export — `settings/export_screen.dart`

@@ -288,9 +288,10 @@ freigegeben. Etappe 4 fertig: D16b/D16c (Abstand im Editor-Abschnitt
 der App), D17b (deutsche Systemtexte), D18 (Doku, `rueckmeldung-figma.md`,
 Design-Paket 0.2.0), nach Prüfung D18b (Abstand Titel/Beschreibung in
 Bildschirm 2; Maß- und Parameterfelder als Zahlenfelder), nach dem
-iPhone-Test D17c (Deutsch als Sprache des App-Bundles in iOS/macOS). Kandidaten für
+iPhone-Test D17c (Deutsch als Sprache des App-Bundles in iOS/macOS) und
+D18c (Abstand zwischen den Maßfeldern). Kandidaten für
 Teil 1.4: `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“. Test-IDs neu:
-GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–80, APP-03–05.
+GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–81, APP-03–05.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.

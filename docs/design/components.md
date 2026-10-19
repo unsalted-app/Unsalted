@@ -119,7 +119,7 @@ Aus Design-Komponenten zusammengesetzt; Abschnitte je Bildschirm in
 | `NutritionHeader` (Kennzahlenleiste) | `Core/Nutrition Header` `142:57` | `nutrition/nutrition_header.dart` | `AppFigureRow`, `AppValue.strong`, `AppNotice` (Warnung) | UI-70 |
 | `NutritionTable` (Deklaration) | `Data/Key Value Table` | `nutrition/nutrition_table.dart` | `AppKeyValueTable` (`sub`, `strong`), `AppSelect`, `AppText` | UI-71 |
 | `AmountCalculator` | `Core/Amount Calculator` `179:392` | `nutrition/amount_calculator.dart` | `AppTextField` (Zahl, Einheit), `AppIcon` (`swap`) | UI-71 |
-| `PackageForm` | Bildschirm 10 | `foods/package_form.dart` | Abschnitte unter `foods/sections/` (`AppTextField` als Zahlenfelder im `AppGrid`, `AppSection`, `AppNotice`) | UI-73, UI-78, UI-80 |
+| `PackageForm` | Bildschirm 10 | `foods/package_form.dart` | Abschnitte unter `foods/sections/` (`AppTextField` als Zahlenfelder im `AppGrid`, `AppSection`, `AppNotice`) | UI-73, UI-78, UI-80, UI-81 |
 | `SnapshotColumn` | — | `versions/snapshot_column.dart` | `AppText`, `AppPadding`, `AppStack` | — |
 | `ChangeList` | Bildschirm 08, `Change` | `versions/change_list.dart` | `AppItemList`, `AppSection`, `AppChangeText` | UI-69 |
 
