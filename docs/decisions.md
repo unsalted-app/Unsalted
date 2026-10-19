@@ -3198,3 +3198,10 @@ Exit 0.
 GL-02 `10_lebensmittel_bearbeiten` (Abstand zwischen Name, Marke und Barcode,
 der Rest rückt nach unten). `03_rezept_bearbeiten` unverändert — die Schritte
 liegen unterhalb des Bildausschnitts; Export ist kein Golden-Motiv.
+
+**Status des Design-Systems (F14).** `docs/design/system/README.md`: das
+Status-Blockzitat lautet jetzt „freigegeben (design-v0.2.0)“; seine alten
+Sätze (Material-3-Platzhalter im Code, Prüfung in Figma ausstehend) sind
+damit überholt und ersetzt durch den Verweis auf `packages/unsalted_design`
+0.2.0 und `rueckmeldung-figma.md`. Der übrige Inhalt der Übergabe bleibt
+unverändert.

@@ -1,4 +1,4 @@
-> **Status: Vorschlag, Entwurf zur Freigabe.** Dieses System beschreibt die empfohlene visuelle Identität von unsalted. Im Code (`packages/unsalted_design`, Stand `main@1022185`) stehen noch Material-3-Platzhalter. Übernommen sind Namensschema, Komponenteninventar, Abstands-, Breakpoint- und Bewegungsskala. Farben, Schrift, Radien, Linien und Komponentenbilder sind neu und werden erst in Figma geprüft und freigegeben.
+> **Status: freigegeben (design-v0.2.0).** Dieses System beschreibt die visuelle Identität von unsalted. Es ist mit Teil 1.3 im Code umgesetzt (`packages/unsalted_design` 0.2.0); bewusste Abweichungen des Codes von Figma stehen in `docs/design/rueckmeldung-figma.md`.
 
 Für Figma: Schritt-für-Schritt-Anleitung in Abschnitt 07, Variablen zum Importieren unter Assets → Figma-Startpaket.
 
