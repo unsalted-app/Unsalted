@@ -14,6 +14,8 @@
 // Fassungsmarke samt Siegel.
 // UI-76: „Keine Treffer.“ ohne Leerstelle (kein Punktraster), „Noch keine
 // Rezepte.“ mit Leerstelle und Aktion.
+// UI-77 (D16b): Abstand `space-m` zwischen den Feldern des Abschnitts
+// „Parameter“.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,7 @@ import 'package:unsalted_core/src/ui/foods/package_form.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/sections/recipe_detail_steps_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/ingredient_row.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_frozen_section.dart';
+import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_parameters_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_steps_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/step_row.dart';
 import 'package:unsalted_core/src/ui/recipe_list/sections/recipe_list_empty_section.dart';
@@ -225,4 +228,25 @@ void main() {
     expect(find.byType(AppSlot), findsOneWidget);
     expect(find.widgetWithText(AppButton, 'Erstes Rezept anlegen'), findsOneWidget);
   });
+
+  for (final showAdvanced in [true, false]) {
+    testWidgets('UI-77: Abstand zwischen den Parameter-Feldern (showAdvanced: $showAdvanced)', (tester) async {
+      await _pump(
+        tester,
+        RecipeEditorParametersSection(
+          servings: TextEditingController(),
+          bakingLoss: TextEditingController(),
+          finalWeight: TextEditingController(),
+          notes: TextEditingController(),
+          onChanged: () {},
+          showAdvanced: showAdvanced,
+        ),
+      );
+      final fields = [for (final e in find.byType(AppTextField).evaluate()) tester.getRect(find.byWidget(e.widget))];
+      expect(fields, hasLength(showAdvanced ? 4 : 2));
+      for (var i = 1; i < fields.length; i++) {
+        expect(fields[i].top - fields[i - 1].bottom, AppSpacing.m);
+      }
+    });
+  }
 }

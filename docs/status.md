@@ -265,6 +265,8 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D15a | Kennzahlenleiste als fachneutrale Design-Komponente `AppFigureRow` (Haarlinien, Einzug, bei großer Schrift untereinander; freigegeben); DS-61, Katalog, GL-01 `daten` | fertig |
 | D15 | Nährwerte: Kopf als Kennzahlenleiste, Hinweis als Warnung, Deklaration („davon“ eingerückt, kcal hervorgehoben), Mengenrechner mit Einheit und Tausch-Symbol, bei großer Schrift untereinander; UI-70/71 | fertig |
 | D16 | Editor und Lebensmittel: Zutatenzeile zweizeilig mit gestrichelter Unterstreichung, Schrittzeile mit Nummer (freigegeben) und Timer darunter, Zustandsrahmen der eingefrorenen Ansicht, Hinweise im Verpackungsformular, Nährwertfelder zweispaltig (Testzeilen freigegeben), Schritte im Detail mit Nummer und Timer-Tag, „Keine Treffer.“ ohne Leerstelle, schmales Feld und Auswahl bei großer Schrift; UI-72–74, UI-76, DS-23c, DS-25c | fertig |
+| — | Nachträge aus Etappe 3: Kandidaten für Teil 1.4 festgehalten, Kommentare im Detail-Test (`7296aff`) | fertig |
+| D16b | Abstand `space-m` zwischen den Feldern im Editor-Abschnitt „Parameter“ (freigegeben); UI-77 | fertig |
 | D17–D18 | Etappe 4 nach Plan | offen |
 
 **Kandidaten für Teil 1.4** (eingeordnet 2026-10-18, Details in

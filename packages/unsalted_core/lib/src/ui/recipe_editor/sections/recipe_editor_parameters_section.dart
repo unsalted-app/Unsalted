@@ -1,7 +1,8 @@
 // lib/src/ui/recipe_editor/sections/recipe_editor_parameters_section.dart
 //
 // Bildschirm 3, Abschnitt „Parameter“ (Teil 1.2): Portionen, Backverlust,
-// Fertiggewicht-Override, Notizen.
+// Fertiggewicht-Override, Notizen. Seit Teil 1.3 (D16b) mit Abstand
+// `space-m` zwischen den gestapelten Feldern (wie im Verpackungsformular).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -40,6 +41,7 @@ class RecipeEditorParametersSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppStack(
+        gap: AppSpace.m,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppTextField(controller: servings, label: 'Portionen', onChanged: (_) => onChanged()),

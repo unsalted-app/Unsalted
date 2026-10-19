@@ -2967,3 +2967,19 @@ zusätzlich: alle bewussten Abweichungen von Figma in
 und `:234–236` (Plan-Z. 227, 233–235; durch die Importzeile aus D13 um eins
 verschoben) — nur Kommentare: „Marke in der Fassungsleiste“ statt „Chip in
 der Versionsleiste“; der Code der Helfer bleibt.
+
+**D16b — Abstand im Editor-Abschnitt „Parameter“ (freigegeben, Punkt 4).**
+`recipe_editor/sections/recipe_editor_parameters_section.dart`: `AppStack`
+mit `gap: AppSpace.m` zwischen Portionen, Backverlust,
+Fertiggewicht-Override und Notizen (bzw. Portionen und Notizen, wenn C29 die
+erweiterten Felder ausblendet) — derselbe Abstand wie zwischen den
+Nährwertfeldern (D16) und im Figma-Raster von Bildschirm 03 (12). Der
+Anlege-Abschnitt von Bildschirm 2 (`recipe_create_fields_section.dart`,
+Titel und Beschreibung) stapelt seine Felder ebenfalls ohne Abstand; nicht
+Teil der Freigabe, nicht geändert (Bericht). *Geänderte bestehende
+Testzeilen:* keine. Neu in `test/ui/recipe_editor/editor_design_test.dart`:
+UI-77 (Abstand genau `space-m`, mit und ohne erweiterte Felder). Gegenprobe:
+ohne Abstand → beide Fälle rot; danach grün. Nachtrag 28.10.3 ergänzt. Mac:
+Core 438 Tests grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39318263650 (`goldens/d16b`): abweichend die 8 Bilder von
+GL-02 `03_rezept_bearbeiten` (Abstand zwischen den Parameter-Feldern).

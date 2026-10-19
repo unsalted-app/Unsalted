@@ -286,9 +286,9 @@ kein Merge, keine Tags). Kandidaten für Teil 1.4: `docs/design/plan-1.3.md`,
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** D16b (Abstand im Editor-Abschnitt „Parameter“), D16c
-(Nährwertfelder als Zahlenfelder), dann D17, D17b, D18; Stopp mit Bericht
-nach D18.
+**Nächster Schritt:** D16c (Nährwertfelder als Zahlenfelder), dann D17,
+D17b, D18; Stopp mit Bericht nach D18. (D16b fertig: Abstand im
+Editor-Abschnitt „Parameter“.)
 
 ---
 
