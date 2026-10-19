@@ -2945,3 +2945,25 @@ unterstrichen; bei 200 % am Handy liegt die Zeile unterhalb des Ausschnitts)
 und `10_lebensmittel_bearbeiten` (Handy 100 %, Tablet 100/200 %: Abstand
 zwischen den Nährwertfeldern, auf dem Tablet zweispaltig). Die Schritte im
 Rezeptdetail liegen in `04_rezeptdetail` unterhalb des Ausschnitts.
+
+## 2026-10-18 — Teil 1.3, Etappe 4 (freigegeben)
+
+**Freigabe Etappe 3 und Entscheidungen (Projektverantwortlicher):** Etappe 3
+geprüft und freigegeben; weiter mit D17, D17b, D18, Stopp nach D18; kein
+Merge, keine Tags. Zu den offenen Punkten des Berichts: (1)–(3) Master in der
+Fassungsleiste, sichtbares Umsortieren ohne Ziehen, „leer“/„keine Treffer“ in
+der Lebensmittelliste sind Kandidaten für Teil 1.4 — festgehalten in
+`plan-1.3.md` („Nicht Teil von 1.3“) und `status.md`. (4) Abstand der
+gestapelten Felder im Editor-Abschnitt „Parameter“: freigegeben, eigener
+kleiner Commit mit Test und Golden. (5) Nährwertfelder im
+Verpackungsformular: freigegeben — rechtsbündig mit Zahlentastatur (mit
+Komma) wie die übrigen Zahlenfelder, mit Test. (6) Kommentare „Chip“ in
+`recipe_detail_screen_test.dart`: freigegeben, nur die Kommentare. D18
+zusätzlich: alle bewussten Abweichungen von Figma in
+`docs/design/rueckmeldung-figma.md` sammeln.
+
+*Umgesetzt in diesem Commit:* (1)–(3) wie oben; (6)
+`packages/unsalted_core/test/ui/recipe_detail/recipe_detail_screen_test.dart:228`
+und `:234–236` (Plan-Z. 227, 233–235; durch die Importzeile aus D13 um eins
+verschoben) — nur Kommentare: „Marke in der Fassungsleiste“ statt „Chip in
+der Versionsleiste“; der Code der Helfer bleibt.

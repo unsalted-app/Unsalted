@@ -300,6 +300,15 @@ kopieren?“ (Text aus Kapitel 22); pro Portion und pro 100 g in der
 Editor-Vorschau (ohne Bildschirm-Änderung möglich, aber eine inhaltliche
 Erweiterung — eigene Freigabe).
 
+**Kandidaten für Teil 1.4** (aus Etappe 3, vom Projektverantwortlichen am
+2026-10-18 so eingeordnet): Master in der Fassungsleiste hervorheben (die
+Master-ID kennt nur `recipe_detail_screen.dart`); sichtbares Umsortieren
+ohne Ziehen, z. B. „Nach oben“/„Nach unten“ im Menü der Zeile (WCAG 2.5.7 für
+alle, nicht nur mit Hilfstechnik; Bildschirm und Callbacks); „leer“ und
+„keine Treffer“ in der Lebensmittelliste unterscheiden (ob gesucht wird,
+weiß nur `food_list_screen.dart`). Dazu weiter: Liste und Detail
+nebeneinander ab 840 (F4).
+
 ---
 
 ## (d) Tests, Regeln, Kapitel 28

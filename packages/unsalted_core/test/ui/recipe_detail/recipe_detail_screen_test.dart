@@ -225,15 +225,15 @@ Future<String> _addVersion(
   }).then((value) => value!);
 }
 
-/// Beschriftung des gewählten Chips in der Versionsleiste.
+/// Beschriftung der gewählten Marke in der Fassungsleiste.
 String _selectedVersionLabel(WidgetTester tester) {
   final mark = tester.widgetList<AppMark>(find.byType(AppMark)).singleWhere((m) => m.selected);
   return mark.label;
 }
 
-/// Tippt den Chip [label] der Versionsleiste an und lässt dessen
-/// Auswahl-Animation auslaufen -- `_settle` pumpt ohne Zeitvorschub, sonst
-/// verfehlt ein direkt folgender Tap den halb animierten Chip.
+/// Tippt die Marke [label] der Fassungsleiste an -- `_settle` pumpt ohne
+/// Zeitvorschub; die halbe Sekunde danach stammt von den früheren
+/// Auswahl-Chips (Animation) und schadet der Fassungsleiste nicht.
 Future<void> _tapVersion(WidgetTester tester, String label) async {
   await tester.tap(find.widgetWithText(VersionMark, label));
   await _settle(tester);

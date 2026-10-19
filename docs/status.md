@@ -267,6 +267,12 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D16 | Editor und Lebensmittel: Zutatenzeile zweizeilig mit gestrichelter Unterstreichung, Schrittzeile mit Nummer (freigegeben) und Timer darunter, Zustandsrahmen der eingefrorenen Ansicht, Hinweise im Verpackungsformular, Nährwertfelder zweispaltig (Testzeilen freigegeben), Schritte im Detail mit Nummer und Timer-Tag, „Keine Treffer.“ ohne Leerstelle, schmales Feld und Auswahl bei großer Schrift; UI-72–74, UI-76, DS-23c, DS-25c | fertig |
 | D17–D18 | Etappe 4 nach Plan | offen |
 
+**Kandidaten für Teil 1.4** (eingeordnet 2026-10-18, Details in
+`docs/design/plan-1.3.md`, „Nicht Teil von 1.3“): Master in der
+Fassungsleiste hervorheben; sichtbares Umsortieren ohne Ziehen (WCAG 2.5.7);
+„leer“ und „keine Treffer“ in der Lebensmittelliste unterscheiden; Liste und
+Detail nebeneinander ab 840 (F4).
+
 ## Bekannte offene Lücken (nicht blockierend)
 
 - `foodVariantToInsertCompanion`/`foodVariantToUpdateCompanion` in

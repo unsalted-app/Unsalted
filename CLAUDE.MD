@@ -278,14 +278,17 @@ fertig (Änderungsliste in Teilen, Semantik = bisheriger Text; Vergleich bei
 großer Schrift A über B), D15a fertig (Kennzahlenleiste `AppFigureRow`), D15
 fertig (Nährwert-Kopf als Kennzahlenleiste, Deklaration, Mengenrechner), D16
 fertig (Zutaten- und Schrittzeile, Zustandsrahmen, Hinweise, Nährwertfelder
-zweispaltig, „Keine Treffer.“ ohne Leerstelle). Etappe 3 fertig. Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
+zweispaltig, „Keine Treffer.“ ohne Leerstelle). Etappe 3 fertig und
+freigegeben. Etappe 4 in Arbeit (Nachträge aus Etappe 3, D17, D17b, D18;
+kein Merge, keine Tags). Kandidaten für Teil 1.4: `docs/design/plan-1.3.md`,
+„Nicht Teil von 1.3“. Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** Bericht zu Etappe 3 an den Projektverantwortlichen;
-danach Etappe 4 (D17 App-Hülle mit Seitenleiste, D17b deutsche Systemtexte,
-D18 Abschluss) nach Plan.
+**Nächster Schritt:** D16b (Abstand im Editor-Abschnitt „Parameter“), D16c
+(Nährwertfelder als Zahlenfelder), dann D17, D17b, D18; Stopp mit Bericht
+nach D18.
 
 ---
 
