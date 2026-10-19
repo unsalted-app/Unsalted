@@ -63,4 +63,23 @@ void main() {
     expect(tester.getTopLeft(find.text('Teil')).dy, greaterThan(tester.getTopLeft(find.byType(Divider)).dy));
     expect(find.text('Ohne'), findsOneWidget);
   });
+
+  testVariants('DS-22b: AppSection mit Abschnittslinie, Überschrift und Metadaten (Teil 1.3)', (tester, variant) async {
+    await pumpVariant(
+      tester,
+      variant,
+      const AppSection(title: 'Teil', meta: 'für 4', children: [Text('Inhalt')]),
+    );
+    final c = variant.theme.brightness == Brightness.dark ? AppColorTokens.dark : AppColorTokens.light;
+    final rule = tester.widget<Divider>(find.byType(Divider));
+    expect(rule.thickness, AppStroke.rule);
+    expect(rule.color, c.lineStrong);
+    final heading = tester.widget<Text>(find.text('Teil')).style!;
+    expect(heading.fontSize, AppTypography.heading.fontSize);
+    expect(heading.fontWeight, AppTypography.heading.fontWeight);
+    expect(tester.widget<Text>(find.text('für 4')).style!.color, c.textSecondary);
+    final ruleBottom = tester.getBottomLeft(find.byType(Divider)).dy;
+    expect(tester.getTopLeft(find.text('Teil')).dy - ruleBottom, greaterThanOrEqualTo(AppSpacing.m));
+    expect(tester.getTopLeft(find.text('Inhalt')).dy, greaterThan(tester.getBottomLeft(find.text('Teil')).dy));
+  });
 }

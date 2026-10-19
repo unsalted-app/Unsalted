@@ -1,6 +1,7 @@
 // lib/src/ui/foods/sections/package_identity_section.dart
 //
 // Bildschirm 10, Abschnitt „Kennung“ (Teil 1.2): Name, Marke, Barcode.
+// Seit Teil 1.3 (D18d) mit Abstand `space-m` zwischen den Feldern (wie D16b).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -32,9 +33,15 @@ class PackageIdentitySection extends StatelessWidget {
   Widget build(BuildContext context) => AppSection(
         divider: false,
         children: [
-          AppTextField(controller: name, label: 'Name'),
-          AppTextField(controller: brand, label: 'Marke'),
-          if (showBarcode) AppTextField(controller: barcode, label: 'Barcode'),
+          AppStack(
+            gap: AppSpace.m,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppTextField(controller: name, label: 'Name'),
+              AppTextField(controller: brand, label: 'Marke'),
+              if (showBarcode) AppTextField(controller: barcode, label: 'Barcode'),
+            ],
+          ),
         ],
       );
 }

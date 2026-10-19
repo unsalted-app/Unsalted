@@ -1,0 +1,332 @@
+{
+  "neutral": {
+    "0": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "alpha": 1,
+        "hex": "#ffffff"
+      },
+      "$description": "Primitiv „Weiß“. Nur über surface-raised (hell) verwenden, nie direkt in Komponenten."
+    },
+    "50": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9765,
+          0.9686,
+          0.9451
+        ],
+        "alpha": 1,
+        "hex": "#f9f7f1"
+      },
+      "$description": "Primitiv „Papier“ (Markenfarbe), ein Hauch warm (OKLCH 0.976 0.008 91) – bewusst kein Creme. Seitengrund hell, Text dunkel. Nur über semantische Tokens verwenden."
+    },
+    "100": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9412,
+          0.9333,
+          0.9137
+        ],
+        "alpha": 1,
+        "hex": "#f0eee9"
+      },
+      "$description": "Primitiv. Vertiefte Flächen hell (surface-sunken)."
+    },
+    "150": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.8863,
+          0.8745,
+          0.8549
+        ],
+        "alpha": 1,
+        "hex": "#e2dfda"
+      },
+      "$description": "Primitiv. Haarlinien und Punktraster hell (line-hairline, line-dot)."
+    },
+    "400": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.6078,
+          0.6235,
+          0.6392
+        ],
+        "alpha": 1,
+        "hex": "#9b9fa3"
+      },
+      "$description": "Primitiv. Sekundärtext und Entwurfslinie dunkel, deaktivierter Text hell."
+    },
+    "500": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.4902,
+          0.502,
+          0.5255
+        ],
+        "alpha": 1,
+        "hex": "#7d8086"
+      },
+      "$description": "Primitiv. Bedienelement-Kontur (line-control) in beiden Modi, Entwurfslinie hell."
+    },
+    "600": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.3686,
+          0.3843,
+          0.4118
+        ],
+        "alpha": 1,
+        "hex": "#5e6269"
+      },
+      "$description": "Primitiv „Graphit“ (Markenfarbe). Sekundärtext hell, deaktivierter Text dunkel."
+    },
+    "700": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.2627,
+          0.2824,
+          0.3176
+        ],
+        "alpha": 1,
+        "hex": "#434851"
+      },
+      "$description": "Primitiv. Haarlinien dunkel."
+    },
+    "800": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.1451,
+          0.1647,
+          0.2039
+        ],
+        "alpha": 1,
+        "hex": "#252a34"
+      },
+      "$description": "Primitiv. Erhöhte Flächen und Punktraster dunkel (surface-raised, line-dot)."
+    },
+    "900": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0784,
+          0.098,
+          0.1451
+        ],
+        "alpha": 1,
+        "hex": "#141925"
+      },
+      "$description": "Primitiv „Tinte“ (Markenfarbe, Blauschwarz). Text und Primäraktion hell, Seitengrund dunkel."
+    },
+    "950": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0471,
+          0.0627,
+          0.098
+        ],
+        "alpha": 1,
+        "hex": "#0c1019"
+      },
+      "$description": "Primitiv. Vertiefte Flächen dunkel, Scrim."
+    }
+  },
+  "marker": {
+    "400": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9961,
+          0.898,
+          0.2706
+        ],
+        "alpha": 1,
+        "hex": "#fee545"
+      },
+      "$description": "Primitiv „Marker“ (Markenfarbe, Textmarker-Gelb), heller Modus. Nur über marker, state-master und action-inverse verwenden; niemals als Textfarbe."
+    },
+    "500": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9294,
+          0.8196,
+          0.2392
+        ],
+        "alpha": 1,
+        "hex": "#edd13d"
+      },
+      "$description": "Primitiv „Marker“ für den dunklen Modus: etwas dunkler, damit er auf Tinte nicht blendet (Tinte darauf 11,5 : 1)."
+    }
+  },
+  "red": {
+    "100": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9922,
+          0.9137,
+          0.9098
+        ],
+        "alpha": 1,
+        "hex": "#fde9e8"
+      },
+      "$description": "Primitiv. Fehlerfläche hell."
+    },
+    "300": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9569,
+          0.5686,
+          0.5569
+        ],
+        "alpha": 1,
+        "hex": "#f4918e"
+      },
+      "$description": "Primitiv. Fehlertext dunkel."
+    },
+    "600": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.7647,
+          0.1647,
+          0.1569
+        ],
+        "alpha": 1,
+        "hex": "#c32a28"
+      },
+      "$description": "Primitiv. Fehlertext hell."
+    },
+    "800": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.5137,
+          0.102,
+          0.0941
+        ],
+        "alpha": 1,
+        "hex": "#831a18"
+      },
+      "$description": "Primitiv. Text auf Fehlerfläche hell."
+    },
+    "900": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.302,
+          0.1098,
+          0.102
+        ],
+        "alpha": 1,
+        "hex": "#4d1c1a"
+      },
+      "$description": "Primitiv. Fehlerfläche dunkel."
+    }
+  },
+  "orange": {
+    "100": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9961,
+          0.9294,
+          0.851
+        ],
+        "alpha": 1,
+        "hex": "#feedd9"
+      },
+      "$description": "Primitiv. Warnfläche hell."
+    },
+    "300": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.9529,
+          0.6784,
+          0.4
+        ],
+        "alpha": 1,
+        "hex": "#f3ad66"
+      },
+      "$description": "Primitiv. Warntext dunkel."
+    },
+    "700": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.651,
+          0.3373,
+          0.0392
+        ],
+        "alpha": 1,
+        "hex": "#a6560a"
+      },
+      "$description": "Primitiv. Warntext hell."
+    },
+    "800": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.4627,
+          0.2275,
+          0.051
+        ],
+        "alpha": 1,
+        "hex": "#763a0d"
+      },
+      "$description": "Primitiv. Text auf Warnfläche hell."
+    },
+    "900": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.2863,
+          0.1569,
+          0.0667
+        ],
+        "alpha": 1,
+        "hex": "#492811"
+      },
+      "$description": "Primitiv. Warnfläche dunkel."
+    }
+  }
+}

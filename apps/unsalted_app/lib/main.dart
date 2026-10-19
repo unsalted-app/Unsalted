@@ -7,9 +7,17 @@
 // `UnsaltedModule.routes`. Seit Teil 1.2 (C26): Theme hell/dunkel aus
 // unsalted_design (folgt der Systemeinstellung), Hauptnavigation über
 // AppNavigationBar. Anzeige-Schalter aus config/ui_options.dart (C29).
+// Seit Teil 1.3 (D02): Lizenz der Schrift des Design-Systems registriert.
+// Seit D17 (F4): Die Hauptnavigation steht in `AppPage.navigation` — unter
+// `breakpoint-medium` unten, ab `breakpoint-medium` als seitliche Leiste links
+// (gleiche Ziele); Liste und Detail nebeneinander folgen erst mit Teil 1.4.
+// Seit D17b (F2): Systemtexte der Bedienelemente auf Deutsch
+// (`GlobalMaterialLocalizations`, `Locale('de')`), z. B. „Zurück“, die
+// Bedienhilfe-Aktionen beim Umsortieren und die Lizenzseite.
 
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
@@ -19,6 +27,7 @@ import 'package:unsalted_design/unsalted_design.dart';
 import 'config/ui_options.dart';
 
 void main() {
+  AppFonts.registerLicenses();
   final modules = <UnsaltedModule>[CoreModule()];
   runApp(ProviderScope(
     overrides: appOverrides(database: CoreDatabase(driftDatabase(name: 'unsalted')), modules: modules),
@@ -70,6 +79,9 @@ class _UnsaltedAppState extends State<UnsaltedApp> {
       title: 'unsalted',
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
+      locale: const Locale('de'),
+      supportedLocales: const [Locale('de')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       routerConfig: _router,
     );
   }
@@ -93,7 +105,7 @@ class _NavigationShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage(
       body: child,
-      bottomBar: AppNavigationBar(
+      navigation: AppNavigationBar(
         selectedIndex: _selectedIndex,
         onSelected: (index) => context.go(_destinations[index]),
         destinations: const [

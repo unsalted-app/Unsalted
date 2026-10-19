@@ -20,6 +20,7 @@ final listsFolder = WidgetbookFolder(name: 'lists, chips', children: [
             trailing: AppChip(label: '1:30'),
           ),
           AppListItem(title: 'Kompakt', dense: true),
+          AppListItem(title: 'Gewählt', subtitle: 'Auswahlbalken links', selected: true, onTap: noop),
         ])),
   ]),
   component('AppItemList', [
@@ -38,13 +39,14 @@ final listsFolder = WidgetbookFolder(name: 'lists, chips', children: [
     useCase('List/Reorderable', (_) => _ReorderDemo()),
   ]),
   component('AppChoiceChip', [
-    useCase('Chip/Choice', (_) => const AppStack(direction: Axis.horizontal, gap: AppSpace.s, children: [
+    useCase('Chip/Choice', (_) => const Wrap(spacing: AppSpacing.s, runSpacing: AppSpacing.s, children: [
           AppChoiceChip(label: 'V2', selected: true, onSelected: noop),
           AppChoiceChip(label: 'V1 · Basis', selected: false, onSelected: noop),
         ])),
   ]),
   component('AppChip', [
     useCase('Chip/Info', (_) => const AppChip(label: '12:00')),
+    useCase('mit Symbol', (_) => const AppChip(label: '10:00', icon: AppIcons.timer)),
   ]),
 ]);
 

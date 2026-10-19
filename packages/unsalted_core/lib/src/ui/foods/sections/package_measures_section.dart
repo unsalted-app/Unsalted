@@ -2,7 +2,10 @@
 //
 // Bildschirm 10, Abschnitt „Maße“ (Teil 1.2): Dichte, Stückgewicht,
 // Portionsgröße (Kapitel 22). Ungültige Zahlen sperren das Speichern
-// (PackageForm), ohne das Feld zu markieren — wie vor Teil 1.2.
+// (PackageForm), ohne das Feld zu markieren — wie vor Teil 1.2. Seit Teil 1.3
+// (D18b) Zahlenfelder wie die Nährwertfelder (Tastatur mit Komma,
+// rechtsbündig, tabellarische Ziffern), seit D18c mit Abstand `space-m`
+// zwischen den Feldern (wie D16b).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -46,11 +49,21 @@ class PackageMeasuresSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (visible.isEmpty) return const SizedBox.shrink();
+    const numeric = TextInputType.numberWithOptions(decimal: true);
     return AppSection(
       children: [
-        if (visible.contains(Measure.density)) AppTextField(controller: density, label: 'Dichte (g/ml)'),
-        if (visible.contains(Measure.gramsPerPiece)) AppTextField(controller: gramsPerPiece, label: 'Stückgewicht (g)'),
-        if (visible.contains(Measure.servingSize)) AppTextField(controller: servingSize, label: 'Portionsgröße (g)'),
+        AppStack(
+          gap: AppSpace.m,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (visible.contains(Measure.density))
+              AppTextField(controller: density, label: 'Dichte (g/ml)', keyboardType: numeric),
+            if (visible.contains(Measure.gramsPerPiece))
+              AppTextField(controller: gramsPerPiece, label: 'Stückgewicht (g)', keyboardType: numeric),
+            if (visible.contains(Measure.servingSize))
+              AppTextField(controller: servingSize, label: 'Portionsgröße (g)', keyboardType: numeric),
+          ],
+        ),
       ],
     );
   }

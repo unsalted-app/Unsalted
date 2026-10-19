@@ -47,10 +47,11 @@ class RecipeEditorStepsSection extends StatelessWidget {
           AppReorderableList(
             onReorder: onReorder,
             children: [
-              for (final step in steps)
+              for (final (index, step) in steps.indexed)
                 StepRow(
                   key: ValueKey(step.id),
                   data: step,
+                  number: index + 1,
                   onInstructionChanged: (value) => onInstructionChanged(step.id, value),
                   onTimerChanged: (value) => onTimerChanged(step.id, value),
                   onRemove: () => onRemoved(step.id),

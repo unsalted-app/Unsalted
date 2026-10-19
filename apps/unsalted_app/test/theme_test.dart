@@ -45,11 +45,11 @@ void main() {
       final theme = Theme.of(tester.element(find.text('Noch keine Rezepte.')));
       expect(theme.brightness, brightness);
       final expected = brightness == Brightness.dark ? AppColorTokens.dark : AppColorTokens.light;
-      expect(theme.colorScheme.surface, expected.surface);
+      expect(theme.colorScheme.surface, expected.surfacePage);
 
       expect(find.byType(AppNavigationBar), findsOneWidget);
       for (final label in ['Rezepte', 'Lebensmittel', 'Einstellungen']) {
-        expect(find.descendant(of: find.byType(NavigationBar), matching: find.text(label)), findsOneWidget);
+        expect(find.descendant(of: find.byType(AppNavigationBar), matching: find.text(label)), findsOneWidget);
       }
 
       await tester.pumpWidget(const SizedBox.shrink());

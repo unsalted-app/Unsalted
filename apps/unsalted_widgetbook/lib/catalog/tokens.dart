@@ -25,12 +25,21 @@ final tokensFolder = WidgetbookFolder(name: 'Tokens', children: [
     useCase('light', (_) => _colorTable(AppColorTokens.light)),
     useCase('dark', (_) => _colorTable(AppColorTokens.dark)),
   ]),
+  component('AppFonts', [
+    useCase('Atkinson Hyperlegible Next', (_) => AppStack(gap: AppSpace.s, children: [
+          for (final weight in [FontWeight.w400, FontWeight.w600, FontWeight.w700])
+            Text(
+              'Weizenmehl 0O 1lI 5S – 2,5 g',
+              style: TextStyle(fontFamily: AppFonts.family, package: AppFonts.package, fontWeight: weight),
+            ),
+        ])),
+  ]),
   component('Typografie', [
     useCase('type', (_) => AppStack(gap: AppSpace.s, children: [
           for (final MapEntry(key: name, value: style) in AppTypography.byFigmaName.entries) Text(name, style: style),
         ])),
   ]),
-  component('Abstand, Radius, Höhe', [
+  component('Abstand, Radius, Linie, Größe, Deckkraft, Schatten', [
     useCase('space', (context) => AppStack(gap: AppSpace.s, children: [
           for (final MapEntry(key: name, value: value) in AppSpacing.byFigmaName.entries)
             AppStack(direction: Axis.horizontal, gap: AppSpace.s, children: [
@@ -51,11 +60,36 @@ final tokensFolder = WidgetbookFolder(name: 'Tokens', children: [
               child: Text(name.split('/').last),
             ),
         ])),
-    useCase('elevation', (_) => Wrap(spacing: 16, runSpacing: 16, children: [
-          for (final MapEntry(key: name, value: value) in AppElevation.byFigmaName.entries)
-            Material(
-              elevation: value,
-              borderRadius: BorderRadius.circular(AppRadius.m),
+    useCase('stroke', (context) => AppStack(gap: AppSpace.s, children: [
+          for (final MapEntry(key: name, value: value) in AppStroke.byFigmaName.entries)
+            AppStack(direction: Axis.horizontal, gap: AppSpace.s, children: [
+              SizedBox(width: 96, height: value, child: ColoredBox(color: Theme.of(context).colorScheme.onSurface)),
+              Expanded(child: Text('$name = $value')),
+            ]),
+        ])),
+    useCase('size', (_) => AppStack(gap: AppSpace.xs, children: [
+          for (final MapEntry(key: name, value: value) in {...AppSize.byFigmaName, ...AppReflow.byFigmaName}.entries)
+            Text('$name = $value'),
+        ])),
+    useCase('opacity', (context) => Wrap(spacing: 12, runSpacing: 12, children: [
+          for (final MapEntry(key: name, value: value) in AppOpacity.byFigmaName.entries)
+            SizedBox(
+              width: 96,
+              height: 64,
+              child: ColoredBox(
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: value),
+                child: Center(child: Text(name.split('/').last)),
+              ),
+            ),
+        ])),
+    useCase('shadow', (context) => Wrap(spacing: 24, runSpacing: 24, children: [
+          for (final MapEntry(key: name, value: shadows) in AppShadow.byFigmaName.entries)
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(AppRadius.m),
+                boxShadow: Theme.of(context).brightness == Brightness.dark ? shadows.dark : shadows.light,
+              ),
               child: SizedBox(width: 120, height: 64, child: Center(child: Text(name.split('/').last))),
             ),
         ])),

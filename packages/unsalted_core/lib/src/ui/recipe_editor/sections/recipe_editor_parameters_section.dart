@@ -1,7 +1,10 @@
 // lib/src/ui/recipe_editor/sections/recipe_editor_parameters_section.dart
 //
 // Bildschirm 3, Abschnitt „Parameter“ (Teil 1.2): Portionen, Backverlust,
-// Fertiggewicht-Override, Notizen.
+// Fertiggewicht-Override, Notizen. Seit Teil 1.3 (D16b) mit Abstand
+// `space-m` zwischen den gestapelten Feldern (wie im Verpackungsformular).
+// Seit D18b Zahlenfelder (rechtsbündig, tabellarische Ziffern): Portionen mit
+// Zifferntastatur ohne Komma, Backverlust und Fertiggewicht-Override mit Komma.
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -40,12 +43,28 @@ class RecipeEditorParametersSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppStack(
+        gap: AppSpace.m,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AppTextField(controller: servings, label: 'Portionen', onChanged: (_) => onChanged()),
+          AppTextField(
+            controller: servings,
+            label: 'Portionen',
+            keyboardType: TextInputType.number,
+            onChanged: (_) => onChanged(),
+          ),
           if (showAdvanced) ...[
-            AppTextField(controller: bakingLoss, label: 'Backverlust (%)', onChanged: (_) => onChanged()),
-            AppTextField(controller: finalWeight, label: 'Fertiggewicht-Override (g)', onChanged: (_) => onChanged()),
+            AppTextField(
+              controller: bakingLoss,
+              label: 'Backverlust (%)',
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              onChanged: (_) => onChanged(),
+            ),
+            AppTextField(
+              controller: finalWeight,
+              label: 'Fertiggewicht-Override (g)',
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              onChanged: (_) => onChanged(),
+            ),
           ],
           AppTextField(controller: notes, label: 'Notizen', maxLines: 3),
         ],

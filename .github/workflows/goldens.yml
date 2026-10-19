@@ -1,0 +1,80 @@
+# Teil 1.3 D01 — Golden-Bilder erzeugen (docs/design/plan-1.3.md, d4).
+#
+# Golden-Bilder entstehen nur hier: gleicher Runner und gleiche
+# Flutter-Version wie ci.yml, damit Erzeugen und Vergleichen dieselben Pixel
+# liefern. Ausgelöst durch einen Push auf einen Hilfsbranch goldens/**
+# (z. B. `git push origin HEAD:refs/heads/goldens/d03`); bei push liest GitHub
+# diese Datei aus dem gepushten Commit, sie muss also nicht auf main liegen.
+# Die Bilder kommen als Artefakt „goldens“ zurück und werden mit dem Commit
+# eingecheckt, der sie verursacht. workflow_dispatch nur für später (main).
+name: Goldens
+
+on:
+  push:
+    branches: ['goldens/**']
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5
+          cache: true
+          pub-cache: true
+
+      # Erst vergleichen: Welche eingecheckten Bilder weichen vom gerenderten
+      # Stand ab? Liste in der Zusammenfassung des Laufs und im Artefakt
+      # „golden-vergleich“ (für Berichte und Gegenproben); bricht nicht ab.
+      - name: Vergleich mit den eingecheckten Bildern
+        continue-on-error: true
+        run: |
+          status=0
+          for p in unsalted_design unsalted_core; do
+            (cd packages/$p && flutter pub get > /dev/null && flutter test --tags golden --reporter expanded) \
+              > compare_$p.log 2>&1 || status=1
+          done
+          grep -hE ' \[E\]$' compare_*.log | sed -E 's/^[0-9:]+ \+[0-9]+( ~[0-9]+)? -[0-9]+: //; s/^.*\.dart: //; s/ \[E\]$//' \
+            | sort -u > abweichend.txt || true
+          {
+            echo "## Golden-Vergleich vor dem Erzeugen"
+            echo "Abweichende Bilder: $(wc -l < abweichend.txt)"
+            sed 's/^/- /' abweichend.txt
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $status
+
+      - name: unsalted_design — Goldens erzeugen
+        working-directory: packages/unsalted_design
+        run: |
+          flutter pub get
+          flutter test --tags golden --update-goldens
+
+      - name: unsalted_core — Goldens erzeugen
+        working-directory: packages/unsalted_core
+        run: |
+          flutter pub get
+          flutter test --tags golden --update-goldens
+
+      - name: Bilder als Artefakt
+        uses: actions/upload-artifact@v4
+        with:
+          name: goldens
+          path: |
+            packages/unsalted_design/test/goldens/images/
+            packages/unsalted_core/test/goldens/images/
+          if-no-files-found: error
+
+      - name: Vergleich als Artefakt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-vergleich
+          path: |
+            abweichend.txt
+            compare_*.log
+          if-no-files-found: warn

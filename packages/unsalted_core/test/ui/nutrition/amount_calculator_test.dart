@@ -35,7 +35,7 @@ void main() {
     await tester.enterText(find.widgetWithText(AppTextField, 'Gramm'), '200');
     await tester.pump();
 
-    final kcalField = tester.widget<TextField>(find.widgetWithText(TextField, 'kcal'));
+    final kcalField = tester.widget<TextField>(find.descendant(of: find.widgetWithText(AppTextField, 'kcal'), matching: find.byType(TextField)));
     expect(kcalField.controller!.text, '700');
   });
 
@@ -47,7 +47,7 @@ void main() {
     await tester.enterText(find.widgetWithText(AppTextField, 'kcal'), '700');
     await tester.pump();
 
-    final gramsField = tester.widget<TextField>(find.widgetWithText(TextField, 'Gramm'));
+    final gramsField = tester.widget<TextField>(find.descendant(of: find.widgetWithText(AppTextField, 'Gramm'), matching: find.byType(TextField)));
     expect(gramsField.controller!.text, '200');
   });
 
@@ -73,7 +73,7 @@ void main() {
     await tester.enterText(find.widgetWithText(AppTextField, 'Gramm'), '');
     await tester.pump();
 
-    final kcalField = tester.widget<TextField>(find.widgetWithText(TextField, 'kcal'));
+    final kcalField = tester.widget<TextField>(find.descendant(of: find.widgetWithText(AppTextField, 'kcal'), matching: find.byType(TextField)));
     expect(kcalField.controller!.text, '');
   });
 }

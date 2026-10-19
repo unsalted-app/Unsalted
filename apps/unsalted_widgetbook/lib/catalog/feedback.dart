@@ -16,6 +16,7 @@ final feedbackFolder = WidgetbookFolder(name: 'feedback', children: [
           AppNotice('Wert ungewöhnlich hoch.', kind: AppNoticeKind.warning),
           AppNotice('Eingefroren — als neuen Entwurf kopieren?',
               action: AppButton.tertiary(label: 'Kopieren', onPressed: noop)),
+          AppNotice('Gespeichert.', kind: AppNoticeKind.success),
         ])),
   ]),
   component('AppEmptyState', [

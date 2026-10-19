@@ -1,0 +1,42 @@
+{
+  "none": {
+    "$type": "dimension",
+    "$value": {
+      "value": 0,
+      "unit": "px"
+    },
+    "$description": "Abschnittslinien, Tabellen, Leisten."
+  },
+  "xs": {
+    "$type": "dimension",
+    "$value": {
+      "value": 2,
+      "unit": "px"
+    },
+    "$description": "Fassungsmarke, Tags, Marker-Hinterlegung."
+  },
+  "s": {
+    "$type": "dimension",
+    "$value": {
+      "value": 4,
+      "unit": "px"
+    },
+    "$description": "Buttons, Marker-Knopf, Eingabefelder, Chips, Hinweise, Snackbar."
+  },
+  "m": {
+    "$type": "dimension",
+    "$value": {
+      "value": 8,
+      "unit": "px"
+    },
+    "$description": "Karten, Dialoge, Menüs, Sheets (obere Ecken)."
+  },
+  "full": {
+    "$type": "dimension",
+    "$value": {
+      "value": 9999,
+      "unit": "px"
+    },
+    "$description": "Nur Schalter (Switch), Radio und spätere Avatare (Teil 5)."
+  }
+}

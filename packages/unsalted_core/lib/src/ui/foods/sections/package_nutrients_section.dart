@@ -3,7 +3,11 @@
 // Bildschirm 10, Abschnitt „Nährwerte“ (Teil 1.2): Felder pro 100 g in der
 // Reihenfolge von Bildschirm 5 (EU-Reihenfolge, nur energy_kcal) und das
 // Natrium-Feld (Kapitel 8.2). Welche Felder es gibt, mit welchem Fehler- oder
-// Hilfetext und ob gesperrt, entscheidet PackageForm.
+// Hilfetext und ob gesperrt, entscheidet PackageForm. Seit Teil 1.3 (D16) im
+// Raster (`AppGrid`): ab `breakpoint-medium` der verfügbaren Breite
+// zweispaltig, mit Abstand `space-m`; Reihenfolge zeilenweise unverändert.
+// Seit D16c Zahlenfelder (Tastatur mit Komma; `AppTextField` zeigt sie
+// rechtsbündig in `data` mit tabellarischen Ziffern).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -48,14 +52,17 @@ class PackageNutrientsSection extends StatelessWidget {
   Widget build(BuildContext context) => AppSection(
         title: 'Nährwerte pro 100 g',
         children: [
-          for (final field in fields)
-            AppTextField(
-              controller: field.controller,
-              label: field.label,
-              error: field.error,
-              helper: field.helper,
-              enabled: field.enabled,
+          AppGrid(
+            itemCount: fields.length,
+            itemBuilder: (context, index) => AppTextField(
+              controller: fields[index].controller,
+              label: fields[index].label,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              error: fields[index].error,
+              helper: fields[index].helper,
+              enabled: fields[index].enabled,
             ),
+          ),
         ],
       );
 }

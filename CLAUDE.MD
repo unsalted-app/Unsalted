@@ -66,7 +66,10 @@ unsalted/
 │  ├─ spezifikation.md             VERBINDLICHE Spezifikation (Quelle der Wahrheit)
 │  ├─ status.md                    Phase/Schritt-Tracker
 │  ├─ decisions.md                 Protokoll technischer Entscheidungen
-│  └─ design/                      Teil 1.2: plan.md, design_system.md, components.md, screens.md
+│  └─ design/                      design_system.md, components.md, screens.md (Stand 1.3), plan.md (1.2);
+│                                   Teil 1.3: plan-1.3.md, UEBERGABE.md, rueckmeldung-figma.md (Abweichungen
+│                                   für Figma), system/ (Markenbuch, tokens.json, Komponentenkarten,
+│                                   Schrift-WOFF2, OFL), figma/figma-ids.json
 ├─ tool/
 │  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
 ├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Design, Core, App, Widgetbook
@@ -75,15 +78,24 @@ unsalted/
 │  │                               lib/catalog/ je Design-Ordner eine Datei, Tests WB-01–03
 │  └─ unsalted_app/                App-Hülle (Schritt 8.8)
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
-│     │                            flutter_riverpod, go_router
+│     │                            flutter_riverpod, go_router, flutter_localizations (D17b)
 │     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
+│     ├─ ios/Runner/Info.plist,     Sprache des Bundles „de“ (D17c, APP-05) — sonst
+│     │  macos/Runner/Info.plist    zeichnet iOS „Copy“/„Cut“ englisch
      ├─ lib/main.dart             ProviderScope-Overrides (appOverrides), GoRouter aus
 │     │                            modules.expand((m) => m.routes), ShellRoute
-│     │                            mit NavigationBar (/, /foods, /settings)
+│     │                            mit AppNavigationBar über AppPage.navigation
+│     │                            (unten unter 600, links ab 600; /, /foods, /settings)
 │     └─ test/widget_test.dart     App-Start-Rauchtest
 └─ packages/
-   ├─ unsalted_design/             Design-System (Teil 1.2), Rang 0, nur Flutter, Tür mit show
-   │  └─ lib/src/  tokens/ theme/ layout/ components/<gruppe>/ templates/; Tests DS-01–48
+   ├─ unsalted_design/             Design-System (Teil 1.2/1.3), Rang 0, nur Flutter, Tür mit show
+   │  ├─ tokens/unsalted.tokens.json  Token-Datei aus Figma (= docs/design/system/tokens.json, DS-04)
+   │  ├─ tool/generate_tokens.dart    schreibt lib/src/tokens/*.g.dart — nie von Hand ändern
+   │  ├─ lib/fonts/                   Atkinson Hyperlegible Next 400/600/700 (TTF) + OFL.txt
+   │  └─ lib/src/  tokens/ (generiert) theme/ (inkl. app_reflow.dart: Maße je Textgröße)
+   │               layout/ (reflow_row.dart: Aktion daneben oder darunter) components/<gruppe>/
+   │               templates/ (page_content.dart: Rahmen „Inhalt“);
+   │               Tests DS-01–60 (+ b/c), GL-01 (test/goldens/, nur Linux)
    └─ unsalted_core/
       ├─ pubspec.yaml
       ├─ drift_schemas/
@@ -163,6 +175,7 @@ unsalted/
       │        │  versions/snapshot_column.dart, versions/change_list.dart,
       │        │  recipe_editor/ingredient_row.dart, recipe_editor/step_row.dart (StepRowData),
       │        │  recipe_editor/food_variant_picker_dialog.dart, recipe_detail/version_switcher.dart,
+      │        │  versions/version_mark.dart (Fassungsmarke, Teil 1.3),
       │        │  nutrition/*, foods/package_form.dart   fachliche Bausteine
       │        ├─ versions/change_descriptions.dart     Texte der Änderungsliste (9.2a)
       │        ├─ settings/export_screen.dart / import_screen.dart  Lücken: kein Teilen-Dialog,
@@ -248,9 +261,47 @@ Spezifikation Kapitel 28.9. Der frühere Design-Pass `design/1.1` wurde nicht
 übernommen und ist gelöscht. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03,
 AT-13–15, UI-58–66, UC-01–07, APP-02.
 
-**Nächster Schritt:** neue Arbeitskarten (z. B. echtes Design aus Figma über
-die Tokens, Teil 2 `unsalted_experiments`) nach Vorgabe des
-Projektverantwortlichen.
+**Teil 1.3 – Gestaltung aus Figma (fertig, Freigabe ausstehend; Branch
+`design-1.3`, Entwurfs-PR #2, nicht gemergt, keine Tags):** Übergabe aus Figma unter `docs/design/` (`UEBERGABE.md`,
+`system/`, `figma/`). Plan (freigegeben, Antworten F1–F14):
+`docs/design/plan-1.3.md`; Entscheidungen: `docs/decisions.md`, „Teil 1.3“;
+Nachträge: Spezifikation Kapitel 28.10. Etappe 1 fertig: D01 Goldens (GL-01,
+GL-02, nur Linux), D02 Schrift Atkinson mit OFL, D03 Token-Datei + Generator +
+Theme-Zuordnung, D04 Komponenten-Themes, D05a/b Symbole Outlined. Etappe 2
+fertig: D06–D09 Komponenten (Marker-Knopf, Abschnitt mit Linie,
+Markenelemente, Eingaben mit Beschriftung oben, Rückmeldung), D10 eigene
+Navigation (Balken, Seitenleiste über `AppPage.navigation`, in der App erst
+mit D17) und Deklaration, D11 Rahmen „Inhalt“ (Rand ab 600, höchstens 720),
+zweispaltig ab 1200, D12a `reflow-*` je Textgröße aus Figma, D12 große
+Schrift (`AppReflowMetric`), DS-51 ohne Übergangsliste; Etappe 2
+freigegeben. Etappe 3 (D09b, D13–D16): D09b fertig (Restzeitlinie
+der Meldung), D13a fertig (Tippaktion in der Semantik von Marke und
+Navigationsziel, Hinweis-Aktion unter dem Text bei großer Schrift), D13
+fertig (Fassungsmarke `VersionMark`, Fassungsleiste, „Master“ als Wort), D14
+fertig (Änderungsliste in Teilen, Semantik = bisheriger Text; Vergleich bei
+großer Schrift A über B), D15a fertig (Kennzahlenleiste `AppFigureRow`), D15
+fertig (Nährwert-Kopf als Kennzahlenleiste, Deklaration, Mengenrechner), D16
+fertig (Zutaten- und Schrittzeile, Zustandsrahmen, Hinweise, Nährwertfelder
+zweispaltig, „Keine Treffer.“ ohne Leerstelle). Etappe 3 fertig und
+freigegeben. Etappe 4 fertig: D16b/D16c (Abstand im Editor-Abschnitt
+„Parameter“, Nährwertfelder als Zahlenfelder), D17 (Seitenleiste ab 600 in
+der App), D17b (deutsche Systemtexte), D18 (Doku, `rueckmeldung-figma.md`,
+Design-Paket 0.2.0), nach Prüfung D18b (Abstand Titel/Beschreibung in
+Bildschirm 2; Maß- und Parameterfelder als Zahlenfelder), nach dem
+iPhone-Test D17c (Deutsch als Sprache des App-Bundles in iOS/macOS),
+D18c (Abstand zwischen den Maßfeldern) und D18d (letzter Abstand-Durchgang:
+Kennung, Export-Auswahl, Schrittzeile). Kandidaten für
+Teil 1.4: `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“. Test-IDs neu:
+GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–82, APP-03–05.
+**Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
+stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
+an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
+
+**Nächster Schritt:** Bericht zu D17c/D18c an den Projektverantwortlichen
+(er prüft das Textauswahlmenü auf dem iPhone);
+danach seine Freigabe von Teil 1.3 (Merge von PR #2, Tags und Status in
+`docs/design/system/README.md` nach Plan F14 — alles nur auf seine
+Anweisung), dann Teil 1.4.
 
 ---
 
@@ -460,6 +511,38 @@ Projektverantwortlichen.
   Nachtrag 1.1a):** Die Ausnahmen prüfen Pfade relativ zu `lib/`
   (`src/ui/`, `src/module/`, `src/data/`). Das Tool ist seitdem grün und
   sollte bei jedem Schritt zusätzlich zu AT-01–AT-12 mit Exit 0 enden.
+- **Token-Werte nie von Hand (seit Teil 1.3 D03):** Alle Dateien unter
+  `packages/unsalted_design/lib/src/tokens/` schreibt
+  `dart run tool/generate_tokens.dart` aus `tokens/unsalted.tokens.json`; DS-04
+  schlägt an, sobald Generat und JSON auseinanderlaufen. Eine neue Übergabe
+  ändert beide Token-Dateien (Paket und `docs/design/system/`) im selben
+  Commit. Generierte Doku-Kommentare enthalten bewusst keine
+  Verwendungshinweise der JSON — die nennen Fachbegriffe, und DS-06 prüft
+  auch Kommentare.
+- **Golden-Bilder nur unter Linux (seit Teil 1.3 D01):** Golden-Tests tragen
+  `@TestOn('linux')` und werden auf dem Mac nicht geladen. Bilder entstehen
+  über einen Hilfsbranch (`git push origin HEAD:refs/heads/goldens/dNN`,
+  Workflow `goldens.yml`, Artefakt `goldens`), kommen per `--amend` in den
+  Commit, erst dann geht der Commit auf den Arbeitsbranch (Ablauf:
+  `docs/design/plan-1.3.md`, d4). `flutter_test` lädt keine gebündelten
+  Schriften; die Golden-Harness lädt sie selbst — nie global über
+  `flutter_test_config.dart`, sonst ändern sich die Textmaße aller Tests.
+- **Testschrift ist doppelt so breit (seit Teil 1.3 D12):** In Widget-Tests
+  ist jedes Zeichen ein volles Quadrat; Text ist dort etwa doppelt so breit wie
+  mit Atkinson. Prüfungen bei 200 % (WB-04, DS-43c/44c) sind damit strenger
+  als die echte Darstellung — Layouts robust machen (`Wrap`, `Expanded`), die
+  Prüfung nicht aufweichen. Zum Nachsehen eines Überlaufs, den WB-04 nur mit
+  der ersten Zeile meldet: den Anwendungsfall einzeln ohne `takeException`
+  pumpen, dann druckt Flutter den ganzen Fehler mit Ort.
+- **`dart format` formatiert alte Dateien um (seit Teil 1.3 D11):** Das SDK
+  formatiert im neuen Stil (Einrückung von `=>`-Ausdrücken, `switch`), der
+  Bestand ist im alten Stil. `dart format` nie auf bestehende Dateien
+  anwenden — sonst landen reine Formatänderungen im Diff; neuen Code von Hand
+  im Stil der Umgebung schreiben.
+- **`LayoutBuilder` in Komponenten (seit Teil 1.3 D11/D12):** `AppKeyValueTable`,
+  `AppBottomActionBar` und die Templates entscheiden über die verfügbare
+  Breite. Ein `LayoutBuilder` liefert keine Intrinsic-Maße — diese
+  Komponenten nie unter `IntrinsicHeight`/`IntrinsicWidth` setzen.
 
 ---
 

@@ -10,7 +10,9 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    # Teil 1.3 D01: fest auf eine Image-Version, damit Golden-Bilder aus
+    # goldens.yml (gleicher Runner) hier pixelgleich verglichen werden.
+    runs-on: ubuntu-24.04
     # Teil 1.1d: ein hängender Testlauf bricht nach 20 min ab statt erst nach
     # dem GitHub-Standardlimit von 6 h (docs/decisions.md).
     timeout-minutes: 20

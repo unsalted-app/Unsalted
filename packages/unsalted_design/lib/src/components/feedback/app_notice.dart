@@ -3,13 +3,24 @@
 // Komponente (Teil 1.2): Hinweiszeile, immer mit Symbol (Figma
 // `Feedback/Notice`). Fehler in den error-Rollen, Warnungen in den
 // tertiary-Rollen, Infos in den secondary-Rollen — alle Paare erfüllen AA
-// (DS-05). Übernommen aus `ui/shared/notice.dart` auf `design/1.1`.
+// (DS-05). Übernommen aus `ui/shared/notice.dart` auf `design/1.1`. Seit
+// Teil 1.3 (D09, Notice-Karte): Fehler und Warnung auf den
+// feedback-Flächen, Info und Erfolg neutral auf `surface-sunken` mit Symbol in
+// `text-secondary`; `radius-s`, Innenabstand und Abstand `space-m`, Symbol
+// `size-icon-small` um `space-xxs` abgesenkt, Text `body`. Seit D13a steht
+// eine Aktion rechtsbündig unter dem Text, sobald dem Text daneben weniger
+// als `reflow-label-min` bliebe (große Schrift, 28.10.11).
 
 import 'package:flutter/material.dart';
 
 import '../../layout/app_stack.dart';
-import '../../tokens/radius_tokens.dart';
-import '../../tokens/spacing_tokens.dart';
+import '../../layout/reflow_row.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_reflow.dart';
+import '../../tokens/radius_tokens.g.dart';
+import '../../tokens/size_tokens.g.dart';
+import '../../tokens/typography_tokens.g.dart';
+import '../../tokens/spacing_tokens.g.dart';
 import '../icons/app_icons.dart';
 
 /// Art eines Hinweises.
@@ -22,6 +33,9 @@ enum AppNoticeKind {
 
   /// Information.
   info,
+
+  /// Erfolg (wie Information, Symbol `check`; Teil 1.3).
+  success,
 }
 
 /// Hinweiszeile mit Symbol, Text und optionaler Aktion.
@@ -40,30 +54,43 @@ class AppNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final (background, foreground, icon) = switch (kind) {
-      AppNoticeKind.error => (scheme.errorContainer, scheme.onErrorContainer, AppIcons.error),
-      AppNoticeKind.warning => (scheme.tertiaryContainer, scheme.onTertiaryContainer, AppIcons.warning),
-      AppNoticeKind.info => (scheme.secondaryContainer, scheme.onSecondaryContainer, AppIcons.info),
+    final c = AppColors.of(context);
+    final (background, foreground, iconColor, icon) = switch (kind) {
+      AppNoticeKind.error => (c.feedbackErrorSurface, c.feedbackOnErrorSurface, c.feedbackOnErrorSurface, AppIcons.error),
+      AppNoticeKind.warning =>
+        (c.feedbackWarningSurface, c.feedbackOnWarningSurface, c.feedbackOnWarningSurface, AppIcons.warning),
+      AppNoticeKind.info => (c.surfaceSunken, c.textPrimary, c.textSecondary, AppIcons.info),
+      AppNoticeKind.success => (c.surfaceSunken, c.textPrimary, c.textSecondary, AppIcons.check),
     };
+    final text = Text(message, style: AppTypography.body.copyWith(color: foreground));
     return Semantics(
       container: true,
       liveRegion: kind == AppNoticeKind.error,
       child: DecoratedBox(
-        decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(AppRadius.m)),
+        decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(AppRadius.s)),
         child: AppPadding.all(
           AppSpace.m,
           child: AppStack(
             direction: Axis.horizontal,
             gap: AppSpace.m,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Icon(icon, color: foreground, size: 20),
-              Expanded(
-                child: Text(message, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: foreground)),
+              // Um `space-xxs` abgesenkt, damit das Symbol mit der ersten Zeile fluchtet.
+              AppPadding.only(
+                top: AppSpace.xxs,
+                child: Icon(icon, color: iconColor, size: AppSize.iconSmall),
               ),
-              ?action,
+              Expanded(
+                child: action == null
+                    ? text
+                    : ReflowRow(
+                        main: text,
+                        trailing: action!,
+                        gap: AppSpacing.m,
+                        mainMin: AppReflowMetric.labelMin.of(context),
+                      ),
+              ),
             ],
           ),
         ),

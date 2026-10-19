@@ -2,7 +2,9 @@
 //
 // WB-01 (Teil 1.2): Jeder Anwendungsfall des Katalogs baut in hell/dunkel ×
 // Handy/Tablet ohne Fehler (auch ohne Überlauf).
-// WB-03: Die Katalog-App startet mit Theme- und Viewport-Addon.
+// WB-03: Die Katalog-App startet mit Theme-, Viewport- und Textgrößen-Addon.
+// WB-04 (Teil 1.3, D12): Jeder Anwendungsfall baut bei Textgröße 200 % ohne
+// Überlauf (UEBERGABE Punkt 3).
 // WB-02: Jedes Symbol der Tür von unsalted_design steht als Komponente im
 // Katalog oder ist ausdrücklich als Nicht-Widget bzw. Teil eines anderen
 // Eintrags ausgenommen — eine neue Komponente fällt so auf.
@@ -19,12 +21,13 @@ import 'package:widgetbook/widgetbook.dart';
 /// Symbole ohne eigenen Katalogeintrag.
 const _notCatalogued = {
   // Tokens (Ordner „Tokens“) und Theme (Theme-Addon).
-  'AppBreakpoints', 'AppColorTokens', 'AppElevation', 'AppMotion', 'AppRadius', 'AppSpace', 'AppSpacing',
-  'AppTypography', 'AppTheme', 'AppTone', 'AppIcons',
+  'AppBreakpoints', 'AppColorTokens', 'AppMotion', 'AppOpacity', 'AppRadius', 'AppReflow', 'AppShadow', 'AppSize',
+  'AppSpace', 'AppSpacing', 'AppStroke', 'AppTypography', 'AppTheme', 'AppTone', 'AppIcons', 'AppReflowMetric',
   // Parameter- und Datentypen.
   'AppButtonVariant', 'AppIconSize', 'AppTextRole', 'AppSurfaceTone', 'AppFieldWidth', 'AppSelectItem',
-  'AppNoticeKind', 'AppSnackbarHandle', 'AppMenuEntry', 'AppNavigationDestination', 'AppTableRow',
+  'AppNoticeKind', 'AppSnackbarHandle', 'AppMenuEntry', 'AppNavigationDestination', 'AppTableRow', 'AppFigure',
   'AppWindowSize', 'DetailLayout',
+  'AppMarkState', 'AppCertainty', // Teil 1.3 D07
   // Teil eines anderen Eintrags.
   'AppGap', 'AppPadding', 'DetailSections', 'DetailSplit', 'FormSections',
   'showAppMessage', 'showAppConfirmDialog', 'showAppChoiceDialog', 'showAppDialog', 'showAppAboutDialog',
@@ -72,6 +75,27 @@ void main() {
           expect(tester.takeException(), isNull, reason: useCase.name);
         }
         await tester.pumpWidget(const SizedBox.shrink());
+      });
+    }
+  }
+
+  for (final MapEntry(key: device, value: size) in sizes.entries) {
+    for (final (mode, theme) in [('hell', AppTheme.light()), ('dunkel', AppTheme.dark())]) {
+      testWidgets('WB-04: alle ${useCases.length} Anwendungsfälle bei Textgröße 200 % ($mode, $device)', (tester) async {
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1;
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.view.reset);
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        final failures = <String>[];
+        for (final useCase in useCases) {
+          await tester.pumpWidget(MaterialApp(theme: theme, home: Builder(builder: useCase.builder)));
+          await tester.pump(const Duration(milliseconds: 100));
+          final error = tester.takeException();
+          if (error != null) failures.add('${useCase.name}: ${error.toString().split('\n').first}');
+        }
+        await tester.pumpWidget(const SizedBox.shrink());
+        expect(failures, isEmpty, reason: failures.join('\n'));
       });
     }
   }

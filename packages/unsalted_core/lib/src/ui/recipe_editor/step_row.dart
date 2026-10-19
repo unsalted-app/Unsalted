@@ -5,6 +5,13 @@
 // Timer in ganzen Minuten (Fehlerbehebung 9.2a, Spezifikation 28.4.2),
 // Entfernen. Die Schrittdaten und ihre Timer-Regel sind unverändert
 // übernommen (vorher privat im Editor).
+//
+// Seit Teil 1.3 (D16, StepRow im Vorschlag, Figma `Core/Step Row`): Nummer in
+// `size-index-column` (`data-strong`, vom Abschnitt übergeben, freigegeben),
+// die Anweisung füllt den Rest, das Timer-Feld (schmal, wächst mit der
+// Textgröße) steht darunter wie der Timer in der Anzeige; Ziehgriff und
+// Entfernen unverändert. Seit D18d Abstand `space-m` zwischen Anweisung und
+// Timer (wie D16b; vorher `space-s`).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -76,6 +83,7 @@ class StepRow extends StatelessWidget {
   const StepRow({
     super.key,
     required this.data,
+    this.number,
     required this.onInstructionChanged,
     required this.onTimerChanged,
     required this.onRemove,
@@ -83,6 +91,9 @@ class StepRow extends StatelessWidget {
 
   /// Der Schritt.
   final StepRowData data;
+
+  /// Nummer des Schritts (ab 1); `null` = ohne Nummer.
+  final int? number;
 
   /// Meldet eine geänderte Anweisung.
   final ValueChanged<String> onInstructionChanged;
@@ -95,31 +106,44 @@ class StepRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppPadding.symmetric(
-        vertical: AppSpace.xs,
+        vertical: AppSpace.s,
         child: AppStack(
           direction: Axis.horizontal,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          gap: AppSpace.s,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-            const AppIcon(AppIcons.dragHandle),
-            const AppGap(AppSpace.s),
+            const AppPadding.only(top: AppSpace.xl, child: AppIcon(AppIcons.dragHandle)),
+            if (number != null)
+              SizedBox(
+                width: AppSize.indexColumn,
+                child: AppPadding.only(top: AppSpace.xl, child: AppText.dataStrong('$number')),
+              ),
             Expanded(
-              child: AppTextField(
-                initialValue: data.instruction,
-                label: 'Anweisung',
-                onChanged: onInstructionChanged,
+              child: AppStack(
+                gap: AppSpace.m,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppTextField(
+                    initialValue: data.instruction,
+                    label: 'Anweisung',
+                    onChanged: onInstructionChanged,
+                  ),
+                  AppTextField(
+                    initialValue: timerInputText(data.loadedTimerSeconds),
+                    keyboardType: TextInputType.number,
+                    label: 'Timer (Min.)',
+                    error: data.timerInvalid ? 'Ganze Minuten > 0' : null,
+                    width: AppFieldWidth.narrow,
+                    onChanged: onTimerChanged,
+                  ),
+                ],
               ),
             ),
-            const AppGap(AppSpace.s),
-            AppTextField(
-              initialValue: timerInputText(data.loadedTimerSeconds),
-              keyboardType: TextInputType.number,
-              label: 'Timer (Min.)',
-              error: data.timerInvalid ? 'Ganze Minuten > 0' : null,
-              width: AppFieldWidth.narrow,
-              onChanged: onTimerChanged,
+            AppPadding.only(
+              top: AppSpace.l,
+              child: AppIconButton(icon: AppIcons.deleteOutline, tooltip: 'Schritt entfernen', onPressed: onRemove),
             ),
-            AppIconButton(icon: AppIcons.deleteOutline, tooltip: 'Schritt entfernen', onPressed: onRemove),
           ],
         ),
       );

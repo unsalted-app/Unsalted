@@ -1,0 +1,229 @@
+{
+  "family": {
+    "sans": {
+      "$type": "fontFamily",
+      "$value": "Atkinson Hyperlegible Next",
+      "$description": "Schrift für alles außer Code (SIL OFL 1.1). Schnitte 400, 600, 700."
+    },
+    "mono": {
+      "$type": "fontFamily",
+      "$value": "Roboto Mono",
+      "$description": "Nur Figma-Platzhalter für den Stil code: Im Code gilt die Monospace-Systemschrift (ui-monospace, SF Mono, Menlo, Consolas, monospace)."
+    }
+  },
+  "weight": {
+    "regular": {
+      "$type": "number",
+      "$value": 400,
+      "$description": "Schnitt 400."
+    },
+    "semibold": {
+      "$type": "number",
+      "$value": 600,
+      "$description": "Schnitt 600."
+    },
+    "bold": {
+      "$type": "number",
+      "$value": 700,
+      "$description": "Schnitt 700."
+    }
+  },
+  "display": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 28,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/display."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 36,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/display."
+    }
+  },
+  "title-page": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/title-page."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 28,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/title-page."
+    }
+  },
+  "heading": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 18,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/heading."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/heading."
+    }
+  },
+  "body": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/body."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/body."
+    }
+  },
+  "body-strong": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/body-strong."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/body-strong."
+    }
+  },
+  "body-small": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 14,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/body-small."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/body-small."
+    }
+  },
+  "label-small": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 13,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/label-small."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/label-small."
+    }
+  },
+  "caption": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 13,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/caption."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 18,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/caption."
+    }
+  },
+  "data": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/data."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/data."
+    }
+  },
+  "data-strong": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/data-strong."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 24,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/data-strong."
+    }
+  },
+  "code": {
+    "size": {
+      "$type": "dimension",
+      "$value": {
+        "value": 13,
+        "unit": "px"
+      },
+      "$description": "Schriftgröße von type/code."
+    },
+    "line-height": {
+      "$type": "dimension",
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      },
+      "$description": "Zeilenhöhe von type/code."
+    }
+  }
+}

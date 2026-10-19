@@ -26,6 +26,7 @@ final layoutFolder = WidgetbookFolder(name: 'Layout', children: [
     useCase('Layout/Section', (_) => AppStack(children: [
           const AppSection(divider: false, title: 'Erster Abschnitt', children: [Text('Inhalt')]),
           const AppSection(title: 'Zweiter Abschnitt', children: [Text('Inhalt')]),
+          const AppSection(title: 'Mit Metadaten', meta: 'für 4', children: [Text('Inhalt')]),
         ])),
   ]),
   component('AppGrid', [

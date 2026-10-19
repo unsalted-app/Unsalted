@@ -8,6 +8,12 @@
 // Inhalt-Layouts: `DetailSections` (scrollende Abschnitte; ein- oder
 // zweispaltig über die zentrale Einstellung `DetailLayout.standard`) und
 // `DetailSplit` (zwei Bereiche übereinander mit Fußzeile).
+//
+// Seit Teil 1.3 (D11, Figma `Template/Detail Page`): Inhalt im Rahmen
+// „Inhalt“ (Seitenrand `space-l`, ab `breakpoint-medium` `space-xl`, höchstens
+// `size-content-max`, mittig); zweispaltig ab `breakpoint-large`, je Spalte
+// ein eigener Rahmen (Figma Tablet quer, `Spalten`/`Haupt`/`Neben`); der obere
+// Bereich von `DetailSplit` scrollt, wenn er höher ist als seine Hälfte.
 
 import 'package:flutter/widgets.dart';
 
@@ -17,7 +23,9 @@ import '../components/surfaces/app_divider.dart';
 import '../layout/app_page.dart';
 import '../layout/app_stack.dart';
 import '../layout/responsive.dart';
-import '../tokens/spacing_tokens.dart';
+import '../tokens/size_tokens.g.dart';
+import '../tokens/spacing_tokens.g.dart';
+import 'page_content.dart';
 
 /// Detailseite.
 class DetailPageTemplate extends StatelessWidget {
@@ -60,17 +68,28 @@ class DetailPageTemplate extends StatelessWidget {
       );
 }
 
-/// Anordnung der Abschnitte einer Detailseite.
+/// Anordnung der Abschnitte einer Detailseite. Maßgeblich ist die
+/// Fenstergröße (Material 3), nicht die Breite des Inhalts.
 enum DetailLayout {
   /// immer eine Spalte.
   oneColumn,
 
   /// ab `AppWindowSize.expanded` Haupt- und Nebenabschnitte nebeneinander.
-  twoColumnsFromExpanded;
+  twoColumnsFromExpanded,
 
-  /// Zentrale Einstellung für alle Detailseiten. Zunächst einspaltig wie vor
-  /// Teil 1.2; die Umstellung auf zwei Spalten ist eine Änderung hier.
-  static const standard = DetailLayout.oneColumn;
+  /// ab `AppWindowSize.large` Haupt- und Nebenabschnitte nebeneinander.
+  twoColumnsFromLarge;
+
+  /// Zentrale Einstellung für alle Detailseiten: seit Teil 1.3 zweispaltig ab
+  /// `breakpoint-large` (UEBERGABE Punkt 2).
+  static const standard = DetailLayout.twoColumnsFromLarge;
+
+  /// `true`: bei Fenstergröße [size] zweispaltig.
+  bool twoColumnsAt(AppWindowSize size) => switch (this) {
+        oneColumn => false,
+        twoColumnsFromExpanded => size.isAtLeast(AppWindowSize.expanded),
+        twoColumnsFromLarge => size.isAtLeast(AppWindowSize.large),
+      };
 }
 
 /// Scrollende Abschnitte einer Detailseite. Einspaltig stehen die
@@ -95,25 +114,34 @@ class DetailSections extends StatelessWidget {
   final DetailLayout layout;
 
   @override
-  Widget build(BuildContext context) => ResponsiveBuilder(builder: (context, size) {
-        final twoColumns = layout == DetailLayout.twoColumnsFromExpanded &&
-            secondary.isNotEmpty &&
-            size.isAtLeast(AppWindowSize.expanded);
-        if (!twoColumns) return _column([...sections, ...secondary]);
-        return AppStack(
-          direction: Axis.horizontal,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.max,
-          children: [Expanded(child: _column(sections)), Expanded(child: _column(secondary))],
+  Widget build(BuildContext context) {
+    final size = AppWindowSize.of(context);
+    if (secondary.isEmpty || !layout.twoColumnsAt(size)) {
+      return PageContent(
+        builder: (context, padding) => ListView(padding: padding, children: [...sections, ...secondary]),
+      );
+    }
+    final margin = size.pageMargin.value;
+    final padding = EdgeInsets.fromLTRB(margin, AppSpacing.l, margin, AppSpacing.l);
+    Widget column(List<Widget> children) => Flexible(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: AppSize.contentMax),
+            child: ListView(padding: padding, children: children),
+          ),
         );
-      });
-
-  static Widget _column(List<Widget> children) =>
-      ListView(padding: EdgeInsets.all(AppSpace.l.value), children: children);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [column(sections), column(secondary)],
+    );
+  }
 }
 
 /// Zwei Bereiche übereinander, getrennt durch eine Linie, darunter die
-/// [footer]-Elemente (z. B. Meldung und Aktionsleiste).
+/// [footer]-Elemente (z. B. Meldung und Aktionsleiste). Der obere Bereich
+/// steht im Rahmen „Inhalt“ und scrollt (er darf selbst nicht scrollen); der
+/// untere ist höchstens `size-content-max` breit und scrollt selbst, z. B. als
+/// Liste. Die Fußzeile steht in voller Breite.
 class DetailSplit extends StatelessWidget {
   /// Erzeugt die Aufteilung.
   const DetailSplit({super.key, required this.primary, required this.secondary, this.footer = const []});
@@ -130,11 +158,17 @@ class DetailSplit extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AppStack(
         mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: primary),
+          Expanded(
+            child: PageContent(builder: (context, padding) => SingleChildScrollView(padding: padding, child: primary)),
+          ),
           const AppDivider.flush(),
-          Expanded(child: secondary),
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: AppSize.contentMax), child: secondary),
+            ),
+          ),
           ...footer,
         ],
       );

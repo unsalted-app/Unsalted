@@ -5,15 +5,20 @@
 
 import 'package:flutter/material.dart';
 
+import '../../tokens/size_tokens.g.dart';
+
 import '../../theme/app_tone.dart';
 
 /// Größe von [AppIcon].
 enum AppIconSize {
-  /// Standardgröße der Umgebung (24).
-  m,
+  /// `size-icon-xs` (16), z. B. in Marken und Tags.
+  xs,
 
-  /// groß, z. B. im leeren Zustand (48).
-  l,
+  /// `size-icon-small` (20), z. B. in Buttons und Hinweisen.
+  s,
+
+  /// `size-icon` (24), Standard.
+  m,
 }
 
 /// Ein Symbol.
@@ -37,8 +42,9 @@ class AppIcon extends StatelessWidget {
   Widget build(BuildContext context) => Icon(
         icon,
         size: switch (size) {
-          AppIconSize.m => null,
-          AppIconSize.l => 48,
+          AppIconSize.xs => AppSize.iconXs,
+          AppIconSize.s => AppSize.iconSmall,
+          AppIconSize.m => AppSize.icon,
         },
         color: tone.colorOf(context),
         semanticLabel: semanticLabel,

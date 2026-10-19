@@ -21,10 +21,8 @@ class RecipeListEmptySection extends StatelessWidget {
   Widget build(BuildContext context) => AppEmptyState(
         icon: AppIcons.book,
         message: hasRecipes ? 'Keine Treffer.' : 'Noch keine Rezepte.',
-        // Ohne Aktion hält ein leerer Platzhalter den Abstand unter dem Satz
-        // wie vor Teil 1.2.
-        action: hasRecipes
-            ? const SizedBox.shrink()
-            : AppButton.primary(label: 'Erstes Rezept anlegen', onPressed: onCreate),
+        // „Keine Treffer.“ ohne Aktion: Symbol und Satz, ohne Leerstelle mit
+        // Punktraster (States-Karte; Teil 1.3 D16, Entscheidung 2 zu Etappe 2).
+        action: hasRecipes ? null : AppButton.primary(label: 'Erstes Rezept anlegen', onPressed: onCreate),
       );
 }

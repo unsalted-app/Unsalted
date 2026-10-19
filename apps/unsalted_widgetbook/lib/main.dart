@@ -1,8 +1,9 @@
 // lib/main.dart
 //
 // Komponenten-Katalog von unsalted (Teil 1.2): alle Tokens, Komponenten und
-// Templates aus `unsalted_design`, je hell/dunkel (Theme-Addon) und
-// Handy/Tablet (Viewport-Addon). Start: `flutter run -d macos` in diesem
+// Templates aus `unsalted_design`, je hell/dunkel (Theme-Addon),
+// Handy/Tablet (Viewport-Addon) und seit Teil 1.3 (D12) Textgröße 100–200 %
+// (Textgrößen-Addon). Start: `flutter run -d macos` in diesem
 // Ordner (Web erst nach `flutter config --enable-web` und
 // `flutter create --platforms=web .`, docs/decisions.md C11).
 
@@ -28,6 +29,7 @@ class CatalogApp extends StatelessWidget {
             WidgetbookTheme(name: 'Dunkel', data: AppTheme.dark()),
           ]),
           ViewportAddon([IosViewports.iPhone13, IosViewports.iPadPro11Inches]),
+          TextScaleAddon(min: 1, max: 2, divisions: 4),
         ],
       );
 }

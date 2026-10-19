@@ -6,6 +6,7 @@
 
 import 'package:widgetbook/widgetbook.dart';
 
+import 'brand.dart';
 import 'buttons.dart';
 import 'data.dart';
 import 'feedback.dart';
@@ -23,6 +24,7 @@ final List<WidgetbookNode> catalog = [
   layoutFolder,
   WidgetbookCategory(name: 'Komponenten', children: [
     buttonsFolder,
+    brandFolder,
     surfacesFolder,
     inputsFolder,
     listsFolder,

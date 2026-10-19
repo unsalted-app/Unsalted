@@ -32,6 +32,13 @@ class _ProbeState extends State<_Probe> {
   Widget build(BuildContext context) => const Text('Sonde');
 }
 
+/// Linke Kante des Inhalts im Rahmen „Inhalt“ (Teil 1.3, D11): Seitenrand
+/// `space-l` bzw. ab 600 `space-xl`, Rahmen höchstens `size-content-max`, mittig.
+double _contentLeft(double width) {
+  final margin = width < AppBreakpoints.medium ? AppSpacing.l : AppSpacing.xl;
+  return (width - (width < AppSize.contentMax ? width : AppSize.contentMax)) / 2 + margin;
+}
+
 void main() {
   testVariants('DS-46: ListPageTemplate', (tester, variant) async {
     var taps = 0;
@@ -93,9 +100,9 @@ void main() {
           DetailSections(layout: layout, sections: const [Text('Haupt')], secondary: const [Text('Neben')]),
         );
     await pump(DetailLayout.standard);
-    expect(DetailLayout.standard, DetailLayout.oneColumn);
+    expect(DetailLayout.standard, DetailLayout.twoColumnsFromLarge);
     expect(tester.getTopLeft(find.text('Neben')).dy, greaterThan(tester.getTopLeft(find.text('Haupt')).dy));
-    expect(tester.getTopLeft(find.text('Haupt')), const Offset(AppSpacing.l, AppSpacing.l));
+    expect(tester.getTopLeft(find.text('Haupt')), Offset(_contentLeft(variant.size.width), AppSpacing.l));
 
     await pump(DetailLayout.twoColumnsFromExpanded);
     final wide = AppWindowSize.forWidth(variant.size.width).isAtLeast(AppWindowSize.expanded);
@@ -148,7 +155,7 @@ void main() {
       }),
       wrapInPage: false,
     );
-    await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Brot');
+    await tester.enterText(find.descendant(of: find.widgetWithText(AppTextField, 'Name'), matching: find.byType(TextField)), 'Brot');
     setState(() => messages = [const AppText('Fehler', tone: AppTone.error)]);
     await tester.pump();
     expect(find.text('Fehler'), findsOneWidget);
@@ -174,8 +181,8 @@ void main() {
       wrapInPage: false,
     );
     final field = tester.getRect(find.byType(TextField));
-    expect(field.left, AppSpacing.l);
-    expect(field.width, variant.size.width - 2 * AppSpacing.l);
+    expect(field.left, _contentLeft(variant.size.width));
+    expect(field.width, variant.size.width - 2 * _contentLeft(variant.size.width));
     expect(tester.getTopLeft(find.text('Unten')).dy, greaterThanOrEqualTo(field.bottom));
   });
 }

@@ -2,6 +2,8 @@
 //
 // Bildschirm 11, Abschnitt „Auswahl“ (Teil 1.2): Rezept und eingefrorene
 // Version. Nur Versionen mit state = snapshot sind wählbar (Kapitel 13.7).
+// Seit Teil 1.3 (D18d) Abstand `space-m` zwischen den Auswahlfeldern (wie
+// D16b; vorher `space-s`).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -55,7 +57,7 @@ class ExportSelectionSection extends StatelessWidget {
               onChanged: onRecipeSelected,
             ),
           ),
-          const AppGap(AppSpace.s),
+          const AppGap(AppSpace.m),
           if (versions != null)
             StreamBuilder<List<RecipeVersion>>(
               stream: versions,

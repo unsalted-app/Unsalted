@@ -16,6 +16,7 @@ final inputsFolder = WidgetbookFolder(name: 'inputs', children: [
           AppTextField(label: 'Mit Startwert', initialValue: 'Brot'),
           AppTextField(label: 'Beschreibung', maxLines: 4),
           AppTextField(label: 'Menge', error: 'Ungültige Zahl'),
+          AppTextField(label: 'Zahl mit Einheit', initialValue: '12,5', unit: 'g', keyboardType: TextInputType.number),
           AppTextField(label: 'Name', helper: 'Verknüpfung fehlt – bitte neu auswählen.', helperTone: AppTone.error),
           AppTextField(label: 'Gesperrt', initialValue: 'fest', enabled: false),
           AppTextField(label: 'Mit Aktion', suffix: AppIconButton(icon: AppIcons.search, tooltip: 'Suchen', onPressed: noop)),

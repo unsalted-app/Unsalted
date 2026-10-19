@@ -124,4 +124,64 @@ void main() {
     await tester.tap(find.text('V1'));
     expect(selected, 1);
   });
+
+  testVariants('DS-31b: AppChip als Tag (Teil 1.3)', (tester, variant) async {
+    await pumpVariant(
+      tester,
+      variant,
+      const Align(alignment: Alignment.topLeft, child: AppChip(label: '10:00', icon: AppIcons.timer)),
+    );
+    final c = variant.theme.brightness == Brightness.dark ? AppColorTokens.dark : AppColorTokens.light;
+    final chip = tester.widget<Chip>(find.byType(Chip));
+    expect(tester.getSize(find.byType(Chip)).height, AppSize.mark);
+    // Gezeichnete Kontur (Vordergrund um den Chip), nicht nur ein Parameter.
+    final outline = tester.widget<DecoratedBox>(
+      find.ancestor(of: find.byType(Chip), matching: find.byType(DecoratedBox)).first,
+    );
+    expect(outline.position, DecorationPosition.foreground);
+    final decoration = outline.decoration as BoxDecoration;
+    expect((decoration.border! as Border).top, BorderSide(color: c.lineControl, width: AppStroke.hairline));
+    expect(decoration.borderRadius, BorderRadius.circular(AppRadius.xs));
+    expect(chip.side, BorderSide.none);
+    expect(chip.labelStyle!.fontSize, AppTypography.labelSmall.fontSize);
+    expect(chip.labelStyle!.fontFeatures, AppTypography.labelSmall.fontFeatures);
+    expect(find.byIcon(AppIcons.timer), findsOneWidget);
+  });
+
+  testVariants('DS-26b: AppListItem mit Haarlinie und Auswahlbalken (Teil 1.3)', (tester, variant) async {
+    await pumpVariant(
+      tester,
+      variant,
+      const Column(children: [
+        AppListItem(key: Key('a'), title: 'Eins'),
+        AppListItem(key: Key('b'), title: 'Zwei', selected: true),
+      ]),
+    );
+    final c = variant.theme.brightness == Brightness.dark ? AppColorTokens.dark : AppColorTokens.light;
+    Border border(String key) => (tester
+            .widget<DecoratedBox>(find.descendant(of: find.byKey(Key(key)), matching: find.byType(DecoratedBox)).first)
+            .decoration as BoxDecoration)
+        .border! as Border;
+    expect(border('a').bottom, BorderSide(color: c.lineHairline, width: AppStroke.hairline));
+    expect(border('a').left, BorderSide.none);
+    expect(border('b').left, BorderSide(color: c.lineStrong, width: AppStroke.rule));
+    expect(tester.getSize(find.byKey(const Key('a'))).height, greaterThanOrEqualTo(AppSize.listItem));
+  });
+
+  testVariants('DS-29b: AppReorderableList bietet Umsortieren ohne Ziehen (WCAG 2.5.7)', (tester, variant) async {
+    final handle = tester.ensureSemantics();
+    await pumpVariant(
+      tester,
+      variant,
+      AppReorderableList(onReorder: (_, _) {}, children: const [
+        AppListItem(key: ValueKey('1'), title: 'Eins'),
+        AppListItem(key: ValueKey('2'), title: 'Zwei'),
+        AppListItem(key: ValueKey('3'), title: 'Drei'),
+      ]),
+    );
+    final actions = tester.getSemantics(find.text('Zwei')).getSemanticsData().customSemanticsActionIds;
+    expect(actions, isNotNull);
+    expect(actions!.length, greaterThanOrEqualTo(2), reason: 'nach oben/unten als Bedienhilfe-Aktion');
+    handle.dispose();
+  });
 }

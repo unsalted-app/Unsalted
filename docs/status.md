@@ -234,6 +234,54 @@ Stand nach Etappe 1 (C01–C13): Design 208 Tests, Core 386, App 1, Widgetbook 6
 
 - ~~Ladebalken im Rezeptdetail erst nach ~300 ms Verzögerung zeigen (blitzt bei schnellem Laden kurz auf).~~ → umgesetzt in Teil 1.1c.
 
+## Teil 1.3 — Gestaltung aus Figma — in Arbeit (Phase B, Etappe 1)
+
+Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenfolge D01–D18 und Antworten F1–F14: `docs/design/plan-1.3.md`; Entscheidungen: `docs/decisions.md`, „Teil 1.3“.
+
+| Schritt | Beschreibung | Status |
+|---|---|---|
+| — | Aufräumen: `.DS_Store` aus dem Repository, in `.gitignore` (`571da1e`) | fertig |
+| — | Design-Übergabe aus Figma nach `docs/design/` (`UEBERGABE.md`, `system/`, `figma/`; `c8bdfe3`) | fertig |
+| — | Figma-Abgleich Variablen ↔ `tokens.json` (nur gelesen): 158 Werte gleich, Abweichungen A1–A4 im Plan | fertig |
+| — | Plan `docs/design/plan-1.3.md` | fertig, freigegeben 2026-10-17 (F1–F14) |
+| D01 | Golden-Grundlage und Grundstand: `goldens.yml` (Hilfsbranch `goldens/**`), `ci.yml` auf `ubuntu-24.04`, GL-01 (13 Motive, 104 Bilder), GL-02 (5 Bildschirme, 40 Bilder); Prüflauf 0 Abweichungen, Gegenprobe 24 | fertig |
+| D02 | Schrift und Lizenz: Atkinson Hyperlegible Next als TTF (392 Glyphen, Version 2.001) mit OFL im Design-Paket, `AppFonts`, Lizenz in der App registriert; DS-49 (Glyphen), DS-50 (Lizenz) | fertig |
+| D03 | Token-Datei und Generator (`tool/generate_tokens.dart`, alle Token-Dateien generiert), Theme-Zuordnung nach 01/02, Schrift Atkinson im Theme; DS-04/05/07 neu gefasst, DS-51 mit Übergangsliste (8 Dateien); Kapitel 28.10 (Punkte 1, 12, 13) | fertig |
+| D04 | Komponenten-Themes aus Tokens (`component_themes.dart`): Buttons, Marker-Knopf, Symbol-Schaltfläche, Eingabe, Chips, Liste, Trenner, Meldung, Dialog, Menü, Karte, Laden, Kopfleiste, Navigation, Tooltip; DS-52; Kapitel 28.10.2 | fertig |
+| D05a | Symbol-Finder in Tests auf `AppIcons` (11 Zeilen in 4 Dateien, nur der Symbolname) | fertig |
+| D05b | Symbole Outlined, alle 32 Namen der Figma-Bibliothek (11 neu); DS-17 gegen `figma-ids.json` | fertig |
+| D06 | Komponenten I: Marker-Knopf (Ladekreis aus Tokens), Tag, Text-Stile, Abschnitt mit Abschnittslinie | fertig |
+| D07 | Markenelemente: `AppMark` (auch als Auswahlziel), `AppFrame`/`AppSlot`/`AppDashedUnderline`, `AppHighlight`/`AppChangeText`, `AppValue`; DS-53–58; GL-01-Motiv „marken“ | fertig |
+| D08 | Eingaben und Listen: Beschriftung über dem Feld, Zahl mit Einheit, Fehler mit Symbol, Auswahlfeld mit `chevron`, Listeneintrag mit Haarlinie und Auswahlbalken; Kontur des Tags behoben | fertig |
+| D09 | Rückmeldung: Hinweis mit Symbol (neutral/Warnung/Fehler/Erfolg), Leerstelle, Fehlerzustand mit Symbol, Dialog `size-dialog` mit primärem Verb, Symbolgrößen aus Tokens; Restzeitlinie der Meldung nachgeholt in D09b | fertig |
+| D10 | Navigation und Daten: eigene Navigationsleiste (Balken statt Pille, Seitenleiste ab 600 über `AppPage.navigation`), Kopfleiste und Navigation ohne Textskalierung, Aktionsleiste, Deklarationstabelle, Codeblock; DS-59; DS-51-Liste leer | fertig |
+| D11 | Templates und Layout: Rahmen „Inhalt“ (Seitenrand ab 600, höchstens 720, mittig), Listen ohne Rand, Detail zweispaltig ab 1200, `DetailSplit` oben scrollend (Überlauf Versionsvergleich behoben); DS-60 | fertig |
+| D12a | Token-Nachtrag `reflow` aus Figma: acht Maße mit Werten für 100/200 % in beiden Token-Dateien, Generator liest beide Formen, Figma-Abgleich gleich | fertig |
+| D12 | Große Schrift: Werte je Textgröße (`AppReflowMetric`, linear 100–200 %), Deklaration bricht um, Aktionsleiste untereinander, Textgrößen-Addon im Katalog, WB-04; DS-51-Übergangsliste und Mechanismus entfernt | fertig |
+| D09b | Restzeitlinie der Meldung mit Aktion (`stroke-rule` in `action-inverse`, läuft ab dem Erscheinen in der Frist ab, bei „Bewegung reduzieren“ still); Inhalt der Meldung nach Snackbar-Karte, bei großer Schrift Aktion unter dem Text; drei Core-Test-Helfer mit festen Pumps (freigegeben); DS-38b | fertig |
+| D13a | Bedienhilfe und große Schrift in Komponenten: Tippaktion in der Semantik von Marke (Ziel) und Navigationsziel (Fehler aus D07/D10), Text in der Marke bricht um, Hinweis-Aktion unter dem Text (Entscheidung 4, `ReflowRow`); DS-53b, DS-59b, DS-32c | fertig |
+| D13 | Fassungsmarke (`VersionMark`), Fassungsleiste (Marken mit Auswahlbalken, Umbruch statt Abschneiden), Versionseintrag mit Marke, Zustand als Wort und „Master“ statt Stern; UI-67/68 | fertig |
+| D14 | Änderungsliste in Abschnitten, je Änderung `AppChangeText` (alt durchgestrichen, Pfeil-Symbol, neu markiert), Semantik = bisheriger Text; Versionsvergleich bei großer Schrift A über B; UI-69, UI-75 | fertig |
+| D15a | Kennzahlenleiste als fachneutrale Design-Komponente `AppFigureRow` (Haarlinien, Einzug, bei großer Schrift untereinander; freigegeben); DS-61, Katalog, GL-01 `daten` | fertig |
+| D15 | Nährwerte: Kopf als Kennzahlenleiste, Hinweis als Warnung, Deklaration („davon“ eingerückt, kcal hervorgehoben), Mengenrechner mit Einheit und Tausch-Symbol, bei großer Schrift untereinander; UI-70/71 | fertig |
+| D16 | Editor und Lebensmittel: Zutatenzeile zweizeilig mit gestrichelter Unterstreichung, Schrittzeile mit Nummer (freigegeben) und Timer darunter, Zustandsrahmen der eingefrorenen Ansicht, Hinweise im Verpackungsformular, Nährwertfelder zweispaltig (Testzeilen freigegeben), Schritte im Detail mit Nummer und Timer-Tag, „Keine Treffer.“ ohne Leerstelle, schmales Feld und Auswahl bei großer Schrift; UI-72–74, UI-76, DS-23c, DS-25c | fertig |
+| — | Nachträge aus Etappe 3: Kandidaten für Teil 1.4 festgehalten, Kommentare im Detail-Test (`7296aff`) | fertig |
+| D16b | Abstand `space-m` zwischen den Feldern im Editor-Abschnitt „Parameter“ (freigegeben); UI-77 | fertig |
+| D16c | Nährwertfelder im Verpackungsformular als Zahlenfelder (Tastatur mit Komma, rechtsbündig, tnum; freigegeben); UI-78 | fertig |
+| D17 | App-Hülle: Hauptnavigation über `AppPage.navigation` — unter 600 unten, ab 600 seitliche Leiste links (F4); APP-04 | fertig |
+| D17b | Deutsche Systemtexte: `flutter_localizations` aus dem SDK, Delegates und `Locale('de')` in der App (F2); APP-03 | fertig |
+| D18 | Abschluss: `design_system.md` (Weg der Werte, DS-07 neu), `components.md` (Figma-IDs), `screens.md` (Figma-Abgleich je Bildschirm), neu `rueckmeldung-figma.md` (bewusste Abweichungen), README/CHANGELOG und Version 0.2.0 des Design-Pakets, Kapitel 28.10 vollständig; kein Merge, keine Tags | fertig |
+| D18b | Nach Prüfung Etappe 4 (freigegeben): Abstand `space-m` zwischen Titel und Beschreibung (Bildschirm 2); Maßfelder des Verpackungsformulars und Editor-Parameter als Zahlenfelder (Portionen ohne Komma); UI-79/80 | fertig |
+| D17c | Befund iPhone-Test: Deutsch als Sprache des App-Bundles (`CFBundleDevelopmentRegion` „de“, `CFBundleLocalizations` mit „de“ in iOS und macOS), damit „Kopieren“/„Ausschneiden“ der Textauswahl deutsch sind; APP-05 | fertig |
+| D18c | Abstand `space-m` zwischen den Maßfeldern im Verpackungsformular (wie D16b); UI-81 | fertig |
+| D18d | Letzter Abstand-Durchgang (nach Freigabe von Teil 1.3): `space-m` in Kennung (Name, Marke, Barcode), Export-Auswahl und Schrittzeile (Anweisung → Timer); Zutatenzeile und Mengenrechner bleiben wie Figma (entschieden); UI-82 | fertig |
+
+**Kandidaten für Teil 1.4** (eingeordnet 2026-10-18, Details in
+`docs/design/plan-1.3.md`, „Nicht Teil von 1.3“): Master in der
+Fassungsleiste hervorheben; sichtbares Umsortieren ohne Ziehen (WCAG 2.5.7);
+„leer“ und „keine Treffer“ in der Lebensmittelliste unterscheiden; Liste und
+Detail nebeneinander ab 840 (F4).
+
 ## Bekannte offene Lücken (nicht blockierend)
 
 - `foodVariantToInsertCompanion`/`foodVariantToUpdateCompanion` in

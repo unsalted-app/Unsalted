@@ -107,7 +107,10 @@ Future<void> _settleDb(WidgetTester tester) async {
 
 Future<void> _swipeAway(WidgetTester tester, String title) async {
   await tester.drag(find.text(title), const Offset(-600, 0));
-  await tester.pumpAndSettle();
+  // Feste Pumps statt pumpAndSettle: Die Restzeitlinie der Meldung läuft bis zum Ablauf (Teil 1.3, D09b).
+  for (var i = 0; i < 10; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
 }
 
 void main() {

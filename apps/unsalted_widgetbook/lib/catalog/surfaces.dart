@@ -16,6 +16,14 @@ final surfacesFolder = WidgetbookFolder(name: 'text, icons, cards, surfaces', ch
           AppText.strong('Text/Strong — Überschrift eines Abschnitts'),
           AppText.title('Text/Title — Titel'),
           AppText.caption('Text/Caption — Kleingedrucktes'),
+          AppText.display('type/display'),
+          AppText.titlePage('type/title-page'),
+          AppText.heading('type/heading'),
+          AppText.bodySmall('type/body-small'),
+          AppText.labelSmall('type/label-small'),
+          AppText.data('type/data 1.234,5'),
+          AppText.dataStrong('type/data-strong 343'),
+          AppText.code('type/code {"a": 1}'),
         ])),
     useCase('Töne', (_) => const AppStack(gap: AppSpace.s, children: [
           AppText('normal'),
@@ -28,7 +36,7 @@ final surfacesFolder = WidgetbookFolder(name: 'text, icons, cards, surfaces', ch
     useCase('Icon', (_) => const AppStack(direction: Axis.horizontal, gap: AppSpace.m, children: [
           AppIcon(AppIcons.star),
           AppIcon(AppIcons.star, tone: AppTone.primary),
-          AppIcon(AppIcons.book, size: AppIconSize.l),
+          AppIcon(AppIcons.book, size: AppIconSize.s),
         ])),
     useCase('AppIcons', (_) => Wrap(spacing: 16, runSpacing: 16, children: [
           for (final MapEntry(key: name, value: icon) in AppIcons.byFigmaName.entries)
@@ -58,7 +66,9 @@ final surfacesFolder = WidgetbookFolder(name: 'text, icons, cards, surfaces', ch
           AppDivider(space: AppSpace.xxl),
           Text('bündig'),
           AppDivider.flush(),
-          SizedBox(height: 40, child: Row(children: [Text('links'), AppDivider.vertical(), Text('rechts')])),
+          IntrinsicHeight(
+            child: Row(children: [Expanded(child: Text('links')), AppDivider.vertical(), Expanded(child: Text('rechts'))]),
+          ),
         ])),
   ]),
 ]);

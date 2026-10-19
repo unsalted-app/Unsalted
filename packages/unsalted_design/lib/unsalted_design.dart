@@ -7,16 +7,21 @@
 library;
 
 // Tokens
-export 'src/tokens/breakpoint_tokens.dart' show AppBreakpoints;
-export 'src/tokens/color_tokens.dart' show AppColorTokens;
-export 'src/tokens/elevation_tokens.dart' show AppElevation;
-export 'src/tokens/motion_tokens.dart' show AppMotion;
-export 'src/tokens/radius_tokens.dart' show AppRadius;
-export 'src/tokens/spacing_tokens.dart' show AppSpace, AppSpacing;
-export 'src/tokens/typography_tokens.dart' show AppTypography;
+export 'src/tokens/breakpoint_tokens.g.dart' show AppBreakpoints;
+export 'src/tokens/color_tokens.g.dart' show AppColorTokens;
+export 'src/tokens/motion_tokens.g.dart' show AppMotion;
+export 'src/tokens/opacity_tokens.g.dart' show AppOpacity;
+export 'src/tokens/radius_tokens.g.dart' show AppRadius;
+export 'src/tokens/shadow_tokens.g.dart' show AppShadow;
+export 'src/tokens/size_tokens.g.dart' show AppReflow, AppSize;
+export 'src/tokens/spacing_tokens.g.dart' show AppSpace, AppSpacing;
+export 'src/tokens/stroke_tokens.g.dart' show AppStroke;
+export 'src/tokens/typography_tokens.g.dart' show AppTypography;
 
 // Theme
 export 'src/theme/app_theme.dart' show AppTheme;
+export 'src/theme/app_fonts.dart' show AppFonts;
+export 'src/theme/app_reflow.dart' show AppReflowMetric;
 export 'src/theme/app_tone.dart' show AppTone;
 
 // Layout
@@ -52,7 +57,12 @@ export 'src/components/feedback/app_loading.dart' show AppLoading, AppProgressBa
 export 'src/components/feedback/app_notice.dart' show AppNotice, AppNoticeKind;
 export 'src/components/feedback/app_skeleton.dart' show AppSkeleton;
 export 'src/components/feedback/app_snackbar.dart' show AppMessenger, AppSnackbarHandle, showAppMessage;
+export 'src/components/brand/app_frame.dart' show AppDashedUnderline, AppFrame, AppSlot;
+export 'src/components/brand/app_highlight.dart' show AppChangeText, AppHighlight;
+export 'src/components/brand/app_mark.dart' show AppMark, AppMarkState;
+export 'src/components/brand/app_value.dart' show AppCertainty, AppValue;
 export 'src/components/data/app_code_block.dart' show AppCodeBlock;
+export 'src/components/data/app_figure_row.dart' show AppFigure, AppFigureRow;
 export 'src/components/data/app_key_value_table.dart' show AppKeyValueTable, AppTableRow;
 export 'src/components/navigation/app_bottom_action_bar.dart' show AppBottomActionBar;
 export 'src/components/navigation/app_navigation_bar.dart' show AppNavigationBar, AppNavigationDestination;
