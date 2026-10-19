@@ -3104,3 +3104,31 @@ GL-02 `03_rezept_bearbeiten` (Portionen und Backverlust rechtsbündig mit
 tabellarischen Ziffern). `10_lebensmittel_bearbeiten` unverändert — die
 Maßfelder sind im Golden-Motiv leer, und die Tastatur erscheint nicht im Bild;
 Bildschirm 2 ist kein Golden-Motiv.
+
+**Befund aus dem iPhone-Test (Projektverantwortlicher):** Im
+Textauswahlmenü stehen „Copy“ und „Cut“ englisch, „Nachschlagen“ deutsch.
+Ursache: Copy/Cut/Paste zeichnet iOS selbst, in der Sprache des App-Bundles;
+die `Info.plist` nannte keine Sprache (`CFBundleDevelopmentRegion` =
+`$(DEVELOPMENT_LANGUAGE)`, im Xcode-Projekt `en`; `knownRegions` nur `en`,
+`Base`). „Nachschlagen“ kommt aus den Flutter-Texten (D17b). Vorgabe: vor dem
+Merge D17c und D18c, bei jeder Abweichung Stopp; danach prüft er das Menü
+auf dem iPhone. Kein Merge, keine Tags.
+
+**D17c — Deutsch als Sprache des App-Bundles.**
+`apps/unsalted_app/ios/Runner/Info.plist` und
+`apps/unsalted_app/macos/Runner/Info.plist`: `CFBundleDevelopmentRegion`
+„de“ (statt `$(DEVELOPMENT_LANGUAGE)`), neu `CFBundleLocalizations` mit „de“
+(eingeordnet nach Schlüssel wie Xcode). Das Bundle hat nur `Base.lproj`, kein
+`en.lproj` — damit ist „de“ die einzige Sprache des Bundles, und iOS zeichnet
+seine eigenen Menüs deutsch. Die Xcode-Projekte (`developmentRegion = en`,
+`knownRegions`) bleiben unverändert (nicht Teil der Vorgabe; sie bestimmen
+nur Xcodes Liste der Projektsprachen, nicht das Bundle). Geprüft mit
+`plutil -lint` (beide OK) und `plutil -extract` („de“, `["de"]`). Auf dem
+iPhone noch nicht geprüft (Projektverantwortlicher). *Geänderte bestehende
+Testzeilen:* keine. Neu `apps/unsalted_app/test/bundle_language_test.dart`:
+APP-05 (liest beide `Info.plist` als Text: Entwicklungssprache „de“,
+`CFBundleLocalizations` enthält „de“). Gegenproben: iOS wieder mit
+`$(DEVELOPMENT_LANGUAGE)` → rot; macOS ohne `CFBundleLocalizations` → rot; iOS
+mit `CFBundleLocalizations` nur „en“ → rot; danach grün. Nachtrag 28.10.14
+ergänzt, 28.10.13 um APP-05. Keine Golden-Bilder (App kein Golden-Motiv).
+Mac: App 12 Tests grün; `check_architecture` Exit 0.

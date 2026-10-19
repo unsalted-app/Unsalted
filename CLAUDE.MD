@@ -80,6 +80,8 @@ unsalted/
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
 │     │                            flutter_riverpod, go_router, flutter_localizations (D17b)
 │     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
+│     ├─ ios/Runner/Info.plist,     Sprache des Bundles „de“ (D17c, APP-05) — sonst
+│     │  macos/Runner/Info.plist    zeichnet iOS „Copy“/„Cut“ englisch
      ├─ lib/main.dart             ProviderScope-Overrides (appOverrides), GoRouter aus
 │     │                            modules.expand((m) => m.routes), ShellRoute
 │     │                            mit AppNavigationBar über AppPage.navigation
@@ -285,14 +287,16 @@ freigegeben. Etappe 4 fertig: D16b/D16c (Abstand im Editor-Abschnitt
 „Parameter“, Nährwertfelder als Zahlenfelder), D17 (Seitenleiste ab 600 in
 der App), D17b (deutsche Systemtexte), D18 (Doku, `rueckmeldung-figma.md`,
 Design-Paket 0.2.0), nach Prüfung D18b (Abstand Titel/Beschreibung in
-Bildschirm 2; Maß- und Parameterfelder als Zahlenfelder). Kandidaten für
+Bildschirm 2; Maß- und Parameterfelder als Zahlenfelder), nach dem
+iPhone-Test D17c (Deutsch als Sprache des App-Bundles in iOS/macOS). Kandidaten für
 Teil 1.4: `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“. Test-IDs neu:
-GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–80, APP-03/04.
+GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–80, APP-03–05.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** Bericht zu D18b an den Projektverantwortlichen;
+**Nächster Schritt:** Bericht zu D17c/D18c an den Projektverantwortlichen
+(er prüft das Textauswahlmenü auf dem iPhone);
 danach seine Freigabe von Teil 1.3 (Merge von PR #2, Tags und Status in
 `docs/design/system/README.md` nach Plan F14 — alles nur auf seine
 Anweisung), dann Teil 1.4.

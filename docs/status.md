@@ -272,6 +272,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D17b | Deutsche Systemtexte: `flutter_localizations` aus dem SDK, Delegates und `Locale('de')` in der App (F2); APP-03 | fertig |
 | D18 | Abschluss: `design_system.md` (Weg der Werte, DS-07 neu), `components.md` (Figma-IDs), `screens.md` (Figma-Abgleich je Bildschirm), neu `rueckmeldung-figma.md` (bewusste Abweichungen), README/CHANGELOG und Version 0.2.0 des Design-Pakets, Kapitel 28.10 vollständig; kein Merge, keine Tags | fertig |
 | D18b | Nach Prüfung Etappe 4 (freigegeben): Abstand `space-m` zwischen Titel und Beschreibung (Bildschirm 2); Maßfelder des Verpackungsformulars und Editor-Parameter als Zahlenfelder (Portionen ohne Komma); UI-79/80 | fertig |
+| D17c | Befund iPhone-Test: Deutsch als Sprache des App-Bundles (`CFBundleDevelopmentRegion` „de“, `CFBundleLocalizations` mit „de“ in iOS und macOS), damit „Kopieren“/„Ausschneiden“ der Textauswahl deutsch sind; APP-05 | fertig |
 
 **Kandidaten für Teil 1.4** (eingeordnet 2026-10-18, Details in
 `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“): Master in der
