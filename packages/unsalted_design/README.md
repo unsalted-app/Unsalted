@@ -1,18 +1,28 @@
 # unsalted_design
 
-Design-System von unsalted (Teil 1.2, `design-v0.1.0`): Das Aussehen der App
-liegt ausschließlich hier. Bildschirme in den Fachpaketen legen nur fest,
-*was* angezeigt wird und *was* eine Aktion tut.
+Design-System von unsalted (Teil 1.2 gebaut, Teil 1.3 aus Figma gestaltet;
+`design-v0.2.0`, unveröffentlicht): Das Aussehen der App liegt ausschließlich
+hier. Bildschirme in den Fachpaketen legen nur fest, *was* angezeigt wird und
+*was* eine Aktion tut.
 
 - **Rang 0** in `architecture.yaml`; einzige Abhängigkeit ist Flutter. Keine
   Fachbegriffe, keine UI-Texte, keine Importe von `unsalted_core`, Riverpod
   oder Drift (DS-01, DS-06, `tool/check_architecture.dart`).
-- **Inhalt:** Tokens (`lib/src/tokens/`), Theme, Layout, Komponenten,
-  Templates; öffentliche Tür `lib/unsalted_design.dart`, jeder Export mit
-  `show` (DS-03).
-- **Platzhalter:** Die Tokens tragen den Flutter-Standard (Material 3); das
-  echte Design kommt aus Figma (DS-07 weist die Neutralität nach).
-- **Katalog:** `apps/unsalted_widgetbook` (hell/dunkel × Handy/Tablet).
+- **Werte:** nur aus `tokens/unsalted.tokens.json` (gleich
+  `docs/design/system/tokens.json` aus Figma). `dart run tool/generate_tokens.dart`
+  schreibt alle Dateien unter `lib/src/tokens/`; nie von Hand ändern (DS-04,
+  DS-51).
+- **Schrift:** Atkinson Hyperlegible Next 400/600/700 (`lib/fonts/`, SIL OFL
+  1.1); die App registriert die Lizenz mit `AppFonts.registerLicenses()`.
+- **Inhalt:** Tokens, Theme (Material-Rollen und Komponenten-Themes aus
+  Tokens), Layout, Komponenten (inkl. Markenelemente unter
+  `components/brand/`), Templates; öffentliche Tür `lib/unsalted_design.dart`,
+  jeder Export mit `show` (DS-03).
+- **Große Schrift:** Maße neben Text wachsen bis 200 % mit
+  (`AppReflowMetric`); Komponenten brechen um, statt abzuschneiden.
+- **Katalog:** `apps/unsalted_widgetbook` (hell/dunkel × Handy/Tablet,
+  Textgröße 100–200 %).
+- **Goldens:** GL-01 (`test/goldens/`), nur unter Linux erzeugt und verglichen.
 - **Version:** eigene Tags `design-vX.Y.Z`, siehe `CHANGELOG.md`.
 
 ```dart
@@ -29,5 +39,7 @@ ListPageTemplate(
 ```
 
 Dokumentation: `docs/design/design_system.md` (Ebenen, Regeln, Benennung,
-Ablauf Figma → Code), `docs/design/components.md` (alle Komponenten mit
-Figma-Namen), `docs/design/screens.md` (Bildschirme und Abschnitte).
+Weg der Werte Figma → Code), `docs/design/components.md` (alle Komponenten mit
+Figma-Namen und -IDs), `docs/design/screens.md` (Bildschirme, Abschnitte,
+Figma-Abgleich), `docs/design/rueckmeldung-figma.md` (bewusste Abweichungen
+von Figma).

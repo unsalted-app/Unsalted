@@ -4,6 +4,18 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 
 ## design-v0.2.0 — unveröffentlicht (Teil 1.3, Gestaltung aus Figma)
 
+Version in `pubspec.yaml` 0.2.0 (D18); der Tag folgt nach Freigabe (F14).
+Zusammengefasst: Werte nur aus der Token-Datei aus Figma (Generator, DS-04,
+DS-51), Schrift Atkinson Hyperlegible Next mit OFL, Material-Rollen und
+Komponenten-Themes aus Tokens, Markenelemente, eigene Navigation mit
+Seitenleiste, Rahmen „Inhalt“ und zweispaltige Detailseiten, große Schrift
+bis 200 %, Golden-Bilder unter Linux. Bewusste Abweichungen von Figma:
+`docs/design/rueckmeldung-figma.md`.
+
+- Abschluss (D18): Doku `docs/design/design_system.md`, `components.md`
+  (Figma-IDs), `screens.md` (Figma-Abgleich je Bildschirm),
+  `rueckmeldung-figma.md`; README; Version 0.2.0.
+
 - Eingaben bei großer Schrift (D16): `AppFieldWidth.narrow` ist `reflow-field-min` der Textgröße breit (wächst mit); `AppSelect` additiv mit `expand` (ohne Beschriftung die Breite füllen, lange Einträge gekürzt). Tests DS-23c, DS-25c.
 - Kennzahlenleiste (D15a): neu `AppFigureRow` mit `AppFigure` (Beschriftung `caption`/`text-secondary`, Wert in der Regel `AppValue.strong`); Haarlinie oben und unten, ab dem zweiten Feld links Haarlinie und `reflow-inset-inline`; bei großer Schrift (Feld schmaler als `reflow-stat-min`) untereinander mit Haarlinie dazwischen; Beschriftung und Wert zusammen vorgelesen. Test DS-61.
 - Bedienhilfe und große Schrift (D13a): `AppMark` als Ziel und das Ziel der `AppNavigationBar` tragen die Tippaktion auch in der Semantik (vorher nur im ausgeschlossenen `InkWell`); der Text einer `AppMark` bricht um; `AppNotice` stellt seine Aktion rechtsbündig unter den Text, sobald dem Text daneben weniger als `reflow-label-min` bliebe (intern `ReflowRow`). Tests DS-53b, DS-59b, DS-32c.

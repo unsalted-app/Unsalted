@@ -270,7 +270,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D16c | Nährwertfelder im Verpackungsformular als Zahlenfelder (Tastatur mit Komma, rechtsbündig, tnum; freigegeben); UI-78 | fertig |
 | D17 | App-Hülle: Hauptnavigation über `AppPage.navigation` — unter 600 unten, ab 600 seitliche Leiste links (F4); APP-04 | fertig |
 | D17b | Deutsche Systemtexte: `flutter_localizations` aus dem SDK, Delegates und `Locale('de')` in der App (F2); APP-03 | fertig |
-| D18 | Abschluss | offen |
+| D18 | Abschluss: `design_system.md` (Weg der Werte, DS-07 neu), `components.md` (Figma-IDs), `screens.md` (Figma-Abgleich je Bildschirm), neu `rueckmeldung-figma.md` (bewusste Abweichungen), README/CHANGELOG und Version 0.2.0 des Design-Pakets, Kapitel 28.10 vollständig; kein Merge, keine Tags | fertig |
 
 **Kandidaten für Teil 1.4** (eingeordnet 2026-10-18, Details in
 `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“): Master in der

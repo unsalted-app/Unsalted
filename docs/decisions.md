@@ -3043,3 +3043,28 @@ keine Testzeile prüft sie). *Geänderte bestehende Testzeilen:* keine. Neu
 „Lizenzen“). Gegenprobe: ohne Delegates und Sprache → APP-03 rot (`en_US`);
 danach grün. Keine Golden-Bilder (App kein Golden-Motiv). Nachtrag 28.10.14
 neu. Mac: App 10 Tests grün; `check_architecture` Exit 0.
+
+**D18 — Abschluss Teil 1.3.** Doku nachgeführt: `docs/design/design_system.md`
+(Stand 1.3: Ebenen mit Token-Datei und Generator, Regeln für Werte, große
+Schrift, Katalog und Goldens; Benennung inkl. `reflow/*` und `Core/*`; Weg der
+Werte Figma → Code; DS-07 neu als Zuordnung Material → Tokens),
+`docs/design/components.md` (alle Komponenten mit Figma-Namen, -IDs aus
+`figma-ids.json`, Datei und Tests; fachliche Bausteine mit Figma-Bezug und
+UI-Tests), `docs/design/screens.md` (Stand 1.3 je Bildschirm und eine Zeile
+„Figma“ mit ID: übereinstimmend, bewusst anders, offen; Golden-Motiv —
+das ist der Figma-Abgleich je Hauptbildschirm aus der Abnahme von D18), neu
+`docs/design/rueckmeldung-figma.md` (Vorgabe des Projektverantwortlichen:
+alle bewussten Abweichungen von Figma, damit Figma nachgezogen werden kann —
+A1 Texte nach Kapitel 22, A2 Symbole (`deleteOutline` statt `close`), A3
+Komponenten (u. a. `AppFigureRow` ohne eigene Design-Komponente in Figma,
+Zustandsrahmen der eingefrorenen Ansicht), A4 ergänzte Tokens und Regeln; B:
+was Figma zeigt und der Code später umsetzt). `packages/unsalted_design`:
+README (Stand 1.3), `CHANGELOG.md` (Zusammenfassung 0.2.0), `pubspec.yaml`
+Version 0.2.0 (die Lock-Dateien von App und Katalog führen die Pfad-Version
+mit). Kapitel 28.10: Einleitung „vollständig mit D18“ und Verweis auf die
+Rückmeldedatei, 28.10.13 um DS-52–61, die Buchstaben-Ergänzungen, UI-67–78
+und APP-03/04 ergänzt. *Nicht getan (F14, Vorgabe):* kein Merge, keine Tags;
+`docs/design/system/README.md` bleibt „Entwurf zur Freigabe“, bis der
+Projektverantwortliche freigibt. Keine Golden-Bilder (nur Doku und Version).
+Mac: Design 461, Core 439, App 10, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.

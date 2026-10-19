@@ -66,9 +66,10 @@ unsalted/
 │  ├─ spezifikation.md             VERBINDLICHE Spezifikation (Quelle der Wahrheit)
 │  ├─ status.md                    Phase/Schritt-Tracker
 │  ├─ decisions.md                 Protokoll technischer Entscheidungen
-│  └─ design/                      Teil 1.2: plan.md, design_system.md, components.md, screens.md;
-│                                   Teil 1.3: plan-1.3.md, UEBERGABE.md, system/ (Markenbuch, tokens.json,
-│                                   Komponentenkarten, Schrift-WOFF2, OFL), figma/figma-ids.json
+│  └─ design/                      design_system.md, components.md, screens.md (Stand 1.3), plan.md (1.2);
+│                                   Teil 1.3: plan-1.3.md, UEBERGABE.md, rueckmeldung-figma.md (Abweichungen
+│                                   für Figma), system/ (Markenbuch, tokens.json, Komponentenkarten,
+│                                   Schrift-WOFF2, OFL), figma/figma-ids.json
 ├─ tool/
 │  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
 ├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Design, Core, App, Widgetbook
@@ -258,8 +259,8 @@ Spezifikation Kapitel 28.9. Der frühere Design-Pass `design/1.1` wurde nicht
 übernommen und ist gelöscht. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03,
 AT-13–15, UI-58–66, UC-01–07, APP-02.
 
-**Teil 1.3 – Gestaltung aus Figma (in Arbeit, Branch `design-1.3`,
-Entwurfs-PR #2):** Übergabe aus Figma unter `docs/design/` (`UEBERGABE.md`,
+**Teil 1.3 – Gestaltung aus Figma (fertig, Freigabe ausstehend; Branch
+`design-1.3`, Entwurfs-PR #2, nicht gemergt, keine Tags):** Übergabe aus Figma unter `docs/design/` (`UEBERGABE.md`,
 `system/`, `figma/`). Plan (freigegeben, Antworten F1–F14):
 `docs/design/plan-1.3.md`; Entscheidungen: `docs/decisions.md`, „Teil 1.3“;
 Nachträge: Spezifikation Kapitel 28.10. Etappe 1 fertig: D01 Goldens (GL-01,
@@ -271,7 +272,7 @@ Navigation (Balken, Seitenleiste über `AppPage.navigation`, in der App erst
 mit D17) und Deklaration, D11 Rahmen „Inhalt“ (Rand ab 600, höchstens 720),
 zweispaltig ab 1200, D12a `reflow-*` je Textgröße aus Figma, D12 große
 Schrift (`AppReflowMetric`), DS-51 ohne Übergangsliste; Etappe 2
-freigegeben. Etappe 3 (D09b, D13–D16) in Arbeit: D09b fertig (Restzeitlinie
+freigegeben. Etappe 3 (D09b, D13–D16): D09b fertig (Restzeitlinie
 der Meldung), D13a fertig (Tippaktion in der Semantik von Marke und
 Navigationsziel, Hinweis-Aktion unter dem Text bei großer Schrift), D13
 fertig (Fassungsmarke `VersionMark`, Fassungsleiste, „Master“ als Wort), D14
@@ -280,18 +281,20 @@ großer Schrift A über B), D15a fertig (Kennzahlenleiste `AppFigureRow`), D15
 fertig (Nährwert-Kopf als Kennzahlenleiste, Deklaration, Mengenrechner), D16
 fertig (Zutaten- und Schrittzeile, Zustandsrahmen, Hinweise, Nährwertfelder
 zweispaltig, „Keine Treffer.“ ohne Leerstelle). Etappe 3 fertig und
-freigegeben. Etappe 4 in Arbeit (Nachträge aus Etappe 3, D17, D17b, D18;
-kein Merge, keine Tags). Kandidaten für Teil 1.4: `docs/design/plan-1.3.md`,
-„Nicht Teil von 1.3“. Test-IDs neu: GL-01/02, DS-49–60 (+ b/c), WB-04.
+freigegeben. Etappe 4 fertig: D16b/D16c (Abstand im Editor-Abschnitt
+„Parameter“, Nährwertfelder als Zahlenfelder), D17 (Seitenleiste ab 600 in
+der App), D17b (deutsche Systemtexte), D18 (Doku, `rueckmeldung-figma.md`,
+Design-Paket 0.2.0). Kandidaten für Teil 1.4: `docs/design/plan-1.3.md`,
+„Nicht Teil von 1.3“. Test-IDs neu: GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–78,
+APP-03/04.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** D18 (Abschluss: Doku, `rueckmeldung-figma.md`,
-CHANGELOG 0.2.0); Stopp mit Bericht nach D18. (Fertig in Etappe 4: D16b
-Abstand im Editor-Abschnitt „Parameter“, D16c Nährwertfelder als
-Zahlenfelder, D17 Seitenleiste ab 600 in der App, D17b deutsche
-Systemtexte; APP-03/04.)
+**Nächster Schritt:** Bericht zu Etappe 4 an den Projektverantwortlichen;
+danach seine Freigabe von Teil 1.3 (Merge von PR #2, Tags und Status in
+`docs/design/system/README.md` nach Plan F14 — alles nur auf seine
+Anweisung), dann Teil 1.4.
 
 ---
 

@@ -1,12 +1,17 @@
 # Bildschirme
 
-Stand Teil 1.2 nach C27 (alle Bildschirme umgestellt). Pfade relativ zu
+Stand Teil 1.3 (Gestaltung aus Figma; Teil 1.2 hat alle Bildschirme auf
+Templates und Abschnitte umgestellt, C14–C27). Pfade relativ zu
 `packages/unsalted_core/lib/src/ui/`. Grundlage: Spezifikation Kapitel 22 und
 28.4. Der Bildschirm hält Zustand, lädt Daten und löst Aktionen aus; jeder
 Abschnitt ist ein zustandsloses Widget in eigener Datei unter
 `<bereich>/sections/`, liest keine Provider und baut nur aus
 Design-Komponenten und fachlichen Bausteinen. Abschnitte stehen hier in
-Anzeigereihenfolge. **Umgestellt** nennt den Commit.
+Anzeigereihenfolge. **Umgestellt** nennt den Commit aus Teil 1.2, **Figma**
+den Abgleich mit der App-Datei `5eFqwnCRld6Ibu131541i8` (Handy, nur gelesen;
+IDs in `docs/design/figma/figma-ids.json`): was übereinstimmt, was bewusst
+abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
+(ebd., Abschnitt B). Golden-Bilder: GL-02 (`packages/unsalted_core/test/goldens/`).
 
 ## 1 Rezeptliste — `recipe_list/recipe_list_screen.dart`
 
@@ -20,6 +25,7 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
   2. `recipe_list/sections/recipe_list_empty_section.dart` — „Noch keine Rezepte.“ + „Erstes Rezept anlegen“ bzw. „Keine Treffer.“
   3. `recipe_list/sections/recipe_list_results_section.dart` — Liste mit Wischen-Löschen
 - **Bausteine:** `recipe_list/recipe_card.dart` (`RecipeCard`).
+- **Figma `1:421`:** übereinstimmend Kopfleiste mit Suche (folgt der Textgröße nicht), Einträge mit Haarlinie, Marker-Knopf, Navigation mit Auswahlbalken (ab 600 links), Leerstelle bei leerer Liste, „Keine Treffer.“ ohne Leerstelle (D16), Meldung mit Restzeitlinie (D09b). Offen: Fassungsmarke und Versionszahl je Rezept, Suchtreffer im Marker, Liste und Detail ab 840 (Teil 1.4). Golden `01_rezeptliste`.
 - **Umgestellt:** C16.
 
 ## 2 Rezept erstellen — `recipe_editor/recipe_create_screen.dart`
@@ -31,6 +37,7 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
 - **Template:** `FormPageTemplate` mit `FormSections` und Hauptaktion.
 - **Abschnitte:**
   1. `recipe_editor/sections/recipe_create_fields_section.dart` — Titel (mit Fehlertext) und Beschreibung
+- **Figma `20:978`:** übereinstimmend Rahmen „Inhalt“, Beschriftungen über dem Feld, Marker-Knopf. Offen: Abstand zwischen Titel und Beschreibung (`recipe_create_fields_section.dart`, nicht freigegeben). Kein Golden-Motiv.
 - **Umgestellt:** C17.
 
 ## 3 Rezept bearbeiten — `recipe_editor/recipe_editor_screen.dart`
@@ -44,10 +51,11 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
   1. `recipe_editor/sections/recipe_editor_preview_section.dart` — Gesamt-kcal live (Slot `header`)
   2. `recipe_editor/sections/recipe_editor_parameters_section.dart` — Portionen, Backverlust, Fertiggewicht-Override, Notizen
   3. `recipe_editor/sections/recipe_editor_ingredients_section.dart` — umsortierbare Zutatenzeilen, „Zutat hinzufügen“
-  4. `recipe_editor/sections/recipe_editor_steps_section.dart` — umsortierbare Schritte mit Timer, „Schritt hinzufügen“
+  4. `recipe_editor/sections/recipe_editor_steps_section.dart` — umsortierbare Schritte mit Nummer und Timer, „Schritt hinzufügen“
   5. `recipe_editor/sections/recipe_editor_actions_section.dart` — Einfrieren · Speichern (Slot `bottomBar`)
-- **Abschnitt (eingefroren):** `recipe_editor/sections/recipe_editor_frozen_section.dart` — Hinweis + „Kopieren“, Zutaten und Schritte schreibgeschützt.
+- **Abschnitt (eingefroren):** `recipe_editor/sections/recipe_editor_frozen_section.dart` — Hinweis (`AppNotice`) + „Kopieren“, darunter Zutaten und Schritte schreibgeschützt im Zustandsrahmen (`AppFrame.fixed`) mit `VersionMark` samt Siegel (D16).
 - **Bausteine:** `recipe_editor/ingredient_row.dart` (`IngredientRow`, `IngredientRowData`), `recipe_editor/step_row.dart` (`StepRow`, `StepRowData`, `timerInputText`), `recipe_editor/food_variant_picker_dialog.dart` (`FoodVariantPickerDialog`).
+- **Figma `7:895` (Entwurf), `42:2010` (eingefroren):** übereinstimmend zweizeilige Zutatenzeile (Menge in `reflow-value-column`, Einheit und Notiz teilen den Rest), Abschnitte mit Linie, Abstand zwischen den Parameter-Feldern (D16b), Aktionsleiste (bei großer Schrift untereinander), eingefrorene Ansicht mit Hinweis und „Kopieren“. Bewusst anders: Beschriftungen über den Feldern, Entfernen mit Papierkorb, gestrichelte Unterstreichung statt Tag „nicht verknüpft“, Zustandsrahmen mit Siegel in der eingefrorenen Ansicht, Hinweistext nach Kapitel 22. Offen: Vorschau im gestrichelten Rahmen mit Kennzahlen, Portionen und Backverlust nebeneinander, Einheit als umrandetes Feld. Golden `03_rezept_bearbeiten`.
 - **Umgestellt:** C25.
 
 ## 4 Rezeptdetail — `recipe_detail/recipe_detail_screen.dart`
@@ -56,22 +64,23 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
 - **Daten:** `watchRecipe`, `watchVersions`, `getVersion`, `NutritionService.forVersion`; `modulesProvider` (Abschnitte, Aktionen).
 - **Aktionen:** Version wählen; „Versionen“, „Bearbeiten“; Modul-Aktionen (Kopfleiste, Menü); „Rezept löschen“ (zurück zur Liste, 5 s „Rückgängig“).
 - **Zustände:** Rezept lädt / Fehler / nicht gefunden (`AppPage` ohne Kopfleiste) · Versionen laden / Fehler / keine Version · erstes Laden · Versionswechsel (alter Inhalt bleibt, Ladebalken nach 300 ms, `_VersionLoader`) · Inhalt.
-- **Template:** `DetailPageTemplate` mit `DetailSections` (einspaltig über `DetailLayout.standard`).
+- **Template:** `DetailPageTemplate` mit `DetailSections` (zweispaltig ab `breakpoint-large` über `DetailLayout.standard`, D11).
 - **Abschnitte:**
   - Kopfleiste: `recipe_detail/sections/recipe_detail_actions_section.dart` — Versionen, Bearbeiten, Modul-Aktionen, Menü mit „Rezept löschen“
-  - Haupt: `recipe_detail/version_switcher.dart` (`VersionSwitcher`) · `recipe_detail/sections/recipe_detail_description_section.dart` · `recipe_detail/sections/recipe_detail_nutrition_section.dart` (Kopf, Tabelle, Mengenrechner)
-  - Neben: `recipe_detail/sections/recipe_detail_ingredients_section.dart` · `recipe_detail/sections/recipe_detail_steps_section.dart` (Timer-Chips) · `recipe_detail/sections/recipe_detail_extensions_section.dart` (`recipeDetailSections` nach `order`, im Bildschirm gebaut)
+  - Haupt: `recipe_detail/version_switcher.dart` (`VersionSwitcher`, Fassungsleiste) · `recipe_detail/sections/recipe_detail_description_section.dart` · `recipe_detail/sections/recipe_detail_nutrition_section.dart` (Kopf, Tabelle, Mengenrechner)
+  - Neben: `recipe_detail/sections/recipe_detail_ingredients_section.dart` · `recipe_detail/sections/recipe_detail_steps_section.dart` (Nummer, Timer als Tag) · `recipe_detail/sections/recipe_detail_extensions_section.dart` (`recipeDetailSections` nach `order`, im Bildschirm gebaut)
+- **Figma `1:607`, Tablet quer `148:4381`:** übereinstimmend Fassungsleiste mit Auswahlbalken (bricht bei großer Schrift um), Kennzahlenleiste, Warnhinweis mit Symbol, Deklaration, Mengenrechner, Schritte mit Nummer und Timer-Tag, zweispaltig ab 1200. Bewusst anders: „kcal/Portion“ statt „pro Portion“, erste Kopfspalte der Tabelle leer. Offen: Titel als `display` im Inhalt mit leerer Kopfleiste, Zutaten als `Core/Ingredient Row`, Master in der Fassungsleiste (Teil 1.4). Golden `04_rezeptdetail`.
 - **Umgestellt:** C23 (Test UI-58 für Menü-Aktionen).
 
 ## 5 Nährwertanzeige — Teil von 4
 
-- **Bausteine:** `nutrition/nutrition_header.dart` (`NutritionHeader`: Fertiggewicht, Gesamt-kcal, kcal/Portion, Hinweis „nicht berechenbar“ als `AppSurface` warning), `nutrition/nutrition_table.dart` (`NutritionTable`: `AppKeyValueTable` in EU-Reihenfolge, Spalte 2 über `AppSelect`, `*`-Fußnoten als `AppText.caption`).
+- **Bausteine:** `nutrition/nutrition_header.dart` (`NutritionHeader`: Kennzahlenleiste `AppFigureRow` mit Fertiggewicht, Gesamt, kcal/Portion; Hinweis „nicht berechenbar“ als `AppNotice` Warnung, D15), `nutrition/nutrition_table.dart` (`NutritionTable`: Deklaration `AppKeyValueTable` in EU-Reihenfolge, „davon“ eingerückt, Kalorien hervorgehoben, Spalte 2 über `AppSelect`, `*`-Fußnoten als `AppText.caption`).
 - **Daten:** `NutritionResult`; Rundung nur über `NutritionFormatter`.
 - **Umgestellt:** C22.
 
 ## 6 Mengenrechner — Teil von 5
 
-- **Baustein:** `nutrition/amount_calculator.dart` (`AmountCalculator`) — Gramm ↔ kcal, beidseitig gekoppelt; ungültige Eingabe markiert das Feld.
+- **Baustein:** `nutrition/amount_calculator.dart` (`AmountCalculator`) — Gramm ↔ kcal, beidseitig gekoppelt; ungültige Eingabe markiert das Feld. Seit D15 zwei Zahlenfelder (Gramm mit Einheit im Feld) mit Tausch-Symbol dazwischen, bei großer Schrift das zweite Feld darunter.
 - **Umgestellt:** C22.
 
 ## 7 Versionen — `versions/version_list_screen.dart`
@@ -83,7 +92,8 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
 - **Template:** `ListPageTemplate` ohne Suche und Hauptaktion.
 - **Abschnitte:**
   1. `versions/sections/version_list_results_section.dart` — Liste der Versionen
-- **Bausteine:** `versions/version_tile.dart` (`VersionTile`).
+- **Bausteine:** `versions/version_tile.dart` (`VersionTile`: `VersionMark`, Zustand als Wort, Datum, „Master“ als Wort, Aktionen; D13), `versions/version_mark.dart` (`VersionMark`).
+- **Figma `20:1042`:** übereinstimmend Fassungsmarken (Entwurf gestrichelt, eingefroren mit Kontur, Master mit Markerfläche). Bewusst anders: Figma zeigt eine vereinfachte Liste (Titel „Version n“, Datum, Marke rechts, keine Aktionen); der Code behält Aktionen und Tooltips (28.4.4) und zeigt Marke, Zustand als Wort, Datum und „Master“ als Wort. Kein Golden-Motiv.
 - **Umgestellt:** C20.
 
 ## 8 Versionsvergleich — `versions/version_compare_screen.dart`
@@ -97,7 +107,8 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
   1. `versions/sections/version_compare_columns_section.dart` — A | B (oben)
   2. `versions/sections/version_compare_changes_section.dart` — Änderungsliste oder „Keine Unterschiede.“ (unten)
   3. `versions/sections/version_compare_apply_section.dart` — Fehler + „Als neuen Entwurf übernehmen“ (Fußzeile)
-- **Bausteine:** `versions/snapshot_column.dart` (`SnapshotColumn`), `versions/change_list.dart` (`ChangeList`), `versions/change_descriptions.dart` (`describeChanges`, unverändert).
+- **Bausteine:** `versions/snapshot_column.dart` (`SnapshotColumn`), `versions/change_list.dart` (`ChangeList`: Abschnitte mit Linie, je Änderung `AppChangeText`, Semantik = bisheriger Text; D14), `versions/change_descriptions.dart` (`describeChanges` mit denselben Texten, dazu sichtbare Teile `ChangePart`).
+- **Figma `3:595`:** übereinstimmend Änderungen in Abschnitten mit Linie, „alt durchgestrichen → neu markiert“ mit Pfeil-Symbol, „neu“/„entfernt“, Aktion füllt die Leiste; dazu oberer Bereich scrollt (D11) und bei großer Schrift A über B (D14). Bewusst anders: keine Metadaten „n Änderungen“. Offen: Kopfzeile mit beiden Marken statt Spalten A/B. Golden `08_versionsvergleich`.
 - **Umgestellt:** C21.
 
 ## 9 Lebensmittel-Liste — `foods/food_list_screen.dart`
@@ -112,6 +123,7 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
   2. `foods/sections/food_list_empty_section.dart` — „Keine Lebensmittel gefunden.“ + „Eigenes Produkt anlegen“
   3. `foods/sections/food_list_results_section.dart` — Liste mit Wischen-Löschen
 - **Bausteine:** `foods/food_tile.dart` (`FoodTile`).
+- **Figma `20:1130`:** übereinstimmend wie Bildschirm 1 (Liste, Marker-Knopf, Leerstelle mit Aktion, Meldung). Offen: „leer“ und „keine Treffer“ unterscheiden, Liste und Detail ab 840 (Teil 1.4). Kein Golden-Motiv.
 - **Umgestellt:** C15.
 
 ## 10 Lebensmittel bearbeiten — `foods/food_editor_screen.dart`, `foods/package_form.dart`
@@ -124,9 +136,10 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
 - **Abschnitte (in `PackageForm`):**
   1. `foods/sections/package_identity_section.dart` — Name, Marke, Barcode
   2. `foods/sections/package_measures_section.dart` — Dichte, Stückgewicht, Portionsgröße
-  3. `foods/sections/package_nutrients_section.dart` — 8 Nährwerte (EU-Reihenfolge) + Natrium (`PackageNumberField`)
-  4. `foods/sections/package_validation_section.dart` — Warnungen und Fehler (`AppSurface` warning/error, Keys `package_form_warning`/`package_form_error`)
+  3. `foods/sections/package_nutrients_section.dart` — 8 Nährwerte (EU-Reihenfolge) + Natrium (`PackageNumberField`), als Zahlenfelder im `AppGrid` (ab 600 zweispaltig; D16, D16c)
+  4. `foods/sections/package_validation_section.dart` — Warnungen und Fehler (`AppNotice` Warnung/Fehler, Keys `package_form_warning`/`package_form_error`; D16)
 - **Bausteine:** `foods/package_form.dart` (`PackageForm`: Zustand, Prüfung, Natrium-Umrechnung).
+- **Figma `23:1492`:** übereinstimmend Beschriftungen über dem Feld, Abschnitte mit Linie, Warnung und Fehler als Hinweise mit Symbol, Nährwertfelder als Zahlenfelder (rechtsbündig) und ab 600 zweispaltig. Offen: Maßfelder (Dichte, Stückgewicht, Portionsgröße) ohne Zahlentastatur. Golden `10_lebensmittel_bearbeiten`.
 - **Umgestellt:** C24.
 
 ## 11 Export — `settings/export_screen.dart`
@@ -140,6 +153,7 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
   1. `settings/sections/export_selection_section.dart` — Rezept, Version (bekommt die Streams als Daten)
   2. „Exportieren“ und Fehler (Slot im Bildschirm, keine eigene Darstellung)
   3. `settings/sections/export_result_section.dart` — JSON (`AppCodeBlock`), „In Zwischenablage kopieren“
+- **Figma `23:1818`:** übereinstimmend Rahmen „Inhalt“, Auswahl mit Beschriftung oben, JSON im Codeblock auf `surface-sunken`. Kein Golden-Motiv.
 - **Umgestellt:** C18.
 
 ## 12 Import — `settings/import_screen.dart`
@@ -153,6 +167,7 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
   1. `settings/sections/import_input_section.dart` — JSON einfügen (füllend)
   2. `settings/sections/import_preview_section.dart` — Titel, Zutatenzahl, Gesamt-kcal
   3. Fehler und „Importieren“ (Slot im Bildschirm, keine eigene Darstellung)
+- **Figma `23:1895`:** übereinstimmend Rahmen „Inhalt“, Eingabe füllend, Vorschau. Kein Golden-Motiv.
 - **Umgestellt:** C19.
 
 ## 13 Einstellungen — `settings/settings_screen.dart`
@@ -164,10 +179,12 @@ Anzeigereihenfolge. **Umgestellt** nennt den Commit.
 - **Abschnitte:**
   1. `settings/sections/settings_core_entries_section.dart` — Export, Import, „Über unsalted“
   2. `settings/sections/settings_module_entries_section.dart` — Trennlinie + `settingsEntries` nach `order`
+- **Figma `20:1231`:** übereinstimmend Liste ohne Seitenrand mit Haarlinien, Navigation mit Auswahlbalken. Kein Golden-Motiv.
 - **Umgestellt:** C14.
 
 ## Gemeinsam
 
 - `shared/undoable_deletion.dart` — Fristen und Provider bleiben; Meldung über `AppMessenger` (C15), Wischen über `AppSwipeToDelete` (C16).
 - `shared/unit_labels.dart` — Einheiten deutsch, Mengen mit Dezimalkomma (C27b); eingesetzt in Bildschirm 3 (Zutatenzeile, eingefrorene Ansicht), 4 (Zutaten) und 8 (Vergleichsspalten).
-- App-Hülle `apps/unsalted_app/lib/main.dart` — Theme hell/dunkel aus `AppTheme` (folgt dem System), Navigation über `AppNavigationBar` (C26).
+- App-Hülle `apps/unsalted_app/lib/main.dart` — Theme hell/dunkel aus `AppTheme` (folgt dem System), Navigation über `AppNavigationBar` in `AppPage.navigation`: unter 600 unten, ab 600 als seitliche Leiste links (C26, D17); Systemtexte deutsch (D17b).
+- Große Schrift (28.10.11): Kopfleiste und Navigation folgen der Textgröße nicht; Inhalte wachsen bis 200 % und brechen um (Tabelle, Kennzahlen, Mengenrechner, Zutatenzeile, Aktionsleiste, Vergleich, Hinweis, Meldung).
