@@ -61,6 +61,11 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
   Mengenrechner (zweites Feld darunter), Hinweis und Meldung (Aktion darunter).
 - Die Kopfleiste und die Navigation folgen der Textgröße nicht (UEBERGABE 3);
   Ziele zeigen beim langen Drücken einen Tooltip.
+- Untereinander stehende Formularfelder haben einheitlich `space-m` (12)
+  Abstand. Figma zeigt 16 (Bildschirm 10 Kennung und Maße, Bildschirm 11
+  Auswahl), 32 (Bildschirm 2) und 12 (Bildschirm 3 Parameter); die
+  Editor-Schrittzeile ist in Figma nicht abgebildet. Zutatenzeile (`xs`) und
+  Mengenrechner bei großer Schrift (`space-s`) folgen Figma. (D16b, D18b–D18d)
 
 ## B. Figma zeigt mehr — der Code folgt später (in Figma nichts zu tun)
 

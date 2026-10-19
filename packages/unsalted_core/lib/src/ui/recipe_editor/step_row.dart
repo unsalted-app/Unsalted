@@ -10,7 +10,8 @@
 // `size-index-column` (`data-strong`, vom Abschnitt übergeben, freigegeben),
 // die Anweisung füllt den Rest, das Timer-Feld (schmal, wächst mit der
 // Textgröße) steht darunter wie der Timer in der Anzeige; Ziehgriff und
-// Entfernen unverändert.
+// Entfernen unverändert. Seit D18d Abstand `space-m` zwischen Anweisung und
+// Timer (wie D16b; vorher `space-s`).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -120,7 +121,7 @@ class StepRow extends StatelessWidget {
               ),
             Expanded(
               child: AppStack(
-                gap: AppSpace.s,
+                gap: AppSpace.m,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppTextField(

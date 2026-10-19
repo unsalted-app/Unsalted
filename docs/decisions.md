@@ -3151,3 +3151,50 @@ Tests grün; `check_architecture` Exit 0.
 *Goldens:* Lauf 39330602936 (`goldens/d18c`): abweichend die 8 Bilder von
 GL-02 `10_lebensmittel_bearbeiten` (Abstand zwischen den Maßfeldern, der
 Rest rückt nach unten).
+
+**Freigabe Teil 1.3 (Projektverantwortlicher):** „Menü ist auf dem iPhone
+jetzt deutsch – D17c bestätigt. Teil 1.3 ist freigegeben.“ Reihenfolge: D18d
+(letzter Abstand-Durchgang), Status in `docs/design/system/README.md`,
+Vorprüfung, Merge mit `--no-ff` nach `main`, Tests auf `main`, Tags
+`part1-v1.3.0` und `design-v0.2.0`, Status und Kandidaten für Teil 1.4,
+Aufräumen; bei jeder Abweichung Stopp.
+
+**D18d — Letzter Abstand-Durchgang.** Vorgabe: `package_identity_section.dart`
+bekommt `space-m` wie D16b; alle übrigen Abschnitte und Bausteine unter
+`lib/src/ui` mit untereinander stehenden Eingabefeldern prüfen und die
+restlichen Fälle im selben Commit beheben (keine Bildschirm-Dateien). Befund
+der Durchsicht (alle Dateien mit `AppTextField`, `AppSelect`,
+`PackageNumberField`): ohne Abstand nur noch „Kennung“; mit kleinerem Abstand
+die Export-Auswahl (`space-s`), die Schrittzeile (Anweisung → Timer,
+`space-s`), der Mengenrechner bei großer Schrift (`space-s`) und die
+Zutatenzeile (`xs`); einzelne Felder ohne Nachbarn (Suche, Import,
+Auswahldialog, Spalte der Nährwerttabelle) sind kein Fall; in
+Bildschirm-Dateien steht kein gestapeltes Feld (kein Kandidat für 1.4).
+Figma (nur gelesen) zeigt zwischen gestapelten Formularfeldern 16
+(Bildschirm 10 Kennung/Maße `23:1517`/`23:1571`, Bildschirm 11 Auswahl
+`23:1842`), 32 (Bildschirm 2 `20:978`), beim Mengenrechner bei Schrift 200
+8 (`73:3816`); die Editor-Schrittzeile ist nicht abgebildet.
+*Entscheidung des Projektverantwortlichen (Rückfrage):* Export-Auswahl und
+Schrittzeile auf `space-m`; Zutatenzeile bleibt `xs` (Figma
+`Core/Ingredient Row`, kompakte Listenzeile); Mengenrechner bleibt
+`space-s` (wie Figma bei Schrift 200 — meine erste Rückfrage hatte
+fälschlich „Figma zeigt nur nebeneinander“ genannt, korrigiert und erneut
+gefragt). Umsetzung: `package_identity_section.dart` Felder in `AppStack`
+mit `gap: AppSpace.m`; `export_selection_section.dart` `AppGap(AppSpace.m)`
+statt `AppSpace.s` (der Abstand bleibt auch ohne Versionsauswahl stehen wie
+bisher); `step_row.dart` innerer `AppStack` mit `gap: AppSpace.m`. Die
+einheitlichen 12 statt Figmas 16/32 stehen in `rueckmeldung-figma.md` (A4).
+*Geänderte bestehende Testzeilen:* keine (Core vor den neuen Tests 444 grün;
+keine Testzeile legt `space-s`/`xs` fest). Neu in
+`test/ui/recipe_editor/editor_design_test.dart`: UI-82 (Kennung mit und ohne
+Barcode, Export-Auswahl Rezept → Version, Schrittzeile Anweisung → Timer;
+jeweils genau `space-m`). Gegenproben: Kennung ohne Abstand → rot (0);
+Export wieder `space-s` → rot (8); Schrittzeile wieder `space-s` → rot (8);
+danach grün. Nachträge 28.10.1 (Regel für gestapelte Felder) und 28.10.13;
+`screens.md`, `components.md`, `rueckmeldung-figma.md` nachgeführt. Mac:
+Design 461, Core 448, App 12, Widgetbook 10 Tests grün; `check_architecture`
+Exit 0.
+*Goldens:* Lauf 39335480993 (`goldens/d18d`): abweichend die 8 Bilder von
+GL-02 `10_lebensmittel_bearbeiten` (Abstand zwischen Name, Marke und Barcode,
+der Rest rückt nach unten). `03_rezept_bearbeiten` unverändert — die Schritte
+liegen unterhalb des Bildausschnitts; Export ist kein Golden-Motiv.

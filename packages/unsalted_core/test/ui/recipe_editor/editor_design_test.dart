@@ -24,16 +24,21 @@
 // Zahlenfelder; Portionen ohne Komma, die übrigen mit Komma.
 // UI-81 (D18c): Abstand `space-m` zwischen den Maßfeldern des
 // Verpackungsformulars.
+// UI-82 (D18d): Abstand `space-m` auch zwischen Name, Marke und Barcode
+// (Kennung), zwischen den Auswahlfeldern des Exports und zwischen Anweisung
+// und Timer der Schrittzeile.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:unsalted_core/src/food/food_variant.dart';
+import 'package:unsalted_core/src/recipe/recipe.dart';
 import 'package:unsalted_core/src/recipe/recipe_ingredient.dart';
 import 'package:unsalted_core/src/recipe/recipe_step.dart';
 import 'package:unsalted_core/src/recipe/recipe_version.dart';
 import 'package:unsalted_core/src/ui/foods/package_form.dart';
+import 'package:unsalted_core/src/ui/foods/sections/package_identity_section.dart';
 import 'package:unsalted_core/src/ui/foods/sections/package_measures_section.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/sections/recipe_detail_steps_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/ingredient_row.dart';
@@ -43,6 +48,7 @@ import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_parame
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_steps_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/step_row.dart';
 import 'package:unsalted_core/src/ui/recipe_list/sections/recipe_list_empty_section.dart';
+import 'package:unsalted_core/src/ui/settings/sections/export_selection_section.dart';
 import 'package:unsalted_core/src/ui/versions/version_mark.dart';
 import 'package:unsalted_design/unsalted_design.dart';
 
@@ -369,4 +375,52 @@ void main() {
       }
     });
   }
+
+  for (final showBarcode in [true, false]) {
+    testWidgets('UI-82: Abstand zwischen Name, Marke und Barcode (showBarcode: $showBarcode)', (tester) async {
+      await _pump(
+        tester,
+        PackageIdentitySection(
+          name: TextEditingController(),
+          brand: TextEditingController(),
+          barcode: TextEditingController(),
+          showBarcode: showBarcode,
+        ),
+      );
+      final fields = [for (final e in find.byType(AppTextField).evaluate()) tester.getRect(find.byWidget(e.widget))];
+      expect(fields, hasLength(showBarcode ? 3 : 2));
+      for (var i = 1; i < fields.length; i++) {
+        expect(fields[i].top - fields[i - 1].bottom, AppSpacing.m);
+      }
+    });
+  }
+
+  testWidgets('UI-82: Abstand zwischen den Auswahlfeldern des Exports', (tester) async {
+    await _pump(
+      tester,
+      ExportSelectionSection(
+        recipes: Stream.value(const [Recipe(id: 'r', title: 'Pizzateig')]),
+        versions: Stream.value([_frozenVersion()]),
+        selectedRecipeId: 'r',
+        selectedVersionId: 'v3',
+        onRecipeSelected: (_) {},
+        onVersionSelected: (_) {},
+      ),
+    );
+    await tester.pump();
+    final selects = [
+      for (final e in find.byType(AppSelect<String>).evaluate()) tester.getRect(find.byWidget(e.widget)),
+    ];
+    expect(selects, hasLength(2), reason: 'Rezept und Version');
+    expect(selects[1].top - selects[0].bottom, AppSpacing.m);
+  });
+
+  testWidgets('UI-82: Abstand zwischen Anweisung und Timer', (tester) async {
+    await _pump(
+      tester,
+      StepRow(data: const StepRowData(id: 'a', instruction: 'Kneten'), number: 1, onInstructionChanged: (_) {},
+          onTimerChanged: (_) {}, onRemove: () {}),
+    );
+    expect(_field(tester, 'Timer (Min.)').top - _field(tester, 'Anweisung').bottom, AppSpacing.m);
+  });
 }

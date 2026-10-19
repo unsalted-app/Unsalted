@@ -134,7 +134,7 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · nicht gefunden · Eingabe mit Warnungen/Fehlern · speichert · Speicherfehler (`messages`).
 - **Template:** `FormPageTemplate` mit Hauptaktion und `AppOverflowMenu`; Inhalt `PackageForm` (`FormSections`).
 - **Abschnitte (in `PackageForm`):**
-  1. `foods/sections/package_identity_section.dart` — Name, Marke, Barcode
+  1. `foods/sections/package_identity_section.dart` — Name, Marke, Barcode (Abstand `space-m`; D18d)
   2. `foods/sections/package_measures_section.dart` — Dichte, Stückgewicht, Portionsgröße (Zahlenfelder mit Abstand `space-m`; D18b, D18c)
   3. `foods/sections/package_nutrients_section.dart` — 8 Nährwerte (EU-Reihenfolge) + Natrium (`PackageNumberField`), als Zahlenfelder im `AppGrid` (ab 600 zweispaltig; D16, D16c)
   4. `foods/sections/package_validation_section.dart` — Warnungen und Fehler (`AppNotice` Warnung/Fehler, Keys `package_form_warning`/`package_form_error`; D16)
@@ -150,10 +150,10 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Zustände:** keine Auswahl · keine eingefrorene Version · Fehler · Ergebnis.
 - **Template:** `FormPageTemplate` mit `FormSections.fixed`.
 - **Abschnitte:**
-  1. `settings/sections/export_selection_section.dart` — Rezept, Version (bekommt die Streams als Daten)
+  1. `settings/sections/export_selection_section.dart` — Rezept, Version (bekommt die Streams als Daten; Abstand `space-m`, D18d)
   2. „Exportieren“ und Fehler (Slot im Bildschirm, keine eigene Darstellung)
   3. `settings/sections/export_result_section.dart` — JSON (`AppCodeBlock`), „In Zwischenablage kopieren“
-- **Figma `23:1818`:** übereinstimmend Rahmen „Inhalt“, Auswahl mit Beschriftung oben, JSON im Codeblock auf `surface-sunken`. Kein Golden-Motiv.
+- **Figma `23:1818`:** übereinstimmend Rahmen „Inhalt“, Auswahl mit Beschriftung oben, JSON im Codeblock auf `surface-sunken`. Bewusst anders: Abstand zwischen den Auswahlfeldern `space-m` statt 16 (einheitlich, D18d). Kein Golden-Motiv.
 - **Umgestellt:** C18.
 
 ## 12 Import — `settings/import_screen.dart`

@@ -114,12 +114,12 @@ Aus Design-Komponenten zusammengesetzt; Abschnitte je Bildschirm in
 | `VersionTile` | Bildschirm 07 | `versions/version_tile.dart` | `AppListItem`, `VersionMark`, `AppText`, `AppIconButton` | UI-68 |
 | `VersionSwitcher` (Fassungsleiste) | `Core/Version Switcher` `142:19` | `recipe_detail/version_switcher.dart` | `VersionMark` als Ziele, `Wrap` | UI-67 |
 | `IngredientRow` (zweizeilig) | Bildschirm 03, `Core/Ingredient Row` `141:4` | `recipe_editor/ingredient_row.dart` | `AppTextField`, `AppSelect` (`expand`), `AppDashedUnderline`, `AppIconButton`, `AppIcon` | UI-72 |
-| `StepRow` (Nummer, Timer darunter) | `Core/Step Row` `141:10` | `recipe_editor/step_row.dart` | `AppTextField` (schmal), `AppText.dataStrong`, `AppIconButton` | UI-74 |
+| `StepRow` (Nummer, Timer darunter) | `Core/Step Row` `141:10` | `recipe_editor/step_row.dart` | `AppTextField` (schmal, `space-m` unter der Anweisung), `AppText.dataStrong`, `AppIconButton` | UI-74, UI-82 |
 | `FoodVariantPickerDialog` | — | `recipe_editor/food_variant_picker_dialog.dart` | `AppDialog`, `AppTextField`, `AppItemList`, `AppListItem`, `AppEmptyState` | — |
 | `NutritionHeader` (Kennzahlenleiste) | `Core/Nutrition Header` `142:57` | `nutrition/nutrition_header.dart` | `AppFigureRow`, `AppValue.strong`, `AppNotice` (Warnung) | UI-70 |
 | `NutritionTable` (Deklaration) | `Data/Key Value Table` | `nutrition/nutrition_table.dart` | `AppKeyValueTable` (`sub`, `strong`), `AppSelect`, `AppText` | UI-71 |
 | `AmountCalculator` | `Core/Amount Calculator` `179:392` | `nutrition/amount_calculator.dart` | `AppTextField` (Zahl, Einheit), `AppIcon` (`swap`) | UI-71 |
-| `PackageForm` | Bildschirm 10 | `foods/package_form.dart` | Abschnitte unter `foods/sections/` (`AppTextField` als Zahlenfelder im `AppGrid`, `AppSection`, `AppNotice`) | UI-73, UI-78, UI-80, UI-81 |
+| `PackageForm` | Bildschirm 10 | `foods/package_form.dart` | Abschnitte unter `foods/sections/` (`AppTextField` als Zahlenfelder im `AppGrid`, `AppSection`, `AppNotice`) | UI-73, UI-78, UI-80–82 |
 | `SnapshotColumn` | — | `versions/snapshot_column.dart` | `AppText`, `AppPadding`, `AppStack` | — |
 | `ChangeList` | Bildschirm 08, `Change` | `versions/change_list.dart` | `AppItemList`, `AppSection`, `AppChangeText` | UI-69 |
 

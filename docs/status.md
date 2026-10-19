@@ -274,6 +274,7 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D18b | Nach Prüfung Etappe 4 (freigegeben): Abstand `space-m` zwischen Titel und Beschreibung (Bildschirm 2); Maßfelder des Verpackungsformulars und Editor-Parameter als Zahlenfelder (Portionen ohne Komma); UI-79/80 | fertig |
 | D17c | Befund iPhone-Test: Deutsch als Sprache des App-Bundles (`CFBundleDevelopmentRegion` „de“, `CFBundleLocalizations` mit „de“ in iOS und macOS), damit „Kopieren“/„Ausschneiden“ der Textauswahl deutsch sind; APP-05 | fertig |
 | D18c | Abstand `space-m` zwischen den Maßfeldern im Verpackungsformular (wie D16b); UI-81 | fertig |
+| D18d | Letzter Abstand-Durchgang (nach Freigabe von Teil 1.3): `space-m` in Kennung (Name, Marke, Barcode), Export-Auswahl und Schrittzeile (Anweisung → Timer); Zutatenzeile und Mengenrechner bleiben wie Figma (entschieden); UI-82 | fertig |
 
 **Kandidaten für Teil 1.4** (eingeordnet 2026-10-18, Details in
 `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“): Master in der
