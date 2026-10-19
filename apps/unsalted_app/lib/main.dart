@@ -8,6 +8,9 @@
 // unsalted_design (folgt der Systemeinstellung), Hauptnavigation über
 // AppNavigationBar. Anzeige-Schalter aus config/ui_options.dart (C29).
 // Seit Teil 1.3 (D02): Lizenz der Schrift des Design-Systems registriert.
+// Seit D17 (F4): Die Hauptnavigation steht in `AppPage.navigation` — unter
+// `breakpoint-medium` unten, ab `breakpoint-medium` als seitliche Leiste links
+// (gleiche Ziele); Liste und Detail nebeneinander folgen erst mit Teil 1.4.
 
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +98,7 @@ class _NavigationShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage(
       body: child,
-      bottomBar: AppNavigationBar(
+      navigation: AppNavigationBar(
         selectedIndex: _selectedIndex,
         onSelected: (index) => context.go(_destinations[index]),
         destinations: const [

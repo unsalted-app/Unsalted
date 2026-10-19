@@ -3004,3 +3004,26 @@ Zahlentastatur → UI-78 rot; danach grün. Nachtrag 28.10.8 ergänzt. Mac: Core
 `10_lebensmittel_bearbeiten` (Handy 100 %, Tablet 100/200 %; Werte der
 Nährwertfelder rechtsbündig mit tabellarischen Ziffern; bei 200 % am Handy
 liegen die Felder unterhalb des Ausschnitts).
+
+**D17 — App-Hülle: Seitenleiste ab 600 (F4).** `apps/unsalted_app/lib/main.dart`:
+`_NavigationShell` übergibt die `AppNavigationBar` an `AppPage.navigation`
+statt `bottomBar` (eine Zeile, wie im Plan für D10/D17). `AppPage` (D10)
+stellt sie unter `breakpoint-medium` unten dar, ab `breakpoint-medium` (nach
+Fensterbreite, Material 3) als seitliche Leiste links mit `size-nav-rail`,
+denselben Zielen und dem Auswahlbalken. Die Bildschirme liegen unverändert
+rechts daneben im Rahmen „Inhalt“ (D11). Figma (nur gelesen): Tablet hoch
+`147:9746` und Handy quer `148:3817` zeigen die Leiste links — dort
+zusätzlich Liste und Detail nebeneinander, das bleibt Teil 1.4 (F4). Die
+Unterseiten (Rezeptdetail, Editor …) öffnet der Bildschirm im Navigator der
+Hülle; die Leiste bleibt wie bisher die Navigation unten sichtbar.
+*Geänderte bestehende Testzeilen:* keine — `theme_test.dart:50–52` sucht
+`AppNavigationBar` und findet auf der 800 breiten Testfläche jetzt die
+Seitenleiste (dieselbe Komponente, `rail`), wie im Plan (d2) vorgesehen; der
+Rauchtest tippt die Ziele über ihre Symbole. Neu `test/navigation_test.dart`:
+APP-04 (390 × 844 unten in voller Breite; 1024 × 1366 und Handy quer 844 ×
+390 links mit `size-nav-rail`, Inhalt rechts daneben; drei Ziele; Tippen
+wechselt zu „Einstellungen“ und markiert das Ziel). Gegenprobe: wieder
+`bottomBar` → APP-04 bei 1024 und 844 rot; danach grün. Keine Golden-Bilder
+(die App ist kein Golden-Motiv; GL-02 baut die Bildschirme ohne Hülle).
+Nachtrag 28.10.10 ergänzt. Mac: App 9 Tests grün; `check_architecture`
+Exit 0.

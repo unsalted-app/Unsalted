@@ -81,7 +81,8 @@ unsalted/
 │     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
      ├─ lib/main.dart             ProviderScope-Overrides (appOverrides), GoRouter aus
 │     │                            modules.expand((m) => m.routes), ShellRoute
-│     │                            mit NavigationBar (/, /foods, /settings)
+│     │                            mit AppNavigationBar über AppPage.navigation
+│     │                            (unten unter 600, links ab 600; /, /foods, /settings)
 │     └─ test/widget_test.dart     App-Start-Rauchtest
 └─ packages/
    ├─ unsalted_design/             Design-System (Teil 1.2/1.3), Rang 0, nur Flutter, Tür mit show
@@ -286,10 +287,10 @@ kein Merge, keine Tags). Kandidaten für Teil 1.4: `docs/design/plan-1.3.md`,
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** D17 (Seitenleiste in der App), D17b (deutsche
-Systemtexte), D18 (Abschluss); Stopp mit Bericht nach D18. (Fertig in
-Etappe 4: D16b Abstand im Editor-Abschnitt „Parameter“, D16c Nährwertfelder
-als Zahlenfelder.)
+**Nächster Schritt:** D17b (deutsche Systemtexte), D18 (Abschluss); Stopp
+mit Bericht nach D18. (Fertig in Etappe 4: D16b Abstand im Editor-Abschnitt
+„Parameter“, D16c Nährwertfelder als Zahlenfelder, D17 Seitenleiste ab 600
+in der App, APP-04.)
 
 ---
 
