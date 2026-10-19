@@ -37,7 +37,7 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Template:** `FormPageTemplate` mit `FormSections` und Hauptaktion.
 - **Abschnitte:**
   1. `recipe_editor/sections/recipe_create_fields_section.dart` — Titel (mit Fehlertext) und Beschreibung
-- **Figma `20:978`:** übereinstimmend Rahmen „Inhalt“, Beschriftungen über dem Feld, Marker-Knopf. Offen: Abstand zwischen Titel und Beschreibung (`recipe_create_fields_section.dart`, nicht freigegeben). Kein Golden-Motiv.
+- **Figma `20:978`:** übereinstimmend Rahmen „Inhalt“, Beschriftungen über dem Feld, Abstand zwischen Titel und Beschreibung (D18b), Marker-Knopf. Kein Golden-Motiv.
 - **Umgestellt:** C17.
 
 ## 3 Rezept bearbeiten — `recipe_editor/recipe_editor_screen.dart`
@@ -55,7 +55,7 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
   5. `recipe_editor/sections/recipe_editor_actions_section.dart` — Einfrieren · Speichern (Slot `bottomBar`)
 - **Abschnitt (eingefroren):** `recipe_editor/sections/recipe_editor_frozen_section.dart` — Hinweis (`AppNotice`) + „Kopieren“, darunter Zutaten und Schritte schreibgeschützt im Zustandsrahmen (`AppFrame.fixed`) mit `VersionMark` samt Siegel (D16).
 - **Bausteine:** `recipe_editor/ingredient_row.dart` (`IngredientRow`, `IngredientRowData`), `recipe_editor/step_row.dart` (`StepRow`, `StepRowData`, `timerInputText`), `recipe_editor/food_variant_picker_dialog.dart` (`FoodVariantPickerDialog`).
-- **Figma `7:895` (Entwurf), `42:2010` (eingefroren):** übereinstimmend zweizeilige Zutatenzeile (Menge in `reflow-value-column`, Einheit und Notiz teilen den Rest), Abschnitte mit Linie, Abstand zwischen den Parameter-Feldern (D16b), Aktionsleiste (bei großer Schrift untereinander), eingefrorene Ansicht mit Hinweis und „Kopieren“. Bewusst anders: Beschriftungen über den Feldern, Entfernen mit Papierkorb, gestrichelte Unterstreichung statt Tag „nicht verknüpft“, Zustandsrahmen mit Siegel in der eingefrorenen Ansicht, Hinweistext nach Kapitel 22. Offen: Vorschau im gestrichelten Rahmen mit Kennzahlen, Portionen und Backverlust nebeneinander, Einheit als umrandetes Feld. Golden `03_rezept_bearbeiten`.
+- **Figma `7:895` (Entwurf), `42:2010` (eingefroren):** übereinstimmend zweizeilige Zutatenzeile (Menge in `reflow-value-column`, Einheit und Notiz teilen den Rest), Abschnitte mit Linie, Abstand zwischen den Parameter-Feldern (D16b), Portionen, Backverlust und Fertiggewicht-Override als Zahlenfelder (D18b), Aktionsleiste (bei großer Schrift untereinander), eingefrorene Ansicht mit Hinweis und „Kopieren“. Bewusst anders: Beschriftungen über den Feldern, Entfernen mit Papierkorb, gestrichelte Unterstreichung statt Tag „nicht verknüpft“, Zustandsrahmen mit Siegel in der eingefrorenen Ansicht, Hinweistext nach Kapitel 22. Offen: Vorschau im gestrichelten Rahmen mit Kennzahlen, Portionen und Backverlust nebeneinander, Einheit als umrandetes Feld. Golden `03_rezept_bearbeiten`.
 - **Umgestellt:** C25.
 
 ## 4 Rezeptdetail — `recipe_detail/recipe_detail_screen.dart`
@@ -135,11 +135,11 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Template:** `FormPageTemplate` mit Hauptaktion und `AppOverflowMenu`; Inhalt `PackageForm` (`FormSections`).
 - **Abschnitte (in `PackageForm`):**
   1. `foods/sections/package_identity_section.dart` — Name, Marke, Barcode
-  2. `foods/sections/package_measures_section.dart` — Dichte, Stückgewicht, Portionsgröße
+  2. `foods/sections/package_measures_section.dart` — Dichte, Stückgewicht, Portionsgröße (Zahlenfelder; D18b)
   3. `foods/sections/package_nutrients_section.dart` — 8 Nährwerte (EU-Reihenfolge) + Natrium (`PackageNumberField`), als Zahlenfelder im `AppGrid` (ab 600 zweispaltig; D16, D16c)
   4. `foods/sections/package_validation_section.dart` — Warnungen und Fehler (`AppNotice` Warnung/Fehler, Keys `package_form_warning`/`package_form_error`; D16)
 - **Bausteine:** `foods/package_form.dart` (`PackageForm`: Zustand, Prüfung, Natrium-Umrechnung).
-- **Figma `23:1492`:** übereinstimmend Beschriftungen über dem Feld, Abschnitte mit Linie, Warnung und Fehler als Hinweise mit Symbol, Nährwertfelder als Zahlenfelder (rechtsbündig) und ab 600 zweispaltig. Offen: Maßfelder (Dichte, Stückgewicht, Portionsgröße) ohne Zahlentastatur. Golden `10_lebensmittel_bearbeiten`.
+- **Figma `23:1492`:** übereinstimmend Beschriftungen über dem Feld, Abschnitte mit Linie, Warnung und Fehler als Hinweise mit Symbol, Nährwert- und Maßfelder als Zahlenfelder (rechtsbündig; D16c, D18b), Nährwertfelder ab 600 zweispaltig. Golden `10_lebensmittel_bearbeiten`.
 - **Umgestellt:** C24.
 
 ## 11 Export — `settings/export_screen.dart`

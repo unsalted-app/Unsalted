@@ -284,14 +284,15 @@ zweispaltig, „Keine Treffer.“ ohne Leerstelle). Etappe 3 fertig und
 freigegeben. Etappe 4 fertig: D16b/D16c (Abstand im Editor-Abschnitt
 „Parameter“, Nährwertfelder als Zahlenfelder), D17 (Seitenleiste ab 600 in
 der App), D17b (deutsche Systemtexte), D18 (Doku, `rueckmeldung-figma.md`,
-Design-Paket 0.2.0). Kandidaten für Teil 1.4: `docs/design/plan-1.3.md`,
-„Nicht Teil von 1.3“. Test-IDs neu: GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–78,
-APP-03/04.
+Design-Paket 0.2.0), nach Prüfung D18b (Abstand Titel/Beschreibung in
+Bildschirm 2; Maß- und Parameterfelder als Zahlenfelder). Kandidaten für
+Teil 1.4: `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“. Test-IDs neu:
+GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–80, APP-03/04.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** Bericht zu Etappe 4 an den Projektverantwortlichen;
+**Nächster Schritt:** Bericht zu D18b an den Projektverantwortlichen;
 danach seine Freigabe von Teil 1.3 (Merge von PR #2, Tags und Status in
 `docs/design/system/README.md` nach Plan F14 — alles nur auf seine
 Anweisung), dann Teil 1.4.

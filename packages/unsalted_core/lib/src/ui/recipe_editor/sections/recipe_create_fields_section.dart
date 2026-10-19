@@ -1,7 +1,8 @@
 // lib/src/ui/recipe_editor/sections/recipe_create_fields_section.dart
 //
 // Bildschirm 2, Abschnitt „Felder“ (Teil 1.2): Titel (1–200 Zeichen) und
-// Beschreibung.
+// Beschreibung. Seit Teil 1.3 (D18b) mit Abstand `space-m` zwischen den
+// Feldern (wie D16b).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -27,6 +28,7 @@ class RecipeCreateFieldsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppStack(
+        gap: AppSpace.m,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppTextField(controller: titleController, label: 'Titel', error: titleError),

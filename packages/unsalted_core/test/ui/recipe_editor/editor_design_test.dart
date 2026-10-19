@@ -18,6 +18,10 @@
 // „Parameter“.
 // UI-78 (D16c): Die Nährwertfelder des Verpackungsformulars sind Zahlenfelder
 // (Tastatur mit Komma, rechtsbündig, tabellarische Ziffern).
+// UI-79 (D18b): Abstand `space-m` zwischen Titel und Beschreibung
+// (Bildschirm 2).
+// UI-80 (D18b): Maßfelder des Verpackungsformulars und Editor-Parameter sind
+// Zahlenfelder; Portionen ohne Komma, die übrigen mit Komma.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +32,10 @@ import 'package:unsalted_core/src/recipe/recipe_ingredient.dart';
 import 'package:unsalted_core/src/recipe/recipe_step.dart';
 import 'package:unsalted_core/src/recipe/recipe_version.dart';
 import 'package:unsalted_core/src/ui/foods/package_form.dart';
+import 'package:unsalted_core/src/ui/foods/sections/package_measures_section.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/sections/recipe_detail_steps_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/ingredient_row.dart';
+import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_create_fields_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_frozen_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_parameters_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_steps_section.dart';
@@ -71,6 +77,19 @@ IngredientRow _row({bool linked = false}) => IngredientRow(
     );
 
 Rect _field(WidgetTester tester, String label) => tester.getRect(find.widgetWithText(AppTextField, label));
+
+TextField _input(WidgetTester tester, String label) => tester.widget<TextField>(
+      find.descendant(of: find.widgetWithText(AppTextField, label), matching: find.byType(TextField)),
+    );
+
+/// Zahlenfeld nach D16c: Tastatur [keyboard], rechtsbündig, tabellarische
+/// Ziffern.
+void _expectNumeric(WidgetTester tester, String label, TextInputType keyboard) {
+  final field = _input(tester, label);
+  expect(field.keyboardType, keyboard, reason: label);
+  expect(field.textAlign, TextAlign.end, reason: label);
+  expect(field.style!.fontFeatures, AppTypography.data.fontFeatures, reason: label);
+}
 
 RecipeVersion _frozenVersion() => RecipeVersion(
       id: 'v3',
@@ -274,5 +293,56 @@ void main() {
     }
     await tester.enterText(find.widgetWithText(AppTextField, 'Fett (g)'), '2,5');
     expect(find.text('2,5'), findsOneWidget, reason: 'Komma bleibt erhalten');
+  });
+
+  testWidgets('UI-79: Abstand zwischen Titel und Beschreibung', (tester) async {
+    await _pump(
+      tester,
+      RecipeCreateFieldsSection(
+        titleController: TextEditingController(),
+        descriptionController: TextEditingController(),
+        titleError: null,
+      ),
+    );
+    expect(_field(tester, 'Beschreibung').top - _field(tester, 'Titel').bottom, AppSpacing.m);
+  });
+
+  testWidgets('UI-80: Maßfelder als Zahlenfelder mit Komma', (tester) async {
+    await _pump(
+      tester,
+      PackageMeasuresSection(
+        density: TextEditingController(),
+        gramsPerPiece: TextEditingController(),
+        servingSize: TextEditingController(),
+      ),
+    );
+    const decimal = TextInputType.numberWithOptions(decimal: true);
+    for (final label in ['Dichte (g/ml)', 'Stückgewicht (g)', 'Portionsgröße (g)']) {
+      _expectNumeric(tester, label, decimal);
+    }
+    await tester.enterText(find.widgetWithText(AppTextField, 'Dichte (g/ml)'), '1,03');
+    expect(find.text('1,03'), findsOneWidget, reason: 'Komma bleibt erhalten');
+  });
+
+  testWidgets('UI-80: Editor-Parameter als Zahlenfelder, Portionen ohne Komma', (tester) async {
+    await _pump(
+      tester,
+      RecipeEditorParametersSection(
+        servings: TextEditingController(),
+        bakingLoss: TextEditingController(),
+        finalWeight: TextEditingController(),
+        notes: TextEditingController(),
+        onChanged: () {},
+        showAdvanced: true,
+      ),
+    );
+    _expectNumeric(tester, 'Portionen', TextInputType.number);
+    expect(_input(tester, 'Portionen').keyboardType.decimal, isNot(isTrue), reason: 'Portionen ohne Komma');
+    const decimal = TextInputType.numberWithOptions(decimal: true);
+    _expectNumeric(tester, 'Backverlust (%)', decimal);
+    _expectNumeric(tester, 'Fertiggewicht-Override (g)', decimal);
+    final notes = _input(tester, 'Notizen');
+    expect(notes.keyboardType.index, isNot(TextInputType.number.index), reason: 'Notizen bleiben Text');
+    expect(notes.textAlign, TextAlign.start, reason: 'Notizen bleiben Text');
   });
 }

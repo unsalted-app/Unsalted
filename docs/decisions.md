@@ -3068,3 +3068,39 @@ und APP-03/04 ergänzt. *Nicht getan (F14, Vorgabe):* kein Merge, keine Tags;
 Projektverantwortliche freigibt. Keine Golden-Bilder (nur Doku und Version).
 Mac: Design 461, Core 439, App 10, Widgetbook 10 Tests grün;
 `check_architecture` Exit 0.
+
+**D18b — Nachtrag nach Prüfung von Etappe 4 (freigegeben).** Vorgabe des
+Projektverantwortlichen: „Etappe 4 geprüft – sauber. Vor dem Merge noch ein
+kleiner Commit D18b mit deinen zwei offenen Punkten (beide in Abschnitten
+unter lib/src/ui)“ — die beiden „nicht Teil der Freigabe“-Punkte aus D16b und
+D16c. Kein Merge, keine Tags.
+(1) `recipe_editor/sections/recipe_create_fields_section.dart`: `AppStack`
+mit `gap: AppSpace.m` zwischen Titel und Beschreibung (wie D16b; Figma
+`20:978`). (2) Zahlenfelder wie D16c — `AppTextField` zeigt sie rechtsbündig
+in `data` mit tabellarischen Ziffern (D08):
+`foods/sections/package_measures_section.dart` Dichte, Stückgewicht,
+Portionsgröße mit `TextInputType.numberWithOptions(decimal: true)`;
+`recipe_editor/sections/recipe_editor_parameters_section.dart` Portionen mit
+`TextInputType.number` (ganze Zahl, Tastatur ohne Komma), Backverlust und
+Fertiggewicht-Override mit `numberWithOptions(decimal: true)`; Notizen bleiben
+Textfeld. Parsing, Prüfung, Texte und Reihenfolge unverändert (Portionen
+werden weiter als ganze Zahl gelesen, Komma und Punkt bei den übrigen wie
+bisher). Die Maßfelder liegen weiter ohne Abstand untereinander in
+`AppSection` — nicht Teil der Vorgabe, nicht geändert (Bericht).
+*Geänderte bestehende Testzeilen:* keine (Core vor den neuen Tests 439 grün).
+Neu in `test/ui/recipe_editor/editor_design_test.dart`: UI-79 (Abstand
+zwischen Titel und Beschreibung genau `space-m`), UI-80 (Maßfelder mit
+Zahlentastatur mit Komma, rechtsbündig, tabellarische Ziffern, „1,03“ bleibt
+so stehen; Portionen `TextInputType.number` ohne Komma, Backverlust und
+Fertiggewicht-Override mit Komma, Notizen weiter Text). Gegenproben: ohne
+Abstand → UI-79 rot (0 statt 12); Maßfelder ohne Zahlentastatur → UI-80 rot;
+Portionen mit Komma → UI-80 rot; Backverlust ohne Zahlentastatur → UI-80 rot;
+danach grün. Nachträge 28.10.3, 28.10.8, 28.10.13 ergänzt; `screens.md`
+(Bildschirm 2, 3, 10: „Offen“ erledigt) und `components.md` nachgeführt. Mac:
+Design 461, Core 442, App 10, Widgetbook 10 Tests grün; `check_architecture`
+Exit 0.
+*Goldens:* Lauf 39322997334 (`goldens/d18b`): abweichend die 8 Bilder von
+GL-02 `03_rezept_bearbeiten` (Portionen und Backverlust rechtsbündig mit
+tabellarischen Ziffern). `10_lebensmittel_bearbeiten` unverändert — die
+Maßfelder sind im Golden-Motiv leer, und die Tastatur erscheint nicht im Bild;
+Bildschirm 2 ist kein Golden-Motiv.
