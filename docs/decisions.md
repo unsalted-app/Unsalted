@@ -3027,3 +3027,19 @@ wechselt zu „Einstellungen“ und markiert das Ziel). Gegenprobe: wieder
 (die App ist kein Golden-Motiv; GL-02 baut die Bildschirme ohne Hülle).
 Nachtrag 28.10.10 ergänzt. Mac: App 9 Tests grün; `check_architecture`
 Exit 0.
+
+**D17b — Deutsche Systemtexte (F2).** `apps/unsalted_app/pubspec.yaml`:
+`flutter_localizations` aus dem SDK (in `pubspec.lock` nur von „transitive“
+auf „direct main“, keine neue Version). `lib/main.dart`: `locale: Locale('de')`,
+`supportedLocales: [Locale('de')]`, `localizationsDelegates:
+GlobalMaterialLocalizations.delegates` (Material, Widgets, Cupertino). Damit
+sind Tooltips („Zurück“), die Bedienhilfe-Aktionen von `ReorderableListView`
+(„Nach oben verschieben“ …, vgl. D16 Prüfauftrag Umsortieren), Datums- und
+Textfeld-Menüs sowie die Lizenzseite deutsch. Core und Design bleiben ohne
+Lokalisierung (ihre Tests laufen weiter mit den englischen Standardtexten —
+keine Testzeile prüft sie). *Geänderte bestehende Testzeilen:* keine. Neu
+`apps/unsalted_app/test/localization_test.dart`: APP-03 (Sprache `de`,
+„Zurück“, „Nach oben/unten verschieben“ aus `WidgetsLocalizations`,
+„Lizenzen“). Gegenprobe: ohne Delegates und Sprache → APP-03 rot (`en_US`);
+danach grün. Keine Golden-Bilder (App kein Golden-Motiv). Nachtrag 28.10.14
+neu. Mac: App 10 Tests grün; `check_architecture` Exit 0.

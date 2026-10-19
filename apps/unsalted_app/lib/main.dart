@@ -11,9 +11,13 @@
 // Seit D17 (F4): Die Hauptnavigation steht in `AppPage.navigation` — unter
 // `breakpoint-medium` unten, ab `breakpoint-medium` als seitliche Leiste links
 // (gleiche Ziele); Liste und Detail nebeneinander folgen erst mit Teil 1.4.
+// Seit D17b (F2): Systemtexte der Bedienelemente auf Deutsch
+// (`GlobalMaterialLocalizations`, `Locale('de')`), z. B. „Zurück“, die
+// Bedienhilfe-Aktionen beim Umsortieren und die Lizenzseite.
 
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
@@ -75,6 +79,9 @@ class _UnsaltedAppState extends State<UnsaltedApp> {
       title: 'unsalted',
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
+      locale: const Locale('de'),
+      supportedLocales: const [Locale('de')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       routerConfig: _router,
     );
   }

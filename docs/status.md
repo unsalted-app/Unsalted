@@ -269,7 +269,8 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D16b | Abstand `space-m` zwischen den Feldern im Editor-Abschnitt „Parameter“ (freigegeben); UI-77 | fertig |
 | D16c | Nährwertfelder im Verpackungsformular als Zahlenfelder (Tastatur mit Komma, rechtsbündig, tnum; freigegeben); UI-78 | fertig |
 | D17 | App-Hülle: Hauptnavigation über `AppPage.navigation` — unter 600 unten, ab 600 seitliche Leiste links (F4); APP-04 | fertig |
-| D17b–D18 | Etappe 4 nach Plan | offen |
+| D17b | Deutsche Systemtexte: `flutter_localizations` aus dem SDK, Delegates und `Locale('de')` in der App (F2); APP-03 | fertig |
+| D18 | Abschluss | offen |
 
 **Kandidaten für Teil 1.4** (eingeordnet 2026-10-18, Details in
 `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“): Master in der

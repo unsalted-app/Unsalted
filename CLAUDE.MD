@@ -77,7 +77,7 @@ unsalted/
 │  │                               lib/catalog/ je Design-Ordner eine Datei, Tests WB-01–03
 │  └─ unsalted_app/                App-Hülle (Schritt 8.8)
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
-│     │                            flutter_riverpod, go_router
+│     │                            flutter_riverpod, go_router, flutter_localizations (D17b)
 │     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
      ├─ lib/main.dart             ProviderScope-Overrides (appOverrides), GoRouter aus
 │     │                            modules.expand((m) => m.routes), ShellRoute
@@ -287,10 +287,11 @@ kein Merge, keine Tags). Kandidaten für Teil 1.4: `docs/design/plan-1.3.md`,
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** D17b (deutsche Systemtexte), D18 (Abschluss); Stopp
-mit Bericht nach D18. (Fertig in Etappe 4: D16b Abstand im Editor-Abschnitt
-„Parameter“, D16c Nährwertfelder als Zahlenfelder, D17 Seitenleiste ab 600
-in der App, APP-04.)
+**Nächster Schritt:** D18 (Abschluss: Doku, `rueckmeldung-figma.md`,
+CHANGELOG 0.2.0); Stopp mit Bericht nach D18. (Fertig in Etappe 4: D16b
+Abstand im Editor-Abschnitt „Parameter“, D16c Nährwertfelder als
+Zahlenfelder, D17 Seitenleiste ab 600 in der App, D17b deutsche
+Systemtexte; APP-03/04.)
 
 ---
 
