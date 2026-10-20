@@ -3217,3 +3217,23 @@ ein Lauf grün in 22 s, CI unter Linux grün. Stopp und Bericht; nach Neustart
 des Macs (Vorgabe des Projektverantwortlichen) zwei volle Läufe nacheinander
 grün in 22 s, `--concurrency=1` nicht nötig. Ursache offen → Kandidat f für
 Teil 1.4 (hohe Priorität).
+
+## 2026-10-20 — Teil 1.4: Plan (Entwurf zur Freigabe)
+
+Vorgabe des Projektverantwortlichen: Plan für Teil 1.4 im Format von
+`plan-1.3.md`, noch kein Code; Reihenfolge = Priorität (Stabilität,
+Bedienung, Tablet, Marke); Bildschirm-Dateien ab 1.4 erlaubt (je benannt),
+Core-Logik und Tür unberührt, `module/` nur mit Begründung; Figma nur lesend,
+Fehlendes als „Figma-Nachtrag“. Plan: `docs/plan-1.4.md`, Branch `teil-1.4`
+von `main` @ `ce6431f`.
+
+*Grundlagen aus der Durchsicht (nur gelesen):* 15 Core-Testdateien unter
+`test/ui/` öffnen eine Datenbank (88 Widget-Tests), 12 mit eigenen Kopien der
+Helfer aus 1.1d, 3 inline; 20 feste Wartezeiten (50–200 ms); die 5 App-Tests
+mit Datenbank schließen noch nach dem Muster vor 1.1d. Der „Vermerk C29“ ist
+die Beobachtung eines stehenden Laufs in C29 (Teil 1.2). Figma zeigt Liste
+und Detail nur mit Auswahl (`147:9746`, `147:9823`), keine Editor-Zeilen mit
+Menü, keinen Zustand „Keine Treffer“ für Bildschirm 9, kein App-Symbol und
+kein Startbild; der Master in der Fassungsleiste und Suchtreffer im
+Listeneintrag sind gestaltet. Daraus die Figma-Nachträge N1–N6 und die Fragen
+F1–F13 im Plan.

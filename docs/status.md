@@ -300,6 +300,18 @@ Details der ersten Gruppe in `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“
   unterscheiden; Liste und Detail nebeneinander ab 840 (F4). (Master in der
   Fassungsleiste = b; sichtbares Umsortieren ohne Ziehen = a.)
 
+## Teil 1.4 — Stabilität, Bedienung, Tablet, Marke — Plan zur Freigabe
+
+Branch `teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR nach `main`. Plan: `docs/plan-1.4.md` (Etappen 1 Stabilität, 2 Bedienung, 3 Tablet, 4 Marke; Fragen F1–F13; Figma-Nachträge N1–N6). Kein Code vor der Freigabe.
+
+| Schritt | Beschreibung | Status |
+|---|---|---|
+| — | Plan `docs/plan-1.4.md` | fertig, Freigabe ausstehend |
+| S01–S03 | Etappe 1: Hänger in Core-Widget-Tests mit Datenbank (Diagnose, Behebung, 20 volle Läufe) | offen |
+| B01–B05 | Etappe 2: Zeilenmenü, Master in der Fassungsleiste, „Keine Treffer.“ bei Lebensmitteln, ggf. Suchtreffer und markierbare Texte | offen |
+| T01–T03 | Etappe 3: Liste und Detail ab 840 | offen |
+| M01–M03 | Etappe 4: App-Name, ggf. App-Symbol und Startbild, Abschluss | offen |
+
 ## Bekannte offene Lücken (nicht blockierend)
 
 - `foodVariantToInsertCompanion`/`foodVariantToUpdateCompanion` in

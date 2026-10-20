@@ -66,6 +66,7 @@ unsalted/
 │  ├─ spezifikation.md             VERBINDLICHE Spezifikation (Quelle der Wahrheit)
 │  ├─ status.md                    Phase/Schritt-Tracker
 │  ├─ decisions.md                 Protokoll technischer Entscheidungen
+│  ├─ plan-1.4.md                  Teil 1.4: Plan (Etappen, Commits, Testzeilen, Fragen F1–F13)
 │  └─ design/                      design_system.md, components.md, screens.md (Stand 1.3), plan.md (1.2);
 │                                   Teil 1.3: plan-1.3.md, UEBERGABE.md, rueckmeldung-figma.md (Abweichungen
 │                                   für Figma), system/ (Markenbuch, tokens.json, Komponentenkarten,
@@ -299,11 +300,19 @@ GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–82, APP-03–05.
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** Teil 1.4 — Plan und Arbeitskarten erst nach Vorgabe
-des Projektverantwortlichen. Kandidaten: `docs/status.md`, Abschnitt Teil 1.3
-(a–f; **f mit hoher Priorität:** Hänger in Core-Widget-Tests mit Datenbank,
-lokal 3 von 4 Läufen am 20.10.), dazu `docs/design/plan-1.3.md`, „Nicht Teil
-von 1.3“. Bis dahin keine Änderungen an `main` ohne Arbeitskarte.
+**Teil 1.4 – Stabilität, Bedienung, Tablet, Marke (Plan zur Freigabe;
+Branch `teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR nach `main`):** Plan
+`docs/plan-1.4.md` — Etappe 1 Stabilität (S01–S03: Hänger in Core-Widget-Tests
+mit Datenbank), Etappe 2 Bedienung (B01–B05: Zeilenmenü, Master in der
+Fassungsleiste, „Keine Treffer.“ bei Lebensmitteln, ggf. Suchtreffer und
+markierbare Texte), Etappe 3 Tablet (T01–T03: Liste und Detail ab 840),
+Etappe 4 Marke (M01–M03: App-Name, App-Symbol/Startbild nur mit Figma-Dateien,
+Abschluss). Leitplanken: Bildschirm-Dateien nur die im Plan benannten;
+Core-Logik, Tür und `module/` unverändert; Fehlendes in Figma als
+Figma-Nachtrag N1–N6; Testzeilen einzeln in (d2), ungeplante → Stopp.
+
+**Nächster Schritt:** Freigabe des Plans (Antworten F1–F13) durch den
+Projektverantwortlichen; erst danach S01. Kein Code vorher.
 
 ---
 
