@@ -56,7 +56,7 @@ vermeiden.
 
 ---
 
-## 1. Projektstruktur (Stand: `part1-v1.0.0` — Teil 1 abgeschlossen, Phase 0–10)
+## 1. Projektstruktur (Stand: `part1-v1.3.0` — Teil 1 abgeschlossen, Phase 0–10; Teile 1.1–1.3)
 
 ```text
 unsalted/
@@ -82,7 +82,7 @@ unsalted/
 │     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
 │     ├─ ios/Runner/Info.plist,     Sprache des Bundles „de“ (D17c, APP-05) — sonst
 │     │  macos/Runner/Info.plist    zeichnet iOS „Copy“/„Cut“ englisch
-     ├─ lib/main.dart             ProviderScope-Overrides (appOverrides), GoRouter aus
+│     ├─ lib/main.dart             ProviderScope-Overrides (appOverrides), GoRouter aus
 │     │                            modules.expand((m) => m.routes), ShellRoute
 │     │                            mit AppNavigationBar über AppPage.navigation
 │     │                            (unten unter 600, links ab 600; /, /foods, /settings)
@@ -95,7 +95,7 @@ unsalted/
    │  └─ lib/src/  tokens/ (generiert) theme/ (inkl. app_reflow.dart: Maße je Textgröße)
    │               layout/ (reflow_row.dart: Aktion daneben oder darunter) components/<gruppe>/
    │               templates/ (page_content.dart: Rahmen „Inhalt“);
-   │               Tests DS-01–60 (+ b/c), GL-01 (test/goldens/, nur Linux)
+   │               Tests DS-01–61 (+ b/c), GL-01 (test/goldens/, nur Linux)
    └─ unsalted_core/
       ├─ pubspec.yaml
       ├─ drift_schemas/
@@ -261,8 +261,11 @@ Spezifikation Kapitel 28.9. Der frühere Design-Pass `design/1.1` wurde nicht
 übernommen und ist gelöscht. Test-IDs neu: DS-01–48 (+DS-20b), WB-01–03,
 AT-13–15, UI-58–66, UC-01–07, APP-02.
 
-**Teil 1.3 – Gestaltung aus Figma (fertig, Freigabe ausstehend; Branch
-`design-1.3`, Entwurfs-PR #2, nicht gemergt, keine Tags):** Übergabe aus Figma unter `docs/design/` (`UEBERGABE.md`,
+**Teil 1.3 – Gestaltung aus Figma (abgeschlossen, Tags `part1-v1.3.0` und
+`design-v0.2.0` auf Merge-Commit `36b7c41`, 2026-10-20; PR #2 gemergt,
+Branch `design-1.3` gelöscht; Design-System-Status „freigegeben
+(design-v0.2.0)“; auf `main` Design 461, Core 448, App 12, Widgetbook 10
+Tests grün):** Übergabe aus Figma unter `docs/design/` (`UEBERGABE.md`,
 `system/`, `figma/`). Plan (freigegeben, Antworten F1–F14):
 `docs/design/plan-1.3.md`; Entscheidungen: `docs/decisions.md`, „Teil 1.3“;
 Nachträge: Spezifikation Kapitel 28.10. Etappe 1 fertig: D01 Goldens (GL-01,
@@ -290,18 +293,17 @@ Design-Paket 0.2.0), nach Prüfung D18b (Abstand Titel/Beschreibung in
 Bildschirm 2; Maß- und Parameterfelder als Zahlenfelder), nach dem
 iPhone-Test D17c (Deutsch als Sprache des App-Bundles in iOS/macOS),
 D18c (Abstand zwischen den Maßfeldern) und D18d (letzter Abstand-Durchgang:
-Kennung, Export-Auswahl, Schrittzeile). Kandidaten für
-Teil 1.4: `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“. Test-IDs neu:
+Kennung, Export-Auswahl, Schrittzeile). Test-IDs neu:
 GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–82, APP-03–05.
 **Regel für Etappe 3:** Bestehende Testzeilen in Core, die nicht im Plan
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** Bericht zu D17c/D18c an den Projektverantwortlichen
-(er prüft das Textauswahlmenü auf dem iPhone);
-danach seine Freigabe von Teil 1.3 (Merge von PR #2, Tags und Status in
-`docs/design/system/README.md` nach Plan F14 — alles nur auf seine
-Anweisung), dann Teil 1.4.
+**Nächster Schritt:** Teil 1.4 — Plan und Arbeitskarten erst nach Vorgabe
+des Projektverantwortlichen. Kandidaten: `docs/status.md`, Abschnitt Teil 1.3
+(a–f; **f mit hoher Priorität:** Hänger in Core-Widget-Tests mit Datenbank,
+lokal 3 von 4 Läufen am 20.10.), dazu `docs/design/plan-1.3.md`, „Nicht Teil
+von 1.3“. Bis dahin keine Änderungen an `main` ohne Arbeitskarte.
 
 ---
 

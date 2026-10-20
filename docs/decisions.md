@@ -3205,3 +3205,15 @@ Sätze (Material-3-Platzhalter im Code, Prüfung in Figma ausstehend) sind
 damit überholt und ersetzt durch den Verweis auf `packages/unsalted_design`
 0.2.0 und `rueckmeldung-figma.md`. Der übrige Inhalt der Übergabe bleibt
 unverändert.
+
+**Abschluss Teil 1.3 (2026-10-20).** Merge-Commit `36b7c41` „Teil 1.3:
+Gestaltung aus Figma (D01–D18)“ (`--no-ff`, Eltern `1022185` und `e1808f5`,
+Baum gleich `e1808f5`); Tags `part1-v1.3.0` und `design-v0.2.0` (annotiert)
+auf `36b7c41`. *Befund vor dem Push:* in der Nacht auf den 20.10. hingen
+lokal 3 von 4 vollen Core-Läufen auf `main` — jedes Mal andere Widget-Tests
+mit Datenbank (u. a. UI-44, UC-04, Export-Test) bis zum Zeitlimit von
+10 min, `flutter_tester` bei 0 % CPU; die betroffenen Dateien einzeln grün,
+ein Lauf grün in 22 s, CI unter Linux grün. Stopp und Bericht; nach Neustart
+des Macs (Vorgabe des Projektverantwortlichen) zwei volle Läufe nacheinander
+grün in 22 s, `--concurrency=1` nicht nötig. Ursache offen → Kandidat f für
+Teil 1.4 (hohe Priorität).

@@ -234,9 +234,11 @@ Stand nach Etappe 1 (C01–C13): Design 208 Tests, Core 386, App 1, Widgetbook 6
 
 - ~~Ladebalken im Rezeptdetail erst nach ~300 ms Verzögerung zeigen (blitzt bei schnellem Laden kurz auf).~~ → umgesetzt in Teil 1.1c.
 
-## Teil 1.3 — Gestaltung aus Figma — in Arbeit (Phase B, Etappe 1)
+## Teil 1.3 — Gestaltung aus Figma — abgeschlossen, `part1-v1.3.0`, `design-v0.2.0`
 
-Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenfolge D01–D18 und Antworten F1–F14: `docs/design/plan-1.3.md`; Entscheidungen: `docs/decisions.md`, „Teil 1.3“.
+Branch `design-1.3` von `main` @ `1022185`, PR #2. Plan, Commit-Reihenfolge D01–D18 und Antworten F1–F14: `docs/design/plan-1.3.md`; Entscheidungen: `docs/decisions.md`, „Teil 1.3“; Nachträge: Spezifikation Kapitel 28.10; Abweichungen für Figma: `docs/design/rueckmeldung-figma.md`.
+
+**Abgeschlossen 2026-10-20:** vom Projektverantwortlichen freigegeben (Textauswahlmenü auf dem iPhone nach D17c deutsch bestätigt); PR #2 (`design-1.3` → `main`, CI grün auf `e1808f5`) als Merge-Commit `36b7c41` „Teil 1.3: Gestaltung aus Figma (D01–D18)“ übernommen (`--no-ff`, Historie D01–D18d erhalten). Annotierte Tags auf `36b7c41`: `part1-v1.3.0` („Teil 1.3: Gestaltung aus Figma“) und `design-v0.2.0` („unsalted_design 0.2.0: Design-System aus Figma (Bleistift · Tinte · Marker)“). Auf `main` nach dem Merge: Design 461, Core 448 (zwei volle Läufe nacheinander), App 12, Widgetbook 10 Tests grün; `check_architecture` Exit 0; `flutter analyze` ohne Befund in allen vier Paketen; CI auf `main` grün. Vor dem Neustart des Macs hingen in der Nacht lokal 3 von 4 vollen Core-Läufen (Kandidat f unten); `docs/design/system/README.md` steht auf „freigegeben (design-v0.2.0)“. Branch `design-1.3` danach gelöscht (lokal und remote).
 
 | Schritt | Beschreibung | Status |
 |---|---|---|
@@ -275,12 +277,28 @@ Branch `design-1.3` von `main` @ `1022185`, Entwurfs-PR #2. Plan, Commit-Reihenf
 | D17c | Befund iPhone-Test: Deutsch als Sprache des App-Bundles (`CFBundleDevelopmentRegion` „de“, `CFBundleLocalizations` mit „de“ in iOS und macOS), damit „Kopieren“/„Ausschneiden“ der Textauswahl deutsch sind; APP-05 | fertig |
 | D18c | Abstand `space-m` zwischen den Maßfeldern im Verpackungsformular (wie D16b); UI-81 | fertig |
 | D18d | Letzter Abstand-Durchgang (nach Freigabe von Teil 1.3): `space-m` in Kennung (Name, Marke, Barcode), Export-Auswahl und Schrittzeile (Anweisung → Timer); Zutatenzeile und Mengenrechner bleiben wie Figma (entschieden); UI-82 | fertig |
+| — | Status des Design-Systems „freigegeben (design-v0.2.0)“ (`e1808f5`, F14) | fertig |
+| — | Merge `36b7c41`, Tags `part1-v1.3.0` und `design-v0.2.0` | fertig |
 
-**Kandidaten für Teil 1.4** (eingeordnet 2026-10-18, Details in
-`docs/design/plan-1.3.md`, „Nicht Teil von 1.3“): Master in der
-Fassungsleiste hervorheben; sichtbares Umsortieren ohne Ziehen (WCAG 2.5.7);
-„leer“ und „keine Treffer“ in der Lebensmittelliste unterscheiden; Liste und
-Detail nebeneinander ab 840 (F4).
+Stand nach D18d (= `part1-v1.3.0`): Design 461 Tests, Core 448, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
+
+**Kandidaten für Teil 1.4** (eingeordnet 2026-10-18, ergänzt 2026-10-20;
+Details der ersten Gruppe in `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“):
+
+- **f) Hohe Priorität:** Hänger in Core-Widget-Tests mit Datenbank
+  untersuchen (lokal 3 von 4 Läufen am 20.10., Vermerk C29, CI-Zeitgrenze
+  aus 1.1d).
+- a) Zutaten- und Schrittzeile: „⋯“-Menü mit „Nach oben“, „Nach unten“,
+  „Entfernen“ statt Papierkorb (löst auch Umsortieren ohne Ziehen, WCAG 2.5.7).
+- b) Master auch in der Fassungsleiste markieren.
+- c) Entscheidung offen: Rezepttexte markierbar/kopierbar machen?
+- d) Entscheidung offen: Rezept löschen – Rückgängig beibehalten (Empfehlung)
+  oder anders?
+- e) App-Name auf dem Gerät vereinheitlichen (heute „Unsalted App“ bzw.
+  „unsalted_app“).
+- Aus 2026-10-18: „leer“ und „keine Treffer“ in der Lebensmittelliste
+  unterscheiden; Liste und Detail nebeneinander ab 840 (F4). (Master in der
+  Fassungsleiste = b; sichtbares Umsortieren ohne Ziehen = a.)
 
 ## Bekannte offene Lücken (nicht blockierend)
 
