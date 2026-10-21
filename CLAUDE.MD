@@ -72,7 +72,8 @@ unsalted/
 │                                   für Figma), system/ (Markenbuch, tokens.json, Komponentenkarten,
 │                                   Schrift-WOFF2, OFL), figma/figma-ids.json
 ├─ tool/
-│  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
+│  ├─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
+│  └─ repeat_tests.dart            Wiederholungsläufe für die Hänger-Diagnose (Teil 1.4 S01)
 ├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Design, Core, App, Widgetbook
 ├─ apps/
 │  ├─ unsalted_widgetbook/         Komponenten-Katalog (Teil 1.2, C11), Rang 99, nur macOS;
@@ -300,8 +301,9 @@ GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–82, APP-03–05.
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Teil 1.4 – Stabilität, Bedienung, Tablet, Marke (Plan zur Freigabe;
-Branch `teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR nach `main`):** Plan
+**Teil 1.4 – Stabilität, Bedienung, Tablet, Marke (Plan freigegeben
+2026-10-20, Antworten F1–F13 im Plan; Branch `teil-1.4` von `main` @
+`ce6431f`, Entwurfs-PR #3):** Plan
 `docs/plan-1.4.md` — Etappe 1 Stabilität (S01–S03: Hänger in Core-Widget-Tests
 mit Datenbank), Etappe 2 Bedienung (B01–B05: Zeilenmenü, Master in der
 Fassungsleiste, „Keine Treffer.“ bei Lebensmitteln, ggf. Suchtreffer und
@@ -311,8 +313,17 @@ Abschluss). Leitplanken: Bildschirm-Dateien nur die im Plan benannten;
 Core-Logik, Tür und `module/` unverändert; Fehlendes in Figma als
 Figma-Nachtrag N1–N6; Testzeilen einzeln in (d2), ungeplante → Stopp.
 
-**Nächster Schritt:** Freigabe des Plans (Antworten F1–F13) durch den
-Projektverantwortlichen; erst danach S01. Kein Code vorher.
+S01a fertig (Werkzeug `tool/repeat_tests.dart`, Matrix D1–D4: 2 Hänger in
+60 Läufen, nur mit `--concurrency=1`, beide in
+`recipe_detail_screen_test.dart`). **Wichtig:** `testWidgets` setzt sein
+Zeitlimit selbst (10 min) — `--timeout` und `dart_test.yaml` greifen dort
+nicht; wirksam nur über die Bindung (`flutter_test_config.dart`).
+Diagnoseprotokolle unter `packages/unsalted_core/build/diagnose/` (nicht
+`/private/tmp`: wird beim Neustart geleert), lange Läufe mit
+`caffeinate -dims`.
+
+**Nächster Schritt:** S01 abschließen (D5), dann Stopp mit Bericht und der
+endgültigen Testzeilen-Liste für S02 zur Freigabe.
 
 ---
 

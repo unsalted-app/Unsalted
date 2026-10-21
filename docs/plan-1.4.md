@@ -1,12 +1,12 @@
 # Teil 1.4 – Stabilität, Bedienung, Tablet, Marke: Plan
 
 Phase A · Stand 2026-10-20 · Branch `teil-1.4` (von `main` @ `ce6431f`) ·
-Entwurfs-PR nach `main` · **Entwurf zur Freigabe** — offene Fragen F1–F13 in
-Abschnitt (g)
+Entwurfs-PR #3 · **freigegeben 2026-10-20** — Antworten auf F1–F13 in
+Abschnitt (g) und in `docs/decisions.md`, „Teil 1.4“
 
 Phase B läuft Commit für Commit nach Abschnitt (e), in vier Etappen mit
-Stopp. Reihenfolge der Etappen = Priorität. Kein Code vor der Freigabe dieses
-Plans.
+Stopp. Reihenfolge der Etappen = Priorität. Die Antworten des
+Projektverantwortlichen stehen bei jeder Frage („**Antwort:**“).
 
 Grundlage: `docs/status.md` (Kandidaten a–f), `docs/decisions.md` („Teil
 1.3“, „Abschluss Teil 1.3“), `docs/design/plan-1.3.md` („Nicht Teil von
@@ -486,15 +486,17 @@ Mapper-Leichen (`data/`, Core-Logik), KI-Themen (Teil 6), `material_ui` (F3).
 | R11 | Freeze Teil 1 | Core-Tür, Logik, Schema, `module/` unverändert; Kapitel 28.11 + `decisions.md` |
 | R12 | Fensterbreite vs. verfügbare Breite: bei 844 quer bleiben neben der Leiste 748 | Entscheidung nach Fensterbreite wie Material und Figma (`148:3817` zeigt Liste und Detail bei 844) |
 
-### Fragen F1–F13 (mit Empfehlung)
+### Fragen F1–F13 (mit Empfehlung und Antwort vom 2026-10-20)
 
 - **F1 — c) Rezepttexte markierbar und kopierbar?** *Empfehlung:* **ja, nur
   im Rezeptdetail** (Beschreibung, Zutaten, Schritte) über eine
   Design-Komponente (Auswahlbereich mit Farbe aus Tokens), als B05 nach N6.
   Nicht in Listen (Wischen, Tippen) und nicht in Eingabefeldern (können das
   schon). Kopieren eines ganzen Rezepts als Text wäre eine eigene Funktion.
+  **Antwort:** ja — nur im Rezeptdetail markierbar (B05, nach N6).
 - **F2 — d) Rezept löschen.** *Empfehlung:* **Rückgängig beibehalten** (5 s,
   wie 1.1b und wie Lebensmittel), keine zusätzliche Rückfrage; kein Commit.
+  **Antwort:** Rückgängig beibehalten, kein Commit.
 - **F3 — Umstieg auf `material_ui` (F1 aus 1.3).** *Empfehlung:* **eigener
   kleiner Teil nach 1.4**, nicht in 1.4. Der Umstieg ist mechanisch, ändert
   aber die Architekturregeln des Design-Pakets (Abhängigkeiten von
@@ -502,6 +504,7 @@ Mapper-Leichen (`data/`, Core-Logik), KI-Themen (Teil 6), `material_ui` (F3).
   28.9.1/3) und würde jedes Golden und jeden Etappen-Diff mit fremden
   Änderungen mischen. Zeitpunkt: sobald `flutter/material.dart` in einer
   Flutter-Version veraltet ist, spätestens vor Teil 2.
+  **Antwort:** eigener kleiner Teil nach 1.4.
 - **F4 — Zeilenmenü und „Keine Treffer“ ohne eigenen Figma-Entwurf?**
   *Empfehlung:* N1 vorher von Figma (kleiner Nachtrag). Falls nicht
   rechtzeitig: B01 aus vorhandenen Komponenten (`Icon/more` „⋮“ +
@@ -510,38 +513,52 @@ Mapper-Leichen (`data/`, Core-Logik), KI-Themen (Teil 6), `material_ui` (F3).
   Tooltip des Menüs: „Aktionen für Zutat“ bzw. „Aktionen für Schritt“ (neue
   Texte, Nachtrag 28.11.2). Für B03 genügt das Vorbild `31:1845`; N2 nur zur
   Vollständigkeit.
+  **Antwort:** `Icon/more` „⋮“, Tooltips wie vorgeschlagen. N1 kommt von
+  Figma; liegt sie zu Beginn von Etappe 2 nicht vor, entsteht B01 aus
+  vorhandenen Komponenten, Abweichung in `rueckmeldung-figma.md`.
 - **F5 — Suchtreffer im Marker in 1.4 (B04)?** *Empfehlung:* ja (Figma
   gestaltet, klein).
+  **Antwort:** ja (B04).
 - **F6 — Liste und Detail beim Verkleinern unter 840 mit Auswahl.**
   *Empfehlung:* Auswahl bleibt im Bildschirm erhalten, unter 840 nur die Liste
   (kein automatisches Öffnen); beim Vergrößern erscheint das Detail wieder.
   Alternative: Detail unter 840 automatisch als Seite öffnen (mehr Navigation
   im `build`, fehleranfälliger).
+  **Antwort:** wie empfohlen.
 - **F7 — Detailbereich ohne Auswahl.** *Empfehlung:* Gestaltung aus N3; bis
   dahin Vorschlag Leerstelle ohne Aktion mit „Rezept auswählen.“ bzw.
   „Lebensmittel auswählen.“ (neue Texte, 28.11.7). Ohne N3 und ohne Antwort
   warten T02/T03.
+  **Antwort:** wie empfohlen; bis N3 vorliegt, die vorgeschlagene Leerstelle
+  „Rezept auswählen.“ bzw. „Lebensmittel auswählen.“
 - **F8 — Liste und Detail über Auswahlzustand statt Routen.** *Empfehlung:*
   ja; `module/` und die Routen bleiben, Deep Links `/recipes/:id` und
   `/foods/:id` öffnen weiter ganzseitig. Alternative (verschachtelte Routen in
   der Hülle) ändert `module/` und 28.2.3/28.4.1 und hat ohne Deep-Link-Bedarf
   keinen Nutzen.
+  **Antwort:** wie empfohlen.
 - **F9 — App-Name.** *Empfehlung:* „unsalted“ klein (Markenbuch README,
   03-markenelemente: „Bis zur Gestaltung … klein gesetzt“); nur sichtbare
   Namen ändern, nicht `PRODUCT_NAME`, Bundle-Kennung (`de.unsalted.unsaltedApp`)
   und `applicationId` — sonst neue Installation statt Update und andere
   Build-Pfade.
+  **Antwort:** „unsalted“ klein, nur sichtbare Namen.
 - **F10 — App-Symbol und Startbild.** *Empfehlung:* nur mit Dateien aus Figma
   (N4, N5). Weg: Figma liefert Master und Android-Ebenen; die Größen erzeugt
   einmalig `flutter_launcher_icons` als `dev_dependency` der App (Ergebnis
   eingecheckt) — oder von Hand ohne neue Abhängigkeit. Ohne Lieferung bis
   Etappe 4: M02 in einen späteren Teil.
+  **Antwort:** nur mit Dateien aus Figma; `flutter_launcher_icons` als
+  `dev_dependency` der App ist in Ordnung.
 - **F11 — Versionen und Tags.** *Empfehlung:* `unsalted_design` 0.3.0 (neue
   Bausteine); nach Freigabe Tags `part1-v1.4.0` und `design-v0.3.0`.
+  **Antwort:** ja.
 - **F12 — Zeitlimit je Test und Abnahme.** *Empfehlung:* `timeout: 2m` in
   `packages/unsalted_core/dart_test.yaml` (ein Widget-Test braucht heute unter
   10 s; 2 min lassen Luft unter Last), CI-Grenze 20 min bleibt; Abnahme 20
   volle Core-Läufe ohne Hänger plus 10 unter Last plus App 10.
+  **Antwort:** ja (2 min je Test, Abnahme wie geplant).
 - **F13 — App-Tests mitziehen?** *Empfehlung:* ja, in S02: die 5 App-Dateien
   schließen noch nach dem alten Muster (vor 1.1d) und hätten bei einem roten
   Test dasselbe Hänger-Risiko; Zeilen in (d2).
+  **Antwort:** ja.

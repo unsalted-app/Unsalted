@@ -3237,3 +3237,62 @@ Menü, keinen Zustand „Keine Treffer“ für Bildschirm 9, kein App-Symbol und
 kein Startbild; der Master in der Fassungsleiste und Suchtreffer im
 Listeneintrag sind gestaltet. Daraus die Figma-Nachträge N1–N6 und die Fragen
 F1–F13 im Plan.
+
+**Freigabe des Plans (Projektverantwortlicher, 2026-10-20):** Plan Teil 1.4
+geprüft und freigegeben. Antworten: F1 ja — Rezepttexte nur im Rezeptdetail
+markierbar (B05, nach N6); F2 Rückgängig beibehalten, kein Commit; F3
+`material_ui` als eigener kleiner Teil nach 1.4; F4 `Icon/more` „⋮“, Tooltips
+wie vorgeschlagen, N1 kommt von Figma — liegt sie zu Beginn von Etappe 2 nicht
+vor, B01 aus vorhandenen Komponenten mit Abweichung in
+`rueckmeldung-figma.md`; F5 ja (B04); F6–F8 wie empfohlen (F7: bis N3
+vorliegt, Leerstelle „Rezept auswählen.“ bzw. „Lebensmittel auswählen.“); F9
+„unsalted“ klein, nur sichtbare Namen; F10 nur mit Dateien aus Figma,
+`flutter_launcher_icons` als `dev_dependency` der App in Ordnung; F11 ja; F12
+ja (2 min je Test, Abnahme wie geplant); F13 ja. Weiter mit S01, Stopp nach S01
+mit Bericht. Die Antworten stehen auch in `docs/plan-1.4.md`, Abschnitt (g).
+
+**S01 — Wiederholungswerkzeug und Diagnose.** Neu `tool/repeat_tests.dart`
+(nur `dart:io`, wie `check_architecture.dart`): `--package`, `--runs`,
+`--concurrency`, `--timeout`, `--max-minutes` (beendet den Lauf samt aller
+Kindprozesse über den Prozessbaum aus `ps`; geprüft: nach einem beendeten Lauf
+kein `flutter_tester` übrig), `--load K` (K Endlosschleifen der Shell),
+`--randomize`, `--log-dir`, `--` für weitere Argumente; Reporter `expanded`,
+je Lauf Dauer, Ergebnis, rote Tests und Zeitüberschreitungen mit Namen,
+`runs.csv`.
+
+*Befund zum Zeitlimit (wichtig für F12/S02).* `testWidgets` setzt sein
+Zeitlimit selbst: `timeout: timeout ?? binding.defaultTestTimeout`
+(`flutter_test/lib/src/widget_tester.dart:204`), und
+`AutomatedTestWidgetsFlutterBinding.defaultTestTimeout` ist 10 min
+(`binding.dart:2240`). Ein ausdrückliches Zeitlimit am Test geht dem
+Standard aus Kommandozeile und `dart_test.yaml` vor — `flutter test --timeout
+300ms` ließ alle Widget-Tests grün. Wirksam ist das Limit nur über die Bindung,
+z. B. in `test/flutter_test_config.dart` (`testExecutable`). Für die
+Diagnose lag dort vorübergehend (nicht committet) eine Datei mit 90 s je
+Widget-Test; Gegenprobe mit 100 ms: alle Tests der Datei mit „Test timed out
+after 0.1 seconds“ rot, der Lauf endete trotzdem nach 3 s (die Teardowns aus
+1.1d greifen).
+
+*Matrix (Mac, 15 logische Kerne, Flutter 3.47.5, Drift 2.35.0; 90 s je
+Widget-Test):*
+
+| Serie | Läufe | grün | Dauer min/median/max | Befund |
+|---|---|---|---|---|
+| D1 Standard | 20 | 20 | 24 / 25 / 25 s | kein Hänger |
+| D2 `--concurrency=1` | 20 | 18 | 101 / 103 / 445 s | 2 Hänger, beide in `recipe_detail_screen_test.dart`: Lauf 9 „Aktion "Bearbeiten" öffnet den Editor der gewählten Version (Nachtrag 8.8a)“, Lauf 14 „UI-33: beim Versionswechsel …“; danach jeweils weitere Tests derselben Datei rot (Lauf 9 dauerte 431 s, Lauf 14 232 s) |
+| D3 Standard unter Last (15 Prozesse) | 10 | 10 | 26 / 27 / 27 s | kein Hänger |
+| D4 zufällige Reihenfolge | 10 | 10 | 24 / 25 / 25 s | kein Hänger |
+
+Last allein (H2) löst die Hänger nicht aus, die Reihenfolge innerhalb der
+Dateien (D4) auch nicht; mit `--concurrency=1` traten sie auf (2 von 20) —
+H3 in der Form „parallel verschärft“ ist damit widerlegt. Die Protokolle der
+Matrix lagen im Scratchpad unter `/private/tmp` und gingen beim Neustart des
+Macs verloren; die Zahlen oben stammen aus der Auswertung davor. D5 (die
+betroffene Datei vorübergehend instrumentiert, 50 × allein und volle Läufe
+mit `--concurrency=1`) ging mit einem zweiten Neustart verloren, bevor ein Lauf
+ausgewertet war. Vorgabe des Projektverantwortlichen: S01a sichert Werkzeug,
+Plan mit Antworten und D1–D4 (ohne die vorübergehende Instrumentierung und
+ohne die vorübergehende `flutter_test_config.dart`); D5 neu mit Protokollen
+unter `packages/unsalted_core/build/diagnose/` (von Git ignoriert, übersteht
+Neustarts), lange Läufe unter `caffeinate -dims`, D5b mit 10 Läufen.
+
