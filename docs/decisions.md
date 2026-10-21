@@ -3362,3 +3362,24 @@ grün. Im Bestand gibt es kein solches `await`. Nachtrag 28.11.1 neu,
 Widgetbook 10 Tests grün; `check_architecture` Exit 0; `flutter analyze` ohne
 Befund.
 
+**S03 — Abnahme Stabilität (2026-10-21, Stand `1b7bf24`).**
+`tool/repeat_tests.dart` unter `caffeinate -dims`, Protokolle unter
+`packages/unsalted_core/build/diagnose/S03/`; Zeitlimit je Widget-Test 2 min
+(S02, keine vorübergehende Konfiguration mehr):
+
+| Serie | Läufe | grün | Tests je Lauf | Dauer min/median/max |
+|---|---|---|---|---|
+| Core Standard | 20 | 20 | 451 | 24 / 25 / 25 s |
+| Core unter Last (15 Prozesse) | 10 | 10 | 451 | 26 / 27 / 27 s |
+| Core `--concurrency=1` | 30 | 30 | 451 | 102 / 102 / 102 s |
+| App Standard | 10 | 10 | 12 | 5 / 5 / 5 s |
+
+Kein Hänger, kein roter Test, keine Restprozesse vor einem Lauf. Abnahme
+nach Plan (20 + 10 + 10) und Ergänzung (30 × `--concurrency=1`) erfüllt. CI des
+PRs auf `1b7bf24` grün (mit Goldens unter Linux). Einordnung: Vor S02 traten
+die Hänger in 2 von 120 Läufen auf, in D5 (60 Läufe) schon nicht mehr; 0 von 70
+nach S02 belegt deshalb nicht, dass S02 die (nicht nachgestellte) Ursache
+beseitigt — wohl aber, dass der Helfer nichts verschlechtert. Gesichert ist:
+ein Hänger in einem Widget-Test endet jetzt nach höchstens 2 min mit Namen,
+beim Schließen der Datenbank nach rund 4 s mit klarer Meldung (UI-83).
+

@@ -325,10 +325,13 @@ Diagnoseprotokolle unter `packages/unsalted_core/build/diagnose/` (nicht
 
 S01b fertig (D5 instrumentiert, 60 Läufe ohne Hänger; Ursache lokal nicht
 nachgestellt). S02 fertig (robustes Schließen `closeTestDatabase`, 2 min je
-Widget-Test, UI-83). Test-IDs neu: UI-83.
+Widget-Test, UI-83). S03 fertig (70 Abnahmeläufe grün, kein Hänger). Etappe 1
+fertig. Test-IDs neu: UI-83. Stand: Design 461, Core 451, App 12, Widgetbook
+10 Tests grün.
 
-**Nächster Schritt:** S03 (Abnahme: Core 20 × Standard, 10 × unter Last,
-30 × `--concurrency=1`, App 10 ×), dann Stopp mit Bericht.
+**Nächster Schritt:** Bericht zu Etappe 1 an den Projektverantwortlichen;
+nach Freigabe Etappe 2 (B01 — vorher prüfen, ob Figma-Nachtrag N1 vorliegt,
+sonst nach F4 aus vorhandenen Komponenten).
 
 ---
 

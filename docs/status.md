@@ -310,7 +310,9 @@ Branch `teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR #3. Plan: `docs/plan-1.4.m
 | S01a | Diagnosewerkzeug `tool/repeat_tests.dart`; Matrix D1–D4: 2 Hänger in 60 Läufen, beide mit `--concurrency=1` in `recipe_detail_screen_test.dart`; `testWidgets` ignoriert `--timeout`/`dart_test.yaml` | fertig |
 | S01b | D5 (instrumentiert, 60 Läufe): kein Hänger; Ursache lokal nicht nachgestellt; Nachtrag zum Plan mit endgültigen Testzeilen für S02 (zur Freigabe) | fertig |
 | S02 | Robustes Schließen der Datenbank in Widget-Tests (`closeTestDatabase`, Core und App), Zeitlimit 2 min je Widget-Test über `flutter_test_config.dart`; UI-83 | fertig |
-| S03 | Abnahme: Core 20 × Standard, 10 × unter Last, 30 × `--concurrency=1`; App 10 × | offen |
+| S03 | Abnahme: Core 20 × Standard, 10 × unter Last, 30 × `--concurrency=1` (je 451 Tests), App 10 × (12 Tests) — 70 Läufe, alle grün, kein Hänger | fertig |
+
+Stand nach S03 (Etappe 1 fertig): Design 461 Tests, Core 451, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
 | B01–B05 | Etappe 2: Zeilenmenü, Master in der Fassungsleiste, „Keine Treffer.“ bei Lebensmitteln, ggf. Suchtreffer und markierbare Texte | offen |
 | T01–T03 | Etappe 3: Liste und Detail ab 840 | offen |
 | M01–M03 | Etappe 4: App-Name, ggf. App-Symbol und Startbild, Abschluss | offen |
