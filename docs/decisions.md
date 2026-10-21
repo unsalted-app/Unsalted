@@ -3296,3 +3296,38 @@ ohne die vorübergehende `flutter_test_config.dart`); D5 neu mit Protokollen
 unter `packages/unsalted_core/build/diagnose/` (von Git ignoriert, übersteht
 Neustarts), lange Läufe unter `caffeinate -dims`, D5b mit 10 Läufen.
 
+*D5 (2026-10-21, Protokolle in `packages/unsalted_core/build/diagnose/`, Lauf
+unter `caffeinate -dims`).* `recipe_detail_screen_test.dart` vorübergehend
+instrumentiert (Zeitmarken in `_settle`, `_seedDraftRecipe` und beim
+Schließen getrennt nach `streamQueries.close` und `executor.close`; nicht
+committet, Kopie als `instrumentierung.diff` im Diagnoseordner), 90 s je
+Widget-Test:
+
+| Serie | Läufe | grün | Dauer min/median/max |
+|---|---|---|---|
+| D5a: die Datei allein | 50 | 50 | 24 / 24 / 27 s |
+| D5b: volle Suite, `--concurrency=1` | 10 | 10 | 101 / 101 / 101 s |
+
+Kein Hänger. 840 Schließvorgänge (Baum abbauen bis geschlossen) dauerten
+0,6 / 1,2 / 2,2 / 3,0 ms (min / median / p99 / max).
+
+*Versuch zum Mechanismus (vorübergehend, nicht committet).* A: Abfrage in der
+Fake-Zone abonniert, Baum abgebaut, Listener **nicht** abbestellt, dann
+`runAsync(database.close)` → schließt sofort; ein offener Listener allein
+löst den Hänger also nicht aus. B: dieselbe Lage, `database.close()` in der
+Fake-Zone gestartet und abwechselnd gepumpt und echt gewartet → schließt.
+
+*Ergebnis S01.* Hänger in 2 von 120 Läufen (D1–D5), beide in D2
+(`--concurrency=1`) in `recipe_detail_screen_test.dart` (Versionswechsel bzw.
+Navigation zum Editor), dazu die 3 von 4 Läufe in der Nacht zum 20.10. (mit
+Standard-Parallelität) und die Beobachtung aus C29. Die Ursache ist lokal
+**nicht nachgestellt**; Last (D3) und Reihenfolge (D4) lösen nichts aus, ein
+offener Listener auch nicht. Das Muster (Test steht bei 0 % CPU, bis das
+Zeitlimit greift) passt zur Klasse aus 1.1d: Das Schließen der Datenbank
+wartet auf Arbeit in der Fake-Zone, die während `runAsync` niemand
+weiterschaltet. S02 härtet deshalb das Schließen selbst (in der Fake-Zone
+starten, abwechselnd pumpen und echt warten, mit Grenze und klarer Meldung)
+und setzt ein wirksames Zeitlimit je Widget-Test (2 min über die Bindung);
+feste Wartezeiten bleiben. Endgültige Testzeilen: `docs/plan-1.4.md`, (d2)
+S02, Nachtrag nach S01 — zur Freigabe.
+

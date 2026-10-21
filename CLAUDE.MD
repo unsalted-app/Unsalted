@@ -322,8 +322,12 @@ Diagnoseprotokolle unter `packages/unsalted_core/build/diagnose/` (nicht
 `/private/tmp`: wird beim Neustart geleert), lange Läufe mit
 `caffeinate -dims`.
 
-**Nächster Schritt:** S01 abschließen (D5), dann Stopp mit Bericht und der
-endgültigen Testzeilen-Liste für S02 zur Freigabe.
+S01b fertig (D5 instrumentiert, 60 Läufe ohne Hänger; Ursache lokal nicht
+nachgestellt; S02 härtet das Schließen und setzt 2 min je Widget-Test über
+`flutter_test_config.dart`).
+
+**Nächster Schritt:** Freigabe der endgültigen S02-Testzeilen
+(`docs/plan-1.4.md`, (d2) S02, Nachtrag nach S01); danach S02.
 
 ---
 

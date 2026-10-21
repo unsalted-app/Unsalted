@@ -112,10 +112,11 @@ unsalted/
 │  ├─ lib/src/templates/list_detail_template.dart            NEU     Liste und Detail ab `breakpoint-expanded` (T01)
 │  └─ test/…                             NEU     DS-62 (B01), DS-63 (T01); public_api_golden.txt (T01)
 ├─ packages/unsalted_core/
-│  ├─ dart_test.yaml                     ÄNDERN  Zeitlimit je Test (S02, F12)
+│  ├─ test/flutter_test_config.dart      NEU     Zeitlimit 2 min je Widget-Test über die Bindung (S02, F12; Nachtrag nach S01)
 │  ├─ lib/src/ui/                        ÄNDERN  nur die Dateien aus (c)
 │  └─ test/
-│     ├─ ui/support/db_widget_harness.dart   NEU  gemeinsamer Helfer: Datenbank öffnen, auf Daten warten, schließen (S02)
+│     ├─ ui/support/db_widget_harness.dart   NEU  gemeinsamer Helfer: Datenbank robust schließen (S02)
+│     ├─ ui/support/db_widget_harness_test.dart  NEU  UI-83 (S02)
 │     ├─ ui/**/…_test.dart               ÄNDERN  nur die Zeilen aus (d2)
 │     └─ goldens/…                       ÄNDERN  Bilder (B01, B02, T02), neues Motiv (T02)
 └─ apps/
@@ -124,7 +125,8 @@ unsalted/
    │  ├─ macos/Runner/Info.plist         ÄNDERN  sichtbarer Name (M01)
    │  ├─ android/app/src/main/AndroidManifest.xml   ÄNDERN  `android:label` (M01)
    │  ├─ ios/…/Assets.xcassets, android/…/res/, macos/…/Assets.xcassets   ÄNDERN  nur mit N4/N5 (M02)
-   │  └─ test/                           ÄNDERN  Teardown wie Core (S02, F13); NEU app_name_test.dart APP-06 (M01)
+   │  └─ test/                           ÄNDERN  Teardown wie Core (S02, F13); NEU flutter_test_config.dart,
+   │                                               support/db_teardown.dart (S02); NEU app_name_test.dart APP-06 (M01)
    └─ unsalted_widgetbook/lib/catalog/   ÄNDERN  Menü mit Tooltip (B01), Liste-Detail-Rahmen (T01)
 ```
 
@@ -187,6 +189,35 @@ künftiger Hänger nach kurzer Zeit mit Namen rot wird statt nach 10 min. Wenn
 die Ursache deterministisch nachstellbar ist: Regressionstest UI-83, der
 ohne den Fix hängt bzw. rot wird. App-Tests nach F13.
 
+**Nachtrag nach S01 (2026-10-21, zur Freigabe).** Ergebnis der Diagnose
+(`decisions.md`, „S01“): 2 Hänger in 120 vollen bzw. Datei-Läufen, beide in
+D2 (`--concurrency=1`), in D5 (instrumentiert, 60 Läufe) keiner; jedes der
+840 gemessenen Schließen dauerte höchstens 3 ms. Die Ursache ist lokal nicht
+nachgestellt. Last (D3) und Reihenfolge (D4) lösen nichts aus — H2 ist damit
+nicht gestützt; ein offener Listener in der Fake-Zone allein auch nicht
+(Versuch A). Daraus folgt für S02:
+- **Zeitlimit über die Bindung statt `dart_test.yaml`:** `testWidgets` setzt
+  sein Limit selbst (10 min) und übergeht `--timeout` und `dart_test.yaml`.
+  Neu `test/flutter_test_config.dart` in Core und App setzt
+  `defaultTestTimeout` auf 2 min (F12). Keine Schrift, kein anderes globales
+  Verhalten (CLAUDE.md, Goldens).
+- **Robustes Schließen:** `closeTestDatabase(tester, database)` baut den Baum
+  ab wie bisher und startet `database.close()` dann **in der Fake-Zone**;
+  danach abwechselnd `pump(50 ms)` (Microtasks und Timer der Fake-Zone, auch
+  zeitversetzte) und `runAsync(20 ms)` (echte Zone), bis geschlossen,
+  höchstens 200 Runden; sonst `fail` mit klarer Meldung — rot mit Namen statt
+  Hänger. Versuch B: schließt auch mit offenem Listener.
+- **Feste Wartezeiten bleiben** (keine `pumpUntil`-Umstellung): H2 ist durch
+  D3 nicht gestützt, und jede Umstellung wären 20 geänderte Testzeilen ohne
+  Befund. Damit ändern sich nur die Schließ-Stellen, keine Aufrufstelle und
+  kein `expect`.
+- **UI-83** prüft den Helfer (die ursprüngliche Ursache ist nicht
+  nachstellbar): (a) ein ausstehender Abbestell-Timer von Drift in der
+  Fake-Zone (Abfrage in der Fake-Zone abonniert, ohne Pumpen abbestellt) —
+  das Schließen endet; Gegenprobe: Schließen nur über `runAsync(close)` →
+  Zeitüberschreitung (Mechanismus aus 1.1d, deterministisch); (b) offener
+  Listener in der Fake-Zone — das Schließen endet.
+
 ---
 
 ## (c) Bildschirme, Bausteine, Abschnitte
@@ -229,7 +260,7 @@ Unverändert bleiben `module/core_module.dart` (Routen: `/recipes/:id`,
 
 | ID | Ort | Prüfregel | Commit |
 |---|---|---|---|
-| UI-83 | Core `test/ui/support/` | nur wenn die Ursache nachstellbar ist: der Fall aus S01 endet ohne Fix mit Hänger/rot, mit Fix grün | S02 |
+| UI-83 | Core `test/ui/support/db_widget_harness_test.dart` | `closeTestDatabase` schließt (a) bei ausstehendem Abbestell-Timer von Drift in der Fake-Zone, (b) bei offenem Listener in der Fake-Zone; Gegenprobe (a) mit `runAsync(close)` → Zeitüberschreitung (Nachtrag nach S01) | S02 |
 | DS-62 | Design | `AppOverflowMenu.tooltip` in Semantik und Tooltip; Einträge ausgegraut über `enabled` | B01 |
 | UI-84 | Core | Zeilenmenü der Zutatenzeile: drei Einträge, erste Zeile „Nach oben“ ausgegraut, letzte „Nach unten“ ausgegraut; „Nach unten“ verschiebt wie Ziehen (gleiche `onReorder`-Werte); „Entfernen“ entfernt; schreibgeschützt kein Menü | B01 |
 | UI-85 | Core | dto. Schrittzeile, Nummern danach neu | B01 |
@@ -249,32 +280,47 @@ Pfade ab `packages/unsalted_core/` bzw. `apps/unsalted_app/`; Zeilennummern
 Stand `ce6431f`. Jede Änderung nur wie angegeben; Ablauf, Testdaten und
 Erwartungen bleiben.
 
-**S02 — vorläufig, endgültig nach S01 (Nachtrag zur Freigabe).** Ersetzt
-werden nur Helfer, Teardowns und feste Wartezeiten, keine Erwartung:
+**S02 — endgültig (Nachtrag nach S01, 2026-10-21, zur Freigabe).** Pfade ab
+`packages/unsalted_core/` bzw. `apps/unsalted_app/`, Zeilen Stand
+`ce6431f` (seitdem unverändert). Geändert werden nur die Stellen,
+an denen die Datenbank geschlossen wird, dazu je eine Importzeile; keine
+Aufrufstelle eines Helfers, keine feste Wartezeit, keine Erwartung.
 
-| Datei | Helfer (Definitionen) | Inline-Teardown | feste Wartezeit |
+| Datei | Import (neue Zeile nach) | Zeilen heute | künftig |
 |---|---|---|---|
-| `test/ui/config/core_ui_options_screens_test.dart` | 38, 43 | 47 | 33 |
-| `test/ui/foods/food_editor_screen_test.dart` | 28, 54, 64 | 66 | 34 |
-| `test/ui/foods/food_list_screen_test.dart` | 37, 58, 68 | 70 | 48, 98, 178 |
-| `test/ui/recipe_detail/recipe_detail_menu_context_test.dart` | 52 | 62 | 47 |
-| `test/ui/recipe_detail/recipe_detail_screen_test.dart` | 108, 120, 130 | 132 | 115 |
-| `test/ui/recipe_editor/ingredient_row_test.dart` | 23, 28, 38 | 40 | 122 |
-| `test/ui/recipe_editor/recipe_create_screen_test.dart` | 18, 28, 38 | 40 | 24, 165 |
-| `test/ui/recipe_editor/recipe_editor_screen_test.dart` | 32, 43, 53 | 55 | 38, 398 |
-| `test/ui/recipe_list/recipe_list_screen_test.dart` | 28, 42, 52 | 54 | 38, 103, 172 |
-| `test/ui/settings/export_screen_test.dart` | 23, 35, 45 | 47 | 30 |
-| `test/ui/settings/import_screen_test.dart` | 20, 32, 42 | 44 | 27 |
-| `test/ui/settings/settings_screen_test.dart` | 40, 45, 55 | 57 | — |
-| `test/ui/shared/decimal_comma_test.dart` | — | 138–142 | 65 |
-| `test/ui/versions/version_compare_screen_test.dart` | 29, 41, 51 | 53 | 36 |
-| `test/ui/versions/version_list_screen_test.dart` | 24, 36, 46 | 48 | 31 |
+| `test/ui/config/core_ui_options_screens_test.dart` | 27 | 45–48 (`addTearDown(() async { await _disposeWidgetTree(tester); await tester.runAsync(database.close); });`) | `addTearDown(() => closeTestDatabase(tester, database));` |
+| `test/ui/foods/food_editor_screen_test.dart` | 26 | 65–66 (Körper von `_closeDatabase`) | `await closeTestDatabase(tester, database);` |
+| `test/ui/foods/food_list_screen_test.dart` | 35 | 69–70 | dto. |
+| `test/ui/recipe_detail/recipe_detail_menu_context_test.dart` | 24 | 60–63 (Teardown wie oben) | `addTearDown(() => closeTestDatabase(tester, database));` |
+| `test/ui/recipe_detail/recipe_detail_screen_test.dart` | 52 | 131–132 | `await closeTestDatabase(tester, database);` |
+| `test/ui/recipe_editor/ingredient_row_test.dart` | 21 | 39–40 | dto. |
+| `test/ui/recipe_editor/recipe_create_screen_test.dart` | 16 | 39–40 | dto. |
+| `test/ui/recipe_editor/recipe_editor_screen_test.dart` | 30 | 54–55 | dto. |
+| `test/ui/recipe_list/recipe_list_screen_test.dart` | 26 | 53–54 | dto. |
+| `test/ui/settings/export_screen_test.dart` | 21 | 46–47 | dto. |
+| `test/ui/settings/import_screen_test.dart` | 18 | 43–44 | dto. |
+| `test/ui/settings/settings_screen_test.dart` | 20 | 56–57 | dto. |
+| `test/ui/shared/decimal_comma_test.dart` | 27 | 138–142 (`addTearDown(() async { pumpWidget(…); pump(Duration.zero); runAsync(database.close); });`) | `addTearDown(() => closeTestDatabase(tester, database));` |
+| `test/ui/versions/version_compare_screen_test.dart` | 27 | 52–53 | `await closeTestDatabase(tester, database);` |
+| `test/ui/versions/version_list_screen_test.dart` | 22 | 47–48 | dto. |
 
-Dazu die Aufrufstellen der Helfer (je `addTearDown(() => _closeDatabase(…))`
-und `_disposeWidgetTree(tester)` am Testende, 1.1d: 80 Stellen) — nur der
-Name des Helfers. App (nur nach F13): `test/widget_test.dart:16, 24–25`,
-`localization_test.dart:16, 23–24`, `theme_test.dart:17, 25–26`,
-`ui_options_test.dart:17, 23–24`, `navigation_test.dart:18, 29–30`.
+Import: `import '../support/db_widget_harness.dart';`. Der Doku-Kommentar
+über `_closeDatabase` (1.1d) bleibt; er stimmt weiter.
+
+App (F13), Helfer `test/support/db_teardown.dart` (gleiche Logik, nur über die
+Tür von `unsalted_core`):
+
+| Datei | Import (neue Zeile nach) | Zeile heute | künftig |
+|---|---|---|---|
+| `test/widget_test.dart` | 12 | 25 `addTearDown(() => tester.runAsync(database.close));` | `addTearDown(() => closeTestDatabase(tester, database));` |
+| `test/localization_test.dart` | 12 | 24 | dto. |
+| `test/theme_test.dart` | 13 | 26 | dto. |
+| `test/ui_options_test.dart` | 13 | 24 | dto. |
+| `test/navigation_test.dart` | 14 | 30 | dto. |
+
+Unverändert: alle `_openDatabase`/`_disposeWidgetTree`-Definitionen und
+Aufrufe, die 20 festen Wartezeiten in Core und die 5 in der App,
+`dart_test.yaml` (wirkt bei `testWidgets` nicht).
 
 **B01 — Zeilenmenü**
 
@@ -363,9 +409,12 @@ Keine Änderung an Tests oder `lib/`. Läufe D1–D5 aus (b); Ergebnis,
 Ursache (oder „nicht reproduzierbar“ mit Messwerten) in `decisions.md`.
 **Stopp:** Bericht und endgültige Testzeilen für S02 als Nachtrag zu (d2).
 
-**S02 — Behebung.** Neu: `test/ui/support/db_widget_harness.dart` (+ UI-83,
-falls nachstellbar). Ändern: Zeilen aus (d2) S02, `dart_test.yaml`
-(Zeitlimit, F12), App-Tests nach F13; `spezifikation.md` 28.11.1.
+**S02 — Behebung.** Neu: `test/ui/support/db_widget_harness.dart`,
+`test/ui/support/db_widget_harness_test.dart` (UI-83), `test/flutter_test_config.dart`
+(Zeitlimit 2 min, F12) in Core; in der App `test/flutter_test_config.dart` und
+`test/support/db_teardown.dart`. Ändern: Zeilen aus (d2) S02; `spezifikation.md`
+28.11.1; `CLAUDE.MD` Abschnitt 4 (Zeitlimit von `testWidgets`, Schließen über
+den Helfer).
 Abnahme: alle Tests grün; Gegenprobe des Helfers (Auspumpen vorübergehend
 entfernt → der Fall aus S01 hängt/wird rot, mit Zeitlimit nach kurzer Zeit
 mit Namen).
@@ -554,7 +603,9 @@ Mapper-Leichen (`data/`, Core-Logik), KI-Themen (Teil 6), `material_ui` (F3).
   Bausteine); nach Freigabe Tags `part1-v1.4.0` und `design-v0.3.0`.
   **Antwort:** ja.
 - **F12 — Zeitlimit je Test und Abnahme.** *Empfehlung:* `timeout: 2m` in
-  `packages/unsalted_core/dart_test.yaml` (ein Widget-Test braucht heute unter
+  `packages/unsalted_core/dart_test.yaml` (*Nachtrag nach S01:* wirkt bei
+  `testWidgets` nicht; stattdessen `defaultTestTimeout` der Bindung in
+  `test/flutter_test_config.dart`, siehe (b)) (ein Widget-Test braucht heute unter
   10 s; 2 min lassen Luft unter Last), CI-Grenze 20 min bleibt; Abnahme 20
   volle Core-Läufe ohne Hänger plus 10 unter Last plus App 10.
   **Antwort:** ja (2 min je Test, Abnahme wie geplant).

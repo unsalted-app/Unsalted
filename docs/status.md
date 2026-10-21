@@ -308,7 +308,7 @@ Branch `teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR #3. Plan: `docs/plan-1.4.m
 |---|---|---|
 | — | Plan `docs/plan-1.4.md` | fertig, freigegeben 2026-10-20 |
 | S01a | Diagnosewerkzeug `tool/repeat_tests.dart`; Matrix D1–D4: 2 Hänger in 60 Läufen, beide mit `--concurrency=1` in `recipe_detail_screen_test.dart`; `testWidgets` ignoriert `--timeout`/`dart_test.yaml` | fertig |
-| S01 | D5 (Instrumentierung), Ursache, endgültige Testzeilen für S02 | in Arbeit |
+| S01b | D5 (instrumentiert, 60 Läufe): kein Hänger; Ursache lokal nicht nachgestellt; Nachtrag zum Plan mit endgültigen Testzeilen für S02 (zur Freigabe) | fertig |
 | S02–S03 | Etappe 1: Behebung, Abnahme (20 volle Läufe) | offen |
 | B01–B05 | Etappe 2: Zeilenmenü, Master in der Fassungsleiste, „Keine Treffer.“ bei Lebensmitteln, ggf. Suchtreffer und markierbare Texte | offen |
 | T01–T03 | Etappe 3: Liste und Detail ab 840 | offen |
