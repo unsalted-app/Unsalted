@@ -421,7 +421,10 @@ mit Namen).
 
 **S03 — Abnahme Stabilität.** Nur Doku. `tool/repeat_tests.dart`: Core
 **20 volle Läufe** mit Standard-Parallelität ohne Hänger und ohne roten Test,
-dazu 10 Läufe unter Last (`--load` = Zahl der Kerne) und App 10 Läufe;
+dazu 10 Läufe unter Last (`--load` = Zahl der Kerne), **30 volle Läufe mit
+`--concurrency=1`** (Ergänzung nach S01, 2026-10-21: die einzige Bedingung,
+unter der die Matrix Hänger zeigte, D2) und App 10 Läufe; Protokolle unter
+`packages/unsalted_core/build/diagnose/`, lange Läufe mit `caffeinate -dims`;
 Messwerte (Dauer min/median/max) in `decisions.md`. CI auf dem PR grün.
 **Stopp** mit Bericht.
 
@@ -608,7 +611,8 @@ Mapper-Leichen (`data/`, Core-Logik), KI-Themen (Teil 6), `material_ui` (F3).
   `test/flutter_test_config.dart`, siehe (b)) (ein Widget-Test braucht heute unter
   10 s; 2 min lassen Luft unter Last), CI-Grenze 20 min bleibt; Abnahme 20
   volle Core-Läufe ohne Hänger plus 10 unter Last plus App 10.
-  **Antwort:** ja (2 min je Test, Abnahme wie geplant).
+  **Antwort:** ja (2 min je Test, Abnahme wie geplant). *Ergänzung nach S01
+  (2026-10-21):* zusätzlich 30 volle Core-Läufe mit `--concurrency=1`.
 - **F13 — App-Tests mitziehen?** *Empfehlung:* ja, in S02: die 5 App-Dateien
   schließen noch nach dem alten Muster (vor 1.1d) und hätten bei einem roten
   Test dasselbe Hänger-Risiko; Zeilen in (d2).

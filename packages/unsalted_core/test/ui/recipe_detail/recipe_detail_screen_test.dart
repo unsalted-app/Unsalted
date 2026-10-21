@@ -50,6 +50,7 @@ import 'package:unsalted_core/src/ui/recipe_list/recipe_list_screen.dart';
 import 'package:unsalted_core/src/ui/shared/undoable_deletion.dart';
 import 'package:unsalted_core/src/ui/versions/version_list_screen.dart';
 import 'package:unsalted_core/src/ui/versions/version_mark.dart';
+import '../support/db_widget_harness.dart';
 
 class _FakeModule implements UnsaltedModule {
   final List<RecipeDetailSection> sections;
@@ -128,8 +129,7 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
 /// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
 /// abbauen und auspumpen, dann schließen.
 Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
-  await _disposeWidgetTree(tester);
-  await tester.runAsync(database.close);
+  await closeTestDatabase(tester, database);
 }
 
 Future<(String recipeId, String versionId)> _seedDraftRecipe(

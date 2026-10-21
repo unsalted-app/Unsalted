@@ -186,6 +186,7 @@ unsalted/
       │        │                                        UI-interne Provider, nicht exportiert
       │        └─ shared/unit_labels.dart               Einheiten deutsch, Dezimalkomma (Teil 1.2 C27b)
       └─ test/
+         ├─ flutter_test_config.dart         Zeitlimit 2 min je Widget-Test (Teil 1.4 S02)
          ├─ architecture/                    AT-01 bis AT-15, alle grün (AT-13–15 seit Teil 1.2)
          │  ├─ at01_no_upper_imports_test.dart … at15_design_only_in_ui_test.dart
          │  ├─ public_api_golden.txt
@@ -323,11 +324,11 @@ Diagnoseprotokolle unter `packages/unsalted_core/build/diagnose/` (nicht
 `caffeinate -dims`.
 
 S01b fertig (D5 instrumentiert, 60 Läufe ohne Hänger; Ursache lokal nicht
-nachgestellt; S02 härtet das Schließen und setzt 2 min je Widget-Test über
-`flutter_test_config.dart`).
+nachgestellt). S02 fertig (robustes Schließen `closeTestDatabase`, 2 min je
+Widget-Test, UI-83). Test-IDs neu: UI-83.
 
-**Nächster Schritt:** Freigabe der endgültigen S02-Testzeilen
-(`docs/plan-1.4.md`, (d2) S02, Nachtrag nach S01); danach S02.
+**Nächster Schritt:** S03 (Abnahme: Core 20 × Standard, 10 × unter Last,
+30 × `--concurrency=1`, App 10 ×), dann Stopp mit Bericht.
 
 ---
 
@@ -514,9 +515,13 @@ nachgestellt; S02 härtet das Schließen und setzt 2 min je Widget-Test über
   Wer `expect(await tester.runAsync(...), isNull)` prüft (z. B. „gelöscht“),
   muss danach `expect(tester.takeException(), isNull)` prüfen, sonst gilt eine
   Ausnahme als Erfolg.
-- **Datenbank in Widget-Tests immer über `_closeDatabase` schließen** (seit
-  Teil 1.1d): `addTearDown(() => _closeDatabase(tester, database));` direkt
+- **Datenbank in Widget-Tests immer über `closeTestDatabase` schließen** (seit
+  Teil 1.1d, Helfer seit Teil 1.4 S02: Core `test/ui/support/db_widget_harness.dart`,
+  App `test/support/db_teardown.dart`; in den Core-Dateien ruft `_closeDatabase`
+  ihn auf): `addTearDown(() => _closeDatabase(tester, database));` direkt
   nach dem Öffnen, nie `addTearDown(() => tester.runAsync(database.close))`.
+  Der Helfer startet `close()` in der Fake-Zone und pumpt abwechselnd mit echtem
+  Warten, bis geschlossen ist (sonst rot mit Meldung statt Hänger).
   Nach einem roten Test lässt `flutter_test` den Widget-Baum stehen; Drift
   wartet in `close()` auf seine Abbestell-Timer (`Timer.run`) in der
   Fake-Zone, die dann niemand mehr auspumpt — der ganze Lauf hing (z. B. wenn
@@ -526,7 +531,19 @@ nachgestellt; S02 härtet das Schließen und setzt 2 min je Widget-Test über
   „A Timer is still pending“ bei grünen Tests). `ci.yml` bricht nach 20 min ab.
   Für Gegenproben mit Zeitlimit nicht `perl alarm` verwenden: Das beendet nur
   das `flutter`-Startskript, die `flutter_tester`-Kinder laufen als Waisen
-  weiter.
+  weiter — `tool/repeat_tests.dart --max-minutes` beendet den ganzen
+  Prozessbaum.
+- **`testWidgets` ignoriert `--timeout` und `dart_test.yaml`** (seit Teil 1.4
+  S01): Es setzt sein Limit selbst (`binding.defaultTestTimeout`, 10 min).
+  Das Limit von 2 min kommt aus `test/flutter_test_config.dart` (Core, App) —
+  dort nur das Zeitlimit, keine Schriften. Seltene Hänger lokal mit
+  `tool/repeat_tests.dart` jagen; Protokolle unter
+  `packages/unsalted_core/build/diagnose/` (nicht `/private/tmp`, wird beim
+  Neustart geleert), lange Läufe mit `caffeinate -dims`.
+- **Kein `await subscription.cancel()` im Widget-Test nach `runAsync`** (seit
+  Teil 1.4 S02): Die Fortsetzung landet in der Fake-Zone, die niemand
+  auspumpt — der Testkörper steht. Drift bestellt synchron ab; `unawaited`
+  genügt.
 - **`dart doc` meldet fehlende Doku-Kommentare nicht** (seit 10.2): Lücken
   findet man nur mit vorübergehend aktiviertem Lint `public_member_api_docs`
   (nicht committen) und Filter auf die über `lib/unsalted_core.dart`

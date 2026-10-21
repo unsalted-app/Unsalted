@@ -22,6 +22,7 @@ import 'package:unsalted_core/src/module/extension_types.dart';
 import 'package:unsalted_core/src/module/unsalted_module.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/recipe_detail_screen.dart';
+import '../support/db_widget_harness.dart';
 
 class _MenuModule implements UnsaltedModule {
   const _MenuModule(this.actions);
@@ -57,10 +58,7 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
 void main() {
   testWidgets('UI-58: Menü-Aktion eines Moduls erhält einen gültigen Kontext des Rezeptdetails', (tester) async {
     final database = (await tester.runAsync(() async => db.CoreDatabase(NativeDatabase.memory())))!;
-    addTearDown(() async {
-      await _disposeWidgetTree(tester);
-      await tester.runAsync(database.close);
-    });
+    addTearDown(() => closeTestDatabase(tester, database));
     final recipeId = (await tester.runAsync(() async {
       final repo = DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
       return repo.createRecipe(const NewRecipe(title: 'Testrezept'));

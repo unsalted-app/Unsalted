@@ -3331,3 +3331,34 @@ und setzt ein wirksames Zeitlimit je Widget-Test (2 min über die Bindung);
 feste Wartezeiten bleiben. Endgültige Testzeilen: `docs/plan-1.4.md`, (d2)
 S02, Nachtrag nach S01 — zur Freigabe.
 
+**Freigabe S01 (Projektverantwortlicher, 2026-10-21):** Testzeilen-Liste für
+S02 und die Abweichungen 1–3 (Zeitlimit über die Bindung, feste Wartezeiten
+bleiben, UI-83 prüft den Helfer) freigegeben. Ergänzung für S03: zusätzlich
+30 volle Core-Läufe mit `--concurrency=1` (die einzige Bedingung mit Hängern
+in der Matrix), Protokolle unter `packages/unsalted_core/build/diagnose/`,
+lange Läufe mit `caffeinate -dims`; Plan-Nachtrag ergänzt.
+
+**S02 — Behebung.** Neu in Core `test/ui/support/db_widget_harness.dart`
+(`closeTestDatabase`, `closeDatabasePumping`: Baum abbauen und auspumpen,
+`database.close()` in der Fake-Zone starten, dann abwechselnd `pump(50 ms)` und
+`runAsync(20 ms)`, höchstens 200 Runden, sonst `fail` mit Meldung; Fehler aus
+`close()` werden weitergereicht), `test/ui/support/db_widget_harness_test.dart`
+(UI-83) und `test/flutter_test_config.dart` (`defaultTestTimeout` 2 min, nur
+das Zeitlimit). In der App `test/support/db_teardown.dart` (gleiche Logik über
+die Tür, AT-09) und `test/flutter_test_config.dart`. Geändert nur die Zeilen
+aus `plan-1.4.md` (d2) S02: in 15 Core-Dateien je eine Importzeile, in 12 der
+Körper von `_closeDatabase` (zwei Zeilen → eine), in 3 der Inline-Teardown; in
+5 App-Dateien je eine Importzeile und die Teardown-Zeile — maschinell geprüft:
+keine `expect`-Zeile, keine Aufrufstelle, keine feste Wartezeit geändert.
+*Gegenproben:* UI-83 (a) mit Schließen nur über `runAsync(close)` →
+„Test timed out after 30 seconds“; UI-83 (c) ohne `flutter_test_config.dart`
+→ Erwartet 2 min, war 10 min; App-Zeitlimit vorübergehend 100 ms →
+`widget_test.dart` „timed out after 0.1 seconds“; danach alles zurück und grün.
+*Nebenbefund:* In UI-83 (a) hielt ein `await subscription.cancel()` nach einem
+`runAsync` den Testkörper selbst an (die Fortsetzung lag in der Fake-Zone, die
+niemand auspumpte); ohne `await` (Drift plant den Abbestell-Timer synchron)
+grün. Im Bestand gibt es kein solches `await`. Nachtrag 28.11.1 neu,
+`CLAUDE.MD` Abschnitt 4 nachgeführt. Mac: Design 461, Core 451, App 12,
+Widgetbook 10 Tests grün; `check_architecture` Exit 0; `flutter analyze` ohne
+Befund.
+

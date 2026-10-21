@@ -14,6 +14,7 @@ import 'package:unsalted_core/src/data/daos/drift_recipe_dao.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_create_screen.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
+import '../support/db_widget_harness.dart';
 
 Future<CoreDatabase> _openDatabase(WidgetTester tester) async {
   final database = await tester.runAsync(() async => CoreDatabase(NativeDatabase.memory()));
@@ -36,8 +37,7 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
 /// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
 /// abbauen und auspumpen, dann schließen.
 Future<void> _closeDatabase(WidgetTester tester, CoreDatabase database) async {
-  await _disposeWidgetTree(tester);
-  await tester.runAsync(database.close);
+  await closeTestDatabase(tester, database);
 }
 
 void main() {

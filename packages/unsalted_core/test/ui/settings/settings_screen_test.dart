@@ -18,6 +18,7 @@ import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/ui/settings/export_screen.dart';
 import 'package:unsalted_core/src/ui/settings/import_screen.dart';
 import 'package:unsalted_core/src/ui/settings/settings_screen.dart';
+import '../support/db_widget_harness.dart';
 
 class _FakeModule implements UnsaltedModule {
   final List<SettingsEntry> entries;
@@ -53,8 +54,7 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
 /// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
 /// abbauen und auspumpen, dann schließen.
 Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
-  await _disposeWidgetTree(tester);
-  await tester.runAsync(database.close);
+  await closeTestDatabase(tester, database);
 }
 
 void main() {

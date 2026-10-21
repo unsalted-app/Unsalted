@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:unsalted_app/main.dart';
 import 'package:unsalted_core/unsalted_core.dart';
 import 'package:unsalted_design/unsalted_design.dart';
+import 'support/db_teardown.dart';
 
 Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 4; i++) {
@@ -27,7 +28,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       final database = (await tester.runAsync(() async => CoreDatabase(NativeDatabase.memory())))!;
-      addTearDown(() => tester.runAsync(database.close));
+      addTearDown(() => closeTestDatabase(tester, database));
       final modules = <UnsaltedModule>[CoreModule()];
       await tester.pumpWidget(ProviderScope(
         overrides: [

@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:unsalted_app/main.dart';
 import 'package:unsalted_core/unsalted_core.dart';
+import 'support/db_teardown.dart';
 
 Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 4; i++) {
@@ -21,7 +22,7 @@ Future<void> _settle(WidgetTester tester) async {
 void main() {
   testWidgets('APP-03: Systemtexte deutsch', (tester) async {
     final database = (await tester.runAsync(() async => CoreDatabase(NativeDatabase.memory())))!;
-    addTearDown(() => tester.runAsync(database.close));
+    addTearDown(() => closeTestDatabase(tester, database));
     final modules = <UnsaltedModule>[CoreModule()];
     await tester.pumpWidget(ProviderScope(
       overrides: [

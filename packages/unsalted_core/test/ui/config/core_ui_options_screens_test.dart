@@ -25,6 +25,7 @@ import 'package:unsalted_core/src/ui/config/core_ui_options.dart';
 import 'package:unsalted_core/src/ui/foods/food_editor_screen.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/recipe_detail_screen.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
+import '../support/db_widget_harness.dart';
 
 Decimal d(String v) => Decimal.parse(v);
 
@@ -42,10 +43,7 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
 
 Future<db.CoreDatabase> _openDatabase(WidgetTester tester) async {
   final database = (await tester.runAsync(() async => db.CoreDatabase(NativeDatabase.memory())))!;
-  addTearDown(() async {
-    await _disposeWidgetTree(tester);
-    await tester.runAsync(database.close);
-  });
+  addTearDown(() => closeTestDatabase(tester, database));
   return database;
 }
 

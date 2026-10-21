@@ -2869,3 +2869,9 @@ Das Aussehen folgt dem Design-System aus der Figma-Übergabe (`docs/design/UEBER
 - **28.10.14 — Sprache der Systemtexte.** Die App setzt Deutsch für die Systemtexte der Bedienelemente (`flutter_localizations`, `GlobalMaterialLocalizations`, `Locale('de')`): z. B. „Zurück“, die Bedienhilfe-Aktionen beim Umsortieren („Nach oben verschieben“ …) und die Lizenzseite. Deutsch ist auch die Sprache des App-Bundles (iOS und macOS: `CFBundleDevelopmentRegion` „de“, `CFBundleLocalizations` mit „de“), damit Menüs, die das System selbst zeichnet — unter iOS „Kopieren“, „Ausschneiden“, „Einsetzen“ in der Textauswahl —, ebenfalls deutsch erscheinen. Eigene Texte nach Kapitel 22 unverändert. (D17b, D17c)
 - **28.10.15 — Texte und Zeichen.** Sichtbare UI-Texte verwenden nur Zeichen der Schrift (DS-49); Pfeil, Häkchen und Stern erscheinen als Symbol. Der Pfeil steht nur noch in den Texten der Änderungsliste, die als Semantik dienen und nie gezeichnet werden. (D02, D14)
 
+## 28.11 Teil 1.4 – Stabilität, Bedienung, Tablet, Marke
+
+Plan und Commit-Reihenfolge: `docs/plan-1.4.md`; die Punkte tragen die Nummern aus dem Plan (Abschnitt d5) und werden mit den Commits ergänzt. → `decisions.md` „Teil 1.4“
+
+- **28.11.1 — Kapitel 23 / 28.5 — Tests.** Widget-Tests mit Datenbank schließen sie über einen gemeinsamen Helfer (`closeTestDatabase`: Widget-Baum abbauen, `close()` in der Fake-Zone starten, abwechselnd pumpen und in der echten Zone warten, mit Grenze und klarer Meldung statt Hänger; Core `test/ui/support/db_widget_harness.dart`, App `test/support/db_teardown.dart`). Jeder Widget-Test in Core und App hat ein Zeitlimit von 2 min über die Testbindung (`test/flutter_test_config.dart`); `flutter test --timeout` und `dart_test.yaml` wirken bei `testWidgets` nicht. Neu UI-83 (Helfer und Zeitlimit). Diagnosewerkzeug `tool/repeat_tests.dart` (Wiederholungsläufe). (S01, S02)
+
