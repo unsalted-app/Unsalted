@@ -4,6 +4,9 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 
 ## design-v0.3.0 — in Arbeit (Teil 1.4)
 
+- Suffix im Eingabefeld (T00b, Figma `Input/Text Field` `showSuffix`):
+  `AppTextField.suffix` bündig an der Kontur, der Wert endet `space-m` davor
+  (vorher 4 px). Test DS-69.
 - Umbruch im Listeneintrag (T00a, Figma `List/Item`, Hinweis 4): Mit
   `trailing` stehen Eintrag und Element hinten in einer `ReflowRow`;
   passt daneben das Element vorn samt breitestem Wort nicht mehr (minimale

@@ -3618,3 +3618,17 @@ danach grün. Nachtrag 28.11.12; `components.md`, `screens.md`, CHANGELOG. Mac:
 Design 493, Core 463, App 12, Widgetbook 10 Tests grün; `check_architecture`
 Exit 0.
 
+**T00b — Suffix im Eingabefeld (Figma `Input/Text Field` `showSuffix`).**
+`AppTextField(suffix:)` gab es schon (D08). Figma (nur gelesen): `Suffix` ist
+ein `Button/Icon` 48 × 48 am Feldende, „bündig an der Kontur; der Wert endet
+`space/m` davor“. Gemessen (vorübergehender Probetest, gelöscht): Knopf schon
+48 × 48 und bündig, der Wert endete aber nur 4 px davor — Material 3 setzt
+`inputToSuffixGap` fest auf 4. *Umsetzung:* das Suffix bekommt links `space-s`
+Innenabstand (4 + 8 = `space-m`); Knopf bleibt bündig. *Geänderte bestehende
+Testzeilen:* keine. *Neu:* DS-69 (Knopf `size-target`, bündig, Abstand genau
+`space-m` — ändert Flutter seine 4 px, wird DS-69 rot), UI-94 (Lupe der
+Zutatenzeile am Feldende, Name endet `space-m` davor). *Gegenprobe:* ohne
+Innenabstand → DS-69 und UI-94 rot; danach grün. Nachtrag 28.11.13;
+`components.md`, CHANGELOG. Mac: Design 497, Core 464, App 12, Widgetbook 10
+Tests grün; `check_architecture` Exit 0.
+

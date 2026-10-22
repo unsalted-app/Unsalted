@@ -12,6 +12,11 @@
 // `text-secondary` ([AppTextField.unit]). Fehler mit Symbol `error`
 // (`size-icon-xs`, Abstand `space-xs`) in `caption`/`text-error`. Schmal =
 // `reflow-field-min` (wächst ab D12 mit der Schrift).
+//
+// Seit Teil 1.4 (T00b, Figma `Input/Text Field` `showSuffix`): [suffix] ist
+// ein `Button/Icon` am Feldende, bündig an der Kontur (48 × 48); der Wert endet
+// `space-m` davor (Material 3 setzt nur 4 px, das Suffix trägt die übrigen
+// `space-s` als Innenabstand).
 
 import 'package:flutter/material.dart';
 
@@ -125,7 +130,7 @@ class AppTextField extends StatelessWidget {
                 Flexible(child: Text(error!, style: AppTypography.caption.copyWith(color: c.textError))),
               ],
             ),
-      suffixIcon: suffix,
+      suffixIcon: suffix == null ? null : AppPadding.only(left: AppSpace.s, child: suffix!),
       suffixText: unit,
       suffixStyle: AppTypography.data.copyWith(color: c.textSecondary),
       border: expands ? (Theme.of(context).inputDecorationTheme.border ?? const OutlineInputBorder()) : null,

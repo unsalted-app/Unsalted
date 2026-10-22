@@ -35,6 +35,9 @@
 // UI-85 (Teil 1.4 B01, Figma N1): Schrittzeile wie die Zutatenzeile — Griff,
 // Nummer und Menü unten bündig mit der Anweisung, Timer eingerückt darunter,
 // Menü mit Tooltip „Aktionen für Schritt“, Haarlinie unten.
+// UI-94 (Teil 1.4 T00b, Figma `Input/Text Field` `showSuffix`): Die Lupe
+// „Lebensmittel verknüpfen“ sitzt am Ende des Namensfelds, bündig an der
+// Kontur; der Name endet `space-m` davor.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -543,4 +546,15 @@ void main() {
     expect(timer.top - instruction.bottom, AppSpacing.m);
     expect(find.descendant(of: row, matching: find.byType(AppDivider)), findsOneWidget, reason: 'Haarlinie unten');
   });
+
+  testWidgets('UI-94: Lupe am Ende des Namensfelds, Name endet space-m davor', (tester) async {
+    await _pump(tester, _row());
+    final nameField = find.widgetWithText(AppTextField, 'Name');
+    final decorator = tester.getRect(find.descendant(of: nameField, matching: find.byType(InputDecorator)));
+    final button = tester.getRect(find.byTooltip('Lebensmittel verknüpfen'));
+    final text = tester.getRect(find.descendant(of: nameField, matching: find.byType(EditableText)));
+    expect(button.right, decorator.right, reason: 'bündig an der Kontur');
+    expect(button.left - text.right, AppSpacing.m);
+  });
 }
+

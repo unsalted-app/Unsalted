@@ -60,7 +60,7 @@ aus `tokens/unsalted.tokens.json` (DS-04).
 | `AppCard` | `Card` | `135:56` | `components/cards/app_card.dart` | DS-19 |
 | `AppSurface` | `Surface` | `151:205` | `components/surfaces/app_surface.dart` | DS-20, DS-20b |
 | `AppDivider` (`flush`, `vertical`, `rule`) | `Divider` | `82:39` | `components/surfaces/app_divider.dart` | DS-21 |
-| `AppTextField` (Beschriftung oben, `unit`, schmal = `reflow-field-min`) | `Input/Text Field` | `118:30` | `components/inputs/app_text_field.dart` | DS-23, DS-23b, DS-23c |
+| `AppTextField` (Beschriftung oben, `unit`, `suffix` bündig am Feldende, schmal = `reflow-field-min`) | `Input/Text Field` | `118:30` | `components/inputs/app_text_field.dart` | DS-23, DS-23b, DS-23c, DS-69 |
 | `AppSearchField` | `Input/Search` | `138:50` | `components/inputs/app_search_field.dart` | DS-24 |
 | `AppSelect` (`expand`) | `Input/Select` | `149:200` | `components/inputs/app_select.dart` | DS-25, DS-25b, DS-25c |
 | `AppListItem` (`leading`, `selected`, `match`; Umbruch bei großer Schrift) | `List/Item` | `127:29` | `components/lists/app_list_item.dart` (intern `ReflowRow`) | DS-26, DS-26b, DS-66, DS-68 |
