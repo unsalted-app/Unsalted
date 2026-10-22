@@ -13,9 +13,20 @@
 // `radius-xs`, seitlich `space-xxs` wie `Highlight`) hinter den Zeichen, Text
 // darin in `text-on-marker`. Der Titel bleibt ein Text mit unverändertem
 // Klartext (Semantik und Suche im Test wie ohne Treffer).
+//
+// Seit Teil 1.4 (T00a, Figma `List/Item` „Umbruch bei großer Schrift“,
+// Hinweis 4): Mit [AppListItem.trailing] stehen der Eintrag (`ListTile` mit
+// Element vorn, Titel, Untertitel) und das Element hinten in einer
+// `ReflowRow` — nebeneinander mittig, oder, sobald daneben das Element vorn
+// und das breiteste Wort von Titel oder Untertitel nicht mehr passen (minimale
+// Eigenbreite des `ListTile`), das Element hinten rechtsbündig darunter, über
+// die volle Breite, mit `space-m` darunter — damit Wörter nicht getrennt
+// werden. Ohne Element hinten unverändert.
 
 import 'package:flutter/material.dart';
 
+import '../../layout/app_stack.dart';
+import '../../layout/reflow_row.dart';
 import '../../theme/app_colors.dart';
 import '../../tokens/radius_tokens.g.dart';
 import '../../tokens/spacing_tokens.g.dart';
@@ -63,6 +74,14 @@ class AppListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
+    final tile = ListTile(
+      title: _MatchedTitle(title: title, match: match),
+      subtitle: subtitle == null ? null : Text(subtitle!),
+      leading: leading,
+      onTap: onTap,
+      dense: dense ? true : null,
+      selected: selected,
+    );
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(
@@ -70,15 +89,17 @@ class AppListItem extends StatelessWidget {
           left: selected ? BorderSide(color: c.lineStrong, width: AppStroke.rule) : BorderSide.none,
         ),
       ),
-      child: ListTile(
-        title: _MatchedTitle(title: title, match: match),
-        subtitle: subtitle == null ? null : Text(subtitle!),
-        leading: leading,
-        trailing: trailing,
-        onTap: onTap,
-        dense: dense ? true : null,
-        selected: selected,
-      ),
+      child: trailing == null
+          ? tile
+          : ReflowRow(
+              main: tile,
+              trailing: AppPadding.only(right: AppSpace.l, child: trailing!),
+              gap: 0,
+              mainMin: 0,
+              mainMinIntrinsic: true,
+              centered: true,
+              stackedEndGap: AppSpacing.m,
+            ),
     );
   }
 }

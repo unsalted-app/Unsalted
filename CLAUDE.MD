@@ -337,11 +337,16 @@ B02 fertig (Master in der Fassungsleiste), B03 fertig („Keine Treffer.“ bei
 Lebensmitteln), B04 fertig (Suchtreffer markiert), B05a fertig
 (Token-Nachtrag Textauswahl: 30 Farbrollen), B05 fertig (Rezepttexte im
 Detail markierbar). Etappe 2 fertig. Test-IDs neu: UI-83–90, DS-62,
-DS-64–67.
+DS-64–67; in Etappe 3 UI-93, DS-68.
 
-**Nächster Schritt:** Bericht zu Etappe 2 an den Projektverantwortlichen;
-nach Freigabe Etappe 3 (T01–T03, Liste und Detail ab 840; leerer
-Detailbereich nach N3 mit Punktraster, ohne Text).
+Etappe 2 freigegeben. Etappe 3: T00a fertig (Listeneintrag bricht bei großer
+Schrift um, Bildschirm 7 bei 200 %). Für Etappe 4 vorgemerkt: eingefrorene
+Ansicht nach Figma `42:2010`, restliche Namen/IDs in `components.md` und
+`rueckmeldung-figma.md`.
+
+**Nächster Schritt:** Etappe 3 weiter (T00b `AppTextField(suffix:)`, dann
+T01–T03; leerer Detailbereich nach N3 mit Punktraster, ohne Text). Golden-Lauf
+vor jedem Push; Stopp nach Etappe 3.
 
 ---
 

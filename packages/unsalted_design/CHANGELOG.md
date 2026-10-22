@@ -4,6 +4,12 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 
 ## design-v0.3.0 — in Arbeit (Teil 1.4)
 
+- Umbruch im Listeneintrag (T00a, Figma `List/Item`, Hinweis 4): Mit
+  `trailing` stehen Eintrag und Element hinten in einer `ReflowRow`;
+  passt daneben das Element vorn samt breitestem Wort nicht mehr (minimale
+  Eigenbreite des `ListTile`), steht das Element rechtsbündig darunter, mit
+  `space-m` darunter. `ReflowRow` additiv `stackedGap`, `stackedEndGap`,
+  `centered`, `mainMinIntrinsic`. Test DS-68.
 - Zeilenmenü (B01): `AppOverflowMenu` additiv mit `tooltip` (Tooltip und
   Semantik des Menüknopfs, Figma `Feedback/Tooltip`); `AppDashedUnderline`
   zeichnet die Linie `space-xxs` unter dem Inhalt, außerhalb des Layouts

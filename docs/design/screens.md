@@ -94,6 +94,7 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Abschnitte:**
   1. `versions/sections/version_list_results_section.dart` — Liste der Versionen
 - **Bausteine:** `versions/version_tile.dart` (`VersionTile`: `VersionMark`, Zustand als Wort, Datum, „Master“ als Wort, Aktionen; D13), `versions/version_mark.dart` (`VersionMark`).
+- **Große Schrift (Teil 1.4 T00a, Figma Schrift 200 `73:3817`):** die Aktionen stehen rechtsbündig unter Zustand und Datum, sobald daneben Marke und breitestes Wort nicht mehr passen; Wörter werden nicht getrennt.
 - **Figma `20:1042`:** übereinstimmend Fassungsmarken (Entwurf gestrichelt, eingefroren mit Kontur, Master mit Markerfläche). Bewusst anders: Figma zeigt eine vereinfachte Liste (Titel „Version n“, Datum, Marke rechts, keine Aktionen); der Code behält Aktionen und Tooltips (28.4.4) und zeigt Marke, Zustand als Wort, Datum und „Master“ als Wort. Kein Golden-Motiv.
 - **Umgestellt:** C20.
 

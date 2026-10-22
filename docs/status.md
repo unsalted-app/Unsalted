@@ -322,7 +322,8 @@ Stand nach S03 (Etappe 1 fertig): Design 461 Tests, Core 451, App 12, Widgetbook
 | B05 | Markierbare Rezepttexte im Rezeptdetail (`AppSelectableArea`), Textauswahl im Theme aus `selection`/`selection-handle`; DS-67, UI-90 | fertig |
 
 Stand nach Etappe 2: Design 491 Tests, Core 461, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
-| T01–T03 | Etappe 3: Liste und Detail ab 840 | offen |
+| T00a | Listeneintrag bricht bei großer Schrift um (Aktionen unter Titel und Untertitel, Figma `List/Item`, Hinweis 4); DS-68, UI-93 | fertig |
+| T00b–T03 | Etappe 3: `AppTextField(suffix:)`, Liste und Detail ab 840 | in Arbeit |
 | M01–M03 | Etappe 4: App-Name, ggf. App-Symbol und Startbild, Abschluss | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)

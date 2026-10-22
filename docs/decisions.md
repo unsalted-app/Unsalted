@@ -3577,3 +3577,44 @@ grün. Nachträge 28.11.6 und 28.11.11 (Sammelpunkt Design-Paket);
 `components.md`, `screens.md`. Mac: Design 491, Core 461, App 12, Widgetbook
 10 Tests grün; `check_architecture` Exit 0.
 
+## 2026-10-22 — Teil 1.4, Etappe 3 (Tablet)
+
+**Freigabe Etappe 2 und Vorgaben (Projektverantwortlicher):** Etappe 2
+geprüft und freigegeben (CI grün, nur geplante Testzeilen). Weiter mit Etappe
+3; vorher als eigene Commits mit Tests und Goldens die Bibliotheksänderungen
+aus der Figma-Übergabe, auf denen die Listen aufbauen: T00a
+`AppListItem(leading:)` und Umbruch bei großer Schrift nach Hinweis 4 (damit
+Bildschirm 7 bei 200 % stimmt; ohne Bildschirm-Datei, sonst Stopp), T00b
+`AppTextField(suffix:)` für die Lupe „Lebensmittel verknüpfen“ am Feldende wie
+in Figma. Dann T01–T03, leerer Detailbereich nach N3 (Punktraster, ohne Text).
+Für Etappe 4 (vor M03) vorgemerkt: eingefrorene Ansicht nach Figma `42:2010`,
+restliche Namen und IDs in `components.md` und `rueckmeldung-figma.md`.
+Golden-Lauf vor jedem Push; ungeplante Core-Testzeilen → Stopp; Stopp nach
+Etappe 3.
+
+**T00a — Umbruch im Listeneintrag (Figma `List/Item`, Hinweis 4).**
+`AppListItem(leading:)` gab es schon (seit 1.2); neu ist der Umbruch. Figma
+(Schrift 200, `73:3817`, nur gelesen): `List/Item` als umbrechende Zeile
+(Abstand 12, Innenabstand 12/16), Marke vorn, Zustand und Datum füllen, die
+Aktionen rechtsbündig in eigener Zeile darunter. *Umsetzung (Design):* Mit
+`trailing` steht der Eintrag (`ListTile` mit Element vorn, Titel, Untertitel —
+unverändert) zusammen mit dem Element hinten in einer `ReflowRow`. Kriterium:
+die minimale Eigenbreite des `ListTile` (Innenabstand + Element vorn + Abstand
++ breitestes Wort von Titel oder Untertitel, so rechnet Flutter selbst) muss
+neben das Element hinten passen — sonst steht es rechtsbündig darunter, über
+die volle Breite, mit `space-m` darunter; nebeneinander senkrecht mittig wie
+bisher. Ein erster Versuch mit der `ReflowRow` nur im Titelplatz scheiterte an
+UI-68 (lange Marke „V2 · mit Vorteig“ ließ den Aktionen zu wenig Breite,
+Überlauf) — deshalb über den ganzen Eintrag. `ReflowRow` (intern) additiv
+`stackedGap`, `stackedEndGap`, `centered`, `mainMinIntrinsic`; `AppNotice`
+unverändert. Ohne `trailing` baut `AppListItem` exakt wie bisher. Keine
+Bildschirm-Datei; `version_tile.dart` unverändert. *Geänderte bestehende
+Testzeilen:* keine. *Neu:* DS-68 (Handy 200 %: Aktionen unter Titel und
+Untertitel, rechtsbündig, `space-m` darunter, Titel einzeilig, kein Überlauf;
+Tablet 100 %: daneben, mittig), UI-93 (Versionseintrag bei 600 Breite: 200 %
+Aktionen unter Zustand und Datum, „Eingefroren“ einzeilig; 100 % daneben).
+*Gegenprobe:* altes `ListTile(trailing:)` → DS-68 und UI-93 (200 %) rot;
+danach grün. Nachtrag 28.11.12; `components.md`, `screens.md`, CHANGELOG. Mac:
+Design 493, Core 463, App 12, Widgetbook 10 Tests grün; `check_architecture`
+Exit 0.
+
