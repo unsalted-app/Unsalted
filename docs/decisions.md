@@ -3542,4 +3542,13 @@ nur in der JSON auf 0,45 geändert, nicht generiert → DS-04 rot; zurück.
 Noch keine Verwendung im Theme (folgt in B05). `components.md`,
 `design_system.md`, CHANGELOG. Mac: Design 485, Core 460, App 12, Widgetbook 10
 Tests grün; `check_architecture` Exit 0.
+*Goldens (Folge-Commit):* Die CI auf `5b3f602` war rot — das GL-01-Motiv
+`tokens_farbe` zeigt alle Farbrollen, also auch die beiden neuen; meine
+Annahme „ohne Verwendung im Theme kein Bild geändert“ war falsch, der
+Golden-Lauf fehlte vor dem Push. Weil der Commit schon auf `teil-1.4` lag,
+kommen die Bilder als eigener Commit (kein `--amend`, kein Force-Push). Lauf
+39813330313 (`goldens/b05a`): abweichend die 8 Bilder `tokens_farbe`; angesehen:
+`selection` (Marker) und `selection-handle` (Tinte) hinter `marker`, sonst nur
+verschoben. Künftig vor jedem Push mit Token- oder Design-Änderung den
+Golden-Lauf über den Hilfsbranch.
 
