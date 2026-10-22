@@ -118,15 +118,15 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 
 - **Zweck:** Lebensmittel suchen und verwalten.
 - **Daten:** `FoodRepository.search`, ausgeblendet über `pendingFoodDeletionsProvider`.
-- **Aktionen:** Suche; öffnen (Editor); neu (FAB „Neues Lebensmittel“, leerer Zustand); Wischen = Löschen mit 5 s „Rückgängig“.
+- **Aktionen:** Suche; öffnen (Editor; ab 840 im Detailbereich daneben, Teil 1.4 T03); neu (FAB „Neues Lebensmittel“, leerer Zustand; ab 840 im Detailbereich, danach gewählt); Wischen = Löschen mit 5 s „Rückgängig“ (gewähltes Lebensmittel: Auswahl aufgehoben).
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · leer · Liste.
-- **Template:** `ListPageTemplate`.
+- **Template:** `ListPageTemplate`; seit Teil 1.4 T03 in `ListDetailTemplate` — ab 840 Liste und Editor (Bildschirm 10) nebeneinander, ohne Auswahl Punktraster; Auswahlwechsel mit ungespeicherten Änderungen fragt wie 10.0; Auswahl und Eingaben überstehen das Verkleinern (F6, T01a).
 - **Abschnitte:**
   1. `foods/sections/food_list_search_section.dart` — Suchfeld (Slot `search`)
   2. `foods/sections/food_list_empty_section.dart` — „Keine Lebensmittel gefunden.“ + „Eigenes Produkt anlegen“; mit Suchbegriff „Keine Treffer.“ ohne Aktion (B03)
   3. `foods/sections/food_list_results_section.dart` — Liste mit Wischen-Löschen
 - **Bausteine:** `foods/food_tile.dart` (`FoodTile`).
-- **Figma `20:1130`:** übereinstimmend wie Bildschirm 1 (Liste, Marker-Knopf, Leerstelle mit Aktion, Meldung). Seit Teil 1.4 B03 übereinstimmend mit `09 / Keine Treffer` (`218:3919`): mit Suchbegriff „Keine Treffer.“ mit Symbol, ohne Aktion und ohne Leerstelle. Offen: Liste und Detail ab 840 (Teil 1.4, Etappe 3). Kein Golden-Motiv.
+- **Figma `20:1130`:** übereinstimmend wie Bildschirm 1 (Liste, Marker-Knopf, Leerstelle mit Aktion, Meldung). Seit Teil 1.4 B03 übereinstimmend mit `09 / Keine Treffer` (`218:3919`): mit Suchbegriff „Keine Treffer.“ mit Symbol, ohne Aktion und ohne Leerstelle. Seit Teil 1.4 T03 übereinstimmend mit Tablet `147:9823` und ohne Auswahl `219:4706` (N3): Liste in 360, Auswahlbalken, Editor mit Haarlinie und eigener Kopfleiste, ohne Auswahl nur Punktraster. Kein Golden-Motiv.
 - **Umgestellt:** C15.
 
 ## 10 Lebensmittel bearbeiten — `foods/food_editor_screen.dart`, `foods/package_form.dart`
@@ -134,6 +134,7 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Zweck:** Verpackungsangaben anlegen oder ändern.
 - **Daten:** `FoodRepository.getById`, `createVariant`, `updateVariant`, `softDeleteVariant`; `NutrientValidator.check`.
 - **Aktionen:** Speichern (FAB „Lebensmittel speichern“, nicht bei Fehler); Löschen (Menü, 5 s „Rückgängig“); Zurück mit Änderungen fragt nach (10.0, `PopScope` im Bildschirm).
+- **Detailbereich (Teil 1.4 T03):** ab 840 neben der Lebensmittel-Liste; die Liste übergibt `onDone` und `onDirtyChanged`. Speichern lässt den Bereich offen (Editor lädt frisch, nach dem Anlegen das neue Lebensmittel), Löschen und Verwerfen heben die Auswahl auf; kein „Zurück“. Die Rückfrage ist `FoodEditorScreen.confirmDiscard` (Texte aus 10.0), auch beim Auswahlwechsel in der Liste.
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · nicht gefunden · Eingabe mit Warnungen/Fehlern · speichert · Speicherfehler (`messages`).
 - **Template:** `FormPageTemplate` mit Hauptaktion und `AppOverflowMenu`; Inhalt `PackageForm` (`FormSections`).
 - **Abschnitte (in `PackageForm`):**

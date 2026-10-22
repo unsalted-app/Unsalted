@@ -13,6 +13,12 @@
 // Änderungen sind damit hinfällig, deshalb ohne Verwerfen-Dialog.
 // Seit Teil 1.2 (C24) aus Design-Komponenten: FormPageTemplate; Formular in
 // package_form.dart mit Abschnitten unter sections/.
+// Seit Teil 1.4 (T03): Im Detailbereich neben der Lebensmittel-Liste (ab
+// `breakpoint-expanded`) übergibt die Liste [FoodEditorScreen.onDone] und
+// [FoodEditorScreen.onDirtyChanged]. Speichern, Löschen und Verwerfen
+// schließen dann keine Seite, sondern melden das Ergebnis an die Liste;
+// ungespeicherte Änderungen meldet der Editor, damit die Liste beim
+// Auswahlwechsel mit derselben Rückfrage fragt ([FoodEditorScreen.confirmDiscard]).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,7 +37,27 @@ class FoodEditorScreen extends ConsumerStatefulWidget {
   /// (`/foods/:id`).
   final String? foodId;
 
-  const FoodEditorScreen({super.key, this.foodId});
+  /// Im Detailbereich (Teil 1.4 T03): statt die Seite zu schließen, meldet
+  /// der Editor nach dem Speichern die ID des gespeicherten Lebensmittels,
+  /// nach Löschen oder Verwerfen `null`. `null` = eigene Seite (`pop`).
+  final ValueChanged<String?>? onDone;
+
+  /// Meldet, ob ungespeicherte Änderungen vorliegen (Detailbereich).
+  final ValueChanged<bool>? onDirtyChanged;
+
+  const FoodEditorScreen({super.key, this.foodId, this.onDone, this.onDirtyChanged});
+
+  /// Rückfrage vor dem Verwerfen ungespeicherter Eingaben (Nachtrag 10.0);
+  /// `true` = verwerfen.
+  static Future<bool> confirmDiscard(BuildContext context) {
+    return showAppConfirmDialog(
+      context,
+      title: 'Änderungen verwerfen?',
+      message: 'Deine Eingaben sind noch nicht gespeichert.',
+      confirmLabel: 'Verwerfen',
+      cancelLabel: 'Abbrechen',
+    );
+  }
 
   @override
   ConsumerState<FoodEditorScreen> createState() => _FoodEditorScreenState();
@@ -45,18 +71,31 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
   bool _leaving = false;
   String? _saveError;
 
+  /// Zuletzt an [FoodEditorScreen.onDirtyChanged] gemeldeter Stand.
+  bool _reportedDirty = false;
+
   bool get _isEditing => widget.foodId != null;
 
   bool get _hasUnsavedChanges => !_leaving && (_formKey.currentState?.hasChanges ?? false);
 
-  Future<bool> _confirmDiscard() async {
-    return showAppConfirmDialog(
-      context,
-      title: 'Änderungen verwerfen?',
-      message: 'Deine Eingaben sind noch nicht gespeichert.',
-      confirmLabel: 'Verwerfen',
-      cancelLabel: 'Abbrechen',
-    );
+  Future<bool> _confirmDiscard() => FoodEditorScreen.confirmDiscard(context);
+
+  void _reportDirty() {
+    final dirty = _hasUnsavedChanges;
+    if (dirty == _reportedDirty) return;
+    _reportedDirty = dirty;
+    widget.onDirtyChanged?.call(dirty);
+  }
+
+  /// Schließt den Editor: eigene Seite `pop`, im Detailbereich
+  /// [FoodEditorScreen.onDone] mit [doneId].
+  void _close(String? doneId) {
+    final done = widget.onDone;
+    if (done != null) {
+      done(doneId);
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -84,8 +123,10 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
 
     try {
       final repo = ref.read(foodRepositoryProvider);
+      final String savedId;
       if (_isEditing) {
         final existing = _existing!;
+        savedId = existing.id;
         await repo.updateVariant(existing.copyWith(
           name: value.name,
           brand: value.brand,
@@ -96,7 +137,7 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
           nutrients: value.nutrients,
         ));
       } else {
-        await repo.createVariant(NewFoodVariant(
+        savedId = await repo.createVariant(NewFoodVariant(
           name: value.name,
           brand: value.brand,
           barcode: value.barcode,
@@ -112,8 +153,9 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
       // canPop kommt aus dem zuletzt gebauten PopScope: erst den Frame mit
       // _leaving = true bauen, dann schließen (CLAUDE.md Abschnitt 4).
       setState(() => _leaving = true);
+      _reportDirty();
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) Navigator.of(context).pop();
+        if (mounted) _close(savedId);
       });
     } on ValidationException catch (e) {
       setState(() => _saveError = e.message);
@@ -130,11 +172,16 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
     // Wie beim Speichern: erst den Frame mit _leaving = true bauen, dann
     // schließen (CLAUDE.md Abschnitt 4).
     setState(() => _leaving = true);
+    _reportDirty();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final navigator = Navigator.of(context);
-      if (navigator.canPop()) navigator.pop();
+      final done = widget.onDone;
+      if (done == null) {
+        final navigator = Navigator.of(context);
+        if (navigator.canPop()) navigator.pop();
+      }
       deleteFoodWithUndo(context, ref, existing);
+      done?.call(null);
     });
   }
 
@@ -148,8 +195,9 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
         if (!mounted) return;
         if (shouldDiscard) {
           setState(() => _leaving = true);
+          _reportDirty();
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) Navigator.of(context).pop();
+            if (mounted) _close(null);
           });
         }
       },
@@ -200,7 +248,10 @@ class _FoodEditorScreenState extends ConsumerState<FoodEditorScreen> {
             key: _formKey,
             initial: initial,
             options: ref.watch(coreUiOptionsProvider),
-            onChanged: () => setState(() {}),
+            onChanged: () {
+              setState(() {});
+              _reportDirty();
+            },
           );
         },
       ),

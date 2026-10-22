@@ -327,7 +327,9 @@ Stand nach Etappe 2: Design 491 Tests, Core 461, App 12, Widgetbook 10, alle gr�
 | T01 | Rahmen „Liste und Detail“ (`ListDetailTemplate`): ab 840 Liste in `size-list-pane`, Detail mit Haarlinie, ohne Auswahl Punktraster ohne Text (N3); DS-63, GL-01 `template_liste_detail` | fertig |
 | T02 | Rezepte: Liste und Detail ab 840 (Auswahlzustand, Auswahlbalken, Detail mit `onClose`, Auswahl übersteht das Verkleinern); UI-91, GL-02 `01_04_liste_detail` | fertig |
 | T01a | Rahmen hält den Zustand von Liste und Detail beim Wechsel über 840; darunter ein gewähltes Detail verborgen (ohne Fokus, ohne Semantik); DS-63 | fertig |
-| T03 | Lebensmittel: Liste und Editor ab 840 | in Arbeit |
+| T03 | Lebensmittel: Liste und Editor ab 840 (Auswahl, „Neues Lebensmittel“ im Bereich, Speichern ohne `pop`, Rückfrage beim Wechsel; `FoodEditorScreen.onDone`/`onDirtyChanged`); UI-92 | fertig |
+
+Stand nach Etappe 3: Design 511 Tests, Core 471, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
 | M01–M03 | Etappe 4: App-Name, ggf. App-Symbol und Startbild, Abschluss | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)

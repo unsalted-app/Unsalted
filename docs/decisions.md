@@ -3725,3 +3725,35 @@ Semantik; Liste behält ihre Suche; Detail behält ungespeicherte Eingaben).
 `components.md`, CHANGELOG, 28.11.7 und 28.11.11. Mac: Design 511, Core 468,
 App 12, Widgetbook 10 Tests grün (UI-91 unverändert); `check_architecture`
 Exit 0.
+
+**T03 — Lebensmittel: Liste und Editor (Bildschirm 9/10).** *Umsetzung:*
+`FoodListScreen` baut `ListDetailTemplate` wie T02; Zustand `_selectedId`,
+`_creating` (neues Lebensmittel im Bereich), `_round` (Schlüssel des Editors:
+ein Abschluss lädt ihn frisch) und `_detailDirty`. Ab 840 wählt Tippen aus,
+„Neues Lebensmittel“ (Marker-Knopf, leerer Zustand) öffnet den Editor im
+Bereich; darunter wie bisher `Navigator.push`. `FoodEditorScreen` additiv:
+`onDone` — nach dem Speichern mit der ID (beim Anlegen die neue aus
+`createVariant`, die Liste wählt sie), nach Löschen und Verwerfen mit `null`
+statt `pop` —, `onDirtyChanged` (gemeldet aus `PackageForm.onChanged` und
+beim Verlassen, nie im `build`) und die Rückfrage als
+`FoodEditorScreen.confirmDiscard` (Texte aus 10.0 unverändert; der Editor
+selbst nutzt sie weiter). Die Liste fragt vor jedem Auswahlwechsel und vor
+„Neues Lebensmittel“, solange der Editor Änderungen meldet; „Abbrechen“
+lässt alles stehen. Löschen im Bereich und Wischen-Löschen des gewählten
+Lebensmittels heben die Auswahl ohne Rückfrage auf (wie 1.1b). „Zurück“ der
+Plattform mit Änderungen im Bereich fragt weiter über `PopScope`; nach
+„Verwerfen“ meldet der Editor `onDone(null)` (Auswahl aufgehoben) statt die
+Liste zu schließen (28.11.8). Seite unter 840 unverändert (UI-29–32, UI-43
+grün). *Geänderte bestehende Testzeilen:* keine (Lebensmittel-Liste 8 Tests,
+Editor 8 Tests unverändert grün). *Neu:* UI-92 (1024 × 1366: Auswahl, Editor
+rechts ab 360, keine neue Seite, kein „Zurück“; Speichern lässt den Bereich
+offen, Liste zeigt den neuen Namen; Wechsel ohne Änderungen ohne Rückfrage;
+mit Änderungen Rückfrage — „Abbrechen“ bleibt, „Verwerfen“ wechselt ohne zu
+speichern; „Neues Lebensmittel“ im Bereich, nach dem Anlegen gewählt;
+„Löschen“ im Bereich ohne Rückfrage, Auswahl aufgehoben, eine Meldung, nach
+5 s gelöscht; Eingaben überstehen 844 × 390 → 390 × 844 → zurück).
+*Gegenprobe:* Wechsel ohne Rückfrage → UI-92 rot; ohne `onDone` → zwei UI-92
+rot; danach grün. Goldens: kein Motiv betroffen (`10_lebensmittel_bearbeiten`
+zeigt den Editor als eigene Seite). Nachträge 28.11.7 (ergänzt), 28.11.8;
+`screens.md`. Mac: Design 511, Core 471, App 12, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.

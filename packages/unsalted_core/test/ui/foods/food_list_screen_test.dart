@@ -6,6 +6,11 @@
 // Entwurf den Hinweis aus 9.1b.
 // UI-88 (Teil 1.4, B03): Mit Suchbegriff ohne Ergebnis „Keine Treffer.“ mit
 // Symbol, ohne Aktion und ohne Leerstelle; ohne Suchbegriff unverändert.
+// UI-92 (Teil 1.4, T03): Liste und Editor ab 840 — Tippen wählt aus (Editor
+// rechts, keine neue Seite), Speichern lässt den Bereich offen, ein Wechsel
+// mit ungespeicherten Änderungen fragt wie 10.0, „Neues Lebensmittel“ im
+// Bereich (danach gewählt), Löschen hebt die Auswahl auf; ungespeicherte
+// Eingaben überstehen das Drehen (T01a).
 //
 // NativeDatabase.memory() macht echte, nicht gefakte Async-Arbeit (FFI/
 // Isolate-Kommunikation). Unter testWidgets() läuft Code standardmäßig in
@@ -31,6 +36,7 @@ import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/recipe/recipe_ingredient.dart' as model;
 import 'package:unsalted_core/src/ui/foods/food_editor_screen.dart';
+import 'package:unsalted_core/src/ui/foods/food_tile.dart';
 import 'package:unsalted_core/src/ui/foods/food_list_screen.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/ingredient_row.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
@@ -333,5 +339,160 @@ void main() {
 
     await _disposeWidgetTree(tester);
   });
-}
 
+  group('UI-92: Liste und Editor', () {
+    void setView(WidgetTester tester, Size size) {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+    }
+
+    Finder tile(String name) => find.widgetWithText(FoodTile, name);
+    String? editorId(WidgetTester tester) => tester.widget<FoodEditorScreen>(find.byType(FoodEditorScreen)).foodId;
+    List<String> selected(WidgetTester tester) => [
+          for (final item in tester.widgetList<AppListItem>(
+            find.descendant(of: find.byType(FoodTile), matching: find.byType(AppListItem)),
+          ))
+            if (item.selected) item.title,
+        ];
+    /// Name und Marke des gespeicherten Lebensmittels.
+    Future<({String name, String? brand})> stored(WidgetTester tester, CoreDatabase database, String id) async {
+      final variant = await tester.runAsync(() => DriftFoodRepository(DriftFoodDao(database)).getById(id));
+      expect(tester.takeException(), isNull);
+      return (name: variant!.name, brand: variant.brand);
+    }
+
+    testWidgets('UI-92: 1024 × 1366 — Auswahl, Speichern ohne pop, Rückfrage beim Wechsel, neues Lebensmittel',
+        (tester) async {
+      final database = await _openDatabase(tester);
+      addTearDown(() => _closeDatabase(tester, database));
+      final mehlId = await _createFood(tester, database, 'Mehl', 340);
+      final zuckerId = await _createFood(tester, database, 'Zucker', 400);
+      setView(tester, const Size(1024, 1366));
+      await _pumpFoodList(tester, database);
+      expect(find.byType(FoodEditorScreen), findsNothing, reason: 'ohne Auswahl leerer Bereich');
+
+      await tester.tap(tile('Mehl'));
+      await _settleDb(tester);
+      expect(editorId(tester), mehlId);
+      expect(tester.getTopLeft(find.byType(FoodEditorScreen)).dx, greaterThanOrEqualTo(AppSize.listPane),
+          reason: 'Editor rechts neben der Liste');
+      expect(selected(tester), ['Mehl']);
+      expect(Navigator.of(tester.element(find.byType(FoodListScreen))).canPop(), isFalse, reason: 'keine neue Seite');
+      expect(find.byType(BackButton), findsNothing);
+
+      // Speichern lässt den Bereich offen.
+      await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Weizenmehl');
+      await tester.pump();
+      await tester.tap(find.byTooltip('Lebensmittel speichern'));
+      await _settleDb(tester);
+      expect((await stored(tester, database, mehlId)).name, 'Weizenmehl');
+      expect(editorId(tester), mehlId, reason: 'Bereich bleibt offen');
+      expect(find.byType(FoodListScreen), findsOneWidget);
+      expect(selected(tester), ['Weizenmehl']);
+
+      // Nach dem Speichern keine ungespeicherten Änderungen: Wechsel ohne Rückfrage.
+      await tester.tap(tile('Zucker'));
+      await _settleDb(tester);
+      expect(find.text('Änderungen verwerfen?'), findsNothing);
+      expect(editorId(tester), zuckerId);
+      expect(selected(tester), ['Zucker']);
+
+      // Wechsel mit ungespeicherten Änderungen fragt nach (10.0).
+      await tester.enterText(find.widgetWithText(AppTextField, 'Marke'), 'Alpenhof');
+      await tester.pump();
+      await tester.tap(tile('Weizenmehl'));
+      await tester.pumpAndSettle();
+      expect(find.text('Änderungen verwerfen?'), findsOneWidget);
+      await tester.tap(find.widgetWithText(AppButton, 'Abbrechen'));
+      await tester.pumpAndSettle();
+      expect(editorId(tester), zuckerId, reason: 'Abbrechen bleibt');
+      expect(find.text('Alpenhof'), findsOneWidget);
+
+      await tester.tap(tile('Weizenmehl'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(AppButton, 'Verwerfen'));
+      await tester.pumpAndSettle();
+      await _settleDb(tester);
+      expect(editorId(tester), mehlId);
+      expect(selected(tester), ['Weizenmehl']);
+      expect((await stored(tester, database, zuckerId)).brand, isNull, reason: 'verworfen, nicht gespeichert');
+
+      // „Neues Lebensmittel“ im Bereich; nach dem Anlegen gewählt.
+      await tester.tap(find.byTooltip('Neues Lebensmittel'));
+      await _settleDb(tester);
+      expect(find.text('Lebensmittel anlegen'), findsOneWidget);
+      expect(editorId(tester), isNull);
+      expect(selected(tester), isEmpty);
+      await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Haferflocken');
+      await tester.pump();
+      await tester.tap(find.byTooltip('Lebensmittel speichern'));
+      await _settleDb(tester);
+      expect(find.text('Lebensmittel bearbeiten'), findsOneWidget);
+      final newId = editorId(tester);
+      expect(newId, isNotNull);
+      expect((await stored(tester, database, newId!)).name, 'Haferflocken');
+      expect(selected(tester), ['Haferflocken']);
+
+      await _disposeWidgetTree(tester);
+    });
+
+    testWidgets('UI-92: „Löschen“ im Bereich hebt die Auswahl auf, eine Meldung', (tester) async {
+      final database = await _openDatabase(tester);
+      addTearDown(() => _closeDatabase(tester, database));
+      final mehlId = await _createFood(tester, database, 'Mehl', 340);
+      await _createFood(tester, database, 'Zucker', 400);
+      setView(tester, const Size(1024, 1366));
+      await _pumpFoodList(tester, database);
+
+      await tester.tap(tile('Mehl'));
+      await _settleDb(tester);
+      await tester.enterText(find.widgetWithText(AppTextField, 'Marke'), 'Alpenhof');
+      await tester.pump();
+      await tester.tap(find.descendant(of: find.byType(FoodEditorScreen), matching: find.byType(AppOverflowMenu)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Löschen'));
+      // Feste Pumps statt pumpAndSettle: Die Restzeitlinie der Meldung läuft bis zum Ablauf (Teil 1.3, D09b).
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(find.text('Änderungen verwerfen?'), findsNothing, reason: 'Löschen ohne Verwerfen-Dialog');
+      expect(find.byType(FoodEditorScreen), findsNothing, reason: 'Auswahl aufgehoben');
+      expect(find.byType(FoodListScreen), findsOneWidget);
+      expect(tile('Mehl'), findsNothing);
+      expect(find.textContaining('„Mehl“ gelöscht'), findsOneWidget, reason: 'eine Meldung');
+
+      await tester.pump(undoableDeletionDelay);
+      await _settleDb(tester);
+      expect(await _foodAlive(tester, database, mehlId), isFalse);
+
+      await _disposeWidgetTree(tester);
+    });
+
+    testWidgets('UI-92: ungespeicherte Eingaben überstehen das Drehen (844 × 390 → 390 × 844 → zurück)',
+        (tester) async {
+      final database = await _openDatabase(tester);
+      addTearDown(() => _closeDatabase(tester, database));
+      final mehlId = await _createFood(tester, database, 'Mehl', 340);
+      setView(tester, const Size(844, 390));
+      await _pumpFoodList(tester, database);
+      await tester.tap(tile('Mehl'));
+      await _settleDb(tester);
+      await tester.enterText(find.widgetWithText(AppTextField, 'Name'), 'Dinkelmehl');
+      await tester.pump();
+
+      setView(tester, const Size(390, 844));
+      await _settleDb(tester);
+      expect(find.byType(FoodEditorScreen), findsNothing, reason: 'unter 840 nur die Liste');
+      expect(selected(tester), isEmpty);
+
+      setView(tester, const Size(844, 390));
+      await _settleDb(tester);
+      expect(editorId(tester), mehlId, reason: 'Auswahl erhalten (F6)');
+      expect(find.text('Dinkelmehl'), findsOneWidget, reason: 'Eingabe erhalten (T01a)');
+      expect((await stored(tester, database, mehlId)).name, 'Mehl', reason: 'nichts gespeichert');
+
+      await _disposeWidgetTree(tester);
+    });
+  });
+}
