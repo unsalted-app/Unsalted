@@ -326,6 +326,7 @@ Stand nach Etappe 2: Design 491 Tests, Core 461, App 12, Widgetbook 10, alle gr�
 | T00b | Suffix im Eingabefeld bündig am Feldende, Wert endet `space-m` davor (Lupe „Lebensmittel verknüpfen“); DS-69, UI-94 | fertig |
 | T01 | Rahmen „Liste und Detail“ (`ListDetailTemplate`): ab 840 Liste in `size-list-pane`, Detail mit Haarlinie, ohne Auswahl Punktraster ohne Text (N3); DS-63, GL-01 `template_liste_detail` | fertig |
 | T02 | Rezepte: Liste und Detail ab 840 (Auswahlzustand, Auswahlbalken, Detail mit `onClose`, Auswahl übersteht das Verkleinern); UI-91, GL-02 `01_04_liste_detail` | fertig |
+| T01a | Rahmen hält den Zustand von Liste und Detail beim Wechsel über 840; darunter ein gewähltes Detail verborgen (ohne Fokus, ohne Semantik); DS-63 | fertig |
 | T03 | Lebensmittel: Liste und Editor ab 840 | in Arbeit |
 | M01–M03 | Etappe 4: App-Name, ggf. App-Symbol und Startbild, Abschluss | offen |
 

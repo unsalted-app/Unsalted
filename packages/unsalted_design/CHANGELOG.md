@@ -8,6 +8,9 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
   `ListDetailTemplate` (ab `breakpoint-expanded` Liste in `size-list-pane`,
   Detail mit Haarlinie links; ohne Detail Punktraster ohne Text;
   `ListDetailTemplate.isSplit`). Test DS-63, GL-01 `template_liste_detail`.
+  T01a: Beim Wechsel über `breakpoint-expanded` behalten Liste und Detail
+  ihren Zustand; darunter bleibt ein gewähltes Detail verborgen (ohne Fokus,
+  ohne Semantik).
 - Suffix im Eingabefeld (T00b, Figma `Input/Text Field` `showSuffix`):
   `AppTextField.suffix` bündig an der Kontur, der Wert endet `space-m` davor
   (vorher 4 px). Test DS-69.

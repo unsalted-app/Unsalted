@@ -345,7 +345,9 @@ Schrift um, Bildschirm 7 bei 200 %), T00b fertig (Suffix im Eingabefeld), T01
 fertig (Rahmen `ListDetailTemplate`, DS-63; Seiten darin richten sich weiter
 nach der Fensterbreite, wie Figma bei 844 und 1366), T02 fertig (Rezepte:
 Liste und Detail ab 840 über Auswahlzustand, `RecipeDetailScreen.onClose`,
-UI-91). Für Etappe 4 vorgemerkt: eingefrorene
+UI-91), T01a fertig (Rahmen hält den Zustand von Liste und Detail beim
+Wechsel über 840, gewähltes Detail darunter verborgen — sonst gingen
+ungespeicherte Eingaben im Lebensmittel-Editor beim Drehen verloren). Für Etappe 4 vorgemerkt: eingefrorene
 Ansicht nach Figma `42:2010`, restliche Namen/IDs in `components.md` und
 `rueckmeldung-figma.md`.
 

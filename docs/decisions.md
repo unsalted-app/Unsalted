@@ -3697,3 +3697,31 @@ sich (leerer Detailbereich). *Gegenprobe:* ohne `onClose` → UI-91 (Löschen)
 rot; Tippen immer `push` → alle vier UI-91 rot; danach grün. Nachtrag
 28.11.7; `screens.md`. Mac: Design 510, Core 468, App 12, Widgetbook 10
 Tests grün; `check_architecture` Exit 0.
+
+**T01a — Rahmen hält den Zustand beim Wechsel über 840 (Design).**
+*Anlass (beim Vorbereiten von T03):* Unter `breakpoint-expanded` baute
+`ListDetailTemplate` nur die Liste; ein gewähltes Detail fiel aus dem Baum.
+Für das Rezeptdetail heißt das nur neu laden, für den Lebensmittel-Editor im
+Bereich aber: Dreht man ein iPhone von quer (844, nebeneinander) auf hochkant
+(390), sind ungespeicherte Eingaben ohne Rückfrage weg. F6 verlangt, dass die
+Auswahl erhalten bleibt und beim Vergrößern wieder erscheint. *Umsetzung:*
+`ListDetailTemplate` ist jetzt ein `StatefulWidget`; Liste und Detail hängen
+an je einem `GlobalKey` und werden beim Wechsel der Anordnung umgehängt statt
+neu gebaut (Suche, Scrollposition, Eingaben bleiben). Unter 840 bleibt ein
+gewähltes Detail als `Visibility(visible: false, maintainState: true)` im
+Baum: nicht gemalt, ohne Semantik, ohne Animation, ohne Fokus. Den Fokus
+nimmt ein eigenes `ExcludeFocus` innerhalb des gehaltenen Teilbaums weg: Das
+`ExcludeFocus` aus `Visibility` entsteht beim Umhängen neu und entzieht den
+Fokus nur beim Umschalten, nicht beim Einhängen (gemessen: das Feld behielt
+sonst den Fokus). Ohne Auswahl baut der Rahmen unter 840 wie bisher nur die
+Liste. Öffentliche Schnittstelle unverändert; nur die T01-Datei. Bekannte
+Grenze: Ein verborgener Editor mit ungespeicherten Eingaben hält seine
+Rückfrage beim Zurück der Plattform (Android) auch unter 840. *Geänderte
+bestehende Testzeilen:* keine. *Neu:* DS-63 „Zustand bleibt beim Wechsel“
+(1024 → 839 → 1024: Detail verborgen, aber im Baum, ohne Fokus, ohne
+Semantik; Liste behält ihre Suche; Detail behält ungespeicherte Eingaben).
+*Gegenprobe:* ohne `GlobalKey` → DS-63 rot (Eingaben weg); ohne eigenes
+`ExcludeFocus` → rot (Fokus bleibt im verborgenen Feld); danach grün.
+`components.md`, CHANGELOG, 28.11.7 und 28.11.11. Mac: Design 511, Core 468,
+App 12, Widgetbook 10 Tests grün (UI-91 unverändert); `check_architecture`
+Exit 0.

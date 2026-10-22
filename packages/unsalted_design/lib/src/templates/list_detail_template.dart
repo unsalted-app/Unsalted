@@ -11,6 +11,12 @@
 // Marker-Knopf) mit; beide stehen in einer gemeinsamen Seite, damit eine
 // Meldung (z. B. „Rückgängig“) einmal über die ganze Breite erscheint und
 // nicht in jeder der beiden Seiten.
+//
+// Seit T01a: Wechselt das Fenster über `breakpoint-expanded` (Drehen, Fenster
+// verkleinern), behalten Liste und Detail ihren Zustand (Suche,
+// Scrollposition, ungespeicherte Eingaben). Darunter bleibt ein gewähltes
+// Detail verborgen im Baum — ohne Fokus, ohne Semantik, ohne Animation — und
+// erscheint beim Vergrößern unverändert wieder.
 
 import 'package:flutter/widgets.dart';
 
@@ -22,7 +28,7 @@ import '../tokens/size_tokens.g.dart';
 import '../tokens/stroke_tokens.g.dart';
 
 /// Liste und Detail nebeneinander ab `breakpoint-expanded`.
-class ListDetailTemplate extends StatelessWidget {
+class ListDetailTemplate extends StatefulWidget {
   /// Erzeugt das Template; ohne [detail] bleibt der Detailbereich leer.
   const ListDetailTemplate({super.key, required this.list, this.detail});
 
@@ -37,8 +43,31 @@ class ListDetailTemplate extends StatelessWidget {
   static bool isSplit(BuildContext context) => AppWindowSize.of(context).index >= AppWindowSize.expanded.index;
 
   @override
+  State<ListDetailTemplate> createState() => _ListDetailTemplateState();
+}
+
+class _ListDetailTemplateState extends State<ListDetailTemplate> {
+  /// Halten Liste und Detail beim Wechsel der Anordnung (Zustand bleibt).
+  final _listKey = GlobalKey();
+  final _detailKey = GlobalKey();
+
+  @override
   Widget build(BuildContext context) {
-    if (!isSplit(context)) return list;
+    final split = ListDetailTemplate.isSplit(context);
+    final list = KeyedSubtree(key: _listKey, child: widget.list);
+    final selected = widget.detail;
+    // `ExcludeFocus` innerhalb des gehaltenen Teilbaums: nur ein Umschalten
+    // nimmt einem Feld im Detail den Fokus, ein neu eingehängtes nicht.
+    final detail = selected == null
+        ? null
+        : KeyedSubtree(key: _detailKey, child: ExcludeFocus(excluding: !split, child: selected));
+    if (!split) {
+      if (detail == null) return list;
+      return Stack(
+        fit: StackFit.expand,
+        children: [list, Visibility(visible: false, maintainState: true, child: detail)],
+      );
+    }
     final c = AppColors.of(context);
     return AppPage(
       body: Row(

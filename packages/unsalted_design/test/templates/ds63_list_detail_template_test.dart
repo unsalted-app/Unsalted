@@ -6,7 +6,9 @@
 // über den Rest, mit Haarlinie links (`line-hairline`) auf `surface-page`;
 // ohne Detail nur das Punktraster (`line-dot`), ohne Text. Eine Meldung aus
 // Liste oder Detail erscheint einmal (gemeinsame Seite). Bei 200 % Schrift
-// kein Überlauf.
+// kein Überlauf. Seit T01a: Beim Wechsel über `breakpoint-expanded` behalten
+// Liste und Detail ihren Zustand; darunter ist ein gewähltes Detail verborgen
+// (ohne Fokus, ohne Semantik).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -130,6 +132,42 @@ void main() {
     await tester.tap(find.text('Melden'));
     await tester.pumpAndSettle();
     expect(find.text('Gelöscht'), findsOneWidget, reason: 'nicht je Seite eine Meldung');
+  });
+
+  testWidgets('DS-63: Zustand bleibt beim Wechsel über breakpoint-expanded, darunter Detail verborgen', (tester) async {
+    await _pump(
+      tester,
+      1024,
+      const ListDetailTemplate(
+        list: ListPageTemplate(title: 'Liste', body: AppTextField(label: 'Suche')),
+        detail: DetailPageTemplate(title: 'Detail', body: AppTextField(label: 'Notiz')),
+      ),
+    );
+    final note = find.widgetWithText(AppTextField, 'Notiz', skipOffstage: false);
+    bool noteFocused() =>
+        tester.widget<EditableText>(find.descendant(of: note, matching: find.byType(EditableText, skipOffstage: false), skipOffstage: false))
+            .focusNode
+            .hasFocus;
+    await tester.enterText(find.widgetWithText(AppTextField, 'Suche'), 'Teig');
+    await tester.enterText(note, 'ungespeichert');
+    await tester.pump();
+    expect(noteFocused(), isTrue);
+
+    tester.view.physicalSize = const Size(AppBreakpoints.expanded - 1, 900);
+    await tester.pump();
+    expect(find.text('Detail'), findsNothing, reason: 'unter breakpoint-expanded nur die Liste');
+    expect(find.text('Detail', skipOffstage: false), findsOneWidget, reason: 'Detail bleibt verborgen im Baum');
+    expect(noteFocused(), isFalse, reason: 'verborgenes Detail ohne Fokus');
+    final semantics = tester.ensureSemantics();
+    expect(find.bySemanticsLabel('Detail'), findsNothing, reason: 'verborgenes Detail ohne Semantik');
+    semantics.dispose();
+    expect(find.text('Teig'), findsOneWidget, reason: 'Liste behält ihren Zustand');
+
+    tester.view.physicalSize = const Size(1024, 900);
+    await tester.pump();
+    expect(find.text('ungespeichert'), findsOneWidget, reason: 'Detail behält ungespeicherte Eingaben');
+    expect(find.text('Teig'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   for (final detail in [null, _detail]) {
