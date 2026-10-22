@@ -27,7 +27,7 @@ final navigationFolder = WidgetbookFolder(name: 'navigation', children: [
   component('AppOverflowMenu', [
     useCase('Navigation/Overflow Menu', (_) => const Align(
           alignment: Alignment.topRight,
-          child: AppOverflowMenu(entries: [
+          child: AppOverflowMenu(tooltip: 'Aktionen für Eintrag', entries: [
             AppMenuEntry(label: 'Teilen', onSelected: noop),
             AppMenuEntry(label: 'Gesperrt', onSelected: noop, enabled: false),
             AppMenuEntry(label: 'Löschen', onSelected: noop),

@@ -127,7 +127,10 @@ class AppSlot extends StatelessWidget {
   }
 }
 
-/// Gestrichelte Unterstreichung: Eintrag ist noch nicht verknüpft.
+/// Gestrichelte Unterstreichung: Eintrag ist noch nicht verknüpft. Seit
+/// Teil 1.4 (B01, Figma-Hinweis 2) `space-xxs` unter dem Inhalt, nicht im
+/// Layout — auf der Feldkante wäre sie hell unsichtbar (`state-draft` =
+/// `line-control`).
 class AppDashedUnderline extends StatelessWidget {
   /// Unterstreicht [child] gestrichelt in `state-draft`.
   const AppDashedUnderline({super.key, required this.child});
@@ -137,7 +140,11 @@ class AppDashedUnderline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomPaint(
-        foregroundPainter: DashedPainter.underline(color: AppColors.of(context).stateDraft, width: AppStroke.frame),
+        foregroundPainter: DashedPainter.underline(
+          color: AppColors.of(context).stateDraft,
+          width: AppStroke.frame,
+          offset: AppSpacing.xxs,
+        ),
         child: child,
       );
 }

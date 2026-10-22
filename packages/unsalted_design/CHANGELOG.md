@@ -2,7 +2,14 @@
 
 Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 
-## design-v0.2.0 — unveröffentlicht (Teil 1.3, Gestaltung aus Figma)
+## design-v0.3.0 — in Arbeit (Teil 1.4)
+
+- Zeilenmenü (B01): `AppOverflowMenu` additiv mit `tooltip` (Tooltip und
+  Semantik des Menüknopfs, Figma `Feedback/Tooltip`); `AppDashedUnderline`
+  zeichnet die Linie `space-xxs` unter dem Inhalt, außerhalb des Layouts
+  (Figma-Hinweis 2). Tests DS-62, DS-64.
+
+## design-v0.2.0 — Teil 1.3, Gestaltung aus Figma
 
 Version in `pubspec.yaml` 0.2.0 (D18); der Tag folgt nach Freigabe (F14).
 Zusammengefasst: Werte nur aus der Token-Datei aus Figma (Generator, DS-04,

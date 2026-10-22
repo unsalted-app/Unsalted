@@ -327,12 +327,13 @@ Diagnoseprotokolle unter `packages/unsalted_core/build/diagnose/` (nicht
 S01b fertig (D5 instrumentiert, 60 Läufe ohne Hänger; Ursache lokal nicht
 nachgestellt). S02 fertig (robustes Schließen `closeTestDatabase`, 2 min je
 Widget-Test, UI-83). S03 fertig (70 Abnahmeläufe grün, kein Hänger). Etappe 1
-fertig. Test-IDs neu: UI-83. Stand: Design 461, Core 451, App 12, Widgetbook
-10 Tests grün.
+fertig.
 
 Etappe 1 freigegeben. Figma-Nachträge N1–N6 übernommen
 (`docs/design/figma/teil-1.4-figma-nachtraege.md`); N3 (Detailbereich ohne
 Auswahl: Punktraster, **ohne Text**) ersetzt die Zwischenlösung aus F7.
+B01 fertig (Zeilenmenü „⋮“ in Zutaten- und Schrittzeile nach Figma N1).
+Test-IDs neu: UI-83–86, DS-62, DS-64, DS-65.
 
 **Nächster Schritt:** Etappe 2 (B01–B05, vor B05 Token-Nachtrag Textauswahl
 aus Figma), Stopp nach Etappe 2 mit Bericht.

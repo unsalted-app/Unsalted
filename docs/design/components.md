@@ -113,8 +113,8 @@ Aus Design-Komponenten zusammengesetzt; Abschnitte je Bildschirm in
 | `VersionMark` (Teil 1.3) | `Mark` | `versions/version_mark.dart` | `AppMark` | UI-67, UI-68 |
 | `VersionTile` | Bildschirm 07 | `versions/version_tile.dart` | `AppListItem`, `VersionMark`, `AppText`, `AppIconButton` | UI-68 |
 | `VersionSwitcher` (Fassungsleiste) | `Core/Version Switcher` `142:19` | `recipe_detail/version_switcher.dart` | `VersionMark` als Ziele, `Wrap` | UI-67 |
-| `IngredientRow` (zweizeilig) | Bildschirm 03, `Core/Ingredient Row` `141:4` | `recipe_editor/ingredient_row.dart` | `AppTextField`, `AppSelect` (`expand`), `AppDashedUnderline`, `AppIconButton`, `AppIcon` | UI-72 |
-| `StepRow` (Nummer, Timer darunter) | `Core/Step Row` `141:10` | `recipe_editor/step_row.dart` | `AppTextField` (schmal, `space-m` unter der Anweisung), `AppText.dataStrong`, `AppIconButton` | UI-74, UI-82 |
+| `IngredientRow` (zweizeilig, Zeilenmenü) | Bildschirm 03, `_Zeile/Zutat bearbeiten` `7:712` (App), `Core/Ingredient Row` `141:4` (Anzeige) | `recipe_editor/ingredient_row.dart` | `AppTextField`, `AppSelect` (`label`, `expand`), `AppDashedUnderline`, `AppOverflowMenu` (`tooltip`), `AppIcon`, `AppDivider.flush` | UI-72, UI-84, UI-86 |
+| `StepRow` (Nummer, Timer darunter, Zeilenmenü) | `_Zeile/Schritt bearbeiten` `227:4142` (App), `Core/Step Row` `141:10` (Anzeige) | `recipe_editor/step_row.dart` | `AppTextField` (schmal, `space-m` unter der Anweisung), `AppText.dataStrong`, `AppOverflowMenu` (`tooltip`), `AppDivider.flush` | UI-74, UI-82, UI-85 |
 | `FoodVariantPickerDialog` | — | `recipe_editor/food_variant_picker_dialog.dart` | `AppDialog`, `AppTextField`, `AppItemList`, `AppListItem`, `AppEmptyState` | — |
 | `NutritionHeader` (Kennzahlenleiste) | `Core/Nutrition Header` `142:57` | `nutrition/nutrition_header.dart` | `AppFigureRow`, `AppValue.strong`, `AppNotice` (Warnung) | UI-70 |
 | `NutritionTable` (Deklaration) | `Data/Key Value Table` | `nutrition/nutrition_table.dart` | `AppKeyValueTable` (`sub`, `strong`), `AppSelect`, `AppText` | UI-71 |

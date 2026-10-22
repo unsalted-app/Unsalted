@@ -173,7 +173,9 @@ void main() {
     await tester.pump();
     expect(find.widgetWithText(AppTextField, 'Name'), findsOneWidget);
 
-    await tester.tap(find.byIcon(AppIcons.deleteOutline).first);
+    await tester.tap(find.byTooltip('Aktionen für Zutat').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Entfernen'));
     await tester.pump();
     expect(find.widgetWithText(AppTextField, 'Name'), findsNothing);
 
@@ -576,4 +578,30 @@ void main() {
     expect(find.widgetWithText(AppChip, '1:30'), findsOneWidget);
     await _disposeWidgetTree(tester);
   });
+
+  // UI-86 (Teil 1.4 B01): Umsortieren über das Zeilenmenü statt Ziehen
+  // (WCAG 2.5.7) speichert dieselben Positionen wie UI-12; die Verknüpfungen
+  // bleiben.
+  testWidgets('UI-86: „Nach oben“ im Zeilenmenü verschiebt und speichert wie Ziehen', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => _closeDatabase(tester, database));
+    final seed = await seedDeletedLink(tester, database);
+
+    await _pumpEditor(tester, database, recipeId: seed.recipeId, versionId: seed.versionId);
+    await tester.tap(find.byTooltip('Aktionen für Zutat').at(1));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Nach oben'));
+    await tester.pumpAndSettle();
+    expect(tester.getCenter(find.widgetWithText(AppTextField, 'Butter')).dy,
+        lessThan(tester.getCenter(find.widgetWithText(AppTextField, 'Mehl')).dy));
+
+    final rows = await saveAndReadRows(tester, database, seed.versionId);
+    expect(rows['i2']!.position, 1);
+    expect(rows['i1']!.position, 2);
+    expect(rows['i2']!.foodVariantId, seed.butter);
+    expect(rows['i1']!.foodVariantId, seed.mehl);
+
+    await _disposeWidgetTree(tester);
+  });
 }
+

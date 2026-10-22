@@ -15,6 +15,14 @@
 // den Rest; bei großer Schrift untereinander). Eine nicht verknüpfte Zutat
 // (ohne Lebensmittel) ist gestrichelt unterstrichen (Mark-/Frame-Karte,
 // `AppDashedUnderline`). Beschriftungen, Aktionen und Logik unverändert.
+//
+// Seit Teil 1.4 (B01, Figma-Nachtrag N1, `_Zeile/Zutat bearbeiten` 7:712):
+// Zeilenmenü „⋮“ (Tooltip „Aktionen für Zutat“) mit „Nach oben“, „Nach
+// unten“, „Entfernen“ statt Papierkorb — Umsortieren ohne Ziehen (WCAG
+// 2.5.7); „Nach oben“/„Nach unten“ ausgegraut ohne Callback. Beschriftung
+// auch für „Einheit“; Abstand zwischen den Zeilen und beim Umbruch `space-m`
+// (Beschriftung zum Feld `space-xs`); unten eine Haarlinie. Schreibgeschützt
+// ohne Menü.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +95,12 @@ class IngredientRow extends ConsumerStatefulWidget {
   final IngredientRowData data;
   final ValueChanged<IngredientRowData> onChanged;
   final VoidCallback onRemove;
+
+  /// „Nach oben“ im Zeilenmenü; `null` = ausgegraut (erste Zeile).
+  final VoidCallback? onMoveUp;
+
+  /// „Nach unten“ im Zeilenmenü; `null` = ausgegraut (letzte Zeile).
+  final VoidCallback? onMoveDown;
   final bool readOnly;
 
   const IngredientRow({
@@ -94,6 +108,8 @@ class IngredientRow extends ConsumerStatefulWidget {
     required this.data,
     required this.onChanged,
     required this.onRemove,
+    this.onMoveUp,
+    this.onMoveDown,
     this.readOnly = false,
   });
 
@@ -169,6 +185,7 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
     );
     final unit = AppSelect<String>(
       expand: true,
+      label: 'Einheit',
       value: widget.data.unitCode,
       onChanged: widget.readOnly ? null : (value) => _emit((d) => d.copyWith(unitCode: value)),
       items: [for (final unit in UnitCatalog.all) AppSelectItem(unit.code, unitLabel(unit.code))],
@@ -184,11 +201,11 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
     final valueColumn = AppReflowMetric.valueColumn.of(context);
     final selectMin = AppReflowMetric.selectMin.of(context);
 
-    return AppPadding.only(
+    final content = AppPadding.only(
       top: AppSpace.s,
       bottom: AppSpace.m,
       child: AppStack(
-        gap: AppSpace.xs,
+        gap: AppSpace.m,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppStack(
@@ -200,7 +217,18 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
               const AppPadding.only(bottom: AppSpace.m, child: AppIcon(AppIcons.dragHandle)),
               Expanded(child: widget.data.foodVariantId == null ? AppDashedUnderline(child: name) : name),
               if (!widget.readOnly)
-                AppIconButton(icon: AppIcons.deleteOutline, tooltip: 'Zutat entfernen', onPressed: widget.onRemove),
+                AppOverflowMenu(
+                  tooltip: 'Aktionen für Zutat',
+                  entries: [
+                    AppMenuEntry(label: 'Nach oben', enabled: widget.onMoveUp != null, onSelected: widget.onMoveUp ?? _none),
+                    AppMenuEntry(
+                      label: 'Nach unten',
+                      enabled: widget.onMoveDown != null,
+                      onSelected: widget.onMoveDown ?? _none,
+                    ),
+                    AppMenuEntry(label: 'Entfernen', onSelected: widget.onRemove),
+                  ],
+                ),
             ],
           ),
           AppStack(
@@ -225,14 +253,18 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
         ],
       ),
     );
+    return AppStack(crossAxisAlignment: CrossAxisAlignment.stretch, children: [content, const AppDivider.flush()]);
   }
+
+  static void _none() {}
 
   /// Einzug der zweiten Zeile: Breite des Ziehgriffs und Abstand (Figma `Einzug`).
   static const double _indent = AppSize.icon + AppSpacing.s;
 
   /// Zweite Zeile (Figma `Zeile 2`): Menge in `reflow-value-column`, Einheit
   /// und Notiz teilen sich den Rest. Bliebe der Einheit weniger als
-  /// `reflow-select-min` (große Schrift), stehen sie untereinander.
+  /// `reflow-select-min` (große Schrift), stehen sie untereinander (Abstand
+  /// `space-m`, Figma `counterAxisSpacing`).
   static Widget _details({
     required double width,
     required Widget quantity,
@@ -253,7 +285,7 @@ class _IngredientRowState extends ConsumerState<IngredientRow> {
       return row([amount, Expanded(child: unit), Expanded(child: note)]);
     }
     return AppStack(
-      gap: AppSpace.xs,
+      gap: AppSpace.m,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (width - valueColumn - AppSpacing.s >= selectMin)

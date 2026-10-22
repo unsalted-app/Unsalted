@@ -2,7 +2,9 @@
 //
 // Bildschirm 3, Abschnitt „Zutaten“ (Teil 1.2): umsortierbare
 // Zutatenzeilen (Drag-Reorder ändert die Position) und „Zutat hinzufügen“.
-// Jede Zeile trägt ihre stabile ID als Key (Kapitel 10.7).
+// Jede Zeile trägt ihre stabile ID als Key (Kapitel 10.7). Seit Teil 1.4
+// (B01) auch über das Zeilenmenü: „Nach oben“/„Nach unten“ rufen [onReorder]
+// mit denselben Werten wie das Ziehen um eine Stelle.
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -43,12 +45,14 @@ class RecipeEditorIngredientsSection extends StatelessWidget {
           AppReorderableList(
             onReorder: onReorder,
             children: [
-              for (final row in rows)
+              for (final (index, row) in rows.indexed)
                 IngredientRow(
                   key: ValueKey(row.id),
                   data: row,
                   onChanged: onRowChanged,
                   onRemove: () => onRowRemoved(row.id),
+                  onMoveUp: index > 0 ? () => onReorder(index, index - 1) : null,
+                  onMoveDown: index < rows.length - 1 ? () => onReorder(index, index + 1) : null,
                 ),
             ],
           ),

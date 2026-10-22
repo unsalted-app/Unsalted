@@ -3421,3 +3421,48 @@ Bibliotheksänderungen der Übergabe (`AppTextField(suffix:)`,
 `rueckmeldung-figma.md` (A3 Kennzahlenleiste — Figma führt jetzt
 `Data/Figure Row`) werden mit M03 nachgeführt.
 
+**B01 — Zeilenmenü in Zutaten- und Schrittzeile (Figma N1).** Grundlage
+`_Zeile/Zutat bearbeiten` (`7:712`) und `_Zeile/Schritt bearbeiten`
+(`227:4142`), nur gelesen: beide vertikal mit `space-m` zwischen den Zeilen,
+oben `space-s`, unten `space-m` und Haarlinie; Zeile 1 unten bündig (Griff
+und Nummer mit `space-m` darunter, Feld mit Beschriftung `space-xs` darüber,
+Menüknopf `Icon/more` 48 × 48); Zeile 2 eingerückt (Zutat: Menge
+`reflow/value-column`, Einheit mit Beschriftung, Notiz; Schritt: Timer
+`reflow/field-min`). *Design:* `AppOverflowMenu` additiv `tooltip`;
+`AppDashedUnderline` zeichnet die Linie `space-xxs` unter dem Inhalt, außerhalb
+des Layouts (`DashedPainter.underline(offset:)`), damit Griff und Menü bündig
+bleiben; `AppSelect` berücksichtigt `expand` jetzt auch mit Beschriftung —
+nötig, weil die beschriftete Einheit sonst die Breite des längsten Eintrags
+(„Esslöffel“) nimmt und überläuft (UI-72 war damit rot); nur die Zutatenzeile
+nutzt `expand`. Ein Kommentar mit Beispieltext „… Zutat“ im Design-Paket schlug
+bei DS-06 an und ist ohne Beispiel neu gefasst. *Core:* `ingredient_row.dart`
+und `step_row.dart` nach Figma (Menü statt `AppIconButton` mit Papierkorb,
+optionale `onMoveUp`/`onMoveDown`, `null` = ausgegraut; Einheit mit
+„Einheit“; `space-m`; `AppDivider.flush()` unten; schreibgeschützt ohne Menü),
+die Abschnitte rufen für „Nach oben/unten“ `onReorder(i, i ∓ 1)` (gleiche
+Werte wie Ziehen); Bildschirm-Dateien unverändert. *Geänderte bestehende
+Testzeilen (freigegeben, Plan d2 B01):* `recipe_editor_screen_test.dart:176`
+(Papierkorb-Tap → Menü öffnen, `pumpAndSettle`, „Entfernen“ — eine Zeile wird
+drei), `editor_design_test.dart:133` (Tooltip „Zutat entfernen“ → „Aktionen
+für Zutat“); sonst keine. *Neu:* DS-62 (Tooltip, Semantik, ausgegrauter
+Eintrag; Standardtext ohne Tooltip), DS-64 (Unterstreichung `space-xxs`
+darunter, Layout unverändert), DS-65 (`AppSelect` mit Beschriftung und
+`expand` ohne Überlauf); UI-84 (Zutatenzeile: Menü, ausgegraute Einträge,
+`onReorder`-Werte, Entfernen, „Einheit“, `space-m`, Menü bündig, Haarlinie,
+schreibgeschützt ohne Menü), UI-85 (Schrittzeile: Menü, Griff/Nummer/Menü
+bündig, Timer eingerückt, Haarlinie), UI-86 (Bildschirm 3: „Nach oben“,
+Speichern, Positionen und Verknüpfungen wie bei UI-12). *Gegenproben:* ohne
+Menü-Verschieben in den Abschnitten → UI-84, UI-85, UI-86 rot; Zutatenzeile
+wieder `xs` → UI-84 rot; Schrittzeile oben ausgerichtet → UI-85 rot;
+Unterstreichung ohne Abstand → DS-64 rot; `AppSelect` ohne `isExpanded` → DS-65
+rot (Überlauf 96 px); danach alles zurück und grün. Nachtrag 28.11.2;
+`rueckmeldung-figma.md` (neuer Abschnitt C: vier Abweichungen erledigt, B-Zeile
+zum Auswahlfeld angepasst), `screens.md`, `components.md`, CHANGELOG des
+Design-Pakets. Mac: Design 477, Core 455, App 12, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.
+*Goldens:* Lauf 39806362646 (`goldens/b01`): abweichend 8 Bilder GL-01 `marken`
+(Unterstreichung `space-xxs` unter dem Text) und 6 Bilder GL-02
+`03_rezept_bearbeiten` (Menü „⋮“, „Einheit“ beschriftet, `space-m`, Haarlinie;
+bei Handy 200 % liegen die Zutaten unterhalb des Ausschnitts). Angesehen:
+„Milch“ (nicht verknüpft) zeigt die Strichlinie jetzt sichtbar unter dem Feld.
+
