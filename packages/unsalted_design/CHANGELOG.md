@@ -7,7 +7,12 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 - Zeilenmenü (B01): `AppOverflowMenu` additiv mit `tooltip` (Tooltip und
   Semantik des Menüknopfs, Figma `Feedback/Tooltip`); `AppDashedUnderline`
   zeichnet die Linie `space-xxs` unter dem Inhalt, außerhalb des Layouts
-  (Figma-Hinweis 2). Tests DS-62, DS-64.
+  (Figma-Hinweis 2); `AppSelect.expand` gilt auch mit Beschriftung. Tests
+  DS-62, DS-64, DS-65.
+- Suchtreffer (B04): `AppListItem` additiv mit `match` (Zeichenbereich des
+  Titels; Markerfläche `marker`/`radius-xs`/seitlich `space-xxs` dahinter, Text
+  `text-on-marker`; Klartext und Semantik unverändert; Figma `List/Item`
+  `showMatch`). Test DS-66.
 
 ## design-v0.2.0 — Teil 1.3, Gestaltung aus Figma
 

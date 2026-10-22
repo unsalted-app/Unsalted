@@ -7,6 +7,8 @@
 //
 // NativeDatabase.memory() unter testWidgets() braucht WidgetTester.runAsync()
 // -- siehe CLAUDE.md Abschnitt 4 und test/ui/foods/food_list_screen_test.dart.
+// UI-89 (Teil 1.4, B04): Der Suchtreffer im Titel ist markiert (erster Treffer,
+// ohne Groß-/Kleinschreibung); Klartext und Semantik bleiben der ganze Titel.
 
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ import 'package:unsalted_core/src/data/drift_recipe_repository.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/ui/recipe_detail/recipe_detail_screen.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_create_screen.dart';
+import 'package:unsalted_core/src/ui/recipe_list/recipe_card.dart';
 import 'package:unsalted_core/src/ui/recipe_list/recipe_list_screen.dart';
 import 'package:unsalted_core/src/ui/shared/undoable_deletion.dart';
 import '../support/db_widget_harness.dart';
@@ -339,4 +342,44 @@ void main() {
     await _settleDb(tester);
     expect(await _recipeAlive(tester, database, pizzaId, pizzaVersions), isTrue);
   });
+
+  testWidgets('UI-89: Suchtreffer im Titel markiert, Klartext unverändert', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => _closeDatabase(tester, database));
+    await tester.runAsync(() async {
+      final repo = DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
+      await repo.createRecipe(const NewRecipe(title: 'Hefeteig für Zopf'));
+      await repo.createRecipe(const NewRecipe(title: 'Mürbeteig'));
+      await repo.createRecipe(const NewRecipe(title: 'Apfelkuchen'));
+    });
+    expect(tester.takeException(), isNull);
+
+    await _pumpRecipeList(tester, database);
+    TextRange? matchOf(String title) =>
+        tester.widget<AppListItem>(find.ancestor(of: find.text(title), matching: find.byType(AppListItem))).match;
+    expect(matchOf('Hefeteig für Zopf'), isNull, reason: 'ohne Suche keine Markierung');
+
+    await tester.enterText(find.byType(AppSearchField), 'TEIG');
+    await tester.pump();
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester.pump();
+
+    expect(matchOf('Hefeteig für Zopf'), const TextRange(start: 4, end: 8));
+    expect(matchOf('Mürbeteig'), const TextRange(start: 5, end: 9));
+    expect(find.text('Apfelkuchen'), findsNothing);
+    final semantics = tester.ensureSemantics();
+    expect(tester.getSemantics(find.ancestor(of: find.text('Mürbeteig'), matching: find.byType(ListTile))).label,
+        contains('Mürbeteig'));
+    semantics.dispose();
+
+    await _disposeWidgetTree(tester);
+  });
+
+  test('UI-89: Treffer ohne Groß-/Kleinschreibung, sonst keiner', () {
+    expect(RecipeCard.matchOf('Pizzateig', 'pizza'), const TextRange(start: 0, end: 5));
+    expect(RecipeCard.matchOf('Pizzateig', '  teig '), const TextRange(start: 5, end: 9));
+    expect(RecipeCard.matchOf('Pizzateig', ''), isNull);
+    expect(RecipeCard.matchOf('Pizzateig', 'Brot'), isNull);
+  });
 }
+

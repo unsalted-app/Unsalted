@@ -62,7 +62,7 @@ aus `tokens/unsalted.tokens.json` (DS-04).
 | `AppTextField` (Beschriftung oben, `unit`, schmal = `reflow-field-min`) | `Input/Text Field` | `118:30` | `components/inputs/app_text_field.dart` | DS-23, DS-23b, DS-23c |
 | `AppSearchField` | `Input/Search` | `138:50` | `components/inputs/app_search_field.dart` | DS-24 |
 | `AppSelect` (`expand`) | `Input/Select` | `149:200` | `components/inputs/app_select.dart` | DS-25, DS-25b, DS-25c |
-| `AppListItem` (`selected`) | `List/Item` | `127:29` | `components/lists/app_list_item.dart` | DS-26, DS-26b |
+| `AppListItem` (`selected`, `match`) | `List/Item` | `127:29` | `components/lists/app_list_item.dart` | DS-26, DS-26b, DS-66 |
 | `AppItemList` | `List/Items` | `151:297` | `components/lists/app_item_list.dart` | DS-27 |
 | `AppSwipeToDelete` | `List/Swipe to Delete` | `150:163` | `components/lists/app_swipe_to_delete.dart` | DS-28 |
 | `AppReorderableList` | — | — | `components/lists/app_reorderable_list.dart` | DS-29, DS-29b |
@@ -108,7 +108,7 @@ Aus Design-Komponenten zusammengesetzt; Abschnitte je Bildschirm in
 
 | Baustein | Figma | Datei | aus | Test |
 |---|---|---|---|---|
-| `RecipeCard` | — | `recipe_list/recipe_card.dart` | `AppListItem` | UI-01 ff. |
+| `RecipeCard` (Suchtreffer markiert) | `List/Item` `showMatch` | `recipe_list/recipe_card.dart` | `AppListItem` (`match`) | UI-01 ff., UI-89 |
 | `FoodTile` | — | `foods/food_tile.dart` | `AppListItem` | — |
 | `VersionMark` (Teil 1.3) | `Mark` | `versions/version_mark.dart` | `AppMark` | UI-67, UI-68 |
 | `VersionTile` | Bildschirm 07 | `versions/version_tile.dart` | `AppListItem`, `VersionMark`, `AppText`, `AppIconButton` | UI-68 |

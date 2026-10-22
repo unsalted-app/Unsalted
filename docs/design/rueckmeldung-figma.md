@@ -68,7 +68,7 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Thema | Figma | Stand | Wann |
 |---|---|---|---|
 | Liste und Detail nebeneinander ab 840 | Tablet `147:9746`, quer `148:4381` | Seitenleiste ab 600 ist umgesetzt (D17), Liste/Detail nicht | Teil 1.4 (F4) |
-| Rezeptliste mit Fassungsmarke, Versionszahl und Suchtreffer im Marker | `1:421` | braucht Daten bzw. den Suchbegriff im Baustein | später („Nicht Teil von 1.3“) |
+| Rezeptliste mit Fassungsmarke und Versionszahl je Rezept | `1:421` | braucht die Versionen je Rezept (Daten) | später (Plan 1.4, f) |
 | Rezepttitel als `display` im Inhalt, leere Kopfleiste | `1:607` | Bildschirm-Änderung | später |
 | Zutaten im Rezeptdetail als `Core/Ingredient Row` (Menge links in der Wertspalte) | `1:607` | Abschnitt außerhalb des Scopes; weiter Listeneinträge | später |
 | Kopfzeile mit beiden Marken statt Spalten A/B im Versionsvergleich | `3:595` | Bildschirm-Änderung | später |
@@ -87,3 +87,4 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Entfernen in Zutaten- und Schrittzeile | Figma `Icon/close`, Code Papierkorb | beide Zeilenmenü `Icon/more` mit „Nach oben“, „Nach unten“, „Entfernen“ | Figma N1, B01 |
 | Schrittzeile im Editor | in Figma nicht abgebildet | `_Zeile/Schritt bearbeiten` (`227:4142`): wie die Zutatenzeile, Timer eingerückt darunter | Figma N1, B01 |
 | Master in der Fassungsleiste | Figma: Markerfläche in `Core/Version Switcher`; Code: Leiste kannte den Master nicht | beide mit Markerfläche, „Master“ in der Semantik | Teil 1.4 B02 |
+| Suchtreffer in der Rezeptliste | Figma: Treffer im Titel markiert (`List/Item` `showMatch`); Code: ohne Markierung | Treffer mit Markerfläche hinter dem Text, Klartext unverändert | Teil 1.4 B04 |

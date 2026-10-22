@@ -87,6 +87,7 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
               builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
             )),
             onDelete: (recipe) => deleteRecipeWithUndo(context, ref, recipe),
+            query: _query,
           );
         },
       ),

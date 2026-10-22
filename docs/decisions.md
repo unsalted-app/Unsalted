@@ -3501,3 +3501,26 @@ anlegen“, keine Leerstelle). *Gegenprobe:* ohne Übergabe von `searching` →
 UI-88 rot; danach grün. Kein Golden-Motiv für Bildschirm 9. Nachtrag 28.11.4;
 `screens.md`. Mac: Core 458 Tests grün.
 
+**B04 — Suchtreffer in der Rezeptliste (F5).** *Design:* `AppListItem` additiv
+`match` (Zeichenbereich des Titels): der Treffer als `TextSpan` in
+`text-on-marker`, die Markerfläche (`marker`, `radius-xs`, seitlich
+`space-xxs` wie `Highlight`) malt ein Painter hinter genau diese Zeichen
+(`TextPainter.getBoxesForSelection`). Bewusst kein `WidgetSpan` mit
+`AppHighlight`: damit bliebe der Titel kein Klartext, `find.text('Pizzateig')`
+in `recipe_list_screen_test.dart:175` würde rot (ungeplante Testzeile) und die
+Semantik müsste nachgebaut werden; so bleiben Klartext und Semantik
+unverändert. Ungültige Bereiche werden ignoriert. *Core:*
+`recipe_list/recipe_card.dart` additiv `query` mit `RecipeCard.matchOf` (erster
+Treffer ohne Groß-/Kleinschreibung wie die Suche; nur wenn die Kleinschreibung
+die Länge erhält), `recipe_list_results_section.dart` reicht `query` durch,
+`recipe_list_screen.dart` übergibt `_query` (eine Zeile, Bildschirm-Datei im
+Plan benannt). *Geänderte bestehende Testzeilen:* keine. *Neu:* DS-66
+(Spans, Farbe, Markerfläche, `find.text` und Semantik mit dem ganzen Titel;
+ohne/ungültig keine Markierung), UI-89 (Suche „TEIG“: Bereiche 4–8 und 5–9,
+Semantik; `matchOf`-Fälle), Katalog-Anwendungsfall „Mit Suchtreffer“.
+*Gegenprobe:* ohne Übergabe von `query` → UI-89 rot; danach grün. Kein
+Golden-Motiv zeigt eine Suche. Nachtrag 28.11.5; `screens.md`,
+`components.md`, `rueckmeldung-figma.md` (B-Zeile geteilt, Suchtreffer → C),
+CHANGELOG. Mac: Design 485, Core 460, App 12, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.
+

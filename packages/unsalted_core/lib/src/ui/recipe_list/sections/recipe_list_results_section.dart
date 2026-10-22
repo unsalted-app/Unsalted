@@ -12,7 +12,13 @@ import '../recipe_card.dart';
 /// Trefferliste der Rezepte.
 class RecipeListResultsSection extends StatelessWidget {
   /// Erzeugt den Abschnitt.
-  const RecipeListResultsSection({super.key, required this.recipes, required this.onOpen, required this.onDelete});
+  const RecipeListResultsSection({
+    super.key,
+    required this.recipes,
+    required this.onOpen,
+    required this.onDelete,
+    this.query = '',
+  });
 
   /// Anzuzeigende Rezepte.
   final List<Recipe> recipes;
@@ -23,6 +29,9 @@ class RecipeListResultsSection extends StatelessWidget {
   /// Löscht ein weggewischtes Rezept.
   final ValueChanged<Recipe> onDelete;
 
+  /// Suchbegriff; der Treffer im Titel wird markiert (Teil 1.4 B04).
+  final String query;
+
   @override
   Widget build(BuildContext context) => AppItemList.builder(
         itemCount: recipes.length,
@@ -31,7 +40,7 @@ class RecipeListResultsSection extends StatelessWidget {
           return AppSwipeToDelete(
             key: ValueKey('recipe-${recipe.id}'),
             onDelete: () => onDelete(recipe),
-            child: RecipeCard(recipe: recipe, onTap: () => onOpen(recipe)),
+            child: RecipeCard(recipe: recipe, onTap: () => onOpen(recipe), query: query),
           );
         },
       );

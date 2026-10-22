@@ -25,7 +25,7 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
   2. `recipe_list/sections/recipe_list_empty_section.dart` — „Noch keine Rezepte.“ + „Erstes Rezept anlegen“ bzw. „Keine Treffer.“
   3. `recipe_list/sections/recipe_list_results_section.dart` — Liste mit Wischen-Löschen
 - **Bausteine:** `recipe_list/recipe_card.dart` (`RecipeCard`).
-- **Figma `1:421`:** übereinstimmend Kopfleiste mit Suche (folgt der Textgröße nicht), Einträge mit Haarlinie, Marker-Knopf, Navigation mit Auswahlbalken (ab 600 links), Leerstelle bei leerer Liste, „Keine Treffer.“ ohne Leerstelle (D16), Meldung mit Restzeitlinie (D09b). Offen: Fassungsmarke und Versionszahl je Rezept, Suchtreffer im Marker, Liste und Detail ab 840 (Teil 1.4). Golden `01_rezeptliste`.
+- **Figma `1:421`:** übereinstimmend Kopfleiste mit Suche (folgt der Textgröße nicht), Einträge mit Haarlinie, Marker-Knopf, Navigation mit Auswahlbalken (ab 600 links), Leerstelle bei leerer Liste, „Keine Treffer.“ ohne Leerstelle (D16), Meldung mit Restzeitlinie (D09b). Seit Teil 1.4 B04 übereinstimmend: Suchtreffer im Titel mit Marker. Offen: Fassungsmarke und Versionszahl je Rezept (später), Liste und Detail ab 840 (Teil 1.4, Etappe 3). Golden `01_rezeptliste`.
 - **Umgestellt:** C16.
 
 ## 2 Rezept erstellen — `recipe_editor/recipe_create_screen.dart`

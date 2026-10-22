@@ -7,10 +7,18 @@
 // (`stroke-hairline` in `line-hairline`); [AppListItem.selected] zeigt einen
 // Auswahlbalken `stroke-rule` in `line-strong` links (Liste und Detail
 // nebeneinander, Teil 1.4). Höhe und Innenabstand aus dem Theme (D04).
+//
+// Seit Teil 1.4 (B04, Figma `List/Item` `showMatch`): [AppListItem.match]
+// markiert einen Teil des Titels als Treffer — Markerfläche (`marker`,
+// `radius-xs`, seitlich `space-xxs` wie `Highlight`) hinter den Zeichen, Text
+// darin in `text-on-marker`. Der Titel bleibt ein Text mit unverändertem
+// Klartext (Semantik und Suche im Test wie ohne Treffer).
 
 import 'package:flutter/material.dart';
 
 import '../../theme/app_colors.dart';
+import '../../tokens/radius_tokens.g.dart';
+import '../../tokens/spacing_tokens.g.dart';
 import '../../tokens/stroke_tokens.g.dart';
 
 /// Listeneintrag.
@@ -25,6 +33,7 @@ class AppListItem extends StatelessWidget {
     this.onTap,
     this.dense = false,
     this.selected = false,
+    this.match,
   });
 
   /// Titel.
@@ -48,6 +57,9 @@ class AppListItem extends StatelessWidget {
   /// `true`: gewählt (Auswahlbalken links).
   final bool selected;
 
+  /// Treffer im Titel (Zeichenbereich), markiert; `null` oder ungültig = keiner.
+  final TextRange? match;
+
   @override
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
@@ -59,7 +71,7 @@ class AppListItem extends StatelessWidget {
         ),
       ),
       child: ListTile(
-        title: Text(title),
+        title: _MatchedTitle(title: title, match: match),
         subtitle: subtitle == null ? null : Text(subtitle!),
         leading: leading,
         trailing: trailing,
@@ -70,3 +82,76 @@ class AppListItem extends StatelessWidget {
     );
   }
 }
+
+/// Titel mit optional markiertem Treffer.
+class _MatchedTitle extends StatelessWidget {
+  const _MatchedTitle({required this.title, required this.match});
+
+  final String title;
+  final TextRange? match;
+
+  @override
+  Widget build(BuildContext context) {
+    final range = match;
+    if (range == null || !range.isValid || range.isCollapsed || range.end > title.length) return Text(title);
+    final c = AppColors.of(context);
+    final span = TextSpan(
+      style: DefaultTextStyle.of(context).style,
+      children: [
+        TextSpan(text: range.textBefore(title)),
+        TextSpan(text: range.textInside(title), style: TextStyle(color: c.textOnMarker)),
+        TextSpan(text: range.textAfter(title)),
+      ],
+    );
+    return CustomPaint(
+      painter: _MatchPainter(
+        span: span,
+        range: range,
+        color: c.marker,
+        textScaler: MediaQuery.textScalerOf(context),
+        textDirection: Directionality.of(context),
+      ),
+      child: Text.rich(span),
+    );
+  }
+}
+
+/// Malt die Markerfläche hinter den Zeichen des Treffers.
+class _MatchPainter extends CustomPainter {
+  _MatchPainter({
+    required this.span,
+    required this.range,
+    required this.color,
+    required this.textScaler,
+    required this.textDirection,
+  });
+
+  final TextSpan span;
+  final TextRange range;
+  final Color color;
+  final TextScaler textScaler;
+  final TextDirection textDirection;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final painter = TextPainter(text: span, textDirection: textDirection, textScaler: textScaler)
+      ..layout(maxWidth: size.width);
+    final paint = Paint()..color = color;
+    for (final box in painter.getBoxesForSelection(TextSelection(baseOffset: range.start, extentOffset: range.end))) {
+      final rect = box.toRect();
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTRB(rect.left - AppSpacing.xxs, rect.top, rect.right + AppSpacing.xxs, rect.bottom),
+          const Radius.circular(AppRadius.xs),
+        ),
+        paint,
+      );
+    }
+    painter.dispose();
+  }
+
+  @override
+  bool shouldRepaint(_MatchPainter old) =>
+      old.span != span || old.range != range || old.color != color || old.textScaler != textScaler;
+}
+
