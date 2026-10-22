@@ -16,6 +16,8 @@
 // (Teil 1.1c): Ladebalken erst nach 300 ms, bei schnellem Laden nie.
 // UI-87 (Teil 1.4, B02): Die Fassungsleiste im Rezeptdetail markiert die
 // Master-Version des Rezepts.
+// UI-90 (Teil 1.4, B05): Beschreibung, Zutaten und Schritte sind markierbar
+// (`AppSelectableArea`); Titel, Fassungsleiste und Überschriften nicht.
 
 import 'dart:async';
 
@@ -826,6 +828,58 @@ void main() {
         tester.widget<AppMark>(find.ancestor(of: find.text(label), matching: find.byType(AppMark)));
     expect(mark('V1').state, AppMarkState.highlighted, reason: 'Master');
     expect(mark('V2').state, AppMarkState.provisional, reason: 'Entwurf');
+
+    await _disposeWidgetTree(tester);
+  });
+
+  testWidgets('UI-90: Beschreibung, Zutaten und Schritte sind markierbar', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => _closeDatabase(tester, database));
+
+    final recipeDao = DriftRecipeDao(database);
+    final recipeRepo = DriftRecipeRepository(recipeDao, DriftFoodDao(database), database);
+    final recipeId = (await tester.runAsync(() async {
+      final id = await recipeRepo.createRecipe(const NewRecipe(title: 'Pizzateig', description: 'Mit Vorteig'));
+      final versionId = (await recipeDao.watchVersions(id).first).first.id;
+      await recipeRepo.saveDraft(RecipeVersionDraft(
+        id: versionId,
+        recipeId: id,
+        parentVersionId: null,
+        versionIndex: 1,
+        label: null,
+        servings: null,
+        bakingLossPercent: Decimal.zero,
+        finalWeightOverrideG: null,
+        notes: null,
+        ingredients: [
+          RecipeIngredient(
+            id: 'm1',
+            versionId: versionId,
+            position: 1,
+            displayName: 'Mehl',
+            quantity: Decimal.fromInt(500),
+            unitCode: 'g',
+          ),
+        ],
+        steps: [RecipeStep(id: 's1', versionId: versionId, position: 1, instruction: 'Kneten')],
+      ));
+      return id;
+    }))!;
+    expect(tester.takeException(), isNull);
+
+    await _pumpDetail(tester, database, recipeId);
+    Finder area(String text) => find.ancestor(of: find.text(text), matching: find.byType(AppSelectableArea));
+    for (final text in ['Mit Vorteig', 'Mehl', 'Kneten']) {
+      expect(area(text), findsOneWidget, reason: '„$text“ markierbar');
+    }
+    for (final text in ['Pizzateig', 'V1', 'Zutaten', 'Schritte']) {
+      expect(area(text), findsNothing, reason: '„$text“ nicht markierbar');
+    }
+
+    await tester.longPress(find.text('Kneten'));
+    await tester.pumpAndSettle();
+    final context = tester.element(find.byType(RecipeDetailScreen));
+    expect(find.text(MaterialLocalizations.of(context).copyButtonLabel), findsOneWidget, reason: 'Kontextmenü');
 
     await _disposeWidgetTree(tester);
   });

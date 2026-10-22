@@ -56,6 +56,7 @@ aus `tokens/unsalted.tokens.json` (DS-04).
 | `AppIcon`, `AppIconSize` | `Icon` | — | `components/icons/app_icon.dart` | DS-17 |
 | `AppIcons` (32 Namen, Outlined) | `Icon/<name>` | siehe `figma-ids.json` | `components/icons/app_icons.dart` | DS-17 |
 | `AppText` (11 Stile) | `type/*` | — | `components/text/app_text.dart` | DS-18, DS-18b |
+| `AppSelectableArea` (Teil 1.4) | `Input/Text Selection` | `276:297` | `components/text/app_selectable_area.dart`; Farben über `TextSelectionThemeData` (`selection`, `selection-handle`) | DS-67 |
 | `AppCard` | `Card` | `135:56` | `components/cards/app_card.dart` | DS-19 |
 | `AppSurface` | `Surface` | `151:205` | `components/surfaces/app_surface.dart` | DS-20, DS-20b |
 | `AppDivider` (`flush`, `vertical`, `rule`) | `Divider` | `82:39` | `components/surfaces/app_divider.dart` | DS-21 |

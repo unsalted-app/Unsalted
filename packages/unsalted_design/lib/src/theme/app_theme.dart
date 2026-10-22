@@ -8,6 +8,7 @@
 // (02-typografie.md) auf die 28 Farbrollen und elf Textstile abgebildet —
 // so zeigt kein Widget unbemerkt Platzhalter-Lila. DS-07 prüft die Zuordnung.
 // Seit D04 dazu die Komponenten-Themes aus `component_themes.dart` (DS-52);
+// seit Teil 1.4 (B05) auch die Textauswahl aus `selection`/`selection-handle`;
 // Dichte und Tippziele fest, damit Maße auf allen Plattformen den Tokens
 // entsprechen.
 
@@ -53,6 +54,8 @@ abstract final class AppTheme {
       appBarTheme: themes.appBar,
       navigationBarTheme: themes.navigationBar,
       tooltipTheme: themes.tooltip,
+      textSelectionTheme: themes.textSelection,
+      cupertinoOverrideTheme: themes.cupertino,
     );
   }
 

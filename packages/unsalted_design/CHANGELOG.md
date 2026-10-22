@@ -14,6 +14,10 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
   `neutral-900`, dunkel `neutral-50`), `opacity/selection` (0,40) in beiden
   Token-Dateien; `AppColorTokens.selection`, `.selectionHandle`,
   `AppOpacity.selection` generiert. DS-04: 30 Farbrollen.
+- Textauswahl (B05, Figma `Input/Text Selection`, Hinweis 5): Theme mit
+  `TextSelectionThemeData` (Markierung `selection` × `opacity-selection`,
+  Griffe und Cursor `selection-handle`) und `cupertinoOverrideTheme`
+  (`primaryColor` = `selection-handle`); neu `AppSelectableArea`. Test DS-67.
 - Suchtreffer (B04): `AppListItem` additiv mit `match` (Zeichenbereich des
   Titels; Markerfläche `marker`/`radius-xs`/seitlich `space-xxs` dahinter, Text
   `text-on-marker`; Klartext und Semantik unverändert; Figma `List/Item`

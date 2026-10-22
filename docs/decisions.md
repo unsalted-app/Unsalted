@@ -3552,3 +3552,28 @@ kommen die Bilder als eigener Commit (kein `--amend`, kein Force-Push). Lauf
 verschoben. Künftig vor jedem Push mit Token- oder Design-Änderung den
 Golden-Lauf über den Hilfsbranch.
 
+**B05 — Markierbare Rezepttexte (F1, Figma N6).** *Design:*
+`component_themes.dart` mit `textSelection` (`TextSelectionThemeData`:
+`selectionColor` = `selection` × `opacity-selection`, `selectionHandleColor`
+und `cursorColor` = `selection-handle`, Figma-Hinweis 5) und `cupertino`
+(`NoDefaultCupertinoThemeData(primaryColor: selection-handle)` — auf iOS nehmen
+Griffe und Cursor diese Farbe); `AppTheme` setzt `textSelectionTheme` und
+`cupertinoOverrideTheme`. Das gilt in der ganzen App, also auch für Cursor und
+Auswahl in Eingabefeldern (vorher Material-Standard aus dem `ColorScheme`). Neu
+`AppSelectableArea` (`SelectionArea`, Figma `Input/Text Selection`); Tür,
+`public_api_golden.txt` (eine Zeile, DS-03), Katalog „Input/Text Selection“,
+CHANGELOG. *Core:* `recipe_detail_description_section.dart`,
+`…_ingredients_section.dart`, `…_steps_section.dart` betten ihren Inhalt in
+`AppSelectableArea` (Überschriften bleiben außerhalb; Abstände und
+Reihenfolge unverändert); keine Bildschirm-Datei. *Geänderte bestehende
+Testzeilen:* keine (die Texte bleiben `Text`-Widgets; `find.text` und die
+Semantik unverändert). *Neu:* DS-67 (Theme hell/dunkel, Cupertino-Primärfarbe;
+langes Drücken markiert und zeigt „Copy“), UI-90 (Beschreibung, Zutat und
+Schritt in `AppSelectableArea`, Titel, „V1“ und Überschriften nicht;
+langes Drücken auf den Schritt zeigt das Kontextmenü). *Gegenproben:* Theme
+ohne `textSelectionTheme` → DS-67 rot; `AppSelectableArea` ohne `SelectionArea`
+→ DS-67 und UI-90 rot; Beschreibung nicht eingebettet → UI-90 rot; danach
+grün. Nachträge 28.11.6 und 28.11.11 (Sammelpunkt Design-Paket);
+`components.md`, `screens.md`. Mac: Design 491, Core 461, App 12, Widgetbook
+10 Tests grün; `check_architecture` Exit 0.
+

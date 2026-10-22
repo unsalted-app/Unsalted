@@ -10,6 +10,14 @@ import 'sample.dart';
 
 /// Ordner „Basis“ (text, icons, cards, surfaces).
 final surfacesFolder = WidgetbookFolder(name: 'text, icons, cards, surfaces', children: [
+  component('AppSelectableArea', [
+    useCase('Input/Text Selection', (_) => const AppSelectableArea(
+          child: AppStack(gap: AppSpace.s, children: [
+            AppText('Lange drücken markiert ein Wort; die Griffe erweitern die Auswahl.'),
+            AppText.caption('Kopieren über das Menü der Plattform.'),
+          ]),
+        )),
+  ]),
   component('AppText', [
     useCase('Rollen', (_) => const AppStack(gap: AppSpace.s, children: [
           AppText('Text/Body — Fließtext'),

@@ -2,6 +2,8 @@
 //
 // Bildschirm 4, Abschnitt „Zutaten“ (Teil 1.2): Name, Menge, Einheit und
 // optional Notiz je Zutat; Einheit deutsch, Menge mit Dezimalkomma (C27b).
+// Seit Teil 1.4 (B05, F1): der Text ist markierbar und kopierbar
+// (`AppSelectableArea`, Figma `Input/Text Selection`).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -21,12 +23,19 @@ class RecipeDetailIngredientsSection extends StatelessWidget {
   Widget build(BuildContext context) => AppSection(
         title: 'Zutaten',
         children: [
-          for (final ingredient in ingredients)
-            AppListItem(
-              title: ingredient.displayName,
-              subtitle: '${formatAmount(ingredient.quantity, ingredient.unitCode)}'
-                  '${ingredient.note == null ? '' : ' · ${ingredient.note}'}',
+          AppSelectableArea(
+            child: AppStack(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final ingredient in ingredients)
+                  AppListItem(
+                    title: ingredient.displayName,
+                    subtitle: '${formatAmount(ingredient.quantity, ingredient.unitCode)}'
+                        '${ingredient.note == null ? '' : ' · ${ingredient.note}'}',
+                  ),
+              ],
             ),
+          ),
         ],
       );
 }

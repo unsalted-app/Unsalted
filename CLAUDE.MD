@@ -335,11 +335,13 @@ Auswahl: Punktraster, **ohne Text**) ersetzt die Zwischenlösung aus F7.
 B01 fertig (Zeilenmenü „⋮“ in Zutaten- und Schrittzeile nach Figma N1),
 B02 fertig (Master in der Fassungsleiste), B03 fertig („Keine Treffer.“ bei
 Lebensmitteln), B04 fertig (Suchtreffer markiert), B05a fertig
-(Token-Nachtrag Textauswahl: 30 Farbrollen). Test-IDs neu: UI-83–89,
-DS-62, DS-64–66.
+(Token-Nachtrag Textauswahl: 30 Farbrollen), B05 fertig (Rezepttexte im
+Detail markierbar). Etappe 2 fertig. Test-IDs neu: UI-83–90, DS-62,
+DS-64–67.
 
-**Nächster Schritt:** Etappe 2 (B01–B05, vor B05 Token-Nachtrag Textauswahl
-aus Figma), Stopp nach Etappe 2 mit Bericht.
+**Nächster Schritt:** Bericht zu Etappe 2 an den Projektverantwortlichen;
+nach Freigabe Etappe 3 (T01–T03, Liste und Detail ab 840; leerer
+Detailbereich nach N3 mit Punktraster, ohne Text).
 
 ---
 

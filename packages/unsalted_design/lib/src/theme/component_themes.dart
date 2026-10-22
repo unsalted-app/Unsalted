@@ -10,6 +10,7 @@
 // Auswahlbalken der Navigation, Schatten `shadow-overlay` an Menüs und
 // Dialogen, Strichlinien), entsteht in den Komponenten (D06–D10).
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../tokens/color_tokens.g.dart';
@@ -239,6 +240,19 @@ class AppComponentThemes {
               color: states.contains(WidgetState.selected) ? c.textPrimary : c.textSecondary,
             )),
       );
+
+  /// Textauswahl (Teil 1.4 B05, Figma `Input/Text Selection`, Hinweis 5):
+  /// Markierung `selection` × `opacity-selection`, Griffe und Cursor
+  /// `selection-handle`.
+  TextSelectionThemeData get textSelection => TextSelectionThemeData(
+        selectionColor: c.selection.withValues(alpha: AppOpacity.selection),
+        selectionHandleColor: c.selectionHandle,
+        cursorColor: c.selectionHandle,
+      );
+
+  /// iOS: Griffe und Cursor der Textauswahl nehmen `primaryColor` der
+  /// Cupertino-Themes (`selection-handle`).
+  NoDefaultCupertinoThemeData get cupertino => NoDefaultCupertinoThemeData(primaryColor: c.selectionHandle);
 
   /// Tooltip: inverse Fläche, `label-small`.
   TooltipThemeData get tooltip => TooltipThemeData(
