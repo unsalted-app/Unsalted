@@ -3466,3 +3466,25 @@ Design-Pakets. Mac: Design 477, Core 455, App 12, Widgetbook 10 Tests grün;
 bei Handy 200 % liegen die Zutaten unterhalb des Ausschnitts). Angesehen:
 „Milch“ (nicht verknüpft) zeigt die Strichlinie jetzt sichtbar unter dem Feld.
 
+**B02 — Master in der Fassungsleiste.** `recipe_detail/version_switcher.dart`
+additiv `masterVersionId`; die passende Marke bekommt `isMaster: true`
+(`VersionMark` kannte den Master schon: Markerfläche, „…, Master“ in der
+Semantik, seit D13). `recipe_detail/recipe_detail_screen.dart` übergibt
+`recipe.masterVersionId` — eine Zeile in einer Bildschirm-Datei, im Plan
+benannt. *Geänderte bestehende Testzeilen:* keine (ohne `masterVersionId`
+bleibt die Leiste wie bisher, UI-67/68 unverändert). *Neu:* UI-87 in
+`version_mark_test.dart` (Master `highlighted`, übrige unverändert, Auswahl
+unabhängig, Semantik „Version 1, eingefroren, Master“) und in
+`recipe_detail_screen_test.dart` (Rezept mit eingefrorener V1 als Master und
+Entwurf V2: V1 mit Markerfläche). Im Bildschirmtest schlug das Einfrieren
+zuerst still fehl („Eine Version ohne Zutaten kann nicht eingefroren
+werden“ — `runAsync` gibt Ausnahmen nur über `takeException` weiter); der Test
+legt deshalb eine Zutat an und prüft `takeException`. *Gegenproben:* ohne
+Übergabe im Bildschirm → UI-87 (Bildschirm) rot; Leiste mit `isMaster: false`
+→ UI-87 (Leiste) rot; danach grün. Nachtrag 28.11.3; `screens.md`,
+`components.md`, `rueckmeldung-figma.md` (B-Zeile → C). Mac: Core 457 Tests
+grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39808152618 (`goldens/b02`): abweichend die 8 Bilder GL-02
+`04_rezeptdetail` (V2 ist im Golden-Motiv Master: Markerfläche, Auswahlbalken
+unverändert darunter).
+

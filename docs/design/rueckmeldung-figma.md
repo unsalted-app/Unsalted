@@ -68,7 +68,6 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Thema | Figma | Stand | Wann |
 |---|---|---|---|
 | Liste und Detail nebeneinander ab 840 | Tablet `147:9746`, quer `148:4381` | Seitenleiste ab 600 ist umgesetzt (D17), Liste/Detail nicht | Teil 1.4 (F4) |
-| Master in der Fassungsleiste hervorgehoben | `Core/Version Switcher` (`142:19`) | Leiste kennt den Master nicht (nur der Bildschirm) | Teil 1.4 |
 | Rezeptliste mit Fassungsmarke, Versionszahl und Suchtreffer im Marker | `1:421` | braucht Daten bzw. den Suchbegriff im Baustein | später („Nicht Teil von 1.3“) |
 | Rezepttitel als `display` im Inhalt, leere Kopfleiste | `1:607` | Bildschirm-Änderung | später |
 | Zutaten im Rezeptdetail als `Core/Ingredient Row` (Menge links in der Wertspalte) | `1:607` | Abschnitt außerhalb des Scopes; weiter Listeneinträge | später |
@@ -87,4 +86,4 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Beschriftungen der Zutatenzeile | Figma ohne Beschriftung | beide mit Beschriftung, auch „Einheit“; Abstand Beschriftung–Feld `space-xs`, Feld–nächste Beschriftung `space-m` | Figma N1, B01 |
 | Entfernen in Zutaten- und Schrittzeile | Figma `Icon/close`, Code Papierkorb | beide Zeilenmenü `Icon/more` mit „Nach oben“, „Nach unten“, „Entfernen“ | Figma N1, B01 |
 | Schrittzeile im Editor | in Figma nicht abgebildet | `_Zeile/Schritt bearbeiten` (`227:4142`): wie die Zutatenzeile, Timer eingerückt darunter | Figma N1, B01 |
-
+| Master in der Fassungsleiste | Figma: Markerfläche in `Core/Version Switcher`; Code: Leiste kannte den Master nicht | beide mit Markerfläche, „Master“ in der Semantik | Teil 1.4 B02 |

@@ -112,7 +112,7 @@ Aus Design-Komponenten zusammengesetzt; Abschnitte je Bildschirm in
 | `FoodTile` | — | `foods/food_tile.dart` | `AppListItem` | — |
 | `VersionMark` (Teil 1.3) | `Mark` | `versions/version_mark.dart` | `AppMark` | UI-67, UI-68 |
 | `VersionTile` | Bildschirm 07 | `versions/version_tile.dart` | `AppListItem`, `VersionMark`, `AppText`, `AppIconButton` | UI-68 |
-| `VersionSwitcher` (Fassungsleiste) | `Core/Version Switcher` `142:19` | `recipe_detail/version_switcher.dart` | `VersionMark` als Ziele, `Wrap` | UI-67 |
+| `VersionSwitcher` (Fassungsleiste, Master markiert) | `Core/Version Switcher` `142:19` | `recipe_detail/version_switcher.dart` | `VersionMark` als Ziele (`isMaster` über `masterVersionId`), `Wrap` | UI-67, UI-87 |
 | `IngredientRow` (zweizeilig, Zeilenmenü) | Bildschirm 03, `_Zeile/Zutat bearbeiten` `7:712` (App), `Core/Ingredient Row` `141:4` (Anzeige) | `recipe_editor/ingredient_row.dart` | `AppTextField`, `AppSelect` (`label`, `expand`), `AppDashedUnderline`, `AppOverflowMenu` (`tooltip`), `AppIcon`, `AppDivider.flush` | UI-72, UI-84, UI-86 |
 | `StepRow` (Nummer, Timer darunter, Zeilenmenü) | `_Zeile/Schritt bearbeiten` `227:4142` (App), `Core/Step Row` `141:10` (Anzeige) | `recipe_editor/step_row.dart` | `AppTextField` (schmal, `space-m` unter der Anweisung), `AppText.dataStrong`, `AppOverflowMenu` (`tooltip`), `AppDivider.flush` | UI-74, UI-82, UI-85 |
 | `FoodVariantPickerDialog` | — | `recipe_editor/food_variant_picker_dialog.dart` | `AppDialog`, `AppTextField`, `AppItemList`, `AppListItem`, `AppEmptyState` | — |

@@ -315,7 +315,8 @@ Branch `teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR #3. Plan: `docs/plan-1.4.m
 Stand nach S03 (Etappe 1 fertig): Design 461 Tests, Core 451, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
 | — | Figma-Nachträge N1–N6 übernommen (`docs/design/figma/teil-1.4-figma-nachtraege.md`, `figma-ids.json`) | fertig |
 | B01 | Zeilenmenü „⋮“ in Zutaten- und Schrittzeile (Nach oben/unten, Entfernen) nach Figma N1, Einheit beschriftet, `space-m`, Haarlinie, Unterstreichung `space-xxs` darunter; DS-62/64/65, UI-84–86 | fertig |
-| B02–B05 | Etappe 2: Master in der Fassungsleiste, „Keine Treffer.“ bei Lebensmitteln, Suchtreffer, Token-Nachtrag Textauswahl und markierbare Texte | in Arbeit |
+| B02 | Master in der Fassungsleiste (Markerfläche, Semantik), `masterVersionId` aus dem Rezeptdetail; UI-87 | fertig |
+| B03–B05 | Etappe 2: „Keine Treffer.“ bei Lebensmitteln, Suchtreffer, Token-Nachtrag Textauswahl und markierbare Texte | in Arbeit |
 | T01–T03 | Etappe 3: Liste und Detail ab 840 | offen |
 | M01–M03 | Etappe 4: App-Name, ggf. App-Symbol und Startbild, Abschluss | offen |
 

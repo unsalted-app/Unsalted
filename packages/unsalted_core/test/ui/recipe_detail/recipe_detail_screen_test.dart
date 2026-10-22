@@ -14,6 +14,8 @@
 // UI-40 (Teil 1.1b): „Rezept löschen“ im AppBar-Menü kehrt zur Rezeptliste
 // zurück und zeigt dort die SnackBar mit „Rückgängig“. UI-45/UI-46
 // (Teil 1.1c): Ladebalken erst nach 300 ms, bei schnellem Laden nie.
+// UI-87 (Teil 1.4, B02): Die Fassungsleiste im Rezeptdetail markiert die
+// Master-Version des Rezepts.
 
 import 'dart:async';
 
@@ -792,4 +794,40 @@ void main() {
 
     await _disposeWidgetTree(tester);
   });
+
+  testWidgets('UI-87: Rezeptdetail markiert den Master in der Fassungsleiste', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => _closeDatabase(tester, database));
+
+    final recipeRepo = DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
+    final (recipeId, v1) = await _seedDraftRecipe(
+      tester,
+      database,
+      ingredients: (vid) => [
+        RecipeIngredient(
+          id: 'm1',
+          versionId: vid,
+          position: 1,
+          displayName: 'Mehl',
+          quantity: Decimal.fromInt(100),
+          unitCode: 'g',
+        ),
+      ],
+    );
+    await tester.runAsync(() async {
+      await recipeRepo.snapshotVersion(v1);
+      await recipeRepo.setMasterVersion(recipeId, v1);
+      await recipeRepo.createDraftFrom(v1);
+    });
+    expect(tester.takeException(), isNull);
+
+    await _pumpDetail(tester, database, recipeId);
+    AppMark mark(String label) =>
+        tester.widget<AppMark>(find.ancestor(of: find.text(label), matching: find.byType(AppMark)));
+    expect(mark('V1').state, AppMarkState.highlighted, reason: 'Master');
+    expect(mark('V2').state, AppMarkState.provisional, reason: 'Entwurf');
+
+    await _disposeWidgetTree(tester);
+  });
 }
+

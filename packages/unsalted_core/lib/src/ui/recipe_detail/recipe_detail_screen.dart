@@ -342,6 +342,7 @@ class _DetailScaffold extends ConsumerWidget {
             versions: versions,
             selectedVersionId: selectedVersionId,
             onSelected: onVersionSelected,
+            masterVersionId: recipe.masterVersionId,
           ),
           RecipeDetailDescriptionSection(description: recipe.description),
           RecipeDetailNutritionSection(
