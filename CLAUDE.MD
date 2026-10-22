@@ -70,7 +70,8 @@ unsalted/
 │  └─ design/                      design_system.md, components.md, screens.md (Stand 1.3), plan.md (1.2);
 │                                   Teil 1.3: plan-1.3.md, UEBERGABE.md, rueckmeldung-figma.md (Abweichungen
 │                                   für Figma), system/ (Markenbuch, tokens.json, Komponentenkarten,
-│                                   Schrift-WOFF2, OFL), figma/figma-ids.json
+│                                   Schrift-WOFF2, OFL), figma/figma-ids.json,
+│                                   figma/teil-1.4-figma-nachtraege.md (N1–N6, Hinweise für den Code)
 ├─ tool/
 │  ├─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
 │  └─ repeat_tests.dart            Wiederholungsläufe für die Hänger-Diagnose (Teil 1.4 S01)
@@ -329,9 +330,12 @@ Widget-Test, UI-83). S03 fertig (70 Abnahmeläufe grün, kein Hänger). Etappe 1
 fertig. Test-IDs neu: UI-83. Stand: Design 461, Core 451, App 12, Widgetbook
 10 Tests grün.
 
-**Nächster Schritt:** Bericht zu Etappe 1 an den Projektverantwortlichen;
-nach Freigabe Etappe 2 (B01 — vorher prüfen, ob Figma-Nachtrag N1 vorliegt,
-sonst nach F4 aus vorhandenen Komponenten).
+Etappe 1 freigegeben. Figma-Nachträge N1–N6 übernommen
+(`docs/design/figma/teil-1.4-figma-nachtraege.md`); N3 (Detailbereich ohne
+Auswahl: Punktraster, **ohne Text**) ersetzt die Zwischenlösung aus F7.
+
+**Nächster Schritt:** Etappe 2 (B01–B05, vor B05 Token-Nachtrag Textauswahl
+aus Figma), Stopp nach Etappe 2 mit Bericht.
 
 ---
 

@@ -3383,3 +3383,41 @@ beseitigt — wohl aber, dass der Helfer nichts verschlechtert. Gesichert ist:
 ein Hänger in einem Widget-Test endet jetzt nach höchstens 2 min mit Namen,
 beim Schließen der Datenbank nach rund 4 s mit klarer Meldung (UI-83).
 
+## 2026-10-22 — Teil 1.4, Etappe 2 (Bedienung)
+
+**Freigabe Etappe 1 und Vorgaben (Projektverantwortlicher):** Etappe 1
+geprüft und freigegeben (S02/S03 sauber, CI grün). Weiter mit Etappe 2; zuerst
+die Figma-Übergabe einspielen. Figma ist für 1.4 vollständig und
+veröffentlicht: N1 liegt vor → B01 genau nach Figma („⋮“-Menü mit „Nach oben“
+/ „Nach unten“ / „Entfernen“, in der ersten Zeile „Nach oben“ ausgegraut;
+Beschriftungen 4 px zum eigenen Feld und 12 px zum Feld darüber; neue
+Schrittzeile; gestrichelte Linie für „nicht verknüpft“ 2 px unter dem Feld).
+N2 liegt vor (B03, mit Symbol). N6 liegt vor: `color/selection`,
+`color/selection-handle` und `opacity/selection` stehen bisher nur in Figma →
+vor B05 als Token-Nachtrag aus Figma in beide Token-Dateien (wie D12a), eigener
+Commit. Für Etappe 3 vorgemerkt: N3 zeigt den leeren Detailbereich mit
+Punktraster und **ohne Text** — das ersetzt die Zwischenlösung aus F7. Die ZIP
+`unsalted-app-symbol-startbild.zip` bleibt bis Etappe 4 außerhalb des Repos.
+Stopp nach Etappe 2.
+
+**Figma-Nachträge N1–N6 übernommen.** `/Users/dalptri/teil-1.4-figma-nachtraege.md`
+(aus dem Figma-Chat, Stand 21.10.2026; geprüft: reiner UTF-8-Text, 63 Zeilen,
+keine Steuerzeichen) byte-gleich nach `docs/design/figma/teil-1.4-figma-nachtraege.md`.
+`docs/design/figma/figma-ids.json`: `Navigation/Menu Item` jetzt `270:284`
+(Set `state=default|disabled`), `Core/Nutrition Field` → `Data/Figure`
+(`142:56`), `Core/Nutrition Header` → `Data/Figure Row` (`142:57`), neu
+`Core/Nutrition Header` `272:297`, `Feedback/Tooltip` `273:374`,
+`Input/Text Selection` `276:297`, `Brand/Logo` `275:18`, `Brand/Symbol`
+`275:34`; neue Abschnitte `variablen_teil_1_4`, `muster` (Textauswahl
+`276:304`), `marke` (App-Symbol und Startbild), in der App `teil_1_4` (neue
+Rahmen), `bausteine_teil_1_4`, `entfernt_teil_1_4` („07 Versionen / Menü“).
+Bestehende Schlüssel sonst unverändert, Format wie bisher; DS-17 (liest nur
+`bibliothek.symbole`) grün. Die Hinweise „Für den Code“ der Übergabe gelten,
+soweit die Vorgabe oben sie für Etappe 2 nennt (1–3 → B01, 5 → B05, 6 → B03;
+7 → Etappe 3; 8 → Etappe 4). *Nicht im Umfang von Etappe 2, offen:* Hinweis 4
+(Bildschirm 7 bei 200 %: Aktionen unter Titel und Datum) und die übrigen
+Bibliotheksänderungen der Übergabe (`AppTextField(suffix:)`,
+`AppListItem(leading:)`); Namen und IDs in `components.md` und
+`rueckmeldung-figma.md` (A3 Kennzahlenleiste — Figma führt jetzt
+`Data/Figure Row`) werden mit M03 nachgeführt.
+
