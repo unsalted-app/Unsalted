@@ -5,6 +5,8 @@
 // Seit Teil 1.4 (B04, Figma `List/Item` `showMatch`): mit [RecipeCard.query]
 // ist der erste Treffer im Titel markiert (ohne Groß-/Kleinschreibung, wie die
 // Suche in Bildschirm 1).
+// Seit Teil 1.4 (T02): [RecipeCard.selected] zeigt den Auswahlbalken (Liste
+// und Detail nebeneinander).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -14,7 +16,7 @@ import '../../recipe/recipe.dart';
 /// Eintrag eines Rezepts.
 class RecipeCard extends StatelessWidget {
   /// Erzeugt den Eintrag.
-  const RecipeCard({super.key, required this.recipe, required this.onTap, this.query = ''});
+  const RecipeCard({super.key, required this.recipe, required this.onTap, this.query = '', this.selected = false});
 
   /// Das Rezept.
   final Recipe recipe;
@@ -24,6 +26,9 @@ class RecipeCard extends StatelessWidget {
 
   /// Suchbegriff; leer = kein Treffer markiert.
   final String query;
+
+  /// `true`: im Detailbereich geöffnet (Auswahlbalken).
+  final bool selected;
 
   /// Erster Treffer von [query] in [title] (ohne Groß-/Kleinschreibung);
   /// `null` = keiner.
@@ -42,5 +47,6 @@ class RecipeCard extends StatelessWidget {
         subtitle: recipe.description,
         onTap: onTap,
         match: matchOf(recipe.title, query),
+        selected: selected,
       );
 }

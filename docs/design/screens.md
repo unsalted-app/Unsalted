@@ -17,15 +17,15 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 
 - **Zweck:** Einstieg; Rezepte finden und öffnen.
 - **Daten:** `RecipeRepository.watchRecipes()`, ausgeblendet über `pendingRecipeDeletionsProvider`.
-- **Aktionen:** Suche über Titel; Rezept öffnen (Detail); neues Rezept (FAB „Neues Rezept“, leerer Zustand); Wischen = Löschen mit 5 s „Rückgängig“.
+- **Aktionen:** Suche über Titel; Rezept öffnen (Detail; ab 840 im Detailbereich daneben, Teil 1.4 T02); neues Rezept (FAB „Neues Rezept“, leerer Zustand); Wischen = Löschen mit 5 s „Rückgängig“ (gewähltes Rezept: Auswahl aufgehoben).
 - **Zustände:** laden (`AppLoading`) · Fehler + „Erneut versuchen“ (`AppErrorState`) · leer · keine Treffer · Liste.
-- **Template:** `ListPageTemplate`.
+- **Template:** `ListPageTemplate`; seit Teil 1.4 T02 in `ListDetailTemplate` — ab 840 Liste und Rezeptdetail (Bildschirm 4) nebeneinander, ohne Auswahl Punktraster; Auswahl übersteht das Verkleinern (F6).
 - **Abschnitte:**
   1. `recipe_list/sections/recipe_list_search_section.dart` — Suchfeld (Slot `search`)
   2. `recipe_list/sections/recipe_list_empty_section.dart` — „Noch keine Rezepte.“ + „Erstes Rezept anlegen“ bzw. „Keine Treffer.“
   3. `recipe_list/sections/recipe_list_results_section.dart` — Liste mit Wischen-Löschen
 - **Bausteine:** `recipe_list/recipe_card.dart` (`RecipeCard`).
-- **Figma `1:421`:** übereinstimmend Kopfleiste mit Suche (folgt der Textgröße nicht), Einträge mit Haarlinie, Marker-Knopf, Navigation mit Auswahlbalken (ab 600 links), Leerstelle bei leerer Liste, „Keine Treffer.“ ohne Leerstelle (D16), Meldung mit Restzeitlinie (D09b). Seit Teil 1.4 B04 übereinstimmend: Suchtreffer im Titel mit Marker. Offen: Fassungsmarke und Versionszahl je Rezept (später), Liste und Detail ab 840 (Teil 1.4, Etappe 3). Golden `01_rezeptliste`.
+- **Figma `1:421`:** übereinstimmend Kopfleiste mit Suche (folgt der Textgröße nicht), Einträge mit Haarlinie, Marker-Knopf, Navigation mit Auswahlbalken (ab 600 links), Leerstelle bei leerer Liste, „Keine Treffer.“ ohne Leerstelle (D16), Meldung mit Restzeitlinie (D09b). Seit Teil 1.4 B04 übereinstimmend: Suchtreffer im Titel mit Marker. Seit Teil 1.4 T02 übereinstimmend mit Tablet `147:9746`, Handy quer `148:3817` und ohne Auswahl `219:4396` (N3): Liste in 360, Auswahlbalken am gewählten Rezept, Detail mit Haarlinie und eigener Kopfleiste, ohne Auswahl nur Punktraster. Offen: Fassungsmarke und Versionszahl je Rezept (später). Golden `01_rezeptliste`, `01_04_liste_detail`.
 - **Umgestellt:** C16.
 
 ## 2 Rezept erstellen — `recipe_editor/recipe_create_screen.dart`
@@ -62,7 +62,8 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 
 - **Zweck:** Rezept lesen, Version wählen.
 - **Daten:** `watchRecipe`, `watchVersions`, `getVersion`, `NutritionService.forVersion`; `modulesProvider` (Abschnitte, Aktionen).
-- **Aktionen:** Version wählen; „Versionen“, „Bearbeiten“; Modul-Aktionen (Kopfleiste, Menü); „Rezept löschen“ (zurück zur Liste, 5 s „Rückgängig“).
+- **Aktionen:** Version wählen; „Versionen“, „Bearbeiten“; Modul-Aktionen (Kopfleiste, Menü); „Rezept löschen“ (zurück zur Liste bzw. im Detailbereich Auswahl aufheben, 5 s „Rückgängig“).
+- **Detailbereich (Teil 1.4 T02):** ab 840 neben der Rezeptliste; die Liste übergibt `onClose`, die Kopfleiste hat dort kein „Zurück“.
 - **Zustände:** Rezept lädt / Fehler / nicht gefunden (`AppPage` ohne Kopfleiste) · Versionen laden / Fehler / keine Version · erstes Laden · Versionswechsel (alter Inhalt bleibt, Ladebalken nach 300 ms, `_VersionLoader`) · Inhalt.
 - **Template:** `DetailPageTemplate` mit `DetailSections` (zweispaltig ab `breakpoint-large` über `DetailLayout.standard`, D11).
 - **Abschnitte:**

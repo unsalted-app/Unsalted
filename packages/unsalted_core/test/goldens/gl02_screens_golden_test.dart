@@ -5,6 +5,9 @@
 // (3), Rezeptdetail (4), Versionsvergleich (8), Lebensmittel bearbeiten (10).
 // Daten aus support/screen_fixtures.dart. Nur unter Linux
 // (docs/design/plan-1.3.md, d4).
+// Seit Teil 1.4 (T02): Motiv 01_04_liste_detail — Rezeptliste nach Tippen auf
+// ein Rezept: am Tablet Liste und gewähltes Rezept nebeneinander, am Handy
+// das geöffnete Rezeptdetail.
 @TestOn('linux')
 @Tags(['golden'])
 library;
@@ -55,6 +58,40 @@ void _screenGolden(String motif, Widget Function(GoldenFixture fixture) screen) 
   }
 }
 
+/// Wie [_screenGolden], danach Tippen auf [title] (Teil 1.4 T02).
+void _tappedScreenGolden(String motif, Widget screen, String title) {
+  for (final variant in goldenVariants) {
+    testWidgets('GL-02: $motif (${variant.name})', (tester) async {
+      applyGoldenView(tester, variant);
+      final database = await openGoldenDatabase(tester);
+      addTearDown(() => closeGoldenDatabase(tester, database));
+      await seedGoldenFixture(tester, database);
+
+      await tolerateOverflow(() async {
+        await tester.pumpWidget(ProviderScope(
+          overrides: [
+            coreDatabaseProvider.overrideWithValue(database),
+            modulesProvider.overrideWithValue(const []),
+          ],
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: goldenTheme(variant),
+            home: screen,
+          ),
+        ));
+        await settleScreen(tester);
+        await tester.tap(find.text(title));
+        await tester.pump();
+        await settleScreen(tester);
+        await tester.pump(const Duration(seconds: 1));
+        await expectGolden(motif, variant);
+      });
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(Duration.zero);
+    }, tags: ['golden']);
+  }
+}
+
 void main() {
   setUpAll(loadGoldenFonts);
 
@@ -66,4 +103,5 @@ void main() {
     (f) => VersionCompareScreen(recipeId: f.recipeId, versionAId: f.v1, versionBId: f.v2),
   );
   _screenGolden('10_lebensmittel_bearbeiten', (f) => FoodEditorScreen(foodId: f.flourId));
+  _tappedScreenGolden('01_04_liste_detail', const RecipeListScreen(), 'Hefezopf klassisch');
 }

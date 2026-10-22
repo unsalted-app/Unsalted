@@ -9,6 +9,10 @@
 // -- siehe CLAUDE.md Abschnitt 4 und test/ui/foods/food_list_screen_test.dart.
 // UI-89 (Teil 1.4, B04): Der Suchtreffer im Titel ist markiert (erster Treffer,
 // ohne Groß-/Kleinschreibung); Klartext und Semantik bleiben der ganze Titel.
+// UI-91 (Teil 1.4, T02): Liste und Detail ab 840 — Tippen wählt aus
+// (Auswahlbalken, Detail rechts, keine neue Seite), Wechsel, „Rezept löschen“
+// im Detailbereich und Wischen heben die Auswahl auf; die Auswahl übersteht
+// das Verkleinern (F6); unter 840 wie bisher eine eigene Seite.
 
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -381,5 +385,128 @@ void main() {
     expect(RecipeCard.matchOf('Pizzateig', ''), isNull);
     expect(RecipeCard.matchOf('Pizzateig', 'Brot'), isNull);
   });
-}
 
+  group('UI-91: Liste und Detail', () {
+    void setView(WidgetTester tester, Size size) {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+    }
+
+    Finder card(String title) => find.widgetWithText(RecipeCard, title);
+    String detailId(WidgetTester tester) => tester.widget<RecipeDetailScreen>(find.byType(RecipeDetailScreen)).recipeId;
+    List<String> selected(WidgetTester tester) => [
+          for (final item in tester.widgetList<AppListItem>(
+            find.descendant(of: find.byType(RecipeCard), matching: find.byType(AppListItem)),
+          ))
+            if (item.selected) item.title,
+        ];
+
+    for (final size in const [Size(1024, 1366), Size(844, 390)]) {
+      final label = '${size.width.toInt()} × ${size.height.toInt()}';
+      testWidgets('UI-91: $label — Tippen wählt, Wechsel, „Rezept löschen“ hebt die Auswahl auf', (tester) async {
+        final database = await _openDatabase(tester);
+        addTearDown(() => _closeDatabase(tester, database));
+        final (pizzaId, _) = await _seedRecipe(tester, database, 'Pizzateig');
+        final (apfelId, apfelVersions) = await _seedRecipe(tester, database, 'Apfelkuchen');
+        setView(tester, size);
+        await _pumpRecipeList(tester, database);
+
+        expect(find.byType(RecipeDetailScreen), findsNothing);
+        expect(tester.widget<ListDetailTemplate>(find.byType(ListDetailTemplate)).detail, isNull,
+            reason: 'ohne Auswahl leerer Detailbereich');
+
+        await tester.tap(card('Pizzateig'));
+        await _settleDb(tester);
+        expect(detailId(tester), pizzaId);
+        expect(tester.getTopLeft(find.byType(RecipeDetailScreen)).dx, greaterThanOrEqualTo(AppSize.listPane),
+            reason: 'Detail rechts neben der Liste');
+        expect(selected(tester), ['Pizzateig']);
+        expect(Navigator.of(tester.element(find.byType(RecipeListScreen))).canPop(), isFalse,
+            reason: 'keine neue Seite');
+        expect(find.byType(BackButton), findsNothing, reason: 'kein „Zurück“ im Detailbereich');
+
+        await tester.tap(card('Apfelkuchen'));
+        await _settleDb(tester);
+        expect(detailId(tester), apfelId);
+        expect(selected(tester), ['Apfelkuchen']);
+
+        await tester.tap(find.descendant(of: find.byType(RecipeDetailScreen), matching: find.byType(AppOverflowMenu)));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Rezept löschen'));
+        // Feste Pumps statt pumpAndSettle: Die Restzeitlinie der Meldung läuft bis zum Ablauf (Teil 1.3, D09b).
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(find.byType(RecipeDetailScreen), findsNothing, reason: 'Auswahl aufgehoben');
+        expect(find.byType(RecipeListScreen), findsOneWidget, reason: 'Liste bleibt');
+        expect(card('Apfelkuchen'), findsNothing);
+        expect(find.text('„Apfelkuchen“ gelöscht'), findsOneWidget, reason: 'eine Meldung');
+        expect(selected(tester), isEmpty);
+
+        await tester.pump(undoableDeletionDelay);
+        await _settleDb(tester);
+        expect(await _recipeAlive(tester, database, apfelId, apfelVersions), isFalse);
+
+        await _disposeWidgetTree(tester);
+      });
+    }
+
+    testWidgets('UI-91: Wischen hebt die Auswahl auf', (tester) async {
+      final database = await _openDatabase(tester);
+      addTearDown(() => _closeDatabase(tester, database));
+      await _seedRecipe(tester, database, 'Pizzateig');
+      await _seedRecipe(tester, database, 'Apfelkuchen');
+      setView(tester, const Size(1024, 1366));
+      await _pumpRecipeList(tester, database);
+
+      await tester.tap(card('Pizzateig'));
+      await _settleDb(tester);
+      expect(find.byType(RecipeDetailScreen), findsOneWidget);
+
+      await tester.drag(card('Pizzateig'), const Offset(-600, 0));
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(find.byType(RecipeDetailScreen), findsNothing);
+      expect(card('Pizzateig'), findsNothing);
+      expect(find.text('„Pizzateig“ gelöscht'), findsOneWidget);
+
+      await _disposeWidgetTree(tester);
+    });
+
+    testWidgets('UI-91: Auswahl übersteht das Verkleinern; unter 840 eigene Seite', (tester) async {
+      final database = await _openDatabase(tester);
+      addTearDown(() => _closeDatabase(tester, database));
+      final (pizzaId, _) = await _seedRecipe(tester, database, 'Pizzateig');
+      await _seedRecipe(tester, database, 'Apfelkuchen');
+      setView(tester, const Size(1024, 1366));
+      await _pumpRecipeList(tester, database);
+      await tester.tap(card('Pizzateig'));
+      await _settleDb(tester);
+
+      setView(tester, const Size(390, 844));
+      await _settleDb(tester);
+      expect(find.byType(RecipeDetailScreen), findsNothing, reason: 'unter 840 nur die Liste');
+      expect(selected(tester), isEmpty, reason: 'ohne Detail kein Auswahlbalken');
+
+      setView(tester, const Size(1024, 1366));
+      await _settleDb(tester);
+      expect(detailId(tester), pizzaId, reason: 'Auswahl erhalten (F6)');
+      expect(selected(tester), ['Pizzateig']);
+
+      setView(tester, const Size(390, 844));
+      await _settleDb(tester);
+      await tester.tap(card('Apfelkuchen'));
+      await tester.pump();
+      await _settleDb(tester);
+      await tester.pump(const Duration(seconds: 1));
+      final page = find.byType(RecipeDetailScreen);
+      expect(tester.widget<RecipeDetailScreen>(page).onClose, isNull, reason: 'eigene Seite');
+      expect(tester.getRect(page), const Rect.fromLTWH(0, 0, 390, 844));
+      expect(Navigator.of(tester.element(page)).canPop(), isTrue);
+
+      await _disposeWidgetTree(tester);
+    });
+  });
+}

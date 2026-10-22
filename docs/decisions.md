@@ -3667,3 +3667,33 @@ hell sind `line-dot` und `line-hairline` gleich); ohne gemeinsame Seite →
 Meldungsfall rot (zwei Meldungen); danach grün. Nachtrag 28.11.11;
 `components.md`, CHANGELOG. Mac: Design 510, Core 464, App 12,
 Widgetbook 10 Tests grün; `check_architecture` Exit 0.
+
+**T02 — Rezepte: Liste und Detail (Bildschirm 1/4).** *Umsetzung:*
+`RecipeListScreen` baut `ListDetailTemplate`; die Liste ist die bisherige
+`ListPageTemplate`. Auswahlzustand `_selectedId` im Bildschirm (F8, keine
+Routen): ab 840 (`ListDetailTemplate.isSplit`) wählt Tippen aus, darunter
+wie bisher `Navigator.push`. Das Detail ist `RecipeDetailScreen` mit
+`ValueKey` der Auswahl (ein Wechsel lädt das andere Rezept frisch, Version =
+Master) und additiv `onClose`: „Rezept löschen“ hebt dann die Auswahl auf,
+statt die Seite zu schließen (`deleteRecipeWithUndo` liest Messenger,
+Repository und Notifier sofort; der Bereich darf danach verschwinden).
+Wischen-Löschen des gewählten Rezepts hebt die Auswahl ebenfalls auf; nach
+„Rückgängig“ bleibt sie aufgehoben. Auswahlbalken über `RecipeCard.selected`
+→ `AppListItem.selected`, nur nebeneinander. Die Auswahl übersteht das
+Verkleinern (F6): unter 840 nur die Liste ohne Balken, beim Vergrößern
+wieder das Detail. „Zurück“ gibt es im Bereich nicht, weil die Liste keine
+geöffnete Seite ist (`AppTopBar` folgt Material). „Rezept anlegen“
+(`recipe_create_screen.dart`, nicht im Plan) öffnet nach dem Speichern
+weiter das Rezeptdetail als eigene Seite. *Geänderte bestehende
+Testzeilen:* keine (12 Tests der Rezeptliste, UI-40 und APP-04 unverändert
+grün). *Neu:* UI-91 (bei 1024 × 1366 und 844 × 390: ohne Auswahl leerer
+Bereich, Tippen wählt — Detail rechts ab 360, Balken, keine neue Seite,
+kein „Zurück“ —, Wechsel, „Rezept löschen“ hebt die Auswahl auf, eine
+Meldung, nach 5 s gelöscht; Wischen hebt die Auswahl auf; Auswahl übersteht
+390 × 844, unter 840 eigene Seite). GL-02: neues Motiv `01_04_liste_detail`
+(Tippen auf „Hefezopf klassisch“) über einen zusätzlichen Helfer im
+Golden-Test, bestehende Zeilen unverändert; `01_rezeptliste` Tablet ändert
+sich (leerer Detailbereich). *Gegenprobe:* ohne `onClose` → UI-91 (Löschen)
+rot; Tippen immer `push` → alle vier UI-91 rot; danach grün. Nachtrag
+28.11.7; `screens.md`. Mac: Design 510, Core 468, App 12, Widgetbook 10
+Tests grün; `check_architecture` Exit 0.

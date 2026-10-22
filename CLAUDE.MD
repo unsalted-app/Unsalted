@@ -338,16 +338,18 @@ B02 fertig (Master in der Fassungsleiste), B03 fertig („Keine Treffer.“ bei
 Lebensmitteln), B04 fertig (Suchtreffer markiert), B05a fertig
 (Token-Nachtrag Textauswahl: 30 Farbrollen), B05 fertig (Rezepttexte im
 Detail markierbar). Etappe 2 fertig. Test-IDs neu: UI-83–90, DS-62,
-DS-64–67; in Etappe 3 UI-93, UI-94, DS-63, DS-68, DS-69.
+DS-64–67; in Etappe 3 UI-91, UI-93, UI-94, DS-63, DS-68, DS-69.
 
 Etappe 2 freigegeben. Etappe 3: T00a fertig (Listeneintrag bricht bei großer
 Schrift um, Bildschirm 7 bei 200 %), T00b fertig (Suffix im Eingabefeld), T01
 fertig (Rahmen `ListDetailTemplate`, DS-63; Seiten darin richten sich weiter
-nach der Fensterbreite, wie Figma bei 844 und 1366). Für Etappe 4 vorgemerkt: eingefrorene
+nach der Fensterbreite, wie Figma bei 844 und 1366), T02 fertig (Rezepte:
+Liste und Detail ab 840 über Auswahlzustand, `RecipeDetailScreen.onClose`,
+UI-91). Für Etappe 4 vorgemerkt: eingefrorene
 Ansicht nach Figma `42:2010`, restliche Namen/IDs in `components.md` und
 `rueckmeldung-figma.md`.
 
-**Nächster Schritt:** Etappe 3 weiter (T02–T03; leerer Detailbereich nach N3 mit Punktraster, ohne Text). Golden-Lauf
+**Nächster Schritt:** Etappe 3 weiter (T03; leerer Detailbereich nach N3 mit Punktraster, ohne Text). Golden-Lauf
 vor jedem Push; Stopp nach Etappe 3.
 
 ---

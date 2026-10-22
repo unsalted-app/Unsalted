@@ -37,6 +37,11 @@
 // wie die in der Kopfleiste den Kontext dieser Seite (vorher den des
 // Menüknopfs, ebenfalls darunter; UI-58). Lade- und Wechsellogik (1.1a,
 // 1.1c) unverändert.
+//
+// Seit Teil 1.4 (T02): Im Detailbereich neben der Rezeptliste (ab
+// `breakpoint-expanded`) übergibt die Liste [RecipeDetailScreen.onClose];
+// „Rezept löschen“ hebt dann die Auswahl auf, statt die Seite zu schließen.
+// Die Kopfleiste hat dort kein „Zurück“ (die Liste ist keine geöffnete Seite).
 
 import 'dart:async';
 
@@ -65,7 +70,11 @@ import 'version_switcher.dart';
 class RecipeDetailScreen extends ConsumerStatefulWidget {
   final String recipeId;
 
-  const RecipeDetailScreen({super.key, required this.recipeId});
+  /// Schließt den Detailbereich (Liste und Detail nebeneinander); `null` =
+  /// eigene Seite, „Rezept löschen“ schließt sie (`pop`).
+  final VoidCallback? onClose;
+
+  const RecipeDetailScreen({super.key, required this.recipeId, this.onClose});
 
   @override
   ConsumerState<RecipeDetailScreen> createState() => _RecipeDetailScreenState();
@@ -138,6 +147,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
               selectedVersionId: _selectedVersionId!,
               modules: modules,
               onVersionSelected: (id) => setState(() => _selectedVersionId = id),
+              onClose: widget.onClose,
             );
           },
         );
@@ -152,6 +162,7 @@ class _VersionLoader extends ConsumerStatefulWidget {
   final String selectedVersionId;
   final List<UnsaltedModule> modules;
   final ValueChanged<String> onVersionSelected;
+  final VoidCallback? onClose;
 
   const _VersionLoader({
     required this.recipe,
@@ -159,6 +170,7 @@ class _VersionLoader extends ConsumerStatefulWidget {
     required this.selectedVersionId,
     required this.modules,
     required this.onVersionSelected,
+    required this.onClose,
   });
 
   @override
@@ -269,6 +281,7 @@ class _VersionLoaderState extends ConsumerState<_VersionLoader> {
       showProgress: _showProgress,
       modules: widget.modules,
       onVersionSelected: widget.onVersionSelected,
+      onClose: widget.onClose,
     );
   }
 }
@@ -288,6 +301,9 @@ class _DetailScaffold extends ConsumerWidget {
   final List<UnsaltedModule> modules;
   final ValueChanged<String> onVersionSelected;
 
+  /// Siehe [RecipeDetailScreen.onClose].
+  final VoidCallback? onClose;
+
   const _DetailScaffold({
     required this.recipe,
     required this.versions,
@@ -297,6 +313,7 @@ class _DetailScaffold extends ConsumerWidget {
     required this.showProgress,
     required this.modules,
     required this.onVersionSelected,
+    required this.onClose,
   });
 
   @override
@@ -362,10 +379,16 @@ class _DetailScaffold extends ConsumerWidget {
     );
   }
 
-  /// Teil 1.1b: zurück zur Rezeptliste, dort Löschen mit „Rückgängig“.
+  /// Teil 1.1b: zurück zur Rezeptliste, dort Löschen mit „Rückgängig“; im
+  /// Detailbereich (Teil 1.4 T02) Auswahl aufheben statt `pop`.
   void _deleteRecipe(BuildContext context, WidgetRef ref) {
-    final navigator = Navigator.of(context);
-    if (navigator.canPop()) navigator.pop();
+    final close = onClose;
+    if (close != null) {
+      close();
+    } else {
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) navigator.pop();
+    }
     deleteRecipeWithUndo(context, ref, recipe);
   }
 }
