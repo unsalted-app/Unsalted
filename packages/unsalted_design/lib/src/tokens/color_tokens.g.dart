@@ -135,6 +135,8 @@ class AppColorTokens {
     required this.actionOnPrimary,
     required this.actionInverse,
     required this.marker,
+    required this.selection,
+    required this.selectionHandle,
     required this.stateDraft,
     required this.stateFrozen,
     required this.stateMaster,
@@ -210,6 +212,12 @@ class AppColorTokens {
   /// `color/marker`
   final Color marker;
 
+  /// `color/selection`
+  final Color selection;
+
+  /// `color/selection-handle`
+  final Color selectionHandle;
+
   /// `color/state-draft`
   final Color stateDraft;
 
@@ -255,6 +263,8 @@ class AppColorTokens {
     actionOnPrimary: AppColorPrimitives.neutral50,
     actionInverse: AppColorPrimitives.marker400,
     marker: AppColorPrimitives.marker400,
+    selection: AppColorPrimitives.marker400,
+    selectionHandle: AppColorPrimitives.neutral900,
     stateDraft: AppColorPrimitives.neutral500,
     stateFrozen: AppColorPrimitives.neutral900,
     stateMaster: AppColorPrimitives.marker400,
@@ -288,6 +298,8 @@ class AppColorTokens {
     actionOnPrimary: AppColorPrimitives.neutral900,
     actionInverse: AppColorPrimitives.neutral900,
     marker: AppColorPrimitives.marker500,
+    selection: AppColorPrimitives.marker500,
+    selectionHandle: AppColorPrimitives.neutral50,
     stateDraft: AppColorPrimitives.neutral400,
     stateFrozen: AppColorPrimitives.neutral50,
     stateMaster: AppColorPrimitives.marker500,
@@ -320,6 +332,8 @@ class AppColorTokens {
         'color/action-on-primary': actionOnPrimary,
         'color/action-inverse': actionInverse,
         'color/marker': marker,
+        'color/selection': selection,
+        'color/selection-handle': selectionHandle,
         'color/state-draft': stateDraft,
         'color/state-frozen': stateFrozen,
         'color/state-master': stateMaster,

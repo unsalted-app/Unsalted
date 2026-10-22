@@ -19,7 +19,7 @@ einen Bildschirm.
 | Ebene | Ort | Inhalt |
 |---|---|---|
 | Token-Datei | `unsalted_design/tokens/unsalted.tokens.json` | einzige Quelle aller Werte (= `docs/design/system/tokens.json`, aus Figma) |
-| Tokens | `…/lib/src/tokens/*_tokens.g.dart` | generiert: Farbe (Primitive, 28 Rollen hell/dunkel), Typografie (11 Stile), Abstand, Radius, Linie, Größe, `reflow` (100/200 %), Deckkraft, Schatten, Bewegung, Breakpoints |
+| Tokens | `…/lib/src/tokens/*_tokens.g.dart` | generiert: Farbe (Primitive, 30 Rollen hell/dunkel; `selection`, `selection-handle` seit Teil 1.4), Typografie (11 Stile), Abstand, Radius, Linie, Größe, `reflow` (100/200 %), Deckkraft, Schatten, Bewegung, Breakpoints |
 | Theme | `…/lib/src/theme/` | `AppTheme.light()/dark()` (Material-Rollen nach `01-farbe.md`/`02-typografie.md`), `component_themes.dart`, `AppFonts` (Atkinson Hyperlegible Next), `AppTone`, `AppReflowMetric` (Maße je Textgröße); intern `AppColors.of(context)` |
 | Layout | `…/lib/src/layout/` | `AppPage` (mit `navigation`), `AppSection`, `AppStack`/`AppGap`/`AppPadding`, `AppGrid`, `AppWindowSize`/`ResponsiveBuilder`; intern `ReflowRow` |
 | Komponenten | `…/lib/src/components/<gruppe>/` | Buttons, Symbole, Text, Flächen, Eingaben, Listen, Chips, Rückmeldungen, Navigation, Daten, Markenelemente (`brand/`) |

@@ -318,7 +318,8 @@ Stand nach S03 (Etappe 1 fertig): Design 461 Tests, Core 451, App 12, Widgetbook
 | B02 | Master in der Fassungsleiste (Markerfläche, Semantik), `masterVersionId` aus dem Rezeptdetail; UI-87 | fertig |
 | B03 | „Keine Treffer.“ in der Lebensmittelliste mit Suchbegriff (Symbol, ohne Aktion, ohne Leerstelle) nach Figma N2; UI-88 | fertig |
 | B04 | Suchtreffer im Titel der Rezeptliste markiert (`AppListItem.match`, Klartext unverändert); DS-66, UI-89 | fertig |
-| B05 | Etappe 2: Token-Nachtrag Textauswahl (Figma N6), markierbare Rezepttexte | in Arbeit |
+| B05a | Token-Nachtrag Textauswahl aus Figma N6 (`selection`, `selection-handle`, `opacity-selection`) in beiden Token-Dateien | fertig |
+| B05 | Markierbare Rezepttexte im Rezeptdetail (Textauswahl aus Tokens) | in Arbeit |
 | T01–T03 | Etappe 3: Liste und Detail ab 840 | offen |
 | M01–M03 | Etappe 4: App-Name, ggf. App-Symbol und Startbild, Abschluss | offen |
 

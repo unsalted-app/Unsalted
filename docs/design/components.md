@@ -16,7 +16,7 @@ aus `tokens/unsalted.tokens.json` (DS-04).
 
 | Symbol | Figma | Datei | Test |
 |---|---|---|---|
-| `AppColorTokens` (`light`, `dark`; 28 Rollen) | Sammlung `color`, Modi `light`/`dark` | `tokens/color_tokens.g.dart` | DS-02, DS-04, DS-05 |
+| `AppColorTokens` (`light`, `dark`; 30 Rollen, seit Teil 1.4 mit `selection`, `selection-handle`) | Sammlung `color`, Modi `light`/`dark` | `tokens/color_tokens.g.dart` | DS-02, DS-04, DS-05 |
 | `AppTypography` (11 Stile, tnum für `display`, `label-small`, `data`, `data-strong`) | `type/*` | `tokens/typography_tokens.g.dart` | DS-04 |
 | `AppSpacing`, `AppSpace` | `space/*` | `tokens/spacing_tokens.g.dart` | DS-04, DS-10 |
 | `AppRadius` | `radius/*` | `tokens/radius_tokens.g.dart` | DS-04 |

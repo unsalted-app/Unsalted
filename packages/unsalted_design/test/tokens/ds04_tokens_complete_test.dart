@@ -4,7 +4,7 @@
 // lib/src/tokens/ sind genau das Generat der Token-Datei
 // (tool/generate_tokens.dart), die Token-Datei im Paket ist byteweise gleich
 // der Übergabe (docs/design/system/tokens.json, F8), und die Werte im Code
-// entsprechen der JSON: 28 Farbrollen hell und dunkel, elf Textstile mit
+// entsprechen der JSON: 30 Farbrollen hell und dunkel, elf Textstile mit
 // tabellarischen Ziffern genau für display, label-small, data und
 // data-strong (02-typografie), Namen nach der Regel aus 05.
 
@@ -50,7 +50,7 @@ void main() {
     };
     final roles = [for (final t in tokens('color')) if ((t['value'] as Map).containsKey('dark')) t];
     expect(primitives, hasLength(23));
-    expect(roles, hasLength(28));
+    expect(roles, hasLength(30));
     for (final (mode, set) in [('light', AppColorTokens.light), ('dark', AppColorTokens.dark)]) {
       expect(set.brightness, mode == 'light' ? Brightness.light : Brightness.dark);
       final byName = set.byFigmaName;

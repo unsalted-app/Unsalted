@@ -334,7 +334,8 @@ Etappe 1 freigegeben. Figma-Nachträge N1–N6 übernommen
 Auswahl: Punktraster, **ohne Text**) ersetzt die Zwischenlösung aus F7.
 B01 fertig (Zeilenmenü „⋮“ in Zutaten- und Schrittzeile nach Figma N1),
 B02 fertig (Master in der Fassungsleiste), B03 fertig („Keine Treffer.“ bei
-Lebensmitteln), B04 fertig (Suchtreffer markiert). Test-IDs neu: UI-83–89,
+Lebensmitteln), B04 fertig (Suchtreffer markiert), B05a fertig
+(Token-Nachtrag Textauswahl: 30 Farbrollen). Test-IDs neu: UI-83–89,
 DS-62, DS-64–66.
 
 **Nächster Schritt:** Etappe 2 (B01–B05, vor B05 Token-Nachtrag Textauswahl

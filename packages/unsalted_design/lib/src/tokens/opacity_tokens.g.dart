@@ -16,10 +16,14 @@ abstract final class AppOpacity {
   /// `opacity/scrim`
   static const double scrim = 0.48;
 
+  /// `opacity/selection`
+  static const double selection = 0.4;
+
   /// Alle Werte mit ihrem Figma-Namen.
   static const byFigmaName = <String, double>{
     'opacity/hover': hover,
     'opacity/pressed': pressed,
     'opacity/scrim': scrim,
+    'opacity/selection': selection,
   };
 }

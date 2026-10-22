@@ -3524,3 +3524,22 @@ Golden-Motiv zeigt eine Suche. Nachtrag 28.11.5; `screens.md`,
 CHANGELOG. Mac: Design 485, Core 460, App 12, Widgetbook 10 Tests grün;
 `check_architecture` Exit 0.
 
+**B05a — Token-Nachtrag Textauswahl aus Figma (N6, wie D12a).** Figma
+(Bibliothek, nur gelesen): `color/selection` hell Alias `marker/400`, dunkel
+`marker/500` („immer mit `opacity/selection`“); `color/selection-handle` hell
+`neutral/900`, dunkel `neutral/50` (Griffe und Cursor); `opacity/selection`
+40 %. Übernommen in `packages/unsalted_design/tokens/unsalted.tokens.json` und
+`docs/design/system/tokens.json` (byte-gleich, F8): zwei Farbrollen hinter
+`marker`, ein Deckkraft-Wert `opacity-selection` `"0.40"` (Format der übrigen
+Deckkraftwerte), Nutzungstexte gekürzt aus den Figma-Beschreibungen. Die
+Rundreise der JSON war vorher byte-gleich geprüft, sonst ist die Datei
+unverändert. Generator neu: `AppColorTokens.selection`, `.selectionHandle`,
+`AppOpacity.selection` (zweiter Lauf ohne Änderung). *Geänderte bestehende
+Testzeilen (Design-Paket, Grund: zwei neue Rollen aus Figma):*
+`ds04_tokens_complete_test.dart:7` (Kommentar „28 Farbrollen“ → „30“) und
+`:53` (`hasLength(28)` → `hasLength(30)`). *Gegenprobe:* `opacity-selection`
+nur in der JSON auf 0,45 geändert, nicht generiert → DS-04 rot; zurück.
+Noch keine Verwendung im Theme (folgt in B05). `components.md`,
+`design_system.md`, CHANGELOG. Mac: Design 485, Core 460, App 12, Widgetbook 10
+Tests grün; `check_architecture` Exit 0.
+

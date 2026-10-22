@@ -9,6 +9,11 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
   zeichnet die Linie `space-xxs` unter dem Inhalt, außerhalb des Layouts
   (Figma-Hinweis 2); `AppSelect.expand` gilt auch mit Beschriftung. Tests
   DS-62, DS-64, DS-65.
+- Token-Nachtrag Textauswahl (B05a, Figma N6): neu `color/selection` (hell
+  `marker-400`, dunkel `marker-500`), `color/selection-handle` (hell
+  `neutral-900`, dunkel `neutral-50`), `opacity/selection` (0,40) in beiden
+  Token-Dateien; `AppColorTokens.selection`, `.selectionHandle`,
+  `AppOpacity.selection` generiert. DS-04: 30 Farbrollen.
 - Suchtreffer (B04): `AppListItem` additiv mit `match` (Zeichenbereich des
   Titels; Markerfläche `marker`/`radius-xs`/seitlich `space-xxs` dahinter, Text
   `text-on-marker`; Klartext und Semantik unverändert; Figma `List/Item`
