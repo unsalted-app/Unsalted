@@ -3632,3 +3632,38 @@ Innenabstand → DS-69 und UI-94 rot; danach grün. Nachtrag 28.11.13;
 `components.md`, CHANGELOG. Mac: Design 497, Core 464, App 12, Widgetbook 10
 Tests grün; `check_architecture` Exit 0.
 
+**T01 — Rahmen „Liste und Detail“ (Design).** Figma (nur gelesen): Tablet
+hochkant „01+04“ `147:9746` und „09+10“ `147:9823` (Seitenleiste 96, Liste
+360, Detail 568 mit Haarlinie links, Inhalt ab x = 1, eigene Kopfleiste);
+ohne Auswahl `219:4396`/`219:4706` (N3: Punktraster über die ganze Fläche,
+ohne Text, ohne Kopfleiste); Handy quer `148:3817` (844: nebeneinander,
+Detail 388, Seitenrand 24); Tablet quer `148:4381` (1366: Detail 910
+zweispaltig, Spalten 455, Rand 16/24). *Umsetzung:* neu
+`ListDetailTemplate(list:, detail:)` — unter `breakpoint-expanded`
+(Fensterbreite, wie Seitenleiste und Material) nur `list`; ab da Liste in
+`size-list-pane`, daneben das Detail über den Rest auf `surface-page` mit
+Haarlinie links (`stroke-hairline`, `line-hairline`), Inhalt neben der Linie;
+ohne `detail` das vorhandene Punktraster (`line-dot`), ohne Text und ohne
+Semantik. Liste und Detail stehen in einer gemeinsamen Seite (`AppPage`):
+eine Meldung wie „Rückgängig“ erscheint sonst in jeder der beiden Seiten
+(Flutter zeigt eine `SnackBar` in jedem äußersten `Scaffold`; in der App fängt
+das die Hülle ab, in Tests und Katalog nicht). `ListDetailTemplate.isSplit(context)`
+sagt dem Bildschirm, ob Tippen auswählt oder navigiert. Die Seiten in Liste und Detail richten sich
+weiter nach der Fensterbreite (Seitenrand, Detail zweispaltig ab
+`breakpoint-large`) — genau so zeigt es Figma bei 844 und 1366 (gemessen:
+`DetailSections` ergibt dort Spalten 455 mit Rand 16/24 bzw. Seitenrand 24);
+die Fenstergröße wird für das Detail nicht übersteuert. Die Seitenleiste
+bleibt in der App-Hülle (`AppPage.navigation`), Liste und Detail sind
+innere Seiten. Katalog: „ohne Auswahl“, „mit Auswahl“. *Geänderte bestehende
+Testzeilen:* keine; DS-46–48 und DS-60 unverändert grün. *Neu:* DS-63 (je
+Variante: Handy nur Liste, Tablet Liste 360, Detail füllt den Rest,
+Haarlinie nur links, Punktraster neben der Linie über die ganze Fläche,
+erster Punkt bei `space-l`, kein Text; mit Detail zwei Kopfleisten, Detail
+ab 361; Grenze 839/840 über `isSplit`; Meldung aus dem Detail einmal; 200 %
+ohne Überlauf), GL-01-Motiv
+`template_liste_detail`. *Gegenprobe:* Schwelle `medium` statt `expanded`
+und Punkte in `line-hairline` → DS-63 rot (Grenze 839; Punktfarbe nur dunkel,
+hell sind `line-dot` und `line-hairline` gleich); ohne gemeinsame Seite →
+Meldungsfall rot (zwei Meldungen); danach grün. Nachtrag 28.11.11;
+`components.md`, CHANGELOG. Mac: Design 510, Core 464, App 12,
+Widgetbook 10 Tests grün; `check_architecture` Exit 0.

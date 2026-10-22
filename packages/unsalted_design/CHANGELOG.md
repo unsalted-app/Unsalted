@@ -4,6 +4,10 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 
 ## design-v0.3.0 — in Arbeit (Teil 1.4)
 
+- Liste und Detail (T01, Figma Tablet „01+04“/„09+10“, N3): neu
+  `ListDetailTemplate` (ab `breakpoint-expanded` Liste in `size-list-pane`,
+  Detail mit Haarlinie links; ohne Detail Punktraster ohne Text;
+  `ListDetailTemplate.isSplit`). Test DS-63, GL-01 `template_liste_detail`.
 - Suffix im Eingabefeld (T00b, Figma `Input/Text Field` `showSuffix`):
   `AppTextField.suffix` bündig an der Kontur, der Wert endet `space-m` davor
   (vorher 4 px). Test DS-69.

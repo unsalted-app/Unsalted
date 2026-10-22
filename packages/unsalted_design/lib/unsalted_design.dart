@@ -73,4 +73,5 @@ export 'src/components/navigation/app_top_bar.dart' show AppTopBar;
 // Templates
 export 'src/templates/detail_page_template.dart' show DetailLayout, DetailPageTemplate, DetailSections, DetailSplit;
 export 'src/templates/form_page_template.dart' show FormPageTemplate, FormSections;
+export 'src/templates/list_detail_template.dart' show ListDetailTemplate;
 export 'src/templates/list_page_template.dart' show ListPageTemplate;

@@ -100,6 +100,7 @@ aus `tokens/unsalted.tokens.json` (DS-04).
 | `ListPageTemplate` | `Template/List Page` | `151:341` | `templates/list_page_template.dart` | DS-46, DS-60 |
 | `DetailPageTemplate`, `DetailSections`, `DetailSplit`, `DetailLayout` (zweispaltig ab `breakpoint-large`) | `Template/Detail Page` | `151:410` | `templates/detail_page_template.dart` | DS-47, DS-60 |
 | `FormPageTemplate`, `FormSections` | `Template/Form Page` | `151:433` | `templates/form_page_template.dart` | DS-48, DS-60 |
+| `ListDetailTemplate` (Liste in `size-list-pane` und Detail ab `breakpoint-expanded`, ohne Detail Punktraster; `isSplit`) | Tablet „01+04“/„09+10“ der App-Datei, N3 | `147:9746`, `219:4396` | `templates/list_detail_template.dart` | DS-63 |
 | intern: Rahmen „Inhalt“ | Rahmen `Inhalt` der Templates | — | `templates/page_content.dart` | DS-60 |
 
 ## Fachliche Bausteine (in `unsalted_core/lib/src/ui/`)

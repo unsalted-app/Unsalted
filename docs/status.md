@@ -324,7 +324,8 @@ Stand nach S03 (Etappe 1 fertig): Design 461 Tests, Core 451, App 12, Widgetbook
 Stand nach Etappe 2: Design 491 Tests, Core 461, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
 | T00a | Listeneintrag bricht bei großer Schrift um (Aktionen unter Titel und Untertitel, Figma `List/Item`, Hinweis 4); DS-68, UI-93 | fertig |
 | T00b | Suffix im Eingabefeld bündig am Feldende, Wert endet `space-m` davor (Lupe „Lebensmittel verknüpfen“); DS-69, UI-94 | fertig |
-| T01–T03 | Etappe 3: Liste und Detail ab 840 | in Arbeit |
+| T01 | Rahmen „Liste und Detail“ (`ListDetailTemplate`): ab 840 Liste in `size-list-pane`, Detail mit Haarlinie, ohne Auswahl Punktraster ohne Text (N3); DS-63, GL-01 `template_liste_detail` | fertig |
+| T02–T03 | Etappe 3: Rezepte und Lebensmittel, Liste und Detail ab 840 | in Arbeit |
 | M01–M03 | Etappe 4: App-Name, ggf. App-Symbol und Startbild, Abschluss | offen |
 
 ## Bekannte offene Lücken (nicht blockierend)

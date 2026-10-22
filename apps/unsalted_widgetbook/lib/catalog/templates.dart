@@ -10,6 +10,24 @@ import 'sample.dart';
 
 /// Ordner „Templates“.
 final templatesFolder = WidgetbookFolder(name: 'Templates', children: [
+  component('ListDetailTemplate', [
+    pageUseCase('ohne Auswahl', (_) => ListDetailTemplate(
+          list: ListPageTemplate(
+            title: 'Liste',
+            body: AppItemList.builder(itemCount: 12, itemBuilder: (context, i) => AppListItem(title: 'Eintrag ${i + 1}', onTap: noop)),
+          ),
+        )),
+    pageUseCase('mit Auswahl', (_) => ListDetailTemplate(
+          list: ListPageTemplate(
+            title: 'Liste',
+            body: AppItemList.builder(
+              itemCount: 12,
+              itemBuilder: (context, i) => AppListItem(title: 'Eintrag ${i + 1}', selected: i == 1, onTap: noop),
+            ),
+          ),
+          detail: const DetailPageTemplate(title: 'Eintrag 2', body: AppText('Inhalt des gewählten Eintrags')),
+        )),
+  ]),
   component('ListPageTemplate', [
     pageUseCase('Template/List Page', (_) => ListPageTemplate(
           title: 'Liste',
