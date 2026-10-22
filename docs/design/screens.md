@@ -120,10 +120,10 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Template:** `ListPageTemplate`.
 - **Abschnitte:**
   1. `foods/sections/food_list_search_section.dart` — Suchfeld (Slot `search`)
-  2. `foods/sections/food_list_empty_section.dart` — „Keine Lebensmittel gefunden.“ + „Eigenes Produkt anlegen“
+  2. `foods/sections/food_list_empty_section.dart` — „Keine Lebensmittel gefunden.“ + „Eigenes Produkt anlegen“; mit Suchbegriff „Keine Treffer.“ ohne Aktion (B03)
   3. `foods/sections/food_list_results_section.dart` — Liste mit Wischen-Löschen
 - **Bausteine:** `foods/food_tile.dart` (`FoodTile`).
-- **Figma `20:1130`:** übereinstimmend wie Bildschirm 1 (Liste, Marker-Knopf, Leerstelle mit Aktion, Meldung). Offen: „leer“ und „keine Treffer“ unterscheiden, Liste und Detail ab 840 (Teil 1.4). Kein Golden-Motiv.
+- **Figma `20:1130`:** übereinstimmend wie Bildschirm 1 (Liste, Marker-Knopf, Leerstelle mit Aktion, Meldung). Seit Teil 1.4 B03 übereinstimmend mit `09 / Keine Treffer` (`218:3919`): mit Suchbegriff „Keine Treffer.“ mit Symbol, ohne Aktion und ohne Leerstelle. Offen: Liste und Detail ab 840 (Teil 1.4, Etappe 3). Kein Golden-Motiv.
 - **Umgestellt:** C15.
 
 ## 10 Lebensmittel bearbeiten — `foods/food_editor_screen.dart`, `foods/package_form.dart`

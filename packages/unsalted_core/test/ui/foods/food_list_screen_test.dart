@@ -4,6 +4,8 @@
 // UI-41, UI-42, UI-44 (Teil 1.1b): Löschen per Wischen mit 5 s „Rückgängig“;
 // ein gelöschtes Lebensmittel lässt Snapshots unverändert und zeigt im
 // Entwurf den Hinweis aus 9.1b.
+// UI-88 (Teil 1.4, B03): Mit Suchbegriff ohne Ergebnis „Keine Treffer.“ mit
+// Symbol, ohne Aktion und ohne Leerstelle; ohne Suchbegriff unverändert.
 //
 // NativeDatabase.memory() macht echte, nicht gefakte Async-Arbeit (FFI/
 // Isolate-Kommunikation). Unter testWidgets() läuft Code standardmäßig in
@@ -309,4 +311,27 @@ void main() {
 
     await _disposeWidgetTree(tester);
   });
+
+  testWidgets('UI-88: Suche ohne Ergebnis zeigt „Keine Treffer.“ ohne Aktion', (tester) async {
+    final database = await _openDatabase(tester);
+    addTearDown(() => _closeDatabase(tester, database));
+    await _createFood(tester, database, 'Mehl', 340);
+
+    await _pumpFoodList(tester, database);
+    expect(find.text('Mehl'), findsOneWidget);
+
+    await tester.enterText(find.byType(AppSearchField), 'Xyz');
+    await tester.pump();
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+    await tester.pump();
+
+    expect(find.text('Keine Treffer.'), findsOneWidget);
+    expect(find.byIcon(AppIcons.emptyPlate), findsOneWidget, reason: 'mit Symbol');
+    expect(find.widgetWithText(AppButton, 'Eigenes Produkt anlegen'), findsNothing, reason: 'ohne Aktion');
+    expect(find.byType(AppSlot), findsNothing, reason: 'ohne Leerstelle');
+    expect(find.text('Keine Lebensmittel gefunden.'), findsNothing);
+
+    await _disposeWidgetTree(tester);
+  });
 }
+

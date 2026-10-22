@@ -3488,3 +3488,16 @@ grün; `check_architecture` Exit 0.
 `04_rezeptdetail` (V2 ist im Golden-Motiv Master: Markerfläche, Auswahlbalken
 unverändert darunter).
 
+**B03 — „Keine Treffer.“ in der Lebensmittelliste (Figma N2).**
+`foods/sections/food_list_empty_section.dart` additiv `searching`: mit
+Suchbegriff „Keine Treffer.“ mit Symbol `emptyPlate`, ohne Aktion, damit ohne
+Leerstelle (Figma `09 / Keine Treffer` `218:3919`, Hinweis 6; wie Bildschirm 1,
+D16); `foods/food_list_screen.dart` übergibt `_query.trim().isNotEmpty` — eine
+Zeile in einer im Plan benannten Bildschirm-Datei. Ohne Suchbegriff
+unverändert. *Geänderte bestehende Testzeilen:* keine
+(`food_list_screen_test.dart:112–119` prüft den leeren Zustand ohne Suche).
+*Neu:* UI-88 (Suche „Xyz“: „Keine Treffer.“, Symbol, kein „Eigenes Produkt
+anlegen“, keine Leerstelle). *Gegenprobe:* ohne Übergabe von `searching` →
+UI-88 rot; danach grün. Kein Golden-Motiv für Bildschirm 9. Nachtrag 28.11.4;
+`screens.md`. Mac: Core 458 Tests grün.
+

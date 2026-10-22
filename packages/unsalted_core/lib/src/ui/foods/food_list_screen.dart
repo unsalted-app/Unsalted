@@ -70,7 +70,7 @@ class _FoodListScreenState extends ConsumerState<FoodListScreen> {
           final variants =
               (snapshot.data ?? const <FoodVariant>[]).where((v) => !hidden.contains(v.id)).toList();
           if (variants.isEmpty) {
-            return FoodListEmptySection(onCreate: () => _openEditor());
+            return FoodListEmptySection(searching: _query.trim().isNotEmpty, onCreate: () => _openEditor());
           }
 
           return FoodListResultsSection(
