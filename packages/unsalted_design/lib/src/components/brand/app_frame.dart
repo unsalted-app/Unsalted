@@ -10,6 +10,10 @@
 // Punktraster, Symbol, einem Satz und einer Aktion. Dazu die gestrichelte
 // Unterstreichung für noch nicht verknüpfte Einträge. Strichlinien gibt es
 // nur hier und in der vorläufigen Marke.
+// Seit Teil 1.4 (M00b, Figma `Frame` `135:55`, fest `135:47`): Marke und
+// Zustandswort stehen senkrecht mittig zueinander; der Innenabstand ist
+// `space-m`/`space-l` + `stroke-frame` — die Kontur zählt zum Innenabstand
+// wie in Figma (beide Zustände).
 
 import 'package:flutter/material.dart';
 
@@ -46,9 +50,11 @@ class AppFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = AppColors.of(context);
-    final content = AppPadding.symmetric(
-      vertical: AppSpace.m,
-      horizontal: AppSpace.l,
+    final content = Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSpacing.m + AppStroke.frame,
+        horizontal: AppSpacing.l + AppStroke.frame,
+      ),
       child: AppStack(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         gap: AppSpace.s,
@@ -57,6 +63,7 @@ class AppFrame extends StatelessWidget {
             AppStack(
               direction: Axis.horizontal,
               gap: AppSpace.s,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ?mark,
                 if (caption != null)

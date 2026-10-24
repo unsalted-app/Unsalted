@@ -9,6 +9,12 @@ und in den Golden-Motiven (GL-01). Regeln und Benennung:
 `docs/design/design_system.md`; bewusste Abweichungen von Figma:
 `docs/design/rueckmeldung-figma.md`.
 
+**Regel: Die Kontur zählt zum Innenabstand** (Teil 1.4 M00b, wie Figma):
+Bei Marke und Rahmen liegt der Inhalt um Abstandsstufe **plus**
+`stroke-frame` vom äußeren Rand entfernt — Marke waagrecht `space-s` +
+`stroke-frame`, Rahmen `space-m`/`space-l` + `stroke-frame`. Gemessen wird
+der gezeichnete Kasten, nicht der Platz um ihn (DS-70, DS-71).
+
 ## Tokens und Theme
 
 Alle Token-Dateien (`*_tokens.g.dart`) erzeugt `tool/generate_tokens.dart`
@@ -69,7 +75,7 @@ aus `tokens/unsalted.tokens.json` (DS-04).
 | `AppReorderableList` | — | — | `components/lists/app_reorderable_list.dart` | DS-29, DS-29b |
 | `AppChoiceChip` | `Chip/Choice` | `104:38` | `components/chips/app_choice_chip.dart` | DS-30 |
 | `AppChip` (Tag, `icon`) | `Chip/Info` | `106:65` | `components/chips/app_chip.dart` | DS-31, DS-31b |
-| `AppNotice` (`error`, `warning`, `info`, `success`) | `Feedback/Notice` | `134:69` | `components/feedback/app_notice.dart` | DS-32, DS-32b, DS-32c |
+| `AppNotice` (`error`, `warning`, `info`, `success`; mit Aktion daneben fluchtet ihre Beschriftung mit der ersten Textzeile, Tippziel ragt in den Innenabstand, M00b) | `Feedback/Notice` | `134:69` | `components/feedback/app_notice.dart` | DS-32, DS-32b, DS-32c, DS-72 |
 | `AppEmptyState` (mit Aktion als Leerstelle) | `Feedback/Empty State` | `184:219` | `components/feedback/app_empty_state.dart` | DS-33, DS-33b |
 | `AppErrorState` | `Feedback/Error State` | `144:162` | `components/feedback/app_error_state.dart` | DS-34, DS-34b |
 | `AppLoading` | `Feedback/Loading` | `62:253` | `components/feedback/app_loading.dart` | DS-35 |
@@ -84,8 +90,8 @@ aus `tokens/unsalted.tokens.json` (DS-04).
 | `AppKeyValueTable`, `AppTableRow` (`sub`, `strong`) | `Data/Key Value Table`, `Data/Key Value Row`, `Data/Key Value Header` | `140:123`, `140:115`, `140:116` | `components/data/app_key_value_table.dart` | DS-44, DS-44b, DS-44c |
 | `AppFigureRow`, `AppFigure` (Kennzahlenleiste, D15a) | `Core/Nutrition Header`, `Core/Nutrition Field` | `142:57`, `142:56` | `components/data/app_figure_row.dart` | DS-61 |
 | `AppCodeBlock` | `Data/Code Block` | `135:60` | `components/data/app_code_block.dart` | DS-45, DS-45b |
-| `AppMark`, `AppMarkState` (auch als Auswahlziel) | `Mark`, `Core/Version Target` | `114:68`, `142:18` | `components/brand/app_mark.dart` | DS-53, DS-53b |
-| `AppFrame` (`provisional`, `fixed`) | `Frame` | `135:55` | `components/brand/app_frame.dart` | DS-54 |
+| `AppMark`, `AppMarkState` (auch als Auswahlziel; Kasten mindestens `size-mark`, Inhalt mittig, M00b) | `Mark` (fest `107:48`), `Core/Version Target` | `114:68`, `142:18` | `components/brand/app_mark.dart` | DS-53, DS-53b, DS-70 |
+| `AppFrame` (`provisional`, `fixed`; Kopfzeile mittig, M00b) | `Frame` (fest `135:47`) | `135:55` | `components/brand/app_frame.dart` | DS-54, DS-71 |
 | `AppSlot` (Leerstelle mit Punktraster) | `Slot`, `Pattern/Dots` | `144:152`, `144:150` | `components/brand/app_frame.dart` | DS-55 |
 | `AppDashedUnderline` | — (in Figma nicht abbildbar) | — | `components/brand/app_frame.dart` | GL-01 `marken`, UI-72 |
 | `AppHighlight` | `Highlight` | `134:152` | `components/brand/app_highlight.dart` | DS-56 |

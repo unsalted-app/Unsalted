@@ -41,6 +41,7 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Fassungsleiste, Tippziel | `Core/Version Target` 48 × 35 | mindestens `size-target` × `size-target` (48 × 48) | D07 |
 | Meldung, Restzeit | Restzeitlinie läuft in 5 s ab | läuft ab dem vollständigen Erscheinen in der Frist ab; bei „Bewegung reduzieren“ still in voller Breite; bei großer Schrift steht „Rückgängig“ unter dem Text | D09b |
 | Hinweis mit Aktion | Aktion rechts neben dem Text | bei großer Schrift (Text schmaler als `reflow-label-min`) unter dem Text, rechtsbündig | D13a |
+| Hinweis mit Aktion, Tippziel | Aktion 32 hoch (`size-control-small`), oben bündig (Instanz `42:2034`) | Tippziel mindestens `size-target` (48) und ragt dafür in den oberen Innenabstand; die Beschriftung fluchtet wie in Figma mit der ersten Textzeile | Teil 1.4 M00b |
 | Unvollständiger Wert | „*“ | „*“ nach der Einheit („2.868 kcal*“, Value-Karte) | D15 |
 
 ### A4 Tokens und Regeln, die der Code ergänzt hat
@@ -73,7 +74,6 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Editor-Vorschau im gestrichelten Rahmen mit Kennzahlen (Gesamt, pro Portion, pro 100 g) | `7:895` | inhaltliche Erweiterung | später |
 | Portionen und Backverlust nebeneinander | `7:895` | gestapelt mit Abstand `space-m` (D16b) | später |
 | Auswahlfeld als umrandetes Feld (`Input/Select`) auch ohne Beschriftung | Spalte 2 der Nährwerttabelle | ohne Beschriftung weiter die Material-Auswahl mit Unterstrich; die Einheit der Zutatenzeile hat seit Teil 1.4 B01 die Beschriftung „Einheit“ (wie Figma) | später |
-| Aktion im Hinweis in `size-control-small` | `Feedback/Notice` | Tertiär-Knopf in `size-control` | später |
 | Signaturmomente Einfrieren und Küren | Markenbuch | Zustand im Bildschirm | später |
 | Titel von Bildschirm 3 über einer eingefrorenen Fassung | `42:2010`: „Pizzateig · V3“ | „Rezept bearbeiten“ — offene Textfrage: führt über einer schreibgeschützten Fassung in die Irre; braucht eine Änderung in Kapitel 22 (Entscheidung des Projektverantwortlichen). In Teil 1.4 bleibt der Text | später |
 
@@ -87,4 +87,7 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Schrittzeile im Editor | in Figma nicht abgebildet | `_Zeile/Schritt bearbeiten` (`227:4142`): wie die Zutatenzeile, Timer eingerückt darunter | Figma N1, B01 |
 | Master in der Fassungsleiste | Figma: Markerfläche in `Core/Version Switcher`; Code: Leiste kannte den Master nicht | beide mit Markerfläche, „Master“ in der Semantik | Teil 1.4 B02 |
 | Suchtreffer in der Rezeptliste | Figma: Treffer im Titel markiert (`List/Item` `showMatch`); Code: ohne Markierung | Treffer mit Markerfläche hinter dem Text, Klartext unverändert | Teil 1.4 B04 |
+| Kasten der Marke | Figma: Kasten 52 × 24, Text mittig, links und rechts `space-s` + `stroke-frame` (`107:48`); Code: Kasten so hoch wie der Text (etwa 16), nur der Platz um ihn 24, Innenabstand `space-s` | Kasten selbst mindestens `size-mark`, Inhalt senkrecht mittig, `space-s` + `stroke-frame` (die belegte Höhe bleibt) | Teil 1.4 M00b |
+| Kopfzeile und Innenabstand des Rahmens | Figma: Kopfzeile 24 hoch, Zustandswort mittig zur Marke, Innenabstand `space-m`/`space-l` + `stroke-frame` (`135:47`); Code: Zustandswort oben bündig, Innenabstand ohne Kontur | wie Figma, beide Zustände | Teil 1.4 M00b |
+| Lage der Hinweis-Aktion | Figma: Aktion oben, Beschriftung auf Höhe der ersten Zeile; Code: Beschriftung mittig im 48 hohen Tippziel, also tiefer | Beschriftung auf Höhe der ersten Textzeile (siehe A3 zum Tippziel) | Teil 1.4 M00b |
 | Eingefrorene Ansicht (`42:2010`, dunkel `217:18576`, Inhalt `217:3883`) | Figma: Hinweis „V3 ist eingefroren …“, kein Rahmen; Code: Text aus Kapitel 22, Zustandsrahmen mit Siegel (D16) | Figma neu gebaut nach dem Code: Hinweis mit Kapitel-22-Text und „Kopieren“, `space-l`, Zustandsrahmen mit Siegel und „Eingefroren“, Zutaten, eine Linie, Schritte; Code zeichnet seit M00a nur noch eine Linie (vorher zwei mit Abstand) | Figma, Teil 1.4 M00a |

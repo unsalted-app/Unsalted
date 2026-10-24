@@ -10,6 +10,9 @@
 // darunter steht), [ReflowRow.centered] (nebeneinander senkrecht mittig statt
 // oben bündig) und [ReflowRow.mainMinIntrinsic] (Mindestbreite zusätzlich aus
 // der minimalen Eigenbreite des Inhalts, z. B. eines `ListTile`).
+// Seit Teil 1.4 (M00b, `Feedback/Notice`): additiv [ReflowRow.baseline] —
+// nebeneinander steht die Aktion so, dass ihre Grundlinie mit der ersten
+// Grundlinie des Inhalts fluchtet (Beschriftung auf Höhe der ersten Zeile).
 
 import 'dart:math' as math;
 
@@ -29,6 +32,7 @@ class ReflowRow extends MultiChildRenderObjectWidget {
     this.stackedEndGap = 0,
     this.centered = false,
     this.mainMinIntrinsic = false,
+    this.baseline = false,
   }) : super(children: [main, trailing]);
 
   /// Abstand zwischen Inhalt und Aktion (nebeneinander).
@@ -49,9 +53,13 @@ class ReflowRow extends MultiChildRenderObjectWidget {
   /// `true`: Mindestbreite mindestens die minimale Eigenbreite des Inhalts.
   final bool mainMinIntrinsic;
 
+  /// `true`: nebeneinander an der ersten Grundlinie ausgerichtet (statt oben
+  /// bündig bzw. mittig); ohne Grundlinie wie ohne diese Option.
+  final bool baseline;
+
   @override
   RenderReflowRow createRenderObject(BuildContext context) =>
-      RenderReflowRow(gap, mainMin, stackedGap, centered, stackedEndGap, mainMinIntrinsic);
+      RenderReflowRow(gap, mainMin, stackedGap, centered, stackedEndGap, mainMinIntrinsic, baseline);
 
   @override
   void updateRenderObject(BuildContext context, RenderReflowRow renderObject) {
@@ -61,7 +69,8 @@ class ReflowRow extends MultiChildRenderObjectWidget {
       ..stackedGap = stackedGap
       ..stackedEndGap = stackedEndGap
       ..centered = centered
-      ..mainMinIntrinsic = mainMinIntrinsic;
+      ..mainMinIntrinsic = mainMinIntrinsic
+      ..baseline = baseline;
   }
 }
 
@@ -81,6 +90,7 @@ class RenderReflowRow extends RenderBox
     this._centered = false,
     this._stackedEndGap = 0,
     this._mainMinIntrinsic = false,
+    this._baseline = false,
   ]);
 
   double _gap;
@@ -89,6 +99,15 @@ class RenderReflowRow extends RenderBox
   bool _centered;
   double _stackedEndGap;
   bool _mainMinIntrinsic;
+  bool _baseline;
+
+  /// `true`: nebeneinander an der ersten Grundlinie ausgerichtet.
+  bool get baseline => _baseline;
+  set baseline(bool value) {
+    if (value == _baseline) return;
+    _baseline = value;
+    markNeedsLayout();
+  }
 
   /// Abstand unter der Aktion, wenn sie unter dem Inhalt steht.
   double get stackedEndGap => _stackedEndGap;
@@ -173,7 +192,27 @@ class RenderReflowRow extends RenderBox
       return constraints.constrain(Size(width, main.height + stackedGap + trailing.height + stackedEndGap));
     }
     final mainWidth = width - trailing.width - gap;
-    final main = measure(_main, BoxConstraints(minWidth: mainWidth, maxWidth: mainWidth));
+    final mainConstraints = BoxConstraints(minWidth: mainWidth, maxWidth: mainWidth);
+    final main = measure(_main, mainConstraints);
+    if (baseline) {
+      double? base(RenderBox child, BoxConstraints c) => dry
+          ? child.getDryBaseline(c, TextBaseline.alphabetic)
+          : child.getDistanceToBaseline(TextBaseline.alphabetic);
+      final mainBase = base(_main, mainConstraints);
+      final trailingBase = base(_trailing, BoxConstraints(maxWidth: width));
+      if (mainBase != null && trailingBase != null) {
+        // Wer die tiefere Grundlinie hat, steht oben; der andere rückt nach unten.
+        final mainTop = math.max(0.0, trailingBase - mainBase);
+        final trailingTop = math.max(0.0, mainBase - trailingBase);
+        if (!dry) {
+          (_main.parentData! as ReflowRowParentData).offset = Offset(0, mainTop);
+          (_trailing.parentData! as ReflowRowParentData).offset = Offset(width - trailing.width, trailingTop);
+        }
+        return constraints.constrain(
+          Size(width, math.max(mainTop + main.height, trailingTop + trailing.height)),
+        );
+      }
+    }
     final height = math.max(main.height, trailing.height);
     if (!dry) {
       (_main.parentData! as ReflowRowParentData).offset =
@@ -198,6 +237,8 @@ class RenderReflowRow extends RenderBox
   double computeMaxIntrinsicWidth(double height) =>
       _main.getMaxIntrinsicWidth(height) + gap + _trailing.getMaxIntrinsicWidth(height);
 
+  // Mit [baseline] ohne den Versatz der Grundlinien (die gibt es in den
+  // intrinsischen Maßen nicht); eine Näherung von unten.
   double _height(double width) {
     final trailingWidth = math.min(_trailing.getMaxIntrinsicWidth(double.infinity), width);
     final trailingHeight = _trailing.getMinIntrinsicHeight(trailingWidth);

@@ -11,6 +11,12 @@
 // `stroke-rule` in `line-strong` unter der Marke die Auswahl — nie die Füllung.
 // Seit D13a trägt das Ziel die Tippaktion auch in der Semantik (vorher nur im
 // ausgeschlossenen `InkWell`), und ein langer Text bricht in der Marke um.
+// Seit Teil 1.4 (M00b, Figma `Mark` `114:68`, fest `107:48`): Der gezeichnete
+// Kasten selbst ist mindestens `size-mark` hoch, der Inhalt darin senkrecht
+// mittig (vorher nur der Platz um den Kasten), das Siegel mittig zum Text
+// (auch bei großer Schrift, Figma `counterAxisAlignItems`); waagrecht `space-s` +
+// `stroke-frame` Innenabstand — die Kontur zählt zum Innenabstand wie in
+// Figma. Die belegte Höhe bleibt dieselbe.
 
 import 'package:flutter/material.dart';
 
@@ -75,16 +81,24 @@ class AppMark extends StatelessWidget {
       AppMarkState.fixed => (c.textPrimary, null, c.stateFrozen),
       AppMarkState.highlighted => (c.textOnMarker, c.stateMaster, c.textOnMarker),
     };
-    final content = AppPadding.symmetric(
-      horizontal: AppSpace.s,
-      child: AppStack(
-        direction: Axis.horizontal,
-        gap: AppSpace.xs,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (seal) Icon(AppIcons.lock, size: AppSize.iconXs, color: foreground),
-          Flexible(child: Text(label, style: AppTypography.labelSmall.copyWith(color: foreground))),
-        ],
+    final content = ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: AppSize.mark),
+      child: Center(
+        widthFactor: 1,
+        heightFactor: 1,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s + AppStroke.frame),
+          child: AppStack(
+            direction: Axis.horizontal,
+            gap: AppSpace.xs,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (seal) Icon(AppIcons.lock, size: AppSize.iconXs, color: foreground),
+              Flexible(child: Text(label, style: AppTypography.labelSmall.copyWith(color: foreground))),
+            ],
+          ),
+        ),
       ),
     );
     final radius = BorderRadius.circular(AppRadius.xs);
@@ -101,10 +115,7 @@ class AppMark extends StatelessWidget {
             ),
             child: content,
           );
-    final mark = ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: AppSize.mark),
-      child: Center(widthFactor: 1, heightFactor: 1, child: box),
-    );
+    final mark = Center(widthFactor: 1, heightFactor: 1, child: box);
 
     final semantics = semanticLabel ?? label;
     if (onTap == null) {

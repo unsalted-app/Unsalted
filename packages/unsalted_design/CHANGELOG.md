@@ -4,6 +4,15 @@ Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 
 ## design-v0.3.0 — in Arbeit (Teil 1.4)
 
+- Marke, Rahmen, Hinweis nach den Figma-Komponenten (M00b; `Mark` `107:48`,
+  `Frame` `135:47`, `Feedback/Notice` `42:2034`): `AppMark` — der gezeichnete
+  Kasten selbst ist mindestens `size-mark` hoch, Inhalt senkrecht mittig,
+  Siegel mittig zum Text, waagrecht `space-s` + `stroke-frame` (belegte Höhe unverändert);
+  `AppFrame` — Marke und Zustandswort senkrecht mittig, Innenabstand
+  `space-m`/`space-l` + `stroke-frame`; `AppNotice` — die Beschriftung der
+  Aktion daneben fluchtet mit der ersten Textzeile, ihr Tippziel ragt in den
+  oberen Innenabstand. Intern `ReflowRow.baseline` (additiv). Regel „Die
+  Kontur zählt zum Innenabstand“. Tests DS-70–72.
 - Liste und Detail (T01, Figma Tablet „01+04“/„09+10“, N3): neu
   `ListDetailTemplate` (ab `breakpoint-expanded` Liste in `size-list-pane`,
   Detail mit Haarlinie links; ohne Detail Punktraster ohne Text;

@@ -3799,3 +3799,60 @@ unter dem letzten Zutateneintrag, Schritte direkt darunter). *Gegenprobe:*
 A-Zeilen zur eingefrorenen Ansicht (Hinweistext, Zustandsrahmen) sind
 erledigt (Figma folgt dem Code) → Abschnitt C. Goldens: kein Motiv zeigt die
 eingefrorene Ansicht.
+
+**M00b — Marke, Rahmen, Hinweis nach den Figma-Komponenten (Design).**
+*Vorgabe (Projektverantwortlicher, in der Bibliothek nachgeprüft):* `Mark`
+(`114:68`, fest `107:48`) Kasten 52 × 24, Text 16 hoch mittig, links und
+rechts 9,5 = `space-s` + `stroke-frame`; `Frame` (`135:55`, fest `135:47`)
+Kopfzeile 24 hoch, Zustandswort mittig zur Marke, Innenabstand 13,5 / 17,5 =
+`space-m`/`space-l` + `stroke-frame`; `Feedback/Notice` (Instanz `42:2034`)
+Aktion oben, 32 hoch, Beschriftung auf Höhe der ersten Zeile. Nur
+`app_mark.dart`, `app_frame.dart`, `app_notice.dart`, `ReflowRow` additiv.
+*Umsetzung:* `AppMark` — die Mindesthöhe `size-mark` sitzt jetzt auf dem
+gezeichneten Kasten (vorher um ihn herum: der Kasten war nur so hoch wie der
+Text), der Inhalt darin senkrecht mittig, das Siegel quer mittig zum Text
+(Figma `counterAxisAlignItems: CENTER`; vorher oben — bei großer Schrift im
+Golden-Lauf sichtbar), waagrecht `space-s` + `stroke-frame`; das äußere
+`Center` bleibt, damit eine kurze Marke als Ziel
+der Fassungsleiste nicht auf die Zielbreite gestreckt wird. Die belegte Höhe
+bleibt max(`size-mark`, Texthöhe) wie vorher. `AppFrame` — Kopfzeile
+`crossAxisAlignment.center`, Innenabstand `space-m`/`space-l` +
+`stroke-frame` (beide Zustände). `AppNotice` mit Aktion — der obere
+Innenabstand sitzt im Text statt um die Zeile, die Aktion steht über
+`ReflowRow.baseline` (neu, additiv, Standard aus) an der ersten Grundlinie des
+Textes; ihr Tippziel (48) ragt dafür in den Innenabstand. Die Beschriftung
+verteilt den Zeilenabstand wie der Text gleichmäßig
+(`DefaultTextHeightBehavior` um die Aktion): Der Text erbt `even` aus dem
+Theme, die Material-Knöpfe nicht — sonst lagen die Zeilen trotz gleicher
+Grundlinie 2 px (Testschrift) versetzt und der Text rückte nach unten (DS-32c
+schlug dann an). Untereinander (große Schrift) und ohne Aktion unverändert
+(DS-32c, DS-72). Gemessen (vorübergehende Probe, gelöscht): Tippziel 0–48,
+Beschriftung und erste Zeile beide ab 12, Höhe des Hinweises unverändert.
+*Geänderte bestehende Testzeilen:* keine; DS-53 und DS-32c unverändert grün.
+*Neu:* DS-70 (Kasten in drei Zuständen bei 100/200 %: Höhe max(`size-mark`,
+Text), belegte Höhe = Kasten, Inhalt mittig, Siegel mittig zum Text, links/rechts `space-s` +
+`stroke-frame`; als Ziel nicht gestreckt, mittig), DS-71 (Zustandswort mittig
+zur Marke, Kasten `size-mark`, Innenabstand mit Kontur in beiden Zuständen,
+`space-s` unter der Kopfzeile), DS-72 (bei 1024 Breite 100/200 %
+nebeneinander: Text `space-m` unter der Kante, Beschriftung auf Höhe der
+ersten Zeile, Tippziel ≥ `size-target` und nicht über der Kante; ohne Aktion
+unverändert). *Gegenprobe:* alte `AppMark` → DS-70 rot; Siegel ohne Querzentrierung →
+DS-70 (200 %) rot; alter `AppFrame` →
+DS-71 rot; alter `AppNotice` → DS-72 (100 %) rot; ohne `baseline` → DS-72
+(200 %) rot; ohne gleichmäßige Verteilung → DS-72 rot; danach grün.
+`rueckmeldung-figma.md`: A3 Tippziel der Hinweis-Aktion 48 statt 32 (bewusst),
+B-Zeile „Aktion im Hinweis in `size-control-small`“ dadurch ersetzt, C drei
+Zeilen erledigt; `components.md` (Regel „Die Kontur zählt zum
+Innenabstand“), CHANGELOG, 28.11.11. Mac: Design 533, Core 472, App 12,
+Widgetbook 10 Tests grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 40068756165 (`goldens/m00b2`; der erste Lauf 40068316746
+zeigte bei 200 % das Siegel oben — daraufhin quer mittig): 32 Bilder
+geändert — GL-01 `marken` (8: Kästen 24 hoch, Kopfzeile mittig, Siegel
+mittig), GL-01 `rueckmeldung` (8: „Kopieren“ auf Höhe der Zeile; der
+einzeilige Hinweis daneben 60 statt 72 hoch; untereinander 1–2 px durch die
+gleichmäßige Verteilung), GL-02 `04_rezeptdetail` und `01_04_liste_detail`
+(je 8: Marken der Fassungsleiste 24 hoch). Alle Bilder angesehen, bei 200 %
+auf Abschneiden und Überlauf geprüft: nichts Neues. Der Streifen unter
+„Erneut versuchen“ und der angeschnittene Knopf der Leerstelle im Motiv
+`rueckmeldung` (Handy 200 %) standen schon vorher im Bild (feste Motivfläche
+des Katalogs, Überlauf ist in Goldens erlaubt).

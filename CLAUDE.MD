@@ -98,7 +98,7 @@ unsalted/
    │  └─ lib/src/  tokens/ (generiert) theme/ (inkl. app_reflow.dart: Maße je Textgröße)
    │               layout/ (reflow_row.dart: Aktion daneben oder darunter) components/<gruppe>/
    │               templates/ (page_content.dart: Rahmen „Inhalt“; list_detail_template.dart:
-   │               Liste und Detail ab 840, Teil 1.4); Tests DS-01–69 (+ b/c), GL-01
+   │               Liste und Detail ab 840, Teil 1.4); Tests DS-01–72 (+ b/c), GL-01
    │               (test/goldens/, nur Linux)
    └─ unsalted_core/
       ├─ pubspec.yaml
@@ -352,10 +352,12 @@ fertig (Lebensmittel: Liste und Editor ab 840, `FoodEditorScreen.onDone`/
 `onDirtyChanged`/`confirmDiscard`, UI-92). Etappe 3 fertig und freigegeben
 (2026-10-24, samt T01a). Etappe 4: M00a fertig (eingefrorene Ansicht gegen
 Figma `42:2010`: eine Linie zwischen Zutaten und Schritten, UI-95; Titel der
-Kopfleiste als offene Textfrage). Kandidaten nach 1.4 sammelt `status.md`.
+Kopfleiste als offene Textfrage). M00b fertig (Design: Kasten der Marke
+mindestens `size-mark`, Kopfzeile des Rahmens mittig, Kontur zählt zum
+Innenabstand, Hinweis-Aktion auf Höhe der ersten Zeile; DS-70–72). Kandidaten
+nach 1.4 sammelt `status.md`.
 
-**Nächster Schritt:** M00b (Design: Marke, Rahmen, Hinweis nach den
-Figma-Komponenten), dann M00c (Namen und IDs), M01, M02a, M02b, M03; Stopp
+**Nächster Schritt:** M00c (Namen und IDs), M01, M02a, M02b, M03; Stopp
 nach M03, kein Merge, keine Tags. Golden-Lauf vor jedem Push.
 
 ---
