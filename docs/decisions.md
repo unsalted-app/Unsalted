@@ -3990,3 +3990,22 @@ erfolgreich (macOS ohne Startbild, Symbol unverändert); `flutter build apk
 Auf dem iPhone zu prüfen: Startbild hell und dunkel (Papier bzw. Tinte, „u“
 auf dem Markerstrich mittig, kein Punktraster), kein Aufblitzen eines
 anderen Grunds vor dem ersten Bild.
+
+**M03 — Abschluss Teil 1.4.** `unsalted_design` Version 0.3.0
+(`pubspec.yaml`; die Lock-Dateien von App und Katalog führen die
+Pfad-Version, Core hat keine eingecheckte), CHANGELOG mit Zusammenfassung
+(Tag `design-v0.3.0` erst nach Freigabe), README des Pakets (Teil 1.4,
+Templates), `docs/design/system/README.md` „freigegeben (design-v0.2.0);
+design-v0.3.0 (Teil 1.4) zur Freigabe“. `design_system.md`: Regel 6 um Liste
+und Detail ab `breakpoint-expanded` ergänzt, neue Regel 10 „Gemessen wird, was
+man sieht“ (Kasten der Marke, Kontur zählt zum Innenabstand). `screens.md`:
+Stand 1.4, neuer Abschnitt 0 Startbild (nativ). `components.md`: Stand 1.4.
+`rueckmeldung-figma.md`: A5 Marke (macOS-Symbol fehlt, Startbild wie Figma).
+Kapitel 28.11 vollständig (28.11.1–28.11.13). `status.md`: Stand nach Etappe
+4 und Kandidaten nach 1.4 — Titel von Bildschirm 3 über einer eingefrorenen
+Fassung (Kapitel 22), Rezept anlegen im Liste-Detail-Rahmen, macOS-Menü auf
+Deutsch, `material_ui` (F3), Fassungsmarke je Rezept in der Liste,
+Quelldateien der Marke im Repo, macOS-Symbol nachliefern, Android-Zurück bei
+verborgenem Editor. Keine Code- und Teständerung außer der Version. Mac:
+Design 533, Core 472, App 21, Widgetbook 10 Tests grün; `check_architecture`
+Exit 0. Kein Merge, keine Tags (Stopp nach M03).

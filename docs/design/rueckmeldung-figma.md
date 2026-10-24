@@ -59,6 +59,13 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
   Editor-Schrittzeile zeigt Figma seit Teil 1.4 (`227:4142`). Zutatenzeile (`xs`) und
   Mengenrechner bei großer Schrift (`space-s`) folgen Figma. (D16b, D18b–D18d)
 
+### A5 Marke (Teil 1.4)
+
+| Thema | Figma | Code | Commit |
+|---|---|---|---|
+| App-Symbol macOS | keine eigene Fassung (Seite „Marke“: iOS, Android) | macOS behält das bisherige Symbol; bitte eine macOS-Fassung liefern (Apple-Form mit Rand, 1024 × 1024) | Teil 1.4 M02a |
+| Startbild | Seite „Marke“ `275:75`/`275:79`: Fläche und Symbol, ohne Punktraster | wie Figma (iOS und Android, Android 12 mit 288-dp-Symbol); Quelldateien nicht im Repo, nur das Erzeugte | Teil 1.4 M02b |
+
 ## B. Figma zeigt mehr — der Code folgt später (in Figma nichts zu tun)
 
 | Thema | Figma | Stand | Wann |

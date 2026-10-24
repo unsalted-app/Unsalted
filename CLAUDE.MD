@@ -56,7 +56,7 @@ vermeiden.
 
 ---
 
-## 1. Projektstruktur (Stand: `part1-v1.3.0` — Teil 1 abgeschlossen, Phase 0–10; Teile 1.1–1.3)
+## 1. Projektstruktur (Stand: Teil 1.4 fertig auf `teil-1.4`, zur Freigabe; zuletzt getaggt `part1-v1.3.0`)
 
 ```text
 unsalted/
@@ -305,9 +305,10 @@ GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–82, APP-03–05.
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Teil 1.4 – Stabilität, Bedienung, Tablet, Marke (Plan freigegeben
-2026-10-20, Antworten F1–F13 im Plan; Branch `teil-1.4` von `main` @
-`ce6431f`, Entwurfs-PR #3):** Plan
+**Teil 1.4 – Stabilität, Bedienung, Tablet, Marke (fertig bis M03, zur
+Freigabe; Plan freigegeben 2026-10-20, Antworten F1–F13 im Plan; Branch
+`teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR #3; Design-Paket 0.3.0,
+Tags erst nach Freigabe):** Plan
 `docs/plan-1.4.md` — Etappe 1 Stabilität (S01–S03: Hänger in Core-Widget-Tests
 mit Datenbank), Etappe 2 Bedienung (B01–B05: Zeilenmenü, Master in der
 Fassungsleiste, „Keine Treffer.“ bei Lebensmitteln, ggf. Suchtreffer und
@@ -367,7 +368,14 @@ hell/dunkel/getönt, Android adaptiv; macOS unverändert; APP-07). Achtung:
 Punktraster mit `flutter_native_splash` 2.4.8, APP-08; das Werkzeug schreibt
 `ios/Runner/Info.plist` neu — zurücknehmen).
 
-**Nächster Schritt:** M03 (Abschluss); Stopp
+M03 fertig (Abschluss: `unsalted_design` 0.3.0, Doku vollständig, Kapitel
+28.11 vollständig; Kandidaten nach 1.4 in `status.md`). Stand: Design 533,
+Core 472, App 21, Widgetbook 10 Tests grün.
+
+**Nächster Schritt:** Prüfung und Freigabe von Teil 1.4 durch den
+Projektverantwortlichen (iPhone: App-Name, Symbol hell/dunkel/getönt,
+Startbild hell/dunkel, Liste und Detail quer); erst danach Merge und Tags
+(`part1-v1.4.0`, `design-v0.3.0`) auf ausdrückliche Anweisung; Stopp
 nach M03, kein Merge, keine Tags. Golden-Lauf vor jedem Push.
 
 ---

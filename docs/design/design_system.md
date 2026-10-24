@@ -57,7 +57,10 @@ einen Bildschirm.
    (DS-47, DS-48). Detail- und Formularseiten stehen im Rahmen „Inhalt“
    (Seitenrand `space-l`, ab `breakpoint-medium` `space-xl`, höchstens
    `size-content-max`), Listen ohne Rand; Detailseiten zweispaltig ab
-   `breakpoint-large` (DS-60).
+   `breakpoint-large` (DS-60). Ab `breakpoint-expanded` stehen Liste und
+   Detail nebeneinander (`ListDetailTemplate`, Liste in `size-list-pane`,
+   ohne Auswahl nur Punktraster); beim Wechsel über die Grenze behalten beide
+   ihren Zustand (DS-63, Teil 1.4).
 7. **Barrierefreiheit.** Kontraste nach `01-farbe.md` (DS-05); Zustand nie
    nur über Farbe oder Linie (Semantik nennt ihn); Tippziele mindestens
    `size-target`, Tippaktionen auch in der Semantik; Bewegung entfällt bei
@@ -72,6 +75,12 @@ einen Bildschirm.
    (WB-04). Golden-Bilder (GL-01 Katalog, GL-02 Bildschirme; hell/dunkel ×
    Handy/Tablet × 100/200 %) entstehen nur unter Linux (`goldens.yml`) und
    werden in der CI verglichen.
+10. **Gemessen wird, was man sieht** (Teil 1.4 M00b). Maße aus Figma gelten
+    für das Gezeichnete: Der Kasten einer Marke ist selbst mindestens
+    `size-mark` hoch, nicht nur der Platz um ihn. Bei Marke und Rahmen zählt
+    die Kontur (`stroke-frame`) zum Innenabstand wie in Figma (Marke
+    `space-s` + Kontur, Rahmen `space-m`/`space-l` + Kontur). Prüfungen
+    messen den gezeichneten Kasten (DS-70, DS-71).
 
 ## Benennung = Figma-Namen
 

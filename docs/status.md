@@ -338,7 +338,9 @@ Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheid
 | M01 | App-Name „unsalted“ in iOS, macOS, Android (Produktname, Kennungen, `applicationId` bleiben); APP-06; `flutter build ios --no-codesign` und `flutter build macos` lokal erfolgreich | fertig |
 | M02a | App-Symbol aus Figma: iOS hell/dunkel/getönt, Android adaptiv (Vordergrund, Papier, einfarbig) mit `flutter_launcher_icons` 0.14.4; macOS unverändert (keine macOS-Fassung geliefert); APP-07 | fertig |
 | M02b | Startbild aus Figma ohne Punktraster: Papier/Tinte, Symbol mittig, Android 12 mit 288-dp-Symbol, mit `flutter_native_splash` 2.4.8; APP-08 | fertig |
-| M03 | Abschluss | offen |
+| M03 | Abschluss: `unsalted_design` 0.3.0 (Tag nach Freigabe), CHANGELOG, README, `design_system.md` (Regel 10, Liste und Detail), `screens.md` (Startbild), `components.md`, `rueckmeldung-figma.md` (A5 Marke), Kapitel 28.11 vollständig | fertig |
+
+Stand nach Etappe 4 (Teil 1.4 fertig, zur Freigabe; kein Merge, keine Tags): Design 533 Tests, Core 472, App 21, Widgetbook 10, alle grün; `check_architecture` Exit 0.
 
 **Kandidaten nach Teil 1.4** (gesammelt ab 2026-10-24, nicht umgesetzt):
 
@@ -350,6 +352,13 @@ Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheid
   weiter eine eigene Seite; braucht `recipe_create_screen.dart`).
 - macOS-Menü auf Deutsch: `MainMenu.xib` zeigt „About/Hide/Quit
   unsalted“ englisch (M01 hat die Datei nicht geändert).
+- `material_ui` als eigener kleiner Teil nach 1.4 (F3).
+- Fassungsmarke und Versionszahl je Rezept in der Rezeptliste (Figma `1:421`;
+  braucht die Versionen je Rezept in den Daten).
+- Quelldateien von App-Symbol und Startbild aus der Figma-Lieferung im Repo
+  ablegen (z. B. unter `docs/design/system/`), damit `flutter_launcher_icons`
+  und `flutter_native_splash` ohne das ZIP neu erzeugen können (M02a/b haben
+  nur das Ergebnis eingecheckt).
 - macOS-Symbol in Figma nachliefern (Apple-Form mit Rand); bis dahin
   behält macOS das bisherige Symbol (M02a).
 - Android-Zurück bei verborgenem Editor: Unter 840 fragt die Zurück-Taste

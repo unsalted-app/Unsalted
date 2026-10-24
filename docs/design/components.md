@@ -1,6 +1,6 @@
 # Komponenten
 
-Stand Teil 1.3 (`design-v0.2.0`). Pfade relativ zu
+Stand Teil 1.4 (`design-v0.3.0`). Pfade relativ zu
 `packages/unsalted_design/lib/src/`. Figma-IDs aus der Bibliothek
 `5er28Cr7EMMcPzvusWjNyR` (`docs/design/figma/figma-ids.json`); Gestaltung nach
 den Komponentenkarten in `docs/design/system/components/`. Alle Komponenten

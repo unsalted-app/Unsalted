@@ -1,7 +1,8 @@
 # Bildschirme
 
-Stand Teil 1.3 (Gestaltung aus Figma; Teil 1.2 hat alle Bildschirme auf
-Templates und Abschnitte umgestellt, C14–C27). Pfade relativ zu
+Stand Teil 1.4 (Teil 1.2 hat alle Bildschirme auf Templates und Abschnitte
+umgestellt, C14–C27; Teil 1.3 hat sie aus Figma gestaltet; Teil 1.4 ergänzt
+Zeilenmenü, Liste und Detail ab 840, Startbild). Pfade relativ zu
 `packages/unsalted_core/lib/src/ui/`. Grundlage: Spezifikation Kapitel 22 und
 28.4. Der Bildschirm hält Zustand, lädt Daten und löst Aktionen aus; jeder
 Abschnitt ist ein zustandsloses Widget in eigener Datei unter
@@ -12,6 +13,13 @@ den Abgleich mit der App-Datei `5eFqwnCRld6Ibu131541i8` (Handy, nur gelesen;
 IDs in `docs/design/figma/figma-ids.json`): was übereinstimmt, was bewusst
 abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 (ebd., Abschnitt B). Golden-Bilder: GL-02 (`packages/unsalted_core/test/goldens/`).
+
+## 0 Startbild — nativ, kein Flutter-Bildschirm (Teil 1.4 M02b)
+
+- **Zweck:** Fläche und Symbol, bis Flutter das erste Bild zeichnet.
+- **Inhalt:** hell Papier `#F9F7F1`, dunkel Tinte `#141925`, das Startbild-Symbol („u“ auf dem Markerstrich, 160 × 102) mittig; Android 12 mit dem 288-dp-Symbol und denselben Farben; bewusst ohne Punktraster (28.11.10). macOS hat kein Startbild.
+- **Dateien:** `apps/unsalted_app/ios/Runner/Base.lproj/LaunchScreen.storyboard` und `Assets.xcassets/Launch*`, `apps/unsalted_app/android/app/src/main/res/` (`launch_background.xml`, `styles.xml`, `values(-night)-v31`), erzeugt mit `flutter_native_splash`. Test APP-08.
+- **Figma:** Bibliothek, Seite „Marke“ `275:75`/`275:79` (Symbole `275:83`/`275:87`, Android 12 `275:91`/`275:95`); App `00 Startbild / Start` `230:4748`/`230:4752`.
 
 ## 1 Rezeptliste — `recipe_list/recipe_list_screen.dart`
 
