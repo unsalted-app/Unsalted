@@ -336,7 +336,8 @@ Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheid
 | M00b | Design: Marke, Rahmen, Hinweis nach den Figma-Komponenten (Kasten der Marke `size-mark`, Kopfzeile mittig, Kontur zählt zum Innenabstand, Aktion des Hinweises fluchtet mit der ersten Zeile); DS-70–72 | fertig |
 | M00c | Restliche Namen und IDs der Figma-Nachträge in `components.md`, `figma-ids.json`, `rueckmeldung-figma.md`; Abschnitt A gegen die Nachträge geprüft, neun Punkte erledigt (nach C) | fertig |
 | M01 | App-Name „unsalted“ in iOS, macOS, Android (Produktname, Kennungen, `applicationId` bleiben); APP-06; `flutter build ios --no-codesign` und `flutter build macos` lokal erfolgreich | fertig |
-| M02a, M02b, M03 | App-Symbol, Startbild, Abschluss | offen |
+| M02a | App-Symbol aus Figma: iOS hell/dunkel/getönt, Android adaptiv (Vordergrund, Papier, einfarbig) mit `flutter_launcher_icons` 0.14.4; macOS unverändert (keine macOS-Fassung geliefert); APP-07 | fertig |
+| M02b, M03 | Startbild, Abschluss | offen |
 
 **Kandidaten nach Teil 1.4** (gesammelt ab 2026-10-24, nicht umgesetzt):
 
@@ -348,6 +349,8 @@ Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheid
   weiter eine eigene Seite; braucht `recipe_create_screen.dart`).
 - macOS-Menü auf Deutsch: `MainMenu.xib` zeigt „About/Hide/Quit
   unsalted“ englisch (M01 hat die Datei nicht geändert).
+- macOS-Symbol in Figma nachliefern (Apple-Form mit Rand); bis dahin
+  behält macOS das bisherige Symbol (M02a).
 - Android-Zurück bei verborgenem Editor: Unter 840 fragt die Zurück-Taste
   auch dann „Änderungen verwerfen?“, wenn der Editor mit ungespeicherten
   Änderungen verborgen ist (T01a).

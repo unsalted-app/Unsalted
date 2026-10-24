@@ -3908,3 +3908,43 @@ Start durch den Bundle-Namen („About unsalted“ …; die Engine enthält
 `unsalted_app.app` (`PRODUCT_NAME`, bleibt nach F9). Deutsches macOS-Menü
 ist Kandidat für später. Auf dem iPhone prüft der Projektverantwortliche den
 Namen unter dem Symbol. Nachtrag 28.11.9. Mac: App 16 Tests grün.
+
+**M02a — App-Symbol aus Figma.** *Lieferung geprüft* (ZIP außerhalb des
+Repos nach `/Users/dalptri/unsalted-marke/` entpackt, nur gelesen; LIESMICH
+gelesen): Master und iOS hell/dunkel 1024² ohne Alphakanal, iOS dunkel
+transparent und getönt (weiß, „u“ ausgespart) mit Alpha, Android Vordergrund
+/ einfarbig 1024² transparent, Hintergrund deckend `#F9F7F1`, Play-Store 512²;
+Maße und Grundfarben gegen Figma (`275:35`–`275:55`, nur gelesen) und Master
+optisch gegen `275:35` verglichen. Gemessen (Skript ohne PIL): Vordergrund
+sichtbar x 291–731, y 372–651 — innerhalb der Schutzzone 66 dp (199–825 px,
+Ecken höchstens 262 px vom Mittelpunkt bei Radius 313); einfarbig genau eine
+deckende Farbe `#FFFFFF`; Farben exakt aus den Tokens. Keine macOS-Fassung im
+ZIP → macOS unverändert, „macOS-Symbol in Figma nachliefern“ offen.
+*Umsetzung:* `flutter_launcher_icons` 0.14.4 als `dev_dependency` der App
+(feste Version, Schlüssel im Pub-Cache geprüft), Konfiguration in
+`pubspec.yaml` nach dem Vorschlag aus dem ZIP plus
+`adaptive_icon_foreground_inset: 0` — die Voreinstellung 16 % hätte die
+Figma-Ebenen, die die Schutzzone schon einhalten, nochmals verkleinert (gilt
+auch für die einfarbige Ebene). Die Quelldateien lagen nur zum Erzeugen unter
+`apps/unsalted_app/assets/brand/` und sind nicht eingecheckt (der Ordner
+gehört nicht zu den erlaubten Dateien); eingecheckt ist das Ergebnis.
+*Geändert:* `pubspec.yaml`, `pubspec.lock`, `ios/Runner/Assets.xcassets/AppIcon.appiconset`
+(49 Einträge: hell, `luminosity: dark`, `tinted`; neu 38/64/68 pt), unter
+`android/app/src/main/res/` die `mipmap-*/ic_launcher.png`, neu
+`mipmap-anydpi-v26/ic_launcher.xml`, `drawable-*/ic_launcher_foreground.png`
+und `ic_launcher_monochrome.png`, `values/colors.xml`. *Zurückgenommen:* Das
+Werkzeug ersetzte in `ios/Runner.xcodeproj/project.pbxproj` jede Zeile mit
+„ASSETCATALOG“ und machte so aus
+`ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES` den
+ungültigen Wert „AppIcon“ (Fehler im Werkzeug; gemeint ist
+`ASSETCATALOG_COMPILER_APPICON_NAME`, das schon „AppIcon“ ist) — Datei
+unverändert gelassen. `AndroidManifest.xml` schrieb es inhaltsgleich neu (kein
+Unterschied). *Neu:* APP-07 (iOS 1024 ohne Alphakanal, dunkel und getönt
+vorhanden; Android `mipmap-anydpi-v26/ic_launcher.xml` mit Hintergrund
+`#F9F7F1`, Vordergrund und einfarbig, `inset` 0, Ebenen in allen fünf Dichten
+auf transparent). *Gegenprobe:* 1024 mit Alpha, `inset` 16 % und ohne
+adaptive Definition → APP-07 rot; danach grün. *Geänderte bestehende
+Testzeilen:* keine. Lokal: `flutter build ios --no-codesign` erfolgreich
+(Bundle mit `AppIcon` in `Assets.car`); `flutter build apk --debug` **nicht
+lokal geprüft** (kein Android-SDK auf dem Mac). Nachtrag 28.11.10. Mac: App 18
+Tests grün.

@@ -359,9 +359,13 @@ Innenabstand, Hinweis-Aktion auf Höhe der ersten Zeile; DS-70–72). M00c
 fertig (Namen und IDs der Figma-Nachträge, `rueckmeldung-figma.md` A gegen
 die Nachträge geprüft). Kandidaten nach 1.4 sammelt `status.md`.
 
-M01 fertig (App-Name „unsalted“ in iOS, macOS, Android; APP-06).
+M01 fertig (App-Name „unsalted“ in iOS, macOS, Android; APP-06). M02a
+fertig (App-Symbol aus Figma mit `flutter_launcher_icons` 0.14.4, iOS
+hell/dunkel/getönt, Android adaptiv; macOS unverändert; APP-07). Achtung:
+`dart run flutter_launcher_icons` verbiegt in `project.pbxproj` jede
+„ASSETCATALOG“-Zeile — danach zurücknehmen.
 
-**Nächster Schritt:** M02a (App-Symbol), M02b (Startbild), M03; Stopp
+**Nächster Schritt:** M02b (Startbild), M03; Stopp
 nach M03, kein Merge, keine Tags. Golden-Lauf vor jedem Push.
 
 ---
