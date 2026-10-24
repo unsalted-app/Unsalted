@@ -300,7 +300,7 @@ Details der ersten Gruppe in `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“
   unterscheiden; Liste und Detail nebeneinander ab 840 (F4). (Master in der
   Fassungsleiste = b; sichtbares Umsortieren ohne Ziehen = a.)
 
-## Teil 1.4 — Stabilität, Bedienung, Tablet, Marke — Plan zur Freigabe
+## Teil 1.4 — Stabilität, Bedienung, Tablet, Marke — abgeschlossen, `part1-v1.4.0`, `design-v0.3.0`
 
 Branch `teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR #3. Plan: `docs/plan-1.4.md` (Etappen 1 Stabilität, 2 Bedienung, 3 Tablet, 4 Marke; Fragen F1–F13 mit Antworten; Figma-Nachträge N1–N6), freigegeben 2026-10-20.
 
@@ -343,7 +343,9 @@ Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheid
 
 Stand nach Etappe 4 (Teil 1.4 fertig, zur Freigabe; kein Merge, keine Tags): Design 533 Tests, Core 472, App 21, Widgetbook 10, alle grün; `check_architecture` Exit 0.
 
-**Kandidaten nach Teil 1.4** (gesammelt ab 2026-10-24, nicht umgesetzt):
+**Abgeschlossen 2026-10-24:** vom Projektverantwortlichen nach dem iPhone-Test freigegeben; vorher M03a (Quelldateien der Marke, CI grün auf `2923871`). PR #3 (`teil-1.4` → `main`) als Merge-Commit `4ba7b4a` „Teil 1.4: Stabilität, Bedienung, Tablet, Marke (S01–M03a)“ übernommen (`--no-ff`, Historie S01–M03a erhalten); GitHub zeigt PR #3 als gemergt. Annotierte Tags auf `4ba7b4a`: `part1-v1.4.0` („Teil 1.4: Stabilität, Bedienung, Tablet, Marke“) und `design-v0.3.0` („unsalted_design 0.3.0: Liste und Detail, Textauswahl, Marke, Rahmen und Hinweis nach Figma“). Auf `main` nach dem Merge: Design 533, Core 472, App 21, Widgetbook 10 Tests grün; `check_architecture` Exit 0; `flutter analyze` ohne Befund in allen vier Paketen; CI auf `main` grün (Lauf 40073162443). `docs/design/system/README.md` steht auf „freigegeben (design-v0.3.0)“. Branch `teil-1.4` und die Hilfszweige `goldens/**` danach gelöscht (lokal und remote), ebenso das entpackte ZIP außerhalb des Repos.
+
+**Kandidaten für danach** (gesammelt in Teil 1.4 ab 2026-10-24, nicht umgesetzt; der nächste Teil beginnt erst auf Anweisung des Projektverantwortlichen):
 
 - Titel von Bildschirm 3 über einer eingefrorenen Fassung: „Rezept
   bearbeiten“ führt in die Irre; Figma `42:2010` zeigt „Pizzateig · V3“.

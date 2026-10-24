@@ -4025,3 +4025,26 @@ Dateien); nur die bekannten Nebenwirkungen zurückgenommen —
 = false`). In `pubspec.yaml` nur die beiden Kommentare berichtigt (Quellen
 jetzt eingecheckt, Nebenwirkungen zurücknehmen); Konfiguration unverändert.
 Kandidat „Quelldateien der Marke ins Repo“ erledigt.
+
+## 2026-10-24 — Abschluss Teil 1.4
+
+**Freigabe und Abschluss (Projektverantwortlicher).** iPhone-Test bestanden,
+Teil 1.4 freigegeben; Reihenfolge mit Stopp bei jeder Abweichung (keine
+aufgetreten). (1) M03a: Quelldateien der Marke unter
+`apps/unsalted_app/assets/brand/`, Werkzeuge neu gelaufen, Ergebnis
+bytegleich; Golden-Lauf ohne Abweichung, CI grün auf `2923871`. (2)
+Vorprüfung auf `teil-1.4`: Arbeitskopie sauber, Design 533, Core 472, App 21,
+Widgetbook 10 Tests grün, `check_architecture` Exit 0, CI grün. (3) Merge
+`--no-ff` nach `main` (`ce6431f` + `2923871` → `4ba7b4a` „Teil 1.4:
+Stabilität, Bedienung, Tablet, Marke (S01–M03a)“), kein Squash, kein Rebase.
+(4) Auf `main` dieselben Zahlen grün, `check_architecture` Exit 0, `main`
+gepusht, CI grün (Lauf 40073162443). (5) Annotierte Tags auf `4ba7b4a`:
+`part1-v1.4.0` („Teil 1.4: Stabilität, Bedienung, Tablet, Marke“),
+`design-v0.3.0` („unsalted_design 0.3.0: Liste und Detail, Textauswahl,
+Marke, Rahmen und Hinweis nach Figma“), gepusht. (6) PR #3 zeigt GitHub als
+gemergt (Merge-Commit `4ba7b4a`). (7) `status.md`, `CLAUDE.MD` und dieser
+Eintrag; `docs/design/system/README.md` auf „freigegeben (design-v0.3.0)“
+(wie bei 0.2.0). (8) Danach `teil-1.4` und die Hilfszweige `goldens/**`
+gelöscht (lokal und remote), das entpackte ZIP `/Users/dalptri/unsalted-marke/`
+entfernt, nachdem die Quelldateien auf `main` liegen. Kandidaten für danach in
+`status.md`; der nächste Teil beginnt erst auf Anweisung.
