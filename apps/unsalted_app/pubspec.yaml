@@ -57,6 +57,8 @@ dev_dependencies:
   drift: ^2.35.0
   # Teil 1.4 M02a: erzeugt App-Symbole einmalig (Ergebnis eingecheckt), nicht zur Laufzeit.
   flutter_launcher_icons: 0.14.4
+  # Teil 1.4 M02b: erzeugt das Startbild einmalig (Ergebnis eingecheckt), kein Code in lib/.
+  flutter_native_splash: 2.4.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -118,3 +120,20 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "assets/brand/app-symbol/android/app-symbol-android-vordergrund-1024.png"
   adaptive_icon_monochrome: "assets/brand/app-symbol/android/app-symbol-android-einfarbig-1024.png"
   adaptive_icon_foreground_inset: 0
+
+# Teil 1.4 M02b: Startbild aus Figma (275:75/275:79; Symbol 275:83/275:87,
+# Android 12 275:91/275:95): Fläche Papier bzw. Tinte, Symbol in der Mitte,
+# bewusst ohne Punktraster (Android 12 kennt nur Fläche und Symbol, iOS soll
+# gleich aussehen). Quellen wie oben aus der Figma-Lieferung, nicht
+# eingecheckt; erzeugen mit `dart run flutter_native_splash:create`.
+flutter_native_splash:
+  color: "#F9F7F1"
+  image: assets/brand/startbild/startbild-symbol-hell.png
+  color_dark: "#141925"
+  image_dark: assets/brand/startbild/startbild-symbol-dunkel.png
+  android_12:
+    color: "#F9F7F1"
+    image: assets/brand/startbild/startbild-android12-hell.png
+    color_dark: "#141925"
+    image_dark: assets/brand/startbild/startbild-android12-dunkel.png
+  web: false

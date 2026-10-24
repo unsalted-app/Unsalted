@@ -363,9 +363,11 @@ M01 fertig (App-Name „unsalted“ in iOS, macOS, Android; APP-06). M02a
 fertig (App-Symbol aus Figma mit `flutter_launcher_icons` 0.14.4, iOS
 hell/dunkel/getönt, Android adaptiv; macOS unverändert; APP-07). Achtung:
 `dart run flutter_launcher_icons` verbiegt in `project.pbxproj` jede
-„ASSETCATALOG“-Zeile — danach zurücknehmen.
+„ASSETCATALOG“-Zeile — danach zurücknehmen. M02b fertig (Startbild ohne
+Punktraster mit `flutter_native_splash` 2.4.8, APP-08; das Werkzeug schreibt
+`ios/Runner/Info.plist` neu — zurücknehmen).
 
-**Nächster Schritt:** M02b (Startbild), M03; Stopp
+**Nächster Schritt:** M03 (Abschluss); Stopp
 nach M03, kein Merge, keine Tags. Golden-Lauf vor jedem Push.
 
 ---

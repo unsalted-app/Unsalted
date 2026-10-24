@@ -3948,3 +3948,45 @@ Testzeilen:* keine. Lokal: `flutter build ios --no-codesign` erfolgreich
 (Bundle mit `AppIcon` in `Assets.car`); `flutter build apk --debug` **nicht
 lokal geprüft** (kein Android-SDK auf dem Mac). Nachtrag 28.11.10. Mac: App 18
 Tests grün.
+
+**M02b — Startbild aus Figma.** *Entscheidung (Projektverantwortlicher):*
+Startbild bewusst ohne Punktraster, nur Fläche und Symbol wie in `275:75`/
+`275:79` — die SplashScreen-API ab Android 12 erlaubt nur Fläche und Symbol,
+und iOS soll gleich aussehen (28.11.10). *Lieferung geprüft:*
+`startbild-symbol-hell/-dunkel.png` 640 × 408 = 160 × 102 pt @4x
+(Figma `275:83`/`275:87` 160 × 102), Marker hell `#FEE545` bzw. dunkel
+`#EDD13D`, Tinte `#141925`, transparent; `startbild-android12-hell/-dunkel.png`
+1152² = 288 dp @4x (`275:91`/`275:95`), Symbol im 768-px-Kreis (Ecken
+höchstens 380 px vom Mittelpunkt, Radius 384). *Umsetzung:*
+`flutter_native_splash` 2.4.8 als `dev_dependency` (feste Version, nur zum
+Erzeugen), Konfiguration aus dem Vorschlag im ZIP, geprüft nach den Regeln:
+`color` Papier, `color_dark` Tinte, Symbol mittig, `android_12` mit den
+288-dp-Dateien und denselben Farben; zusätzlich `web: false` (die App hat
+keinen Web-Ordner). Kein Code in `lib/`, kein `preserve`/`remove`. Quellen
+wie in M02a nur vorübergehend unter `assets/brand/`, danach entfernt.
+*Geändert:* `pubspec.yaml`, `pubspec.lock`;
+`ios/Runner/Base.lproj/LaunchScreen.storyboard` (Hintergrundbild über die
+ganze Fläche, Symbol `contentMode="center"`), `Assets.xcassets/LaunchImage.imageset`
+(160 × 102 @1x–3x, hell und dunkel), neu `LaunchBackground.imageset` (1 × 1
+Papier bzw. Tinte, `luminosity: dark`); unter `android/app/src/main/res/`
+`drawable(-night)(-v21)/launch_background.xml` (Fläche + Symbol mittig), neu
+`background.png` (Papier/Tinte), `splash.png` und `android12splash.png` je
+Dichte und Nachtfassung, `values(-night)/styles.xml` (vier Fenster-Einträge
+des Werkzeugs: `forceDarkAllowed` false, kein Vollbild, Systemleisten,
+Aussparung), neu `values(-night)-v31/styles.xml`
+(`windowSplashScreenBackground` Papier/Tinte, `windowSplashScreenAnimatedIcon`
+`android12splash`). *Zurückgenommen:* `ios/Runner/Info.plist` — das Werkzeug
+schrieb die Datei mit neuer Einrückung neu und ergänzte `UIStatusBarHidden =
+false`, also das Standardverhalten (Statusleiste sichtbar); ohne den Eintrag
+gleich, Datei unverändert gelassen. `AndroidManifest.xml` blieb unberührt
+(keine Ausrichtung gesetzt). *Neu:* APP-08 (iOS: Hintergrund hell/dunkel als
+Fläche, Symbol mittig 160 × 102; Android bis 11 Fläche + Symbol mittig, ab
+12 Farben und 288-dp-Symbol, hell und dunkel; kein Startbild-Code in `lib/`).
+*Gegenprobe:* dunkle Fläche iOS = hell, Android-12-Farbe dunkel falsch, Code
+in `lib/` → APP-08 rot; danach grün. *Geänderte bestehende Testzeilen:*
+keine. Lokal: `flutter build ios --no-codesign` und `flutter build macos`
+erfolgreich (macOS ohne Startbild, Symbol unverändert); `flutter build apk
+--debug` **nicht lokal geprüft** (kein Android-SDK). Mac: App 21 Tests grün.
+Auf dem iPhone zu prüfen: Startbild hell und dunkel (Papier bzw. Tinte, „u“
+auf dem Markerstrich mittig, kein Punktraster), kein Aufblitzen eines
+anderen Grunds vor dem ersten Bild.

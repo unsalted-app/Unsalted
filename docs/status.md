@@ -337,7 +337,8 @@ Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheid
 | M00c | Restliche Namen und IDs der Figma-Nachträge in `components.md`, `figma-ids.json`, `rueckmeldung-figma.md`; Abschnitt A gegen die Nachträge geprüft, neun Punkte erledigt (nach C) | fertig |
 | M01 | App-Name „unsalted“ in iOS, macOS, Android (Produktname, Kennungen, `applicationId` bleiben); APP-06; `flutter build ios --no-codesign` und `flutter build macos` lokal erfolgreich | fertig |
 | M02a | App-Symbol aus Figma: iOS hell/dunkel/getönt, Android adaptiv (Vordergrund, Papier, einfarbig) mit `flutter_launcher_icons` 0.14.4; macOS unverändert (keine macOS-Fassung geliefert); APP-07 | fertig |
-| M02b, M03 | Startbild, Abschluss | offen |
+| M02b | Startbild aus Figma ohne Punktraster: Papier/Tinte, Symbol mittig, Android 12 mit 288-dp-Symbol, mit `flutter_native_splash` 2.4.8; APP-08 | fertig |
+| M03 | Abschluss | offen |
 
 **Kandidaten nach Teil 1.4** (gesammelt ab 2026-10-24, nicht umgesetzt):
 
