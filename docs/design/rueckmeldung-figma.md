@@ -64,7 +64,7 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Thema | Figma | Code | Commit |
 |---|---|---|---|
 | App-Symbol macOS | keine eigene Fassung (Seite „Marke“: iOS, Android) | macOS behält das bisherige Symbol; bitte eine macOS-Fassung liefern (Apple-Form mit Rand, 1024 × 1024) | Teil 1.4 M02a |
-| Startbild | Seite „Marke“ `275:75`/`275:79`: Fläche und Symbol, ohne Punktraster | wie Figma (iOS und Android, Android 12 mit 288-dp-Symbol); Quelldateien nicht im Repo, nur das Erzeugte | Teil 1.4 M02b |
+| Startbild | Seite „Marke“ `275:75`/`275:79`: Fläche und Symbol, ohne Punktraster | wie Figma (iOS und Android, Android 12 mit 288-dp-Symbol); Quelldateien seit M03a unter `apps/unsalted_app/assets/brand/` | Teil 1.4 M02b |
 
 ## B. Figma zeigt mehr — der Code folgt später (in Figma nichts zu tun)
 

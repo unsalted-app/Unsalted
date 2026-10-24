@@ -4009,3 +4009,19 @@ Quelldateien der Marke im Repo, macOS-Symbol nachliefern, Android-Zurück bei
 verborgenem Editor. Keine Code- und Teständerung außer der Version. Mac:
 Design 533, Core 472, App 21, Widgetbook 10 Tests grün; `check_architecture`
 Exit 0. Kein Merge, keine Tags (Stopp nach M03).
+
+**M03a — Quelldateien der Marke im Repo.** Freigabe Teil 1.4 nach dem
+iPhone-Test (Projektverantwortlicher); vor dem Merge die Quelldateien:
+genau die 9 Dateien, auf die die Konfiguration in `pubspec.yaml` zeigt
+(`flutter_launcher_icons`: Master, iOS dunkel transparent und getönt,
+Android Vordergrund und einfarbig; `flutter_native_splash`: Startbild-Symbol
+hell/dunkel, Android 12 hell/dunkel), plus `LIESMICH.md` aus der
+Figma-Lieferung nach `apps/unsalted_app/assets/brand/` (gleiche Struktur wie
+im ZIP; nicht in `flutter: assets:`, also nicht in der App gebündelt). Beide
+Werkzeuge neu gelaufen: Ergebnis bytegleich (keine Änderung an erzeugten
+Dateien); nur die bekannten Nebenwirkungen zurückgenommen —
+`project.pbxproj` (`ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS`
+→ „AppIcon“) und `ios/Runner/Info.plist` (neu formatiert, `UIStatusBarHidden
+= false`). In `pubspec.yaml` nur die beiden Kommentare berichtigt (Quellen
+jetzt eingecheckt, Nebenwirkungen zurücknehmen); Konfiguration unverändert.
+Kandidat „Quelldateien der Marke ins Repo“ erledigt.

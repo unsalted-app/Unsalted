@@ -103,9 +103,10 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
 # Teil 1.4 M02a: App-Symbol aus Figma (Bibliothek, Seite „Marke“, 275:35 ff.).
-# Die Quelldateien stammen aus der Figma-Lieferung (ZIP mit LIESMICH) und sind
-# nicht eingecheckt — zum erneuten Erzeugen nach assets/brand/ legen und
-# `dart run flutter_launcher_icons` ausführen. Eingecheckt ist das Ergebnis.
+# Die Quelldateien aus der Figma-Lieferung liegen unter assets/brand/ (mit
+# LIESMICH.md, Teil 1.4 M03a; nicht in der App gebündelt); neu erzeugen mit
+# `dart run flutter_launcher_icons`. Danach die Änderung an
+# ios/Runner.xcodeproj/project.pbxproj zurücknehmen (Fehler des Werkzeugs).
 # Die Android-Ebenen sind volle 108 dp mit dem Symbol in der Schutzzone, daher
 # ohne zusätzlichen Rand (inset 0). macOS bleibt, bis Figma eine eigene
 # macOS-Fassung liefert.
@@ -124,8 +125,9 @@ flutter_launcher_icons:
 # Teil 1.4 M02b: Startbild aus Figma (275:75/275:79; Symbol 275:83/275:87,
 # Android 12 275:91/275:95): Fläche Papier bzw. Tinte, Symbol in der Mitte,
 # bewusst ohne Punktraster (Android 12 kennt nur Fläche und Symbol, iOS soll
-# gleich aussehen). Quellen wie oben aus der Figma-Lieferung, nicht
-# eingecheckt; erzeugen mit `dart run flutter_native_splash:create`.
+# gleich aussehen). Quellen wie oben unter assets/brand/; erzeugen mit
+# `dart run flutter_native_splash:create`, danach ios/Runner/Info.plist
+# zurücknehmen (das Werkzeug schreibt sie neu).
 flutter_native_splash:
   color: "#F9F7F1"
   image: assets/brand/startbild/startbild-symbol-hell.png

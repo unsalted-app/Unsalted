@@ -81,6 +81,9 @@ unsalted/
 │  │                               lib/catalog/ je Design-Ordner eine Datei, Tests WB-01–03
 │  └─ unsalted_app/                App-Hülle (Schritt 8.8); sichtbarer Name „unsalted“
 │     │                            (Teil 1.4 M01, APP-06), Produktname/Kennungen unverändert
+│     ├─ assets/brand/             Quelldateien App-Symbol/Startbild aus Figma + LIESMICH.md
+│     │                            (M03a; nicht gebündelt, nur für flutter_launcher_icons/
+│     │                            flutter_native_splash, danach pbxproj/Info.plist zurücknehmen)
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
 │     │                            flutter_riverpod, go_router, flutter_localizations (D17b)
 │     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
@@ -369,7 +372,8 @@ Punktraster mit `flutter_native_splash` 2.4.8, APP-08; das Werkzeug schreibt
 `ios/Runner/Info.plist` neu — zurücknehmen).
 
 M03 fertig (Abschluss: `unsalted_design` 0.3.0, Doku vollständig, Kapitel
-28.11 vollständig; Kandidaten nach 1.4 in `status.md`). Stand: Design 533,
+28.11 vollständig; Kandidaten nach 1.4 in `status.md`). M03a fertig
+(Quelldateien der Marke unter `apps/unsalted_app/assets/brand/`). Stand: Design 533,
 Core 472, App 21, Widgetbook 10 Tests grün.
 
 **Nächster Schritt:** Prüfung und Freigabe von Teil 1.4 durch den
