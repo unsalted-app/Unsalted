@@ -9,6 +9,8 @@
 // Symbol `chevron`. Seit D16 füllt eine Auswahl ohne Beschriftung mit
 // [AppSelect.expand] ihre Breite (lange Einträge werden gekürzt) — für
 // Zeilen, die ihr einen Anteil von mindestens `reflow-select-min` geben.
+// Seit Teil 1.4 (B01, Figma: „Einheit“ mit Beschriftung) gilt
+// [AppSelect.expand] auch mit Beschriftung.
 
 import 'package:flutter/material.dart';
 
@@ -55,8 +57,8 @@ class AppSelect<T> extends StatelessWidget {
   /// Bezeichnung; mit Label als Formularfeld.
   final String? label;
 
-  /// `true`: ohne Beschriftung die verfügbare Breite füllen (braucht eine
-  /// begrenzte Breite, z. B. in `Expanded`).
+  /// `true`: die verfügbare Breite füllen, lange Einträge gekürzt (braucht
+  /// eine begrenzte Breite, z. B. in `Expanded`); mit und ohne Beschriftung.
   final bool expand;
 
   @override
@@ -87,7 +89,13 @@ class AppSelect<T> extends StatelessWidget {
         ),
         Semantics(
           label: label,
-          child: DropdownButtonFormField<T>(initialValue: value, items: menuItems, onChanged: changed, icon: chevron),
+          child: DropdownButtonFormField<T>(
+            initialValue: value,
+            items: menuItems,
+            onChanged: changed,
+            icon: chevron,
+            isExpanded: expand,
+          ),
         ),
       ],
     );

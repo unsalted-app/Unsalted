@@ -19,6 +19,7 @@ import 'package:unsalted_core/src/food/food_variant.dart';
 import 'package:unsalted_core/src/nutrition/nutrient_set.dart';
 import 'package:unsalted_core/src/providers/core_providers.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/ingredient_row.dart';
+import '../support/db_widget_harness.dart';
 
 Future<db.CoreDatabase> _openDatabase(WidgetTester tester) async {
   final database = await tester.runAsync(() async => db.CoreDatabase(NativeDatabase.memory()));
@@ -36,8 +37,7 @@ Future<void> _disposeWidgetTree(WidgetTester tester) async {
 /// die dann niemand mehr auspumpt -- der Lauf hinge. Deshalb erst den Baum
 /// abbauen und auspumpen, dann schließen.
 Future<void> _closeDatabase(WidgetTester tester, db.CoreDatabase database) async {
-  await _disposeWidgetTree(tester);
-  await tester.runAsync(database.close);
+  await closeTestDatabase(tester, database);
 }
 
 void main() {

@@ -300,6 +300,68 @@ Details der ersten Gruppe in `docs/design/plan-1.3.md`, „Nicht Teil von 1.3“
   unterscheiden; Liste und Detail nebeneinander ab 840 (F4). (Master in der
   Fassungsleiste = b; sichtbares Umsortieren ohne Ziehen = a.)
 
+## Teil 1.4 — Stabilität, Bedienung, Tablet, Marke — Plan zur Freigabe
+
+Branch `teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR #3. Plan: `docs/plan-1.4.md` (Etappen 1 Stabilität, 2 Bedienung, 3 Tablet, 4 Marke; Fragen F1–F13 mit Antworten; Figma-Nachträge N1–N6), freigegeben 2026-10-20.
+
+| Schritt | Beschreibung | Status |
+|---|---|---|
+| — | Plan `docs/plan-1.4.md` | fertig, freigegeben 2026-10-20 |
+| S01a | Diagnosewerkzeug `tool/repeat_tests.dart`; Matrix D1–D4: 2 Hänger in 60 Läufen, beide mit `--concurrency=1` in `recipe_detail_screen_test.dart`; `testWidgets` ignoriert `--timeout`/`dart_test.yaml` | fertig |
+| S01b | D5 (instrumentiert, 60 Läufe): kein Hänger; Ursache lokal nicht nachgestellt; Nachtrag zum Plan mit endgültigen Testzeilen für S02 (zur Freigabe) | fertig |
+| S02 | Robustes Schließen der Datenbank in Widget-Tests (`closeTestDatabase`, Core und App), Zeitlimit 2 min je Widget-Test über `flutter_test_config.dart`; UI-83 | fertig |
+| S03 | Abnahme: Core 20 × Standard, 10 × unter Last, 30 × `--concurrency=1` (je 451 Tests), App 10 × (12 Tests) — 70 Läufe, alle grün, kein Hänger | fertig |
+
+Stand nach S03 (Etappe 1 fertig): Design 461 Tests, Core 451, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
+| — | Figma-Nachträge N1–N6 übernommen (`docs/design/figma/teil-1.4-figma-nachtraege.md`, `figma-ids.json`) | fertig |
+| B01 | Zeilenmenü „⋮“ in Zutaten- und Schrittzeile (Nach oben/unten, Entfernen) nach Figma N1, Einheit beschriftet, `space-m`, Haarlinie, Unterstreichung `space-xxs` darunter; DS-62/64/65, UI-84–86 | fertig |
+| B02 | Master in der Fassungsleiste (Markerfläche, Semantik), `masterVersionId` aus dem Rezeptdetail; UI-87 | fertig |
+| B03 | „Keine Treffer.“ in der Lebensmittelliste mit Suchbegriff (Symbol, ohne Aktion, ohne Leerstelle) nach Figma N2; UI-88 | fertig |
+| B04 | Suchtreffer im Titel der Rezeptliste markiert (`AppListItem.match`, Klartext unverändert); DS-66, UI-89 | fertig |
+| B05a | Token-Nachtrag Textauswahl aus Figma N6 (`selection`, `selection-handle`, `opacity-selection`) in beiden Token-Dateien | fertig |
+| B05 | Markierbare Rezepttexte im Rezeptdetail (`AppSelectableArea`), Textauswahl im Theme aus `selection`/`selection-handle`; DS-67, UI-90 | fertig |
+
+Stand nach Etappe 2: Design 491 Tests, Core 461, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
+| T00a | Listeneintrag bricht bei großer Schrift um (Aktionen unter Titel und Untertitel, Figma `List/Item`, Hinweis 4); DS-68, UI-93 | fertig |
+| T00b | Suffix im Eingabefeld bündig am Feldende, Wert endet `space-m` davor (Lupe „Lebensmittel verknüpfen“); DS-69, UI-94 | fertig |
+| T01 | Rahmen „Liste und Detail“ (`ListDetailTemplate`): ab 840 Liste in `size-list-pane`, Detail mit Haarlinie, ohne Auswahl Punktraster ohne Text (N3); DS-63, GL-01 `template_liste_detail` | fertig |
+| T02 | Rezepte: Liste und Detail ab 840 (Auswahlzustand, Auswahlbalken, Detail mit `onClose`, Auswahl übersteht das Verkleinern); UI-91, GL-02 `01_04_liste_detail` | fertig |
+| T01a | Rahmen hält den Zustand von Liste und Detail beim Wechsel über 840; darunter ein gewähltes Detail verborgen (ohne Fokus, ohne Semantik); DS-63 | fertig |
+| T03 | Lebensmittel: Liste und Editor ab 840 (Auswahl, „Neues Lebensmittel“ im Bereich, Speichern ohne `pop`, Rückfrage beim Wechsel; `FoodEditorScreen.onDone`/`onDirtyChanged`); UI-92 | fertig |
+
+Stand nach Etappe 3: Design 511 Tests, Core 471, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
+
+Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheidungen 1/2 aus dem Bericht nachträglich freigegeben; App-Symbol und Startbild aus Figma freigegeben.
+| M00a | Eingefrorene Ansicht gegen Figma `42:2010` (neu gebaut): übereinstimmend bis auf die Linie zwischen Zutaten und Schritten (jetzt eine, `AppDivider.flush`); Titel der Kopfleiste als offene Textfrage; UI-95 | fertig |
+| M00b | Design: Marke, Rahmen, Hinweis nach den Figma-Komponenten (Kasten der Marke `size-mark`, Kopfzeile mittig, Kontur zählt zum Innenabstand, Aktion des Hinweises fluchtet mit der ersten Zeile); DS-70–72 | fertig |
+| M00c | Restliche Namen und IDs der Figma-Nachträge in `components.md`, `figma-ids.json`, `rueckmeldung-figma.md`; Abschnitt A gegen die Nachträge geprüft, neun Punkte erledigt (nach C) | fertig |
+| M01 | App-Name „unsalted“ in iOS, macOS, Android (Produktname, Kennungen, `applicationId` bleiben); APP-06; `flutter build ios --no-codesign` und `flutter build macos` lokal erfolgreich | fertig |
+| M02a | App-Symbol aus Figma: iOS hell/dunkel/getönt, Android adaptiv (Vordergrund, Papier, einfarbig) mit `flutter_launcher_icons` 0.14.4; macOS unverändert (keine macOS-Fassung geliefert); APP-07 | fertig |
+| M02b | Startbild aus Figma ohne Punktraster: Papier/Tinte, Symbol mittig, Android 12 mit 288-dp-Symbol, mit `flutter_native_splash` 2.4.8; APP-08 | fertig |
+| M03a | Quelldateien der Marke (9 Dateien, auf die die Konfiguration zeigt, und `LIESMICH.md`) unter `apps/unsalted_app/assets/brand/`; beide Werkzeuge neu gelaufen, Ergebnis bytegleich | fertig |
+| M03 | Abschluss: `unsalted_design` 0.3.0 (Tag nach Freigabe), CHANGELOG, README, `design_system.md` (Regel 10, Liste und Detail), `screens.md` (Startbild), `components.md`, `rueckmeldung-figma.md` (A5 Marke), Kapitel 28.11 vollständig | fertig |
+
+Stand nach Etappe 4 (Teil 1.4 fertig, zur Freigabe; kein Merge, keine Tags): Design 533 Tests, Core 472, App 21, Widgetbook 10, alle grün; `check_architecture` Exit 0.
+
+**Kandidaten nach Teil 1.4** (gesammelt ab 2026-10-24, nicht umgesetzt):
+
+- Titel von Bildschirm 3 über einer eingefrorenen Fassung: „Rezept
+  bearbeiten“ führt in die Irre; Figma `42:2010` zeigt „Pizzateig · V3“.
+  Braucht eine Änderung in Kapitel 22 (Entscheidung des
+  Projektverantwortlichen); in 1.4 bleibt der Text.
+- Rezept anlegen im Liste-Detail-Rahmen (ab 840 öffnet „Rezept anlegen“
+  weiter eine eigene Seite; braucht `recipe_create_screen.dart`).
+- macOS-Menü auf Deutsch: `MainMenu.xib` zeigt „About/Hide/Quit
+  unsalted“ englisch (M01 hat die Datei nicht geändert).
+- `material_ui` als eigener kleiner Teil nach 1.4 (F3).
+- Fassungsmarke und Versionszahl je Rezept in der Rezeptliste (Figma `1:421`;
+  braucht die Versionen je Rezept in den Daten).
+- macOS-Symbol in Figma nachliefern (Apple-Form mit Rand); bis dahin
+  behält macOS das bisherige Symbol (M02a).
+- Android-Zurück bei verborgenem Editor: Unter 840 fragt die Zurück-Taste
+  auch dann „Änderungen verwerfen?“, wenn der Editor mit ungespeicherten
+  Änderungen verborgen ist (T01a).
+
 ## Bekannte offene Lücken (nicht blockierend)
 
 - `foodVariantToInsertCompanion`/`foodVariantToUpdateCompanion` in

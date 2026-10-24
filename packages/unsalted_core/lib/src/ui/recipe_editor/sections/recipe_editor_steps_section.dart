@@ -3,6 +3,8 @@
 // Bildschirm 3, Abschnitt „Schritte“ (Teil 1.2): umsortierbare
 // Schrittzeilen mit Timer (28.4.2) und „Schritt hinzufügen“. Jede Zeile trägt
 // ihre stabile ID als Key (Kapitel 10.7).
+// Seit Teil 1.4 (B01) auch über das Zeilenmenü: „Nach oben“/„Nach unten“
+// rufen [onReorder] mit denselben Werten wie das Ziehen um eine Stelle.
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -55,6 +57,8 @@ class RecipeEditorStepsSection extends StatelessWidget {
                   onInstructionChanged: (value) => onInstructionChanged(step.id, value),
                   onTimerChanged: (value) => onTimerChanged(step.id, value),
                   onRemove: () => onRemoved(step.id),
+                  onMoveUp: index > 0 ? () => onReorder(index, index - 1) : null,
+                  onMoveDown: index < steps.length - 1 ? () => onReorder(index, index + 1) : null,
                 ),
             ],
           ),

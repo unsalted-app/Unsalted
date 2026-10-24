@@ -16,10 +16,13 @@ import '../../tokens/stroke_tokens.g.dart';
 /// am unteren Rand.
 class DashedPainter extends CustomPainter {
   /// Kontur mit Eckenradius [radius].
-  const DashedPainter.border({required this.color, required this.width, required this.radius}) : underline = false;
+  const DashedPainter.border({required this.color, required this.width, required this.radius})
+      : underline = false,
+        offset = 0;
 
-  /// Linie am unteren Rand.
-  const DashedPainter.underline({required this.color, required this.width})
+  /// Linie am unteren Rand; [offset] > 0 zeichnet sie so weit unter dem
+  /// Rand (außerhalb der eigenen Fläche, ohne das Layout zu ändern).
+  const DashedPainter.underline({required this.color, required this.width, this.offset = 0})
       : radius = 0,
         underline = true;
 
@@ -35,6 +38,9 @@ class DashedPainter extends CustomPainter {
   /// `true`: nur eine Linie am unteren Rand.
   final bool underline;
 
+  /// Abstand der Unterstreichung unter dem Rand.
+  final double offset;
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
@@ -44,8 +50,8 @@ class DashedPainter extends CustomPainter {
     final half = width / 2;
     final path = underline
         ? (Path()
-          ..moveTo(0, size.height - half)
-          ..lineTo(size.width, size.height - half))
+          ..moveTo(0, size.height + offset + half)
+          ..lineTo(size.width, size.height + offset + half))
         : (Path()
           ..addRRect(RRect.fromRectAndRadius(
             Rect.fromLTWH(half, half, size.width - width, size.height - width),
@@ -63,5 +69,9 @@ class DashedPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(DashedPainter old) =>
-      old.color != color || old.width != width || old.radius != radius || old.underline != underline;
+      old.color != color ||
+      old.width != width ||
+      old.radius != radius ||
+      old.underline != underline ||
+      old.offset != offset;
 }

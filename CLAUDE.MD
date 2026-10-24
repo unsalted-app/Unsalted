@@ -56,7 +56,7 @@ vermeiden.
 
 ---
 
-## 1. Projektstruktur (Stand: `part1-v1.3.0` — Teil 1 abgeschlossen, Phase 0–10; Teile 1.1–1.3)
+## 1. Projektstruktur (Stand: Teil 1.4 fertig auf `teil-1.4`, zur Freigabe; zuletzt getaggt `part1-v1.3.0`)
 
 ```text
 unsalted/
@@ -66,17 +66,24 @@ unsalted/
 │  ├─ spezifikation.md             VERBINDLICHE Spezifikation (Quelle der Wahrheit)
 │  ├─ status.md                    Phase/Schritt-Tracker
 │  ├─ decisions.md                 Protokoll technischer Entscheidungen
+│  ├─ plan-1.4.md                  Teil 1.4: Plan (Etappen, Commits, Testzeilen, Fragen F1–F13)
 │  └─ design/                      design_system.md, components.md, screens.md (Stand 1.3), plan.md (1.2);
 │                                   Teil 1.3: plan-1.3.md, UEBERGABE.md, rueckmeldung-figma.md (Abweichungen
 │                                   für Figma), system/ (Markenbuch, tokens.json, Komponentenkarten,
-│                                   Schrift-WOFF2, OFL), figma/figma-ids.json
+│                                   Schrift-WOFF2, OFL), figma/figma-ids.json,
+│                                   figma/teil-1.4-figma-nachtraege.md (N1–N6, Hinweise für den Code)
 ├─ tool/
-│  └─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
+│  ├─ check_architecture.dart      muss mit Exit 0 enden (seit Nachtrag 1.1a)
+│  └─ repeat_tests.dart            Wiederholungsläufe für die Hänger-Diagnose (Teil 1.4 S01)
 ├─ .github/workflows/ci.yml       CI: check_architecture, analyze + test in Design, Core, App, Widgetbook
 ├─ apps/
 │  ├─ unsalted_widgetbook/         Komponenten-Katalog (Teil 1.2, C11), Rang 99, nur macOS;
 │  │                               lib/catalog/ je Design-Ordner eine Datei, Tests WB-01–03
-│  └─ unsalted_app/                App-Hülle (Schritt 8.8)
+│  └─ unsalted_app/                App-Hülle (Schritt 8.8); sichtbarer Name „unsalted“
+│     │                            (Teil 1.4 M01, APP-06), Produktname/Kennungen unverändert
+│     ├─ assets/brand/             Quelldateien App-Symbol/Startbild aus Figma + LIESMICH.md
+│     │                            (M03a; nicht gebündelt, nur für flutter_launcher_icons/
+│     │                            flutter_native_splash, danach pbxproj/Info.plist zurücknehmen)
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
 │     │                            flutter_riverpod, go_router, flutter_localizations (D17b)
 │     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
@@ -94,8 +101,9 @@ unsalted/
    │  ├─ lib/fonts/                   Atkinson Hyperlegible Next 400/600/700 (TTF) + OFL.txt
    │  └─ lib/src/  tokens/ (generiert) theme/ (inkl. app_reflow.dart: Maße je Textgröße)
    │               layout/ (reflow_row.dart: Aktion daneben oder darunter) components/<gruppe>/
-   │               templates/ (page_content.dart: Rahmen „Inhalt“);
-   │               Tests DS-01–61 (+ b/c), GL-01 (test/goldens/, nur Linux)
+   │               templates/ (page_content.dart: Rahmen „Inhalt“; list_detail_template.dart:
+   │               Liste und Detail ab 840, Teil 1.4); Tests DS-01–72 (+ b/c), GL-01
+   │               (test/goldens/, nur Linux)
    └─ unsalted_core/
       ├─ pubspec.yaml
       ├─ drift_schemas/
@@ -184,6 +192,7 @@ unsalted/
       │        │                                        UI-interne Provider, nicht exportiert
       │        └─ shared/unit_labels.dart               Einheiten deutsch, Dezimalkomma (Teil 1.2 C27b)
       └─ test/
+         ├─ flutter_test_config.dart         Zeitlimit 2 min je Widget-Test (Teil 1.4 S02)
          ├─ architecture/                    AT-01 bis AT-15, alle grün (AT-13–15 seit Teil 1.2)
          │  ├─ at01_no_upper_imports_test.dart … at15_design_only_in_ui_test.dart
          │  ├─ public_api_golden.txt
@@ -299,11 +308,79 @@ GL-01/02, DS-49–61 (+ b/c), WB-04, UI-67–82, APP-03–05.
 stehen, erst nach Rückfrage ändern (Stopp); Testzeilen im Design-Paket dürfen
 an das neue Design angepasst werden, jede mit Grund in `docs/decisions.md`.
 
-**Nächster Schritt:** Teil 1.4 — Plan und Arbeitskarten erst nach Vorgabe
-des Projektverantwortlichen. Kandidaten: `docs/status.md`, Abschnitt Teil 1.3
-(a–f; **f mit hoher Priorität:** Hänger in Core-Widget-Tests mit Datenbank,
-lokal 3 von 4 Läufen am 20.10.), dazu `docs/design/plan-1.3.md`, „Nicht Teil
-von 1.3“. Bis dahin keine Änderungen an `main` ohne Arbeitskarte.
+**Teil 1.4 – Stabilität, Bedienung, Tablet, Marke (fertig bis M03, zur
+Freigabe; Plan freigegeben 2026-10-20, Antworten F1–F13 im Plan; Branch
+`teil-1.4` von `main` @ `ce6431f`, Entwurfs-PR #3; Design-Paket 0.3.0,
+Tags erst nach Freigabe):** Plan
+`docs/plan-1.4.md` — Etappe 1 Stabilität (S01–S03: Hänger in Core-Widget-Tests
+mit Datenbank), Etappe 2 Bedienung (B01–B05: Zeilenmenü, Master in der
+Fassungsleiste, „Keine Treffer.“ bei Lebensmitteln, ggf. Suchtreffer und
+markierbare Texte), Etappe 3 Tablet (T01–T03: Liste und Detail ab 840),
+Etappe 4 Marke (M01–M03: App-Name, App-Symbol/Startbild nur mit Figma-Dateien,
+Abschluss). Leitplanken: Bildschirm-Dateien nur die im Plan benannten;
+Core-Logik, Tür und `module/` unverändert; Fehlendes in Figma als
+Figma-Nachtrag N1–N6; Testzeilen einzeln in (d2), ungeplante → Stopp.
+
+S01a fertig (Werkzeug `tool/repeat_tests.dart`, Matrix D1–D4: 2 Hänger in
+60 Läufen, nur mit `--concurrency=1`, beide in
+`recipe_detail_screen_test.dart`). **Wichtig:** `testWidgets` setzt sein
+Zeitlimit selbst (10 min) — `--timeout` und `dart_test.yaml` greifen dort
+nicht; wirksam nur über die Bindung (`flutter_test_config.dart`).
+Diagnoseprotokolle unter `packages/unsalted_core/build/diagnose/` (nicht
+`/private/tmp`: wird beim Neustart geleert), lange Läufe mit
+`caffeinate -dims`.
+
+S01b fertig (D5 instrumentiert, 60 Läufe ohne Hänger; Ursache lokal nicht
+nachgestellt). S02 fertig (robustes Schließen `closeTestDatabase`, 2 min je
+Widget-Test, UI-83). S03 fertig (70 Abnahmeläufe grün, kein Hänger). Etappe 1
+fertig.
+
+Etappe 1 freigegeben. Figma-Nachträge N1–N6 übernommen
+(`docs/design/figma/teil-1.4-figma-nachtraege.md`); N3 (Detailbereich ohne
+Auswahl: Punktraster, **ohne Text**) ersetzt die Zwischenlösung aus F7.
+B01 fertig (Zeilenmenü „⋮“ in Zutaten- und Schrittzeile nach Figma N1),
+B02 fertig (Master in der Fassungsleiste), B03 fertig („Keine Treffer.“ bei
+Lebensmitteln), B04 fertig (Suchtreffer markiert), B05a fertig
+(Token-Nachtrag Textauswahl: 30 Farbrollen), B05 fertig (Rezepttexte im
+Detail markierbar). Etappe 2 fertig. Test-IDs neu: UI-83–90, DS-62,
+DS-64–67; in Etappe 3 UI-91, UI-92, UI-93, UI-94, DS-63, DS-68, DS-69.
+
+Etappe 2 freigegeben. Etappe 3: T00a fertig (Listeneintrag bricht bei großer
+Schrift um, Bildschirm 7 bei 200 %), T00b fertig (Suffix im Eingabefeld), T01
+fertig (Rahmen `ListDetailTemplate`, DS-63; Seiten darin richten sich weiter
+nach der Fensterbreite, wie Figma bei 844 und 1366), T02 fertig (Rezepte:
+Liste und Detail ab 840 über Auswahlzustand, `RecipeDetailScreen.onClose`,
+UI-91), T01a fertig (Rahmen hält den Zustand von Liste und Detail beim
+Wechsel über 840, gewähltes Detail darunter verborgen — sonst gingen
+ungespeicherte Eingaben im Lebensmittel-Editor beim Drehen verloren), T03
+fertig (Lebensmittel: Liste und Editor ab 840, `FoodEditorScreen.onDone`/
+`onDirtyChanged`/`confirmDiscard`, UI-92). Etappe 3 fertig und freigegeben
+(2026-10-24, samt T01a). Etappe 4: M00a fertig (eingefrorene Ansicht gegen
+Figma `42:2010`: eine Linie zwischen Zutaten und Schritten, UI-95; Titel der
+Kopfleiste als offene Textfrage). M00b fertig (Design: Kasten der Marke
+mindestens `size-mark`, Kopfzeile des Rahmens mittig, Kontur zählt zum
+Innenabstand, Hinweis-Aktion auf Höhe der ersten Zeile; DS-70–72). M00c
+fertig (Namen und IDs der Figma-Nachträge, `rueckmeldung-figma.md` A gegen
+die Nachträge geprüft). Kandidaten nach 1.4 sammelt `status.md`.
+
+M01 fertig (App-Name „unsalted“ in iOS, macOS, Android; APP-06). M02a
+fertig (App-Symbol aus Figma mit `flutter_launcher_icons` 0.14.4, iOS
+hell/dunkel/getönt, Android adaptiv; macOS unverändert; APP-07). Achtung:
+`dart run flutter_launcher_icons` verbiegt in `project.pbxproj` jede
+„ASSETCATALOG“-Zeile — danach zurücknehmen. M02b fertig (Startbild ohne
+Punktraster mit `flutter_native_splash` 2.4.8, APP-08; das Werkzeug schreibt
+`ios/Runner/Info.plist` neu — zurücknehmen).
+
+M03 fertig (Abschluss: `unsalted_design` 0.3.0, Doku vollständig, Kapitel
+28.11 vollständig; Kandidaten nach 1.4 in `status.md`). M03a fertig
+(Quelldateien der Marke unter `apps/unsalted_app/assets/brand/`). Stand: Design 533,
+Core 472, App 21, Widgetbook 10 Tests grün.
+
+**Nächster Schritt:** Prüfung und Freigabe von Teil 1.4 durch den
+Projektverantwortlichen (iPhone: App-Name, Symbol hell/dunkel/getönt,
+Startbild hell/dunkel, Liste und Detail quer); erst danach Merge und Tags
+(`part1-v1.4.0`, `design-v0.3.0`) auf ausdrückliche Anweisung; Stopp
+nach M03, kein Merge, keine Tags. Golden-Lauf vor jedem Push.
 
 ---
 
@@ -490,9 +567,13 @@ von 1.3“. Bis dahin keine Änderungen an `main` ohne Arbeitskarte.
   Wer `expect(await tester.runAsync(...), isNull)` prüft (z. B. „gelöscht“),
   muss danach `expect(tester.takeException(), isNull)` prüfen, sonst gilt eine
   Ausnahme als Erfolg.
-- **Datenbank in Widget-Tests immer über `_closeDatabase` schließen** (seit
-  Teil 1.1d): `addTearDown(() => _closeDatabase(tester, database));` direkt
+- **Datenbank in Widget-Tests immer über `closeTestDatabase` schließen** (seit
+  Teil 1.1d, Helfer seit Teil 1.4 S02: Core `test/ui/support/db_widget_harness.dart`,
+  App `test/support/db_teardown.dart`; in den Core-Dateien ruft `_closeDatabase`
+  ihn auf): `addTearDown(() => _closeDatabase(tester, database));` direkt
   nach dem Öffnen, nie `addTearDown(() => tester.runAsync(database.close))`.
+  Der Helfer startet `close()` in der Fake-Zone und pumpt abwechselnd mit echtem
+  Warten, bis geschlossen ist (sonst rot mit Meldung statt Hänger).
   Nach einem roten Test lässt `flutter_test` den Widget-Baum stehen; Drift
   wartet in `close()` auf seine Abbestell-Timer (`Timer.run`) in der
   Fake-Zone, die dann niemand mehr auspumpt — der ganze Lauf hing (z. B. wenn
@@ -502,7 +583,19 @@ von 1.3“. Bis dahin keine Änderungen an `main` ohne Arbeitskarte.
   „A Timer is still pending“ bei grünen Tests). `ci.yml` bricht nach 20 min ab.
   Für Gegenproben mit Zeitlimit nicht `perl alarm` verwenden: Das beendet nur
   das `flutter`-Startskript, die `flutter_tester`-Kinder laufen als Waisen
-  weiter.
+  weiter — `tool/repeat_tests.dart --max-minutes` beendet den ganzen
+  Prozessbaum.
+- **`testWidgets` ignoriert `--timeout` und `dart_test.yaml`** (seit Teil 1.4
+  S01): Es setzt sein Limit selbst (`binding.defaultTestTimeout`, 10 min).
+  Das Limit von 2 min kommt aus `test/flutter_test_config.dart` (Core, App) —
+  dort nur das Zeitlimit, keine Schriften. Seltene Hänger lokal mit
+  `tool/repeat_tests.dart` jagen; Protokolle unter
+  `packages/unsalted_core/build/diagnose/` (nicht `/private/tmp`, wird beim
+  Neustart geleert), lange Läufe mit `caffeinate -dims`.
+- **Kein `await subscription.cancel()` im Widget-Test nach `runAsync`** (seit
+  Teil 1.4 S02): Die Fortsetzung landet in der Fake-Zone, die niemand
+  auspumpt — der Testkörper steht. Drift bestellt synchron ab; `unawaited`
+  genügt.
 - **`dart doc` meldet fehlende Doku-Kommentare nicht** (seit 10.2): Lücken
   findet man nur mit vorübergehend aktiviertem Lint `public_member_api_docs`
   (nicht committen) und Filter auf die über `lib/unsalted_core.dart`

@@ -27,6 +27,20 @@
 // UI-82 (D18d): Abstand `space-m` auch zwischen Name, Marke und Barcode
 // (Kennung), zwischen den Auswahlfeldern des Exports und zwischen Anweisung
 // und Timer der Schrittzeile.
+// UI-84 (Teil 1.4 B01, Figma N1): Zutatenzeile mit Zeilenmenü „⋮“ (Tooltip
+// „Aktionen für Zutat“: „Nach oben“, „Nach unten“, „Entfernen“, erste bzw.
+// letzte Zeile ausgegraut; dieselben `onReorder`-Werte wie das Ziehen),
+// Beschriftung „Einheit“, `space-m` zwischen den Zeilen, Haarlinie unten,
+// schreibgeschützt ohne Menü.
+// UI-85 (Teil 1.4 B01, Figma N1): Schrittzeile wie die Zutatenzeile — Griff,
+// Nummer und Menü unten bündig mit der Anweisung, Timer eingerückt darunter,
+// Menü mit Tooltip „Aktionen für Schritt“, Haarlinie unten.
+// UI-94 (Teil 1.4 T00b, Figma `Input/Text Field` `showSuffix`): Die Lupe
+// „Lebensmittel verknüpfen“ sitzt am Ende des Namensfelds, bündig an der
+// Kontur; der Name endet `space-m` davor.
+// UI-95 (Teil 1.4 M00a, Figma `42:2010`): In der eingefrorenen Ansicht trennt
+// genau eine Haarlinie Zutaten und Schritte — direkt unter dem letzten
+// Zutateneintrag, ohne Abstand.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +59,7 @@ import 'package:unsalted_core/src/ui/recipe_editor/ingredient_row.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_create_fields_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_frozen_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_parameters_section.dart';
+import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_ingredients_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/sections/recipe_editor_steps_section.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/step_row.dart';
 import 'package:unsalted_core/src/ui/recipe_list/sections/recipe_list_empty_section.dart';
@@ -130,7 +145,7 @@ void main() {
     expect(note.top, amount.top, reason: 'Einheit und Notiz in derselben Zeile');
     expect(tester.getRect(find.byType(AppSelect<String>)).left, greaterThan(amount.right));
     expect(amount.left, greaterThan(tester.getRect(find.byIcon(AppIcons.dragHandle)).left), reason: 'eingerückt');
-    expect(find.byTooltip('Zutat entfernen'), findsOneWidget);
+    expect(find.byTooltip('Aktionen für Zutat'), findsOneWidget);
   });
 
   testWidgets('UI-72: bei 200 % ohne Überlauf untereinander', (tester) async {
@@ -422,5 +437,139 @@ void main() {
           onTimerChanged: (_) {}, onRemove: () {}),
     );
     expect(_field(tester, 'Timer (Min.)').top - _field(tester, 'Anweisung').bottom, AppSpacing.m);
+  });
+
+  Future<List<PopupMenuItem<VoidCallback>>> openMenu(WidgetTester tester, Finder button) async {
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+    return tester.widgetList<PopupMenuItem<VoidCallback>>(find.byType(PopupMenuItem<VoidCallback>)).toList();
+  }
+
+  Future<void> choose(WidgetTester tester, String entry) async {
+    await tester.tap(find.text(entry));
+    await tester.pumpAndSettle();
+  }
+
+  String entryLabel(PopupMenuItem<VoidCallback> item) => (item.child! as Text).data!;
+
+  testWidgets('UI-84: Zeilenmenü der Zutatenzeile, Einheit beschriftet, Abstände nach Figma', (tester) async {
+    final moves = <(int, int)>[];
+    final removed = <String>[];
+    IngredientRowData data(String id, String name) =>
+        IngredientRowData(id: id, displayName: name, quantity: Decimal.fromInt(100), unitCode: 'g');
+    await _pump(
+      tester,
+      RecipeEditorIngredientsSection(
+        rows: [data('a', 'Mehl'), data('b', 'Wasser')],
+        onReorder: (from, to) => moves.add((from, to)),
+        onRowChanged: (_) {},
+        onRowRemoved: removed.add,
+        onAdd: () {},
+      ),
+      size: const Size(390, 1200),
+    );
+    final menus = find.byTooltip('Aktionen für Zutat');
+    expect(menus, findsNWidgets(2));
+    expect(find.byIcon(AppIcons.deleteOutline), findsNothing, reason: 'kein Papierkorb mehr');
+
+    var items = await openMenu(tester, menus.first);
+    expect([for (final item in items) entryLabel(item)], ['Nach oben', 'Nach unten', 'Entfernen']);
+    expect([for (final item in items) item.enabled], [false, true, true], reason: 'erste Zeile: Nach oben ausgegraut');
+    await choose(tester, 'Nach unten');
+    expect(moves, [(0, 1)], reason: 'wie Ziehen um eine Stelle');
+
+    items = await openMenu(tester, menus.last);
+    expect([for (final item in items) item.enabled], [true, false, true], reason: 'letzte Zeile: Nach unten ausgegraut');
+    await choose(tester, 'Nach oben');
+    expect(moves, [(0, 1), (1, 0)]);
+    await openMenu(tester, menus.last);
+    await choose(tester, 'Entfernen');
+    expect(removed, ['b']);
+
+    expect(find.widgetWithText(AppSelect<String>, 'Einheit'), findsNWidgets(2), reason: 'Beschriftung „Einheit“');
+    final name = tester.getRect(find.widgetWithText(AppTextField, 'Name').first);
+    final amount = tester.getRect(find.widgetWithText(AppTextField, 'Menge').first);
+    expect(amount.top - name.bottom, AppSpacing.m, reason: 'Zeile 1 zu Zeile 2');
+    final menu = tester.getRect(menus.first);
+    expect(menu.bottom, name.bottom, reason: 'Menü unten bündig mit dem Feld');
+    expect(find.descendant(of: find.byType(IngredientRow).first, matching: find.byType(AppDivider)), findsOneWidget,
+        reason: 'Haarlinie unten');
+  });
+
+  testWidgets('UI-84: schreibgeschützte Zutatenzeile ohne Menü', (tester) async {
+    await _pump(
+      tester,
+      IngredientRow(
+        data: IngredientRowData(id: 'a', displayName: 'Mehl', quantity: Decimal.fromInt(100), unitCode: 'g'),
+        onChanged: (_) {},
+        onRemove: () {},
+        readOnly: true,
+      ),
+    );
+    expect(find.byType(AppOverflowMenu), findsNothing);
+  });
+
+  testWidgets('UI-85: Schrittzeile mit Zeilenmenü, Griff, Nummer und Menü unten bündig', (tester) async {
+    final moves = <(int, int)>[];
+    final removed = <String>[];
+    await _pump(
+      tester,
+      RecipeEditorStepsSection(
+        steps: const [StepRowData(id: 'a', instruction: 'Kneten'), StepRowData(id: 'b', instruction: 'Ruhen')],
+        onReorder: (from, to) => moves.add((from, to)),
+        onInstructionChanged: (_, _) {},
+        onTimerChanged: (_, _) {},
+        onRemoved: removed.add,
+        onAdd: () {},
+      ),
+      size: const Size(390, 1200),
+    );
+    final menus = find.byTooltip('Aktionen für Schritt');
+    expect(menus, findsNWidgets(2));
+    expect(find.byIcon(AppIcons.deleteOutline), findsNothing);
+
+    var items = await openMenu(tester, menus.first);
+    expect([for (final item in items) item.enabled], [false, true, true]);
+    await choose(tester, 'Nach unten');
+    items = await openMenu(tester, menus.last);
+    expect([for (final item in items) item.enabled], [true, false, true]);
+    await choose(tester, 'Entfernen');
+    expect(moves, [(0, 1)]);
+    expect(removed, ['b']);
+
+    final row = find.byType(StepRow).first;
+    final instruction = tester.getRect(find.widgetWithText(AppTextField, 'Anweisung').first);
+    final timer = tester.getRect(find.widgetWithText(AppTextField, 'Timer (Min.)').first);
+    final handle = tester.getRect(find.descendant(of: row, matching: find.byIcon(AppIcons.dragHandle)));
+    final number = tester.getRect(find.descendant(of: row, matching: find.text('1')));
+    expect(tester.getRect(menus.first).bottom, instruction.bottom, reason: 'Menü unten bündig');
+    expect(handle.bottom, instruction.bottom - AppSpacing.m, reason: 'Griff space-m über der Feldkante');
+    expect(number.bottom, closeTo(instruction.bottom - AppSpacing.m, 0.01), reason: 'Nummer space-m über der Feldkante');
+    expect(timer.left, instruction.left, reason: 'Timer eingerückt unter der Anweisung');
+    expect(timer.top - instruction.bottom, AppSpacing.m);
+    expect(find.descendant(of: row, matching: find.byType(AppDivider)), findsOneWidget, reason: 'Haarlinie unten');
+  });
+
+  testWidgets('UI-94: Lupe am Ende des Namensfelds, Name endet space-m davor', (tester) async {
+    await _pump(tester, _row());
+    final nameField = find.widgetWithText(AppTextField, 'Name');
+    final decorator = tester.getRect(find.descendant(of: nameField, matching: find.byType(InputDecorator)));
+    final button = tester.getRect(find.byTooltip('Lebensmittel verknüpfen'));
+    final text = tester.getRect(find.descendant(of: nameField, matching: find.byType(EditableText)));
+    expect(button.right, decorator.right, reason: 'bündig an der Kontur');
+    expect(button.left - text.right, AppSpacing.m);
+  });
+
+  testWidgets('UI-95: eingefrorene Ansicht mit einer Linie zwischen Zutaten und Schritten', (tester) async {
+    await _pump(tester, RecipeEditorFrozenSection(version: _frozenVersion(), onCopy: () {}));
+    final frame = find.byType(AppFrame);
+    final divider = find.descendant(of: frame, matching: find.byType(AppDivider));
+    expect(divider, findsOneWidget);
+    final line = tester.getRect(divider);
+    expect(line.height, AppStroke.hairline, reason: 'ohne Abstand über und unter der Linie');
+    final ingredient = tester.getRect(find.ancestor(of: find.text('Mehl'), matching: find.byType(AppListItem)));
+    final step = tester.getRect(find.ancestor(of: find.text('Kneten'), matching: find.byType(AppListItem)));
+    expect(line.top, ingredient.bottom, reason: 'direkt unter dem letzten Zutateneintrag');
+    expect(step.top, line.bottom, reason: 'Schritte direkt darunter');
   });
 }

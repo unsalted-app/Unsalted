@@ -1,6 +1,12 @@
 // test/ui/versions/version_mark_test.dart
 //
 // UI-67 und UI-68 (Teil 1.3, D13): Fassungsmarke, Fassungsleiste und Master.
+// UI-87 (Teil 1.4, B02): Mit `masterVersionId` trägt die Master-Marke in der
+// Fassungsleiste die Markerfläche und „Master“ in der Semantik; die Auswahl
+// bleibt davon unabhängig.
+// UI-93 (Teil 1.4, T00a, Figma-Hinweis 4): Bildschirm 7 bei 200 % — die
+// Aktionen stehen rechtsbündig unter Zustand und Datum, „Eingefroren“ wird
+// nicht getrennt; bei 100 % daneben.
 // UI-67: Die Fassungsleiste zeigt je Version eine Marke (Entwurf gestrichelt,
 // eingefroren mit Kontur), die gewählte mit Auswahlbalken; Semantik nennt
 // Nummer, Bezeichnung und Zustand; Tippen meldet die Version; bei großer
@@ -123,4 +129,54 @@ void main() {
         startsWith('Version 2 · mit Vorteig, eingefroren, Master'));
     semantics.dispose();
   });
+
+  testWidgets('UI-87: Fassungsleiste markiert den Master', (tester) async {
+    await _pump(
+      tester,
+      VersionSwitcher(versions: _versions, selectedVersionId: 'v2', masterVersionId: 'v1', onSelected: (_) {}),
+    );
+    expect(_markOf(tester, 'V1').state, AppMarkState.highlighted, reason: 'Master mit Markerfläche');
+    expect(_markOf(tester, 'V2 · mit Vorteig').state, AppMarkState.fixed);
+    expect(_markOf(tester, 'V3').state, AppMarkState.provisional);
+    expect(_markOf(tester, 'V1').selected, isFalse, reason: 'Auswahl unabhängig vom Master');
+    expect(_markOf(tester, 'V2 · mit Vorteig').selected, isTrue);
+    final semantics = tester.ensureSemantics();
+    expect(tester.getSemantics(find.byType(VersionMark).last).label, 'Version 1, eingefroren, Master');
+    semantics.dispose();
+  });
+
+  for (final scale in [1.0, 2.0]) {
+    testWidgets('UI-93: Versionseintrag bei ${(scale * 100).toInt()} %', (tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _pump(
+        tester,
+        VersionTile(
+          version: _version(1),
+          isMaster: false,
+          onMarkMaster: () {},
+          onCopy: () {},
+          onCompare: () {},
+          onDelete: () {},
+        ),
+        size: const Size(600, 900),
+      );
+      expect(tester.takeException(), isNull);
+      final tile = tester.getRect(find.byType(VersionTile));
+      final date = tester.getRect(find.textContaining('2026'));
+      final state = tester.getRect(find.text('Eingefroren'));
+      final copy = tester.getRect(find.byTooltip('Kopie als Entwurf'));
+      final delete = tester.getRect(find.byTooltip('Löschen'));
+      final line = DefaultTextStyle.of(tester.element(find.text('Eingefroren'))).style;
+      expect(state.height, lessThanOrEqualTo(line.fontSize! * (line.height ?? 1.5) * scale + 1),
+          reason: '„Eingefroren“ in einer Zeile');
+      expect(delete.right, tile.right - AppSpacing.l, reason: 'rechtsbündig');
+      if (scale == 2) {
+        expect(copy.top, greaterThanOrEqualTo(date.bottom), reason: 'Aktionen unter Zustand und Datum');
+      } else {
+        expect(copy.top, lessThan(date.bottom), reason: 'Aktionen daneben');
+      }
+    });
+  }
 }
+

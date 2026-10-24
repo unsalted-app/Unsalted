@@ -1,7 +1,8 @@
 # Bildschirme
 
-Stand Teil 1.3 (Gestaltung aus Figma; Teil 1.2 hat alle Bildschirme auf
-Templates und Abschnitte umgestellt, C14–C27). Pfade relativ zu
+Stand Teil 1.4 (Teil 1.2 hat alle Bildschirme auf Templates und Abschnitte
+umgestellt, C14–C27; Teil 1.3 hat sie aus Figma gestaltet; Teil 1.4 ergänzt
+Zeilenmenü, Liste und Detail ab 840, Startbild). Pfade relativ zu
 `packages/unsalted_core/lib/src/ui/`. Grundlage: Spezifikation Kapitel 22 und
 28.4. Der Bildschirm hält Zustand, lädt Daten und löst Aktionen aus; jeder
 Abschnitt ist ein zustandsloses Widget in eigener Datei unter
@@ -13,19 +14,26 @@ IDs in `docs/design/figma/figma-ids.json`): was übereinstimmt, was bewusst
 abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 (ebd., Abschnitt B). Golden-Bilder: GL-02 (`packages/unsalted_core/test/goldens/`).
 
+## 0 Startbild — nativ, kein Flutter-Bildschirm (Teil 1.4 M02b)
+
+- **Zweck:** Fläche und Symbol, bis Flutter das erste Bild zeichnet.
+- **Inhalt:** hell Papier `#F9F7F1`, dunkel Tinte `#141925`, das Startbild-Symbol („u“ auf dem Markerstrich, 160 × 102) mittig; Android 12 mit dem 288-dp-Symbol und denselben Farben; bewusst ohne Punktraster (28.11.10). macOS hat kein Startbild.
+- **Dateien:** `apps/unsalted_app/ios/Runner/Base.lproj/LaunchScreen.storyboard` und `Assets.xcassets/Launch*`, `apps/unsalted_app/android/app/src/main/res/` (`launch_background.xml`, `styles.xml`, `values(-night)-v31`), erzeugt mit `flutter_native_splash`. Test APP-08.
+- **Figma:** Bibliothek, Seite „Marke“ `275:75`/`275:79` (Symbole `275:83`/`275:87`, Android 12 `275:91`/`275:95`); App `00 Startbild / Start` `230:4748`/`230:4752`.
+
 ## 1 Rezeptliste — `recipe_list/recipe_list_screen.dart`
 
 - **Zweck:** Einstieg; Rezepte finden und öffnen.
 - **Daten:** `RecipeRepository.watchRecipes()`, ausgeblendet über `pendingRecipeDeletionsProvider`.
-- **Aktionen:** Suche über Titel; Rezept öffnen (Detail); neues Rezept (FAB „Neues Rezept“, leerer Zustand); Wischen = Löschen mit 5 s „Rückgängig“.
+- **Aktionen:** Suche über Titel; Rezept öffnen (Detail; ab 840 im Detailbereich daneben, Teil 1.4 T02); neues Rezept (FAB „Neues Rezept“, leerer Zustand); Wischen = Löschen mit 5 s „Rückgängig“ (gewähltes Rezept: Auswahl aufgehoben).
 - **Zustände:** laden (`AppLoading`) · Fehler + „Erneut versuchen“ (`AppErrorState`) · leer · keine Treffer · Liste.
-- **Template:** `ListPageTemplate`.
+- **Template:** `ListPageTemplate`; seit Teil 1.4 T02 in `ListDetailTemplate` — ab 840 Liste und Rezeptdetail (Bildschirm 4) nebeneinander, ohne Auswahl Punktraster; Auswahl übersteht das Verkleinern (F6).
 - **Abschnitte:**
   1. `recipe_list/sections/recipe_list_search_section.dart` — Suchfeld (Slot `search`)
   2. `recipe_list/sections/recipe_list_empty_section.dart` — „Noch keine Rezepte.“ + „Erstes Rezept anlegen“ bzw. „Keine Treffer.“
   3. `recipe_list/sections/recipe_list_results_section.dart` — Liste mit Wischen-Löschen
 - **Bausteine:** `recipe_list/recipe_card.dart` (`RecipeCard`).
-- **Figma `1:421`:** übereinstimmend Kopfleiste mit Suche (folgt der Textgröße nicht), Einträge mit Haarlinie, Marker-Knopf, Navigation mit Auswahlbalken (ab 600 links), Leerstelle bei leerer Liste, „Keine Treffer.“ ohne Leerstelle (D16), Meldung mit Restzeitlinie (D09b). Offen: Fassungsmarke und Versionszahl je Rezept, Suchtreffer im Marker, Liste und Detail ab 840 (Teil 1.4). Golden `01_rezeptliste`.
+- **Figma `1:421`:** übereinstimmend Kopfleiste mit Suche (folgt der Textgröße nicht), Einträge mit Haarlinie, Marker-Knopf, Navigation mit Auswahlbalken (ab 600 links), Leerstelle bei leerer Liste, „Keine Treffer.“ ohne Leerstelle (D16), Meldung mit Restzeitlinie (D09b). Seit Teil 1.4 B04 übereinstimmend: Suchtreffer im Titel mit Marker. Seit Teil 1.4 T02 übereinstimmend mit Tablet `147:9746`, Handy quer `148:3817` und ohne Auswahl `219:4396` (N3): Liste in 360, Auswahlbalken am gewählten Rezept, Detail mit Haarlinie und eigener Kopfleiste, ohne Auswahl nur Punktraster. Offen: Fassungsmarke und Versionszahl je Rezept (später). Golden `01_rezeptliste`, `01_04_liste_detail`.
 - **Umgestellt:** C16.
 
 ## 2 Rezept erstellen — `recipe_editor/recipe_create_screen.dart`
@@ -55,21 +63,23 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
   5. `recipe_editor/sections/recipe_editor_actions_section.dart` — Einfrieren · Speichern (Slot `bottomBar`)
 - **Abschnitt (eingefroren):** `recipe_editor/sections/recipe_editor_frozen_section.dart` — Hinweis (`AppNotice`) + „Kopieren“, darunter Zutaten und Schritte schreibgeschützt im Zustandsrahmen (`AppFrame.fixed`) mit `VersionMark` samt Siegel (D16).
 - **Bausteine:** `recipe_editor/ingredient_row.dart` (`IngredientRow`, `IngredientRowData`), `recipe_editor/step_row.dart` (`StepRow`, `StepRowData`, `timerInputText`), `recipe_editor/food_variant_picker_dialog.dart` (`FoodVariantPickerDialog`).
-- **Figma `7:895` (Entwurf), `42:2010` (eingefroren):** übereinstimmend zweizeilige Zutatenzeile (Menge in `reflow-value-column`, Einheit und Notiz teilen den Rest), Abschnitte mit Linie, Abstand zwischen den Parameter-Feldern (D16b), Portionen, Backverlust und Fertiggewicht-Override als Zahlenfelder (D18b), Aktionsleiste (bei großer Schrift untereinander), eingefrorene Ansicht mit Hinweis und „Kopieren“. Bewusst anders: Beschriftungen über den Feldern, Entfernen mit Papierkorb, gestrichelte Unterstreichung statt Tag „nicht verknüpft“, Zustandsrahmen mit Siegel in der eingefrorenen Ansicht, Hinweistext nach Kapitel 22. Offen: Vorschau im gestrichelten Rahmen mit Kennzahlen, Portionen und Backverlust nebeneinander, Einheit als umrandetes Feld. Golden `03_rezept_bearbeiten`.
+- **Figma `7:895` (Entwurf), `42:2010` (eingefroren):** übereinstimmend zweizeilige Zutatenzeile (Menge in `reflow-value-column`, Einheit und Notiz teilen den Rest), Abschnitte mit Linie, Abstand zwischen den Parameter-Feldern (D16b), Portionen, Backverlust und Fertiggewicht-Override als Zahlenfelder (D18b), Aktionsleiste (bei großer Schrift untereinander), eingefrorene Ansicht mit Hinweis und „Kopieren“ (seit Teil 1.4 M00a gegen das neu gebaute `42:2010` geprüft: Hinweis mit Kapitel-22-Text, `space-l`, Zustandsrahmen mit Siegel und „Eingefroren“, Zutaten, eine Linie, Schritte). Seit Teil 1.4 B01 übereinstimmend mit `_Zeile/Zutat bearbeiten` und `_Zeile/Schritt bearbeiten` (Figma N1): Zeilenmenü „⋮“ mit „Nach oben“, „Nach unten“, „Entfernen“, Beschriftungen über den Feldern (auch „Einheit“), gestrichelte Unterstreichung unter dem Feld, Haarlinie je Zeile. Offen: Titel der Kopfleiste über einer eingefrorenen Fassung (`42:2010`: „Pizzateig · V3“, Code: „Rezept bearbeiten“; offene Textfrage, Kapitel 22, Kandidat nach 1.4); Vorschau im gestrichelten Rahmen mit Kennzahlen, Portionen und Backverlust nebeneinander, Einheit als umrandetes Feld. Golden `03_rezept_bearbeiten`.
 - **Umgestellt:** C25.
 
 ## 4 Rezeptdetail — `recipe_detail/recipe_detail_screen.dart`
 
 - **Zweck:** Rezept lesen, Version wählen.
 - **Daten:** `watchRecipe`, `watchVersions`, `getVersion`, `NutritionService.forVersion`; `modulesProvider` (Abschnitte, Aktionen).
-- **Aktionen:** Version wählen; „Versionen“, „Bearbeiten“; Modul-Aktionen (Kopfleiste, Menü); „Rezept löschen“ (zurück zur Liste, 5 s „Rückgängig“).
+- **Aktionen:** Version wählen; „Versionen“, „Bearbeiten“; Modul-Aktionen (Kopfleiste, Menü); „Rezept löschen“ (zurück zur Liste bzw. im Detailbereich Auswahl aufheben, 5 s „Rückgängig“).
+- **Detailbereich (Teil 1.4 T02):** ab 840 neben der Rezeptliste; die Liste übergibt `onClose`, die Kopfleiste hat dort kein „Zurück“.
 - **Zustände:** Rezept lädt / Fehler / nicht gefunden (`AppPage` ohne Kopfleiste) · Versionen laden / Fehler / keine Version · erstes Laden · Versionswechsel (alter Inhalt bleibt, Ladebalken nach 300 ms, `_VersionLoader`) · Inhalt.
 - **Template:** `DetailPageTemplate` mit `DetailSections` (zweispaltig ab `breakpoint-large` über `DetailLayout.standard`, D11).
 - **Abschnitte:**
   - Kopfleiste: `recipe_detail/sections/recipe_detail_actions_section.dart` — Versionen, Bearbeiten, Modul-Aktionen, Menü mit „Rezept löschen“
   - Haupt: `recipe_detail/version_switcher.dart` (`VersionSwitcher`, Fassungsleiste) · `recipe_detail/sections/recipe_detail_description_section.dart` · `recipe_detail/sections/recipe_detail_nutrition_section.dart` (Kopf, Tabelle, Mengenrechner)
   - Neben: `recipe_detail/sections/recipe_detail_ingredients_section.dart` · `recipe_detail/sections/recipe_detail_steps_section.dart` (Nummer, Timer als Tag) · `recipe_detail/sections/recipe_detail_extensions_section.dart` (`recipeDetailSections` nach `order`, im Bildschirm gebaut)
-- **Figma `1:607`, Tablet quer `148:4381`:** übereinstimmend Fassungsleiste mit Auswahlbalken (bricht bei großer Schrift um), Kennzahlenleiste, Warnhinweis mit Symbol, Deklaration, Mengenrechner, Schritte mit Nummer und Timer-Tag, zweispaltig ab 1200. Bewusst anders: „kcal/Portion“ statt „pro Portion“, erste Kopfspalte der Tabelle leer. Offen: Titel als `display` im Inhalt mit leerer Kopfleiste, Zutaten als `Core/Ingredient Row`, Master in der Fassungsleiste (Teil 1.4). Golden `04_rezeptdetail`.
+  - Seit Teil 1.4 B05: Beschreibung, Zutaten und Schritte markierbar und kopierbar (`AppSelectableArea`); Titel, Fassungsleiste, Nährwerte und Überschriften nicht.
+- **Figma `1:607`, Tablet quer `148:4381`:** übereinstimmend Fassungsleiste mit Auswahlbalken (bricht bei großer Schrift um), Kennzahlenleiste, Warnhinweis mit Symbol, Deklaration, Mengenrechner, Schritte mit Nummer und Timer-Tag, zweispaltig ab 1200. Seit Teil 1.4 (M00c) zeigt auch Figma „kcal/Portion“ in der Kennzahlenleiste und die erste Kopfspalte der Tabelle leer. Seit Teil 1.4 B02 übereinstimmend: Master in der Fassungsleiste mit Markerfläche. Offen: Titel als `display` im Inhalt mit leerer Kopfleiste, Zutaten als `Core/Ingredient Row`. Golden `04_rezeptdetail`.
 - **Umgestellt:** C23 (Test UI-58 für Menü-Aktionen).
 
 ## 5 Nährwertanzeige — Teil von 4
@@ -93,6 +103,7 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Abschnitte:**
   1. `versions/sections/version_list_results_section.dart` — Liste der Versionen
 - **Bausteine:** `versions/version_tile.dart` (`VersionTile`: `VersionMark`, Zustand als Wort, Datum, „Master“ als Wort, Aktionen; D13), `versions/version_mark.dart` (`VersionMark`).
+- **Große Schrift (Teil 1.4 T00a, Figma Schrift 200 `73:3817`):** die Aktionen stehen rechtsbündig unter Zustand und Datum, sobald daneben Marke und breitestes Wort nicht mehr passen; Wörter werden nicht getrennt.
 - **Figma `20:1042`:** übereinstimmend Fassungsmarken (Entwurf gestrichelt, eingefroren mit Kontur, Master mit Markerfläche). Bewusst anders: Figma zeigt eine vereinfachte Liste (Titel „Version n“, Datum, Marke rechts, keine Aktionen); der Code behält Aktionen und Tooltips (28.4.4) und zeigt Marke, Zustand als Wort, Datum und „Master“ als Wort. Kein Golden-Motiv.
 - **Umgestellt:** C20.
 
@@ -115,15 +126,15 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 
 - **Zweck:** Lebensmittel suchen und verwalten.
 - **Daten:** `FoodRepository.search`, ausgeblendet über `pendingFoodDeletionsProvider`.
-- **Aktionen:** Suche; öffnen (Editor); neu (FAB „Neues Lebensmittel“, leerer Zustand); Wischen = Löschen mit 5 s „Rückgängig“.
+- **Aktionen:** Suche; öffnen (Editor; ab 840 im Detailbereich daneben, Teil 1.4 T03); neu (FAB „Neues Lebensmittel“, leerer Zustand; ab 840 im Detailbereich, danach gewählt); Wischen = Löschen mit 5 s „Rückgängig“ (gewähltes Lebensmittel: Auswahl aufgehoben).
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · leer · Liste.
-- **Template:** `ListPageTemplate`.
+- **Template:** `ListPageTemplate`; seit Teil 1.4 T03 in `ListDetailTemplate` — ab 840 Liste und Editor (Bildschirm 10) nebeneinander, ohne Auswahl Punktraster; Auswahlwechsel mit ungespeicherten Änderungen fragt wie 10.0; Auswahl und Eingaben überstehen das Verkleinern (F6, T01a).
 - **Abschnitte:**
   1. `foods/sections/food_list_search_section.dart` — Suchfeld (Slot `search`)
-  2. `foods/sections/food_list_empty_section.dart` — „Keine Lebensmittel gefunden.“ + „Eigenes Produkt anlegen“
+  2. `foods/sections/food_list_empty_section.dart` — „Keine Lebensmittel gefunden.“ + „Eigenes Produkt anlegen“; mit Suchbegriff „Keine Treffer.“ ohne Aktion (B03)
   3. `foods/sections/food_list_results_section.dart` — Liste mit Wischen-Löschen
 - **Bausteine:** `foods/food_tile.dart` (`FoodTile`).
-- **Figma `20:1130`:** übereinstimmend wie Bildschirm 1 (Liste, Marker-Knopf, Leerstelle mit Aktion, Meldung). Offen: „leer“ und „keine Treffer“ unterscheiden, Liste und Detail ab 840 (Teil 1.4). Kein Golden-Motiv.
+- **Figma `20:1130`:** übereinstimmend wie Bildschirm 1 (Liste, Marker-Knopf, Leerstelle mit Aktion, Meldung). Seit Teil 1.4 B03 übereinstimmend mit `09 / Keine Treffer` (`218:3919`): mit Suchbegriff „Keine Treffer.“ mit Symbol, ohne Aktion und ohne Leerstelle. Seit Teil 1.4 T03 übereinstimmend mit Tablet `147:9823` und ohne Auswahl `219:4706` (N3): Liste in 360, Auswahlbalken, Editor mit Haarlinie und eigener Kopfleiste, ohne Auswahl nur Punktraster. Kein Golden-Motiv.
 - **Umgestellt:** C15.
 
 ## 10 Lebensmittel bearbeiten — `foods/food_editor_screen.dart`, `foods/package_form.dart`
@@ -131,6 +142,7 @@ abweicht (`docs/design/rueckmeldung-figma.md`, Abschnitt A) und was offen ist
 - **Zweck:** Verpackungsangaben anlegen oder ändern.
 - **Daten:** `FoodRepository.getById`, `createVariant`, `updateVariant`, `softDeleteVariant`; `NutrientValidator.check`.
 - **Aktionen:** Speichern (FAB „Lebensmittel speichern“, nicht bei Fehler); Löschen (Menü, 5 s „Rückgängig“); Zurück mit Änderungen fragt nach (10.0, `PopScope` im Bildschirm).
+- **Detailbereich (Teil 1.4 T03):** ab 840 neben der Lebensmittel-Liste; die Liste übergibt `onDone` und `onDirtyChanged`. Speichern lässt den Bereich offen (Editor lädt frisch, nach dem Anlegen das neue Lebensmittel), Löschen und Verwerfen heben die Auswahl auf; kein „Zurück“. Die Rückfrage ist `FoodEditorScreen.confirmDiscard` (Texte aus 10.0), auch beim Auswahlwechsel in der Liste.
 - **Zustände:** laden · Fehler + „Erneut versuchen“ · nicht gefunden · Eingabe mit Warnungen/Fehlern · speichert · Speicherfehler (`messages`).
 - **Template:** `FormPageTemplate` mit Hauptaktion und `AppOverflowMenu`; Inhalt `PackageForm` (`FormSections`).
 - **Abschnitte (in `PackageForm`):**

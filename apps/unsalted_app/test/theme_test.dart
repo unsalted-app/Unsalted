@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:unsalted_app/main.dart';
 import 'package:unsalted_core/unsalted_core.dart';
 import 'package:unsalted_design/unsalted_design.dart';
+import 'support/db_teardown.dart';
 
 Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 4; i++) {
@@ -23,7 +24,7 @@ void main() {
   for (final brightness in Brightness.values) {
     testWidgets('APP-02: Theme aus unsalted_design folgt dem System (${brightness.name})', (tester) async {
       final database = (await tester.runAsync(() async => CoreDatabase(NativeDatabase.memory())))!;
-      addTearDown(() => tester.runAsync(database.close));
+      addTearDown(() => closeTestDatabase(tester, database));
       tester.platformDispatcher.platformBrightnessTestValue = brightness;
       addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
 

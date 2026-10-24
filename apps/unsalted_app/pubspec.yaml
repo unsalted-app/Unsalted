@@ -55,6 +55,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   drift: ^2.35.0
+  # Teil 1.4 M02a: erzeugt App-Symbole einmalig (Ergebnis eingecheckt), nicht zur Laufzeit.
+  flutter_launcher_icons: 0.14.4
+  # Teil 1.4 M02b: erzeugt das Startbild einmalig (Ergebnis eingecheckt), kein Code in lib/.
+  flutter_native_splash: 2.4.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -97,3 +101,41 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Teil 1.4 M02a: App-Symbol aus Figma (Bibliothek, Seite „Marke“, 275:35 ff.).
+# Die Quelldateien aus der Figma-Lieferung liegen unter assets/brand/ (mit
+# LIESMICH.md, Teil 1.4 M03a; nicht in der App gebündelt); neu erzeugen mit
+# `dart run flutter_launcher_icons`. Danach die Änderung an
+# ios/Runner.xcodeproj/project.pbxproj zurücknehmen (Fehler des Werkzeugs).
+# Die Android-Ebenen sind volle 108 dp mit dem Symbol in der Schutzzone, daher
+# ohne zusätzlichen Rand (inset 0). macOS bleibt, bis Figma eine eigene
+# macOS-Fassung liefert.
+flutter_launcher_icons:
+  image_path: "assets/brand/app-symbol/app-symbol-master-1024.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path_ios_dark_transparent: "assets/brand/app-symbol/ios/app-symbol-ios-dunkel-transparent-1024.png"
+  image_path_ios_tinted_grayscale: "assets/brand/app-symbol/ios/app-symbol-ios-getoent-1024.png"
+  adaptive_icon_background: "#F9F7F1"
+  adaptive_icon_foreground: "assets/brand/app-symbol/android/app-symbol-android-vordergrund-1024.png"
+  adaptive_icon_monochrome: "assets/brand/app-symbol/android/app-symbol-android-einfarbig-1024.png"
+  adaptive_icon_foreground_inset: 0
+
+# Teil 1.4 M02b: Startbild aus Figma (275:75/275:79; Symbol 275:83/275:87,
+# Android 12 275:91/275:95): Fläche Papier bzw. Tinte, Symbol in der Mitte,
+# bewusst ohne Punktraster (Android 12 kennt nur Fläche und Symbol, iOS soll
+# gleich aussehen). Quellen wie oben unter assets/brand/; erzeugen mit
+# `dart run flutter_native_splash:create`, danach ios/Runner/Info.plist
+# zurücknehmen (das Werkzeug schreibt sie neu).
+flutter_native_splash:
+  color: "#F9F7F1"
+  image: assets/brand/startbild/startbild-symbol-hell.png
+  color_dark: "#141925"
+  image_dark: assets/brand/startbild/startbild-symbol-dunkel.png
+  android_12:
+    color: "#F9F7F1"
+    image: assets/brand/startbild/startbild-android12-hell.png
+    color_dark: "#141925"
+    image_dark: assets/brand/startbild/startbild-android12-dunkel.png
+  web: false

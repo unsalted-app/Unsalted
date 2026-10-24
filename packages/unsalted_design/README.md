@@ -1,7 +1,7 @@
 # unsalted_design
 
-Design-System von unsalted (Teil 1.2 gebaut, Teil 1.3 aus Figma gestaltet;
-`design-v0.2.0`, unveröffentlicht): Das Aussehen der App liegt ausschließlich
+Design-System von unsalted (Teil 1.2 gebaut, Teil 1.3 aus Figma gestaltet,
+Teil 1.4 ergänzt; `design-v0.3.0`, unveröffentlicht): Das Aussehen der App liegt ausschließlich
 hier. Bildschirme in den Fachpaketen legen nur fest, *was* angezeigt wird und
 *was* eine Aktion tut.
 
@@ -16,7 +16,8 @@ hier. Bildschirme in den Fachpaketen legen nur fest, *was* angezeigt wird und
   1.1); die App registriert die Lizenz mit `AppFonts.registerLicenses()`.
 - **Inhalt:** Tokens, Theme (Material-Rollen und Komponenten-Themes aus
   Tokens), Layout, Komponenten (inkl. Markenelemente unter
-  `components/brand/`), Templates; öffentliche Tür `lib/unsalted_design.dart`,
+  `components/brand/`), Templates (Liste, Detail, Formular, ab Teil 1.4
+  Liste und Detail nebeneinander); öffentliche Tür `lib/unsalted_design.dart`,
   jeder Export mit `show` (DS-03).
 - **Große Schrift:** Maße neben Text wachsen bis 200 % mit
   (`AppReflowMetric`); Komponenten brechen um, statt abzuschneiden.

@@ -1,7 +1,8 @@
 // lib/src/ui/recipe_list/sections/recipe_list_results_section.dart
 //
 // Bildschirm 1, Abschnitt „Treffer“ (Teil 1.2): Rezepte als Liste; nach links
-// wischen löscht (mit „Rückgängig“, Teil 1.1b).
+// wischen löscht (mit „Rückgängig“, Teil 1.1b). Seit Teil 1.4 (T02) trägt das
+// im Detailbereich geöffnete Rezept den Auswahlbalken.
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -12,7 +13,14 @@ import '../recipe_card.dart';
 /// Trefferliste der Rezepte.
 class RecipeListResultsSection extends StatelessWidget {
   /// Erzeugt den Abschnitt.
-  const RecipeListResultsSection({super.key, required this.recipes, required this.onOpen, required this.onDelete});
+  const RecipeListResultsSection({
+    super.key,
+    required this.recipes,
+    required this.onOpen,
+    required this.onDelete,
+    this.query = '',
+    this.selectedId,
+  });
 
   /// Anzuzeigende Rezepte.
   final List<Recipe> recipes;
@@ -23,6 +31,12 @@ class RecipeListResultsSection extends StatelessWidget {
   /// Löscht ein weggewischtes Rezept.
   final ValueChanged<Recipe> onDelete;
 
+  /// Suchbegriff; der Treffer im Titel wird markiert (Teil 1.4 B04).
+  final String query;
+
+  /// Im Detailbereich geöffnetes Rezept; `null` = keins.
+  final String? selectedId;
+
   @override
   Widget build(BuildContext context) => AppItemList.builder(
         itemCount: recipes.length,
@@ -31,7 +45,12 @@ class RecipeListResultsSection extends StatelessWidget {
           return AppSwipeToDelete(
             key: ValueKey('recipe-${recipe.id}'),
             onDelete: () => onDelete(recipe),
-            child: RecipeCard(recipe: recipe, onTap: () => onOpen(recipe)),
+            child: RecipeCard(
+              recipe: recipe,
+              onTap: () => onOpen(recipe),
+              query: query,
+              selected: recipe.id == selectedId,
+            ),
           );
         },
       );

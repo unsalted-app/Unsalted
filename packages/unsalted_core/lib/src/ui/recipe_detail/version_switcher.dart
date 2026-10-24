@@ -10,8 +10,12 @@
 // Fassungsmarken nebeneinander, Abstand `space-s`, unten ausgerichtet; die
 // gewählte trägt den Auswahlbalken, jedes Ziel mindestens `size-target`.
 // Passt die Leiste nicht in eine Zeile (große Schrift, viele Versionen),
-// bricht sie um statt abzuschneiden. Den Master kennt die Leiste nicht (die
-// Versionen tragen ihn nicht) — alle Marken zeigen Entwurf oder eingefroren.
+// bricht sie um statt abzuschneiden.
+//
+// Seit Teil 1.4 (B02, Figma `Core/Version Switcher` 142:19): Mit
+// [VersionSwitcher.masterVersionId] trägt die Master-Version die Markerfläche
+// und „Master“ in der Semantik (wie in Bildschirm 7); ohne bleiben alle Marken
+// Entwurf oder eingefroren.
 
 import 'package:flutter/material.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -24,11 +28,15 @@ class VersionSwitcher extends StatelessWidget {
   final String? selectedVersionId;
   final ValueChanged<String> onSelected;
 
+  /// Master-Version des Rezepts; `null` = keine markiert.
+  final String? masterVersionId;
+
   const VersionSwitcher({
     super.key,
     required this.versions,
     required this.selectedVersionId,
     required this.onSelected,
+    this.masterVersionId,
   });
 
   @override
@@ -40,7 +48,7 @@ class VersionSwitcher extends StatelessWidget {
         for (final version in versions)
           VersionMark(
             version: version,
-            isMaster: false,
+            isMaster: masterVersionId != null && version.id == masterVersionId,
             selected: version.id == selectedVersionId,
             onTap: () => onSelected(version.id),
           ),

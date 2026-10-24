@@ -10,6 +10,14 @@
 // `size-icon-small` um `space-xxs` abgesenkt, Text `body`. Seit D13a steht
 // eine Aktion rechtsbündig unter dem Text, sobald dem Text daneben weniger
 // als `reflow-label-min` bliebe (große Schrift, 28.10.11).
+// Seit Teil 1.4 (M00b, Figma `Feedback/Notice`, Instanz `42:2034`): Steht die
+// Aktion neben dem Text, fluchtet ihre Beschriftung mit der ersten Textzeile
+// (wie das Symbol). Dafür sitzt der obere Innenabstand im Text statt um die
+// ganze Zeile; das Tippziel der Aktion (mindestens `size-target`) darf so in
+// den Innenabstand ragen. Die Beschriftung der Aktion verteilt den
+// Zeilenabstand wie der Text gleichmäßig (wie Figma; Material-Knöpfe sonst
+// proportional), sonst lägen die Zeilen trotz gleicher Grundlinie versetzt.
+// Untereinander (große Schrift) und ohne Aktion unverändert.
 
 import 'package:flutter/material.dart';
 
@@ -63,37 +71,55 @@ class AppNotice extends StatelessWidget {
       AppNoticeKind.success => (c.surfaceSunken, c.textPrimary, c.textSecondary, AppIcons.check),
     };
     final text = Text(message, style: AppTypography.body.copyWith(color: foreground));
+    final symbol = Icon(icon, color: iconColor, size: AppSize.iconSmall);
     return Semantics(
       container: true,
       liveRegion: kind == AppNoticeKind.error,
       child: DecoratedBox(
         decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(AppRadius.s)),
-        child: AppPadding.all(
-          AppSpace.m,
-          child: AppStack(
-            direction: Axis.horizontal,
-            gap: AppSpace.m,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              // Um `space-xxs` abgesenkt, damit das Symbol mit der ersten Zeile fluchtet.
-              AppPadding.only(
-                top: AppSpace.xxs,
-                child: Icon(icon, color: iconColor, size: AppSize.iconSmall),
-              ),
-              Expanded(
-                child: action == null
-                    ? text
-                    : ReflowRow(
-                        main: text,
-                        trailing: action!,
+        child: action == null
+            ? AppPadding.all(
+                AppSpace.m,
+                child: AppStack(
+                  direction: Axis.horizontal,
+                  gap: AppSpace.m,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    // Um `space-xxs` abgesenkt, damit das Symbol mit der ersten Zeile fluchtet.
+                    AppPadding.only(top: AppSpace.xxs, child: symbol),
+                    Expanded(child: text),
+                  ],
+                ),
+              )
+            : Padding(
+                // Oben kein Innenabstand: Er sitzt im Text, damit das Tippziel der
+                // Aktion hineinragen darf.
+                padding: const EdgeInsets.fromLTRB(AppSpacing.m, 0, AppSpacing.m, AppSpacing.m),
+                child: AppStack(
+                  direction: Axis.horizontal,
+                  gap: AppSpace.m,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(padding: const EdgeInsets.only(top: AppSpacing.m + AppSpacing.xxs), child: symbol),
+                    Expanded(
+                      child: ReflowRow(
+                        main: AppPadding.only(top: AppSpace.m, child: text),
+                        trailing: DefaultTextHeightBehavior(
+                          textHeightBehavior: const TextHeightBehavior(
+                            leadingDistribution: TextLeadingDistribution.even,
+                          ),
+                          child: action!,
+                        ),
                         gap: AppSpacing.m,
                         mainMin: AppReflowMetric.labelMin.of(context),
+                        baseline: true,
                       ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }

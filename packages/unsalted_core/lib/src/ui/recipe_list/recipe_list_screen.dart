@@ -9,11 +9,20 @@
 // Löschungen sind sofort ausgeblendet. Seit Teil 1.2 (C16) aus
 // Design-Komponenten: ListPageTemplate, Abschnitte unter sections/, Baustein
 // RecipeCard.
+// Seit Teil 1.4 (T02, Figma Tablet „01+04“): ab `breakpoint-expanded` stehen
+// Liste und Rezeptdetail nebeneinander (`ListDetailTemplate`). Tippen wählt
+// dann aus, statt zu navigieren; das gewählte Rezept trägt den
+// Auswahlbalken, ohne Auswahl bleibt der Detailbereich leer (Punktraster).
+// Darunter wie bisher `Navigator.push`. Die Auswahl bleibt beim Verkleinern
+// erhalten und erscheint beim Vergrößern wieder (F6). Gelöscht — per Wischen
+// oder über „Rezept löschen“ im Detailbereich — hebt sie auf. Routen
+// unverändert (F8).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:unsalted_design/unsalted_design.dart';
 
+import '../../contracts/recipe_repository.dart';
 import '../../recipe/recipe.dart';
 import '../../providers/core_providers.dart';
 import '../recipe_detail/recipe_detail_screen.dart';
@@ -34,6 +43,9 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
   final _searchController = TextEditingController();
   String _query = '';
 
+  /// Im Detailbereich geöffnetes Rezept; `null` = keine Auswahl.
+  String? _selectedId;
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -46,11 +58,42 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
     ));
   }
 
+  /// Nebeneinander: auswählen; sonst das Rezeptdetail als eigene Seite.
+  void _open(Recipe recipe) {
+    if (ListDetailTemplate.isSplit(context)) {
+      setState(() => _selectedId = recipe.id);
+      return;
+    }
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
+    ));
+  }
+
+  void _delete(Recipe recipe) {
+    if (recipe.id == _selectedId) setState(() => _selectedId = null);
+    deleteRecipeWithUndo(context, ref, recipe);
+  }
+
   @override
   Widget build(BuildContext context) {
     final repo = ref.watch(recipeRepositoryProvider);
     final hidden = ref.watch(pendingRecipeDeletionsProvider);
+    final selectedId = _selectedId;
+    final split = ListDetailTemplate.isSplit(context);
 
+    return ListDetailTemplate(
+      list: _list(repo, hidden, split ? selectedId : null),
+      detail: selectedId == null
+          ? null
+          : RecipeDetailScreen(
+              key: ValueKey(selectedId),
+              recipeId: selectedId,
+              onClose: () => setState(() => _selectedId = null),
+            ),
+    );
+  }
+
+  Widget _list(RecipeRepository repo, Set<String> hidden, String? selectedId) {
     return ListPageTemplate(
       title: 'Rezepte',
       search: RecipeListSearchSection(
@@ -83,10 +126,10 @@ class _RecipeListScreenState extends ConsumerState<RecipeListScreen> {
 
           return RecipeListResultsSection(
             recipes: recipes,
-            onOpen: (recipe) => Navigator.of(context).push(MaterialPageRoute<void>(
-              builder: (_) => RecipeDetailScreen(recipeId: recipe.id),
-            )),
-            onDelete: (recipe) => deleteRecipeWithUndo(context, ref, recipe),
+            onOpen: _open,
+            onDelete: _delete,
+            query: _query,
+            selectedId: selectedId,
           );
         },
       ),

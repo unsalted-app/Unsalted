@@ -25,6 +25,7 @@ import 'package:unsalted_core/src/recipe/recipe_snapshot_v1.dart';
 import 'package:unsalted_core/src/ui/foods/package_form.dart';
 import 'package:unsalted_core/src/ui/recipe_editor/recipe_editor_screen.dart';
 import 'package:unsalted_core/src/ui/versions/change_descriptions.dart';
+import '../support/db_widget_harness.dart';
 
 Decimal d(String v) => Decimal.parse(v);
 
@@ -135,11 +136,7 @@ void main() {
   testWidgets('UI-66: Rezept-Editor — Backverlust und Fertiggewicht mit Komma, Eingabe mit Komma und Punkt',
       (tester) async {
     final database = (await tester.runAsync(() async => db.CoreDatabase(NativeDatabase.memory())))!;
-    addTearDown(() async {
-      await tester.pumpWidget(const SizedBox.shrink());
-      await tester.pump(Duration.zero);
-      await tester.runAsync(database.close);
-    });
+    addTearDown(() => closeTestDatabase(tester, database));
     final repo = DriftRecipeRepository(DriftRecipeDao(database), DriftFoodDao(database), database);
     final (recipeId, versionId) = (await tester.runAsync(() async {
       final recipeId = await repo.createRecipe(const NewRecipe(title: 'Brot'));

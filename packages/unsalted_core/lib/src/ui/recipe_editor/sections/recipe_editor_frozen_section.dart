@@ -8,6 +8,9 @@
 // Hinweis als `AppNotice` mit „Kopieren“ (Text unverändert), darunter der
 // schreibgeschützte Inhalt im Zustandsrahmen (`AppFrame.fixed`) mit der
 // Fassungsmarke samt Siegel und dem Zustandswort.
+//
+// Seit Teil 1.4 (M00a, Figma `42:2010`): zwischen Zutaten und Schritten genau
+// eine Haarlinie, ohne Abstand (`AppDivider.flush`).
 
 import 'package:flutter/widgets.dart';
 import 'package:unsalted_design/unsalted_design.dart';
@@ -47,7 +50,7 @@ class RecipeEditorFrozenSection extends StatelessWidget {
                     title: ingredient.displayName,
                     subtitle: formatAmount(ingredient.quantity, ingredient.unitCode),
                   ),
-                const AppDivider(),
+                const AppDivider.flush(),
                 for (final step in version.steps) AppListItem(title: step.instruction),
               ],
             ),

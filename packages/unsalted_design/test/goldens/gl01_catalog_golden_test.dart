@@ -240,6 +240,8 @@ Widget _listTemplate() => ListPageTemplate(
       primaryAction: const AppFab(icon: AppIcons.add, tooltip: 'Neu', onPressed: _noop),
     );
 
+Widget _listDetailTemplate() => ListDetailTemplate(list: _listTemplate());
+
 Widget _detailTemplate() => DetailPageTemplate(
       title: 'Detail',
       actions: const [
@@ -307,5 +309,6 @@ void main() {
   testGolden('GL-01', 'daten', _data);
   testGolden('GL-01', 'template_liste', _listTemplate, after: _showUndoMessage);
   testGolden('GL-01', 'template_detail', _detailTemplate);
+  testGolden('GL-01', 'template_liste_detail', _listDetailTemplate);
   testGolden('GL-01', 'template_formular', _formTemplate);
 }

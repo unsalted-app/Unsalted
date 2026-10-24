@@ -21,6 +21,7 @@ final listsFolder = WidgetbookFolder(name: 'lists, chips', children: [
           ),
           AppListItem(title: 'Kompakt', dense: true),
           AppListItem(title: 'Gewählt', subtitle: 'Auswahlbalken links', selected: true, onTap: noop),
+          AppListItem(title: 'Mit Suchtreffer', match: TextRange(start: 4, end: 10), onTap: noop),
         ])),
   ]),
   component('AppItemList', [

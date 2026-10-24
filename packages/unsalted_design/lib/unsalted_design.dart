@@ -40,6 +40,7 @@ export 'src/components/icons/app_icon.dart' show AppIcon, AppIconSize;
 export 'src/components/icons/app_icons.dart' show AppIcons;
 export 'src/components/surfaces/app_divider.dart' show AppDivider;
 export 'src/components/surfaces/app_surface.dart' show AppSurface, AppSurfaceTone;
+export 'src/components/text/app_selectable_area.dart' show AppSelectableArea;
 export 'src/components/text/app_text.dart' show AppText, AppTextRole;
 export 'src/components/chips/app_chip.dart' show AppChip;
 export 'src/components/chips/app_choice_chip.dart' show AppChoiceChip;
@@ -72,4 +73,5 @@ export 'src/components/navigation/app_top_bar.dart' show AppTopBar;
 // Templates
 export 'src/templates/detail_page_template.dart' show DetailLayout, DetailPageTemplate, DetailSections, DetailSplit;
 export 'src/templates/form_page_template.dart' show FormPageTemplate, FormSections;
+export 'src/templates/list_detail_template.dart' show ListDetailTemplate;
 export 'src/templates/list_page_template.dart' show ListPageTemplate;

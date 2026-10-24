@@ -3217,3 +3217,811 @@ ein Lauf grün in 22 s, CI unter Linux grün. Stopp und Bericht; nach Neustart
 des Macs (Vorgabe des Projektverantwortlichen) zwei volle Läufe nacheinander
 grün in 22 s, `--concurrency=1` nicht nötig. Ursache offen → Kandidat f für
 Teil 1.4 (hohe Priorität).
+
+## 2026-10-20 — Teil 1.4: Plan (Entwurf zur Freigabe)
+
+Vorgabe des Projektverantwortlichen: Plan für Teil 1.4 im Format von
+`plan-1.3.md`, noch kein Code; Reihenfolge = Priorität (Stabilität,
+Bedienung, Tablet, Marke); Bildschirm-Dateien ab 1.4 erlaubt (je benannt),
+Core-Logik und Tür unberührt, `module/` nur mit Begründung; Figma nur lesend,
+Fehlendes als „Figma-Nachtrag“. Plan: `docs/plan-1.4.md`, Branch `teil-1.4`
+von `main` @ `ce6431f`.
+
+*Grundlagen aus der Durchsicht (nur gelesen):* 15 Core-Testdateien unter
+`test/ui/` öffnen eine Datenbank (88 Widget-Tests), 12 mit eigenen Kopien der
+Helfer aus 1.1d, 3 inline; 20 feste Wartezeiten (50–200 ms); die 5 App-Tests
+mit Datenbank schließen noch nach dem Muster vor 1.1d. Der „Vermerk C29“ ist
+die Beobachtung eines stehenden Laufs in C29 (Teil 1.2). Figma zeigt Liste
+und Detail nur mit Auswahl (`147:9746`, `147:9823`), keine Editor-Zeilen mit
+Menü, keinen Zustand „Keine Treffer“ für Bildschirm 9, kein App-Symbol und
+kein Startbild; der Master in der Fassungsleiste und Suchtreffer im
+Listeneintrag sind gestaltet. Daraus die Figma-Nachträge N1–N6 und die Fragen
+F1–F13 im Plan.
+
+**Freigabe des Plans (Projektverantwortlicher, 2026-10-20):** Plan Teil 1.4
+geprüft und freigegeben. Antworten: F1 ja — Rezepttexte nur im Rezeptdetail
+markierbar (B05, nach N6); F2 Rückgängig beibehalten, kein Commit; F3
+`material_ui` als eigener kleiner Teil nach 1.4; F4 `Icon/more` „⋮“, Tooltips
+wie vorgeschlagen, N1 kommt von Figma — liegt sie zu Beginn von Etappe 2 nicht
+vor, B01 aus vorhandenen Komponenten mit Abweichung in
+`rueckmeldung-figma.md`; F5 ja (B04); F6–F8 wie empfohlen (F7: bis N3
+vorliegt, Leerstelle „Rezept auswählen.“ bzw. „Lebensmittel auswählen.“); F9
+„unsalted“ klein, nur sichtbare Namen; F10 nur mit Dateien aus Figma,
+`flutter_launcher_icons` als `dev_dependency` der App in Ordnung; F11 ja; F12
+ja (2 min je Test, Abnahme wie geplant); F13 ja. Weiter mit S01, Stopp nach S01
+mit Bericht. Die Antworten stehen auch in `docs/plan-1.4.md`, Abschnitt (g).
+
+**S01 — Wiederholungswerkzeug und Diagnose.** Neu `tool/repeat_tests.dart`
+(nur `dart:io`, wie `check_architecture.dart`): `--package`, `--runs`,
+`--concurrency`, `--timeout`, `--max-minutes` (beendet den Lauf samt aller
+Kindprozesse über den Prozessbaum aus `ps`; geprüft: nach einem beendeten Lauf
+kein `flutter_tester` übrig), `--load K` (K Endlosschleifen der Shell),
+`--randomize`, `--log-dir`, `--` für weitere Argumente; Reporter `expanded`,
+je Lauf Dauer, Ergebnis, rote Tests und Zeitüberschreitungen mit Namen,
+`runs.csv`.
+
+*Befund zum Zeitlimit (wichtig für F12/S02).* `testWidgets` setzt sein
+Zeitlimit selbst: `timeout: timeout ?? binding.defaultTestTimeout`
+(`flutter_test/lib/src/widget_tester.dart:204`), und
+`AutomatedTestWidgetsFlutterBinding.defaultTestTimeout` ist 10 min
+(`binding.dart:2240`). Ein ausdrückliches Zeitlimit am Test geht dem
+Standard aus Kommandozeile und `dart_test.yaml` vor — `flutter test --timeout
+300ms` ließ alle Widget-Tests grün. Wirksam ist das Limit nur über die Bindung,
+z. B. in `test/flutter_test_config.dart` (`testExecutable`). Für die
+Diagnose lag dort vorübergehend (nicht committet) eine Datei mit 90 s je
+Widget-Test; Gegenprobe mit 100 ms: alle Tests der Datei mit „Test timed out
+after 0.1 seconds“ rot, der Lauf endete trotzdem nach 3 s (die Teardowns aus
+1.1d greifen).
+
+*Matrix (Mac, 15 logische Kerne, Flutter 3.47.5, Drift 2.35.0; 90 s je
+Widget-Test):*
+
+| Serie | Läufe | grün | Dauer min/median/max | Befund |
+|---|---|---|---|---|
+| D1 Standard | 20 | 20 | 24 / 25 / 25 s | kein Hänger |
+| D2 `--concurrency=1` | 20 | 18 | 101 / 103 / 445 s | 2 Hänger, beide in `recipe_detail_screen_test.dart`: Lauf 9 „Aktion "Bearbeiten" öffnet den Editor der gewählten Version (Nachtrag 8.8a)“, Lauf 14 „UI-33: beim Versionswechsel …“; danach jeweils weitere Tests derselben Datei rot (Lauf 9 dauerte 431 s, Lauf 14 232 s) |
+| D3 Standard unter Last (15 Prozesse) | 10 | 10 | 26 / 27 / 27 s | kein Hänger |
+| D4 zufällige Reihenfolge | 10 | 10 | 24 / 25 / 25 s | kein Hänger |
+
+Last allein (H2) löst die Hänger nicht aus, die Reihenfolge innerhalb der
+Dateien (D4) auch nicht; mit `--concurrency=1` traten sie auf (2 von 20) —
+H3 in der Form „parallel verschärft“ ist damit widerlegt. Die Protokolle der
+Matrix lagen im Scratchpad unter `/private/tmp` und gingen beim Neustart des
+Macs verloren; die Zahlen oben stammen aus der Auswertung davor. D5 (die
+betroffene Datei vorübergehend instrumentiert, 50 × allein und volle Läufe
+mit `--concurrency=1`) ging mit einem zweiten Neustart verloren, bevor ein Lauf
+ausgewertet war. Vorgabe des Projektverantwortlichen: S01a sichert Werkzeug,
+Plan mit Antworten und D1–D4 (ohne die vorübergehende Instrumentierung und
+ohne die vorübergehende `flutter_test_config.dart`); D5 neu mit Protokollen
+unter `packages/unsalted_core/build/diagnose/` (von Git ignoriert, übersteht
+Neustarts), lange Läufe unter `caffeinate -dims`, D5b mit 10 Läufen.
+
+*D5 (2026-10-21, Protokolle in `packages/unsalted_core/build/diagnose/`, Lauf
+unter `caffeinate -dims`).* `recipe_detail_screen_test.dart` vorübergehend
+instrumentiert (Zeitmarken in `_settle`, `_seedDraftRecipe` und beim
+Schließen getrennt nach `streamQueries.close` und `executor.close`; nicht
+committet, Kopie als `instrumentierung.diff` im Diagnoseordner), 90 s je
+Widget-Test:
+
+| Serie | Läufe | grün | Dauer min/median/max |
+|---|---|---|---|
+| D5a: die Datei allein | 50 | 50 | 24 / 24 / 27 s |
+| D5b: volle Suite, `--concurrency=1` | 10 | 10 | 101 / 101 / 101 s |
+
+Kein Hänger. 840 Schließvorgänge (Baum abbauen bis geschlossen) dauerten
+0,6 / 1,2 / 2,2 / 3,0 ms (min / median / p99 / max).
+
+*Versuch zum Mechanismus (vorübergehend, nicht committet).* A: Abfrage in der
+Fake-Zone abonniert, Baum abgebaut, Listener **nicht** abbestellt, dann
+`runAsync(database.close)` → schließt sofort; ein offener Listener allein
+löst den Hänger also nicht aus. B: dieselbe Lage, `database.close()` in der
+Fake-Zone gestartet und abwechselnd gepumpt und echt gewartet → schließt.
+
+*Ergebnis S01.* Hänger in 2 von 120 Läufen (D1–D5), beide in D2
+(`--concurrency=1`) in `recipe_detail_screen_test.dart` (Versionswechsel bzw.
+Navigation zum Editor), dazu die 3 von 4 Läufe in der Nacht zum 20.10. (mit
+Standard-Parallelität) und die Beobachtung aus C29. Die Ursache ist lokal
+**nicht nachgestellt**; Last (D3) und Reihenfolge (D4) lösen nichts aus, ein
+offener Listener auch nicht. Das Muster (Test steht bei 0 % CPU, bis das
+Zeitlimit greift) passt zur Klasse aus 1.1d: Das Schließen der Datenbank
+wartet auf Arbeit in der Fake-Zone, die während `runAsync` niemand
+weiterschaltet. S02 härtet deshalb das Schließen selbst (in der Fake-Zone
+starten, abwechselnd pumpen und echt warten, mit Grenze und klarer Meldung)
+und setzt ein wirksames Zeitlimit je Widget-Test (2 min über die Bindung);
+feste Wartezeiten bleiben. Endgültige Testzeilen: `docs/plan-1.4.md`, (d2)
+S02, Nachtrag nach S01 — zur Freigabe.
+
+**Freigabe S01 (Projektverantwortlicher, 2026-10-21):** Testzeilen-Liste für
+S02 und die Abweichungen 1–3 (Zeitlimit über die Bindung, feste Wartezeiten
+bleiben, UI-83 prüft den Helfer) freigegeben. Ergänzung für S03: zusätzlich
+30 volle Core-Läufe mit `--concurrency=1` (die einzige Bedingung mit Hängern
+in der Matrix), Protokolle unter `packages/unsalted_core/build/diagnose/`,
+lange Läufe mit `caffeinate -dims`; Plan-Nachtrag ergänzt.
+
+**S02 — Behebung.** Neu in Core `test/ui/support/db_widget_harness.dart`
+(`closeTestDatabase`, `closeDatabasePumping`: Baum abbauen und auspumpen,
+`database.close()` in der Fake-Zone starten, dann abwechselnd `pump(50 ms)` und
+`runAsync(20 ms)`, höchstens 200 Runden, sonst `fail` mit Meldung; Fehler aus
+`close()` werden weitergereicht), `test/ui/support/db_widget_harness_test.dart`
+(UI-83) und `test/flutter_test_config.dart` (`defaultTestTimeout` 2 min, nur
+das Zeitlimit). In der App `test/support/db_teardown.dart` (gleiche Logik über
+die Tür, AT-09) und `test/flutter_test_config.dart`. Geändert nur die Zeilen
+aus `plan-1.4.md` (d2) S02: in 15 Core-Dateien je eine Importzeile, in 12 der
+Körper von `_closeDatabase` (zwei Zeilen → eine), in 3 der Inline-Teardown; in
+5 App-Dateien je eine Importzeile und die Teardown-Zeile — maschinell geprüft:
+keine `expect`-Zeile, keine Aufrufstelle, keine feste Wartezeit geändert.
+*Gegenproben:* UI-83 (a) mit Schließen nur über `runAsync(close)` →
+„Test timed out after 30 seconds“; UI-83 (c) ohne `flutter_test_config.dart`
+→ Erwartet 2 min, war 10 min; App-Zeitlimit vorübergehend 100 ms →
+`widget_test.dart` „timed out after 0.1 seconds“; danach alles zurück und grün.
+*Nebenbefund:* In UI-83 (a) hielt ein `await subscription.cancel()` nach einem
+`runAsync` den Testkörper selbst an (die Fortsetzung lag in der Fake-Zone, die
+niemand auspumpte); ohne `await` (Drift plant den Abbestell-Timer synchron)
+grün. Im Bestand gibt es kein solches `await`. Nachtrag 28.11.1 neu,
+`CLAUDE.MD` Abschnitt 4 nachgeführt. Mac: Design 461, Core 451, App 12,
+Widgetbook 10 Tests grün; `check_architecture` Exit 0; `flutter analyze` ohne
+Befund.
+
+**S03 — Abnahme Stabilität (2026-10-21, Stand `1b7bf24`).**
+`tool/repeat_tests.dart` unter `caffeinate -dims`, Protokolle unter
+`packages/unsalted_core/build/diagnose/S03/`; Zeitlimit je Widget-Test 2 min
+(S02, keine vorübergehende Konfiguration mehr):
+
+| Serie | Läufe | grün | Tests je Lauf | Dauer min/median/max |
+|---|---|---|---|---|
+| Core Standard | 20 | 20 | 451 | 24 / 25 / 25 s |
+| Core unter Last (15 Prozesse) | 10 | 10 | 451 | 26 / 27 / 27 s |
+| Core `--concurrency=1` | 30 | 30 | 451 | 102 / 102 / 102 s |
+| App Standard | 10 | 10 | 12 | 5 / 5 / 5 s |
+
+Kein Hänger, kein roter Test, keine Restprozesse vor einem Lauf. Abnahme
+nach Plan (20 + 10 + 10) und Ergänzung (30 × `--concurrency=1`) erfüllt. CI des
+PRs auf `1b7bf24` grün (mit Goldens unter Linux). Einordnung: Vor S02 traten
+die Hänger in 2 von 120 Läufen auf, in D5 (60 Läufe) schon nicht mehr; 0 von 70
+nach S02 belegt deshalb nicht, dass S02 die (nicht nachgestellte) Ursache
+beseitigt — wohl aber, dass der Helfer nichts verschlechtert. Gesichert ist:
+ein Hänger in einem Widget-Test endet jetzt nach höchstens 2 min mit Namen,
+beim Schließen der Datenbank nach rund 4 s mit klarer Meldung (UI-83).
+
+## 2026-10-22 — Teil 1.4, Etappe 2 (Bedienung)
+
+**Freigabe Etappe 1 und Vorgaben (Projektverantwortlicher):** Etappe 1
+geprüft und freigegeben (S02/S03 sauber, CI grün). Weiter mit Etappe 2; zuerst
+die Figma-Übergabe einspielen. Figma ist für 1.4 vollständig und
+veröffentlicht: N1 liegt vor → B01 genau nach Figma („⋮“-Menü mit „Nach oben“
+/ „Nach unten“ / „Entfernen“, in der ersten Zeile „Nach oben“ ausgegraut;
+Beschriftungen 4 px zum eigenen Feld und 12 px zum Feld darüber; neue
+Schrittzeile; gestrichelte Linie für „nicht verknüpft“ 2 px unter dem Feld).
+N2 liegt vor (B03, mit Symbol). N6 liegt vor: `color/selection`,
+`color/selection-handle` und `opacity/selection` stehen bisher nur in Figma →
+vor B05 als Token-Nachtrag aus Figma in beide Token-Dateien (wie D12a), eigener
+Commit. Für Etappe 3 vorgemerkt: N3 zeigt den leeren Detailbereich mit
+Punktraster und **ohne Text** — das ersetzt die Zwischenlösung aus F7. Die ZIP
+`unsalted-app-symbol-startbild.zip` bleibt bis Etappe 4 außerhalb des Repos.
+Stopp nach Etappe 2.
+
+**Figma-Nachträge N1–N6 übernommen.** `/Users/dalptri/teil-1.4-figma-nachtraege.md`
+(aus dem Figma-Chat, Stand 21.10.2026; geprüft: reiner UTF-8-Text, 63 Zeilen,
+keine Steuerzeichen) byte-gleich nach `docs/design/figma/teil-1.4-figma-nachtraege.md`.
+`docs/design/figma/figma-ids.json`: `Navigation/Menu Item` jetzt `270:284`
+(Set `state=default|disabled`), `Core/Nutrition Field` → `Data/Figure`
+(`142:56`), `Core/Nutrition Header` → `Data/Figure Row` (`142:57`), neu
+`Core/Nutrition Header` `272:297`, `Feedback/Tooltip` `273:374`,
+`Input/Text Selection` `276:297`, `Brand/Logo` `275:18`, `Brand/Symbol`
+`275:34`; neue Abschnitte `variablen_teil_1_4`, `muster` (Textauswahl
+`276:304`), `marke` (App-Symbol und Startbild), in der App `teil_1_4` (neue
+Rahmen), `bausteine_teil_1_4`, `entfernt_teil_1_4` („07 Versionen / Menü“).
+Bestehende Schlüssel sonst unverändert, Format wie bisher; DS-17 (liest nur
+`bibliothek.symbole`) grün. Die Hinweise „Für den Code“ der Übergabe gelten,
+soweit die Vorgabe oben sie für Etappe 2 nennt (1–3 → B01, 5 → B05, 6 → B03;
+7 → Etappe 3; 8 → Etappe 4). *Nicht im Umfang von Etappe 2, offen:* Hinweis 4
+(Bildschirm 7 bei 200 %: Aktionen unter Titel und Datum) und die übrigen
+Bibliotheksänderungen der Übergabe (`AppTextField(suffix:)`,
+`AppListItem(leading:)`); Namen und IDs in `components.md` und
+`rueckmeldung-figma.md` (A3 Kennzahlenleiste — Figma führt jetzt
+`Data/Figure Row`) werden mit M03 nachgeführt.
+
+**B01 — Zeilenmenü in Zutaten- und Schrittzeile (Figma N1).** Grundlage
+`_Zeile/Zutat bearbeiten` (`7:712`) und `_Zeile/Schritt bearbeiten`
+(`227:4142`), nur gelesen: beide vertikal mit `space-m` zwischen den Zeilen,
+oben `space-s`, unten `space-m` und Haarlinie; Zeile 1 unten bündig (Griff
+und Nummer mit `space-m` darunter, Feld mit Beschriftung `space-xs` darüber,
+Menüknopf `Icon/more` 48 × 48); Zeile 2 eingerückt (Zutat: Menge
+`reflow/value-column`, Einheit mit Beschriftung, Notiz; Schritt: Timer
+`reflow/field-min`). *Design:* `AppOverflowMenu` additiv `tooltip`;
+`AppDashedUnderline` zeichnet die Linie `space-xxs` unter dem Inhalt, außerhalb
+des Layouts (`DashedPainter.underline(offset:)`), damit Griff und Menü bündig
+bleiben; `AppSelect` berücksichtigt `expand` jetzt auch mit Beschriftung —
+nötig, weil die beschriftete Einheit sonst die Breite des längsten Eintrags
+(„Esslöffel“) nimmt und überläuft (UI-72 war damit rot); nur die Zutatenzeile
+nutzt `expand`. Ein Kommentar mit Beispieltext „… Zutat“ im Design-Paket schlug
+bei DS-06 an und ist ohne Beispiel neu gefasst. *Core:* `ingredient_row.dart`
+und `step_row.dart` nach Figma (Menü statt `AppIconButton` mit Papierkorb,
+optionale `onMoveUp`/`onMoveDown`, `null` = ausgegraut; Einheit mit
+„Einheit“; `space-m`; `AppDivider.flush()` unten; schreibgeschützt ohne Menü),
+die Abschnitte rufen für „Nach oben/unten“ `onReorder(i, i ∓ 1)` (gleiche
+Werte wie Ziehen); Bildschirm-Dateien unverändert. *Geänderte bestehende
+Testzeilen (freigegeben, Plan d2 B01):* `recipe_editor_screen_test.dart:176`
+(Papierkorb-Tap → Menü öffnen, `pumpAndSettle`, „Entfernen“ — eine Zeile wird
+drei), `editor_design_test.dart:133` (Tooltip „Zutat entfernen“ → „Aktionen
+für Zutat“); sonst keine. *Neu:* DS-62 (Tooltip, Semantik, ausgegrauter
+Eintrag; Standardtext ohne Tooltip), DS-64 (Unterstreichung `space-xxs`
+darunter, Layout unverändert), DS-65 (`AppSelect` mit Beschriftung und
+`expand` ohne Überlauf); UI-84 (Zutatenzeile: Menü, ausgegraute Einträge,
+`onReorder`-Werte, Entfernen, „Einheit“, `space-m`, Menü bündig, Haarlinie,
+schreibgeschützt ohne Menü), UI-85 (Schrittzeile: Menü, Griff/Nummer/Menü
+bündig, Timer eingerückt, Haarlinie), UI-86 (Bildschirm 3: „Nach oben“,
+Speichern, Positionen und Verknüpfungen wie bei UI-12). *Gegenproben:* ohne
+Menü-Verschieben in den Abschnitten → UI-84, UI-85, UI-86 rot; Zutatenzeile
+wieder `xs` → UI-84 rot; Schrittzeile oben ausgerichtet → UI-85 rot;
+Unterstreichung ohne Abstand → DS-64 rot; `AppSelect` ohne `isExpanded` → DS-65
+rot (Überlauf 96 px); danach alles zurück und grün. Nachtrag 28.11.2;
+`rueckmeldung-figma.md` (neuer Abschnitt C: vier Abweichungen erledigt, B-Zeile
+zum Auswahlfeld angepasst), `screens.md`, `components.md`, CHANGELOG des
+Design-Pakets. Mac: Design 477, Core 455, App 12, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.
+*Goldens:* Lauf 39806362646 (`goldens/b01`): abweichend 8 Bilder GL-01 `marken`
+(Unterstreichung `space-xxs` unter dem Text) und 6 Bilder GL-02
+`03_rezept_bearbeiten` (Menü „⋮“, „Einheit“ beschriftet, `space-m`, Haarlinie;
+bei Handy 200 % liegen die Zutaten unterhalb des Ausschnitts). Angesehen:
+„Milch“ (nicht verknüpft) zeigt die Strichlinie jetzt sichtbar unter dem Feld.
+
+**B02 — Master in der Fassungsleiste.** `recipe_detail/version_switcher.dart`
+additiv `masterVersionId`; die passende Marke bekommt `isMaster: true`
+(`VersionMark` kannte den Master schon: Markerfläche, „…, Master“ in der
+Semantik, seit D13). `recipe_detail/recipe_detail_screen.dart` übergibt
+`recipe.masterVersionId` — eine Zeile in einer Bildschirm-Datei, im Plan
+benannt. *Geänderte bestehende Testzeilen:* keine (ohne `masterVersionId`
+bleibt die Leiste wie bisher, UI-67/68 unverändert). *Neu:* UI-87 in
+`version_mark_test.dart` (Master `highlighted`, übrige unverändert, Auswahl
+unabhängig, Semantik „Version 1, eingefroren, Master“) und in
+`recipe_detail_screen_test.dart` (Rezept mit eingefrorener V1 als Master und
+Entwurf V2: V1 mit Markerfläche). Im Bildschirmtest schlug das Einfrieren
+zuerst still fehl („Eine Version ohne Zutaten kann nicht eingefroren
+werden“ — `runAsync` gibt Ausnahmen nur über `takeException` weiter); der Test
+legt deshalb eine Zutat an und prüft `takeException`. *Gegenproben:* ohne
+Übergabe im Bildschirm → UI-87 (Bildschirm) rot; Leiste mit `isMaster: false`
+→ UI-87 (Leiste) rot; danach grün. Nachtrag 28.11.3; `screens.md`,
+`components.md`, `rueckmeldung-figma.md` (B-Zeile → C). Mac: Core 457 Tests
+grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 39808152618 (`goldens/b02`): abweichend die 8 Bilder GL-02
+`04_rezeptdetail` (V2 ist im Golden-Motiv Master: Markerfläche, Auswahlbalken
+unverändert darunter).
+
+**B03 — „Keine Treffer.“ in der Lebensmittelliste (Figma N2).**
+`foods/sections/food_list_empty_section.dart` additiv `searching`: mit
+Suchbegriff „Keine Treffer.“ mit Symbol `emptyPlate`, ohne Aktion, damit ohne
+Leerstelle (Figma `09 / Keine Treffer` `218:3919`, Hinweis 6; wie Bildschirm 1,
+D16); `foods/food_list_screen.dart` übergibt `_query.trim().isNotEmpty` — eine
+Zeile in einer im Plan benannten Bildschirm-Datei. Ohne Suchbegriff
+unverändert. *Geänderte bestehende Testzeilen:* keine
+(`food_list_screen_test.dart:112–119` prüft den leeren Zustand ohne Suche).
+*Neu:* UI-88 (Suche „Xyz“: „Keine Treffer.“, Symbol, kein „Eigenes Produkt
+anlegen“, keine Leerstelle). *Gegenprobe:* ohne Übergabe von `searching` →
+UI-88 rot; danach grün. Kein Golden-Motiv für Bildschirm 9. Nachtrag 28.11.4;
+`screens.md`. Mac: Core 458 Tests grün.
+
+**B04 — Suchtreffer in der Rezeptliste (F5).** *Design:* `AppListItem` additiv
+`match` (Zeichenbereich des Titels): der Treffer als `TextSpan` in
+`text-on-marker`, die Markerfläche (`marker`, `radius-xs`, seitlich
+`space-xxs` wie `Highlight`) malt ein Painter hinter genau diese Zeichen
+(`TextPainter.getBoxesForSelection`). Bewusst kein `WidgetSpan` mit
+`AppHighlight`: damit bliebe der Titel kein Klartext, `find.text('Pizzateig')`
+in `recipe_list_screen_test.dart:175` würde rot (ungeplante Testzeile) und die
+Semantik müsste nachgebaut werden; so bleiben Klartext und Semantik
+unverändert. Ungültige Bereiche werden ignoriert. *Core:*
+`recipe_list/recipe_card.dart` additiv `query` mit `RecipeCard.matchOf` (erster
+Treffer ohne Groß-/Kleinschreibung wie die Suche; nur wenn die Kleinschreibung
+die Länge erhält), `recipe_list_results_section.dart` reicht `query` durch,
+`recipe_list_screen.dart` übergibt `_query` (eine Zeile, Bildschirm-Datei im
+Plan benannt). *Geänderte bestehende Testzeilen:* keine. *Neu:* DS-66
+(Spans, Farbe, Markerfläche, `find.text` und Semantik mit dem ganzen Titel;
+ohne/ungültig keine Markierung), UI-89 (Suche „TEIG“: Bereiche 4–8 und 5–9,
+Semantik; `matchOf`-Fälle), Katalog-Anwendungsfall „Mit Suchtreffer“.
+*Gegenprobe:* ohne Übergabe von `query` → UI-89 rot; danach grün. Kein
+Golden-Motiv zeigt eine Suche. Nachtrag 28.11.5; `screens.md`,
+`components.md`, `rueckmeldung-figma.md` (B-Zeile geteilt, Suchtreffer → C),
+CHANGELOG. Mac: Design 485, Core 460, App 12, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.
+
+**B05a — Token-Nachtrag Textauswahl aus Figma (N6, wie D12a).** Figma
+(Bibliothek, nur gelesen): `color/selection` hell Alias `marker/400`, dunkel
+`marker/500` („immer mit `opacity/selection`“); `color/selection-handle` hell
+`neutral/900`, dunkel `neutral/50` (Griffe und Cursor); `opacity/selection`
+40 %. Übernommen in `packages/unsalted_design/tokens/unsalted.tokens.json` und
+`docs/design/system/tokens.json` (byte-gleich, F8): zwei Farbrollen hinter
+`marker`, ein Deckkraft-Wert `opacity-selection` `"0.40"` (Format der übrigen
+Deckkraftwerte), Nutzungstexte gekürzt aus den Figma-Beschreibungen. Die
+Rundreise der JSON war vorher byte-gleich geprüft, sonst ist die Datei
+unverändert. Generator neu: `AppColorTokens.selection`, `.selectionHandle`,
+`AppOpacity.selection` (zweiter Lauf ohne Änderung). *Geänderte bestehende
+Testzeilen (Design-Paket, Grund: zwei neue Rollen aus Figma):*
+`ds04_tokens_complete_test.dart:7` (Kommentar „28 Farbrollen“ → „30“) und
+`:53` (`hasLength(28)` → `hasLength(30)`). *Gegenprobe:* `opacity-selection`
+nur in der JSON auf 0,45 geändert, nicht generiert → DS-04 rot; zurück.
+Noch keine Verwendung im Theme (folgt in B05). `components.md`,
+`design_system.md`, CHANGELOG. Mac: Design 485, Core 460, App 12, Widgetbook 10
+Tests grün; `check_architecture` Exit 0.
+*Goldens (Folge-Commit):* Die CI auf `5b3f602` war rot — das GL-01-Motiv
+`tokens_farbe` zeigt alle Farbrollen, also auch die beiden neuen; meine
+Annahme „ohne Verwendung im Theme kein Bild geändert“ war falsch, der
+Golden-Lauf fehlte vor dem Push. Weil der Commit schon auf `teil-1.4` lag,
+kommen die Bilder als eigener Commit (kein `--amend`, kein Force-Push). Lauf
+39813330313 (`goldens/b05a`): abweichend die 8 Bilder `tokens_farbe`; angesehen:
+`selection` (Marker) und `selection-handle` (Tinte) hinter `marker`, sonst nur
+verschoben. Künftig vor jedem Push mit Token- oder Design-Änderung den
+Golden-Lauf über den Hilfsbranch.
+
+**B05 — Markierbare Rezepttexte (F1, Figma N6).** *Design:*
+`component_themes.dart` mit `textSelection` (`TextSelectionThemeData`:
+`selectionColor` = `selection` × `opacity-selection`, `selectionHandleColor`
+und `cursorColor` = `selection-handle`, Figma-Hinweis 5) und `cupertino`
+(`NoDefaultCupertinoThemeData(primaryColor: selection-handle)` — auf iOS nehmen
+Griffe und Cursor diese Farbe); `AppTheme` setzt `textSelectionTheme` und
+`cupertinoOverrideTheme`. Das gilt in der ganzen App, also auch für Cursor und
+Auswahl in Eingabefeldern (vorher Material-Standard aus dem `ColorScheme`). Neu
+`AppSelectableArea` (`SelectionArea`, Figma `Input/Text Selection`); Tür,
+`public_api_golden.txt` (eine Zeile, DS-03), Katalog „Input/Text Selection“,
+CHANGELOG. *Core:* `recipe_detail_description_section.dart`,
+`…_ingredients_section.dart`, `…_steps_section.dart` betten ihren Inhalt in
+`AppSelectableArea` (Überschriften bleiben außerhalb; Abstände und
+Reihenfolge unverändert); keine Bildschirm-Datei. *Geänderte bestehende
+Testzeilen:* keine (die Texte bleiben `Text`-Widgets; `find.text` und die
+Semantik unverändert). *Neu:* DS-67 (Theme hell/dunkel, Cupertino-Primärfarbe;
+langes Drücken markiert und zeigt „Copy“), UI-90 (Beschreibung, Zutat und
+Schritt in `AppSelectableArea`, Titel, „V1“ und Überschriften nicht;
+langes Drücken auf den Schritt zeigt das Kontextmenü). *Gegenproben:* Theme
+ohne `textSelectionTheme` → DS-67 rot; `AppSelectableArea` ohne `SelectionArea`
+→ DS-67 und UI-90 rot; Beschreibung nicht eingebettet → UI-90 rot; danach
+grün. Nachträge 28.11.6 und 28.11.11 (Sammelpunkt Design-Paket);
+`components.md`, `screens.md`. Mac: Design 491, Core 461, App 12, Widgetbook
+10 Tests grün; `check_architecture` Exit 0.
+
+## 2026-10-22 — Teil 1.4, Etappe 3 (Tablet)
+
+**Freigabe Etappe 2 und Vorgaben (Projektverantwortlicher):** Etappe 2
+geprüft und freigegeben (CI grün, nur geplante Testzeilen). Weiter mit Etappe
+3; vorher als eigene Commits mit Tests und Goldens die Bibliotheksänderungen
+aus der Figma-Übergabe, auf denen die Listen aufbauen: T00a
+`AppListItem(leading:)` und Umbruch bei großer Schrift nach Hinweis 4 (damit
+Bildschirm 7 bei 200 % stimmt; ohne Bildschirm-Datei, sonst Stopp), T00b
+`AppTextField(suffix:)` für die Lupe „Lebensmittel verknüpfen“ am Feldende wie
+in Figma. Dann T01–T03, leerer Detailbereich nach N3 (Punktraster, ohne Text).
+Für Etappe 4 (vor M03) vorgemerkt: eingefrorene Ansicht nach Figma `42:2010`,
+restliche Namen und IDs in `components.md` und `rueckmeldung-figma.md`.
+Golden-Lauf vor jedem Push; ungeplante Core-Testzeilen → Stopp; Stopp nach
+Etappe 3.
+
+**T00a — Umbruch im Listeneintrag (Figma `List/Item`, Hinweis 4).**
+`AppListItem(leading:)` gab es schon (seit 1.2); neu ist der Umbruch. Figma
+(Schrift 200, `73:3817`, nur gelesen): `List/Item` als umbrechende Zeile
+(Abstand 12, Innenabstand 12/16), Marke vorn, Zustand und Datum füllen, die
+Aktionen rechtsbündig in eigener Zeile darunter. *Umsetzung (Design):* Mit
+`trailing` steht der Eintrag (`ListTile` mit Element vorn, Titel, Untertitel —
+unverändert) zusammen mit dem Element hinten in einer `ReflowRow`. Kriterium:
+die minimale Eigenbreite des `ListTile` (Innenabstand + Element vorn + Abstand
++ breitestes Wort von Titel oder Untertitel, so rechnet Flutter selbst) muss
+neben das Element hinten passen — sonst steht es rechtsbündig darunter, über
+die volle Breite, mit `space-m` darunter; nebeneinander senkrecht mittig wie
+bisher. Ein erster Versuch mit der `ReflowRow` nur im Titelplatz scheiterte an
+UI-68 (lange Marke „V2 · mit Vorteig“ ließ den Aktionen zu wenig Breite,
+Überlauf) — deshalb über den ganzen Eintrag. `ReflowRow` (intern) additiv
+`stackedGap`, `stackedEndGap`, `centered`, `mainMinIntrinsic`; `AppNotice`
+unverändert. Ohne `trailing` baut `AppListItem` exakt wie bisher. Keine
+Bildschirm-Datei; `version_tile.dart` unverändert. *Geänderte bestehende
+Testzeilen:* keine. *Neu:* DS-68 (Handy 200 %: Aktionen unter Titel und
+Untertitel, rechtsbündig, `space-m` darunter, Titel einzeilig, kein Überlauf;
+Tablet 100 %: daneben, mittig), UI-93 (Versionseintrag bei 600 Breite: 200 %
+Aktionen unter Zustand und Datum, „Eingefroren“ einzeilig; 100 % daneben).
+*Gegenprobe:* altes `ListTile(trailing:)` → DS-68 und UI-93 (200 %) rot;
+danach grün. Nachtrag 28.11.12; `components.md`, `screens.md`, CHANGELOG. Mac:
+Design 493, Core 463, App 12, Widgetbook 10 Tests grün; `check_architecture`
+Exit 0.
+
+**T00b — Suffix im Eingabefeld (Figma `Input/Text Field` `showSuffix`).**
+`AppTextField(suffix:)` gab es schon (D08). Figma (nur gelesen): `Suffix` ist
+ein `Button/Icon` 48 × 48 am Feldende, „bündig an der Kontur; der Wert endet
+`space/m` davor“. Gemessen (vorübergehender Probetest, gelöscht): Knopf schon
+48 × 48 und bündig, der Wert endete aber nur 4 px davor — Material 3 setzt
+`inputToSuffixGap` fest auf 4. *Umsetzung:* das Suffix bekommt links `space-s`
+Innenabstand (4 + 8 = `space-m`); Knopf bleibt bündig. *Geänderte bestehende
+Testzeilen:* keine. *Neu:* DS-69 (Knopf `size-target`, bündig, Abstand genau
+`space-m` — ändert Flutter seine 4 px, wird DS-69 rot), UI-94 (Lupe der
+Zutatenzeile am Feldende, Name endet `space-m` davor). *Gegenprobe:* ohne
+Innenabstand → DS-69 und UI-94 rot; danach grün. Nachtrag 28.11.13;
+`components.md`, CHANGELOG. Mac: Design 497, Core 464, App 12, Widgetbook 10
+Tests grün; `check_architecture` Exit 0.
+
+**T01 — Rahmen „Liste und Detail“ (Design).** Figma (nur gelesen): Tablet
+hochkant „01+04“ `147:9746` und „09+10“ `147:9823` (Seitenleiste 96, Liste
+360, Detail 568 mit Haarlinie links, Inhalt ab x = 1, eigene Kopfleiste);
+ohne Auswahl `219:4396`/`219:4706` (N3: Punktraster über die ganze Fläche,
+ohne Text, ohne Kopfleiste); Handy quer `148:3817` (844: nebeneinander,
+Detail 388, Seitenrand 24); Tablet quer `148:4381` (1366: Detail 910
+zweispaltig, Spalten 455, Rand 16/24). *Umsetzung:* neu
+`ListDetailTemplate(list:, detail:)` — unter `breakpoint-expanded`
+(Fensterbreite, wie Seitenleiste und Material) nur `list`; ab da Liste in
+`size-list-pane`, daneben das Detail über den Rest auf `surface-page` mit
+Haarlinie links (`stroke-hairline`, `line-hairline`), Inhalt neben der Linie;
+ohne `detail` das vorhandene Punktraster (`line-dot`), ohne Text und ohne
+Semantik. Liste und Detail stehen in einer gemeinsamen Seite (`AppPage`):
+eine Meldung wie „Rückgängig“ erscheint sonst in jeder der beiden Seiten
+(Flutter zeigt eine `SnackBar` in jedem äußersten `Scaffold`; in der App fängt
+das die Hülle ab, in Tests und Katalog nicht). `ListDetailTemplate.isSplit(context)`
+sagt dem Bildschirm, ob Tippen auswählt oder navigiert. Die Seiten in Liste und Detail richten sich
+weiter nach der Fensterbreite (Seitenrand, Detail zweispaltig ab
+`breakpoint-large`) — genau so zeigt es Figma bei 844 und 1366 (gemessen:
+`DetailSections` ergibt dort Spalten 455 mit Rand 16/24 bzw. Seitenrand 24);
+die Fenstergröße wird für das Detail nicht übersteuert. Die Seitenleiste
+bleibt in der App-Hülle (`AppPage.navigation`), Liste und Detail sind
+innere Seiten. Katalog: „ohne Auswahl“, „mit Auswahl“. *Geänderte bestehende
+Testzeilen:* keine; DS-46–48 und DS-60 unverändert grün. *Neu:* DS-63 (je
+Variante: Handy nur Liste, Tablet Liste 360, Detail füllt den Rest,
+Haarlinie nur links, Punktraster neben der Linie über die ganze Fläche,
+erster Punkt bei `space-l`, kein Text; mit Detail zwei Kopfleisten, Detail
+ab 361; Grenze 839/840 über `isSplit`; Meldung aus dem Detail einmal; 200 %
+ohne Überlauf), GL-01-Motiv
+`template_liste_detail`. *Gegenprobe:* Schwelle `medium` statt `expanded`
+und Punkte in `line-hairline` → DS-63 rot (Grenze 839; Punktfarbe nur dunkel,
+hell sind `line-dot` und `line-hairline` gleich); ohne gemeinsame Seite →
+Meldungsfall rot (zwei Meldungen); danach grün. Nachtrag 28.11.11;
+`components.md`, CHANGELOG. Mac: Design 510, Core 464, App 12,
+Widgetbook 10 Tests grün; `check_architecture` Exit 0.
+
+**T02 — Rezepte: Liste und Detail (Bildschirm 1/4).** *Umsetzung:*
+`RecipeListScreen` baut `ListDetailTemplate`; die Liste ist die bisherige
+`ListPageTemplate`. Auswahlzustand `_selectedId` im Bildschirm (F8, keine
+Routen): ab 840 (`ListDetailTemplate.isSplit`) wählt Tippen aus, darunter
+wie bisher `Navigator.push`. Das Detail ist `RecipeDetailScreen` mit
+`ValueKey` der Auswahl (ein Wechsel lädt das andere Rezept frisch, Version =
+Master) und additiv `onClose`: „Rezept löschen“ hebt dann die Auswahl auf,
+statt die Seite zu schließen (`deleteRecipeWithUndo` liest Messenger,
+Repository und Notifier sofort; der Bereich darf danach verschwinden).
+Wischen-Löschen des gewählten Rezepts hebt die Auswahl ebenfalls auf; nach
+„Rückgängig“ bleibt sie aufgehoben. Auswahlbalken über `RecipeCard.selected`
+→ `AppListItem.selected`, nur nebeneinander. Die Auswahl übersteht das
+Verkleinern (F6): unter 840 nur die Liste ohne Balken, beim Vergrößern
+wieder das Detail. „Zurück“ gibt es im Bereich nicht, weil die Liste keine
+geöffnete Seite ist (`AppTopBar` folgt Material). „Rezept anlegen“
+(`recipe_create_screen.dart`, nicht im Plan) öffnet nach dem Speichern
+weiter das Rezeptdetail als eigene Seite. *Geänderte bestehende
+Testzeilen:* keine (12 Tests der Rezeptliste, UI-40 und APP-04 unverändert
+grün). *Neu:* UI-91 (bei 1024 × 1366 und 844 × 390: ohne Auswahl leerer
+Bereich, Tippen wählt — Detail rechts ab 360, Balken, keine neue Seite,
+kein „Zurück“ —, Wechsel, „Rezept löschen“ hebt die Auswahl auf, eine
+Meldung, nach 5 s gelöscht; Wischen hebt die Auswahl auf; Auswahl übersteht
+390 × 844, unter 840 eigene Seite). GL-02: neues Motiv `01_04_liste_detail`
+(Tippen auf „Hefezopf klassisch“) über einen zusätzlichen Helfer im
+Golden-Test, bestehende Zeilen unverändert; `01_rezeptliste` Tablet ändert
+sich (leerer Detailbereich). *Gegenprobe:* ohne `onClose` → UI-91 (Löschen)
+rot; Tippen immer `push` → alle vier UI-91 rot; danach grün. Nachtrag
+28.11.7; `screens.md`. Mac: Design 510, Core 468, App 12, Widgetbook 10
+Tests grün; `check_architecture` Exit 0.
+
+**T01a — Rahmen hält den Zustand beim Wechsel über 840 (Design).**
+*Anlass (beim Vorbereiten von T03):* Unter `breakpoint-expanded` baute
+`ListDetailTemplate` nur die Liste; ein gewähltes Detail fiel aus dem Baum.
+Für das Rezeptdetail heißt das nur neu laden, für den Lebensmittel-Editor im
+Bereich aber: Dreht man ein iPhone von quer (844, nebeneinander) auf hochkant
+(390), sind ungespeicherte Eingaben ohne Rückfrage weg. F6 verlangt, dass die
+Auswahl erhalten bleibt und beim Vergrößern wieder erscheint. *Umsetzung:*
+`ListDetailTemplate` ist jetzt ein `StatefulWidget`; Liste und Detail hängen
+an je einem `GlobalKey` und werden beim Wechsel der Anordnung umgehängt statt
+neu gebaut (Suche, Scrollposition, Eingaben bleiben). Unter 840 bleibt ein
+gewähltes Detail als `Visibility(visible: false, maintainState: true)` im
+Baum: nicht gemalt, ohne Semantik, ohne Animation, ohne Fokus. Den Fokus
+nimmt ein eigenes `ExcludeFocus` innerhalb des gehaltenen Teilbaums weg: Das
+`ExcludeFocus` aus `Visibility` entsteht beim Umhängen neu und entzieht den
+Fokus nur beim Umschalten, nicht beim Einhängen (gemessen: das Feld behielt
+sonst den Fokus). Ohne Auswahl baut der Rahmen unter 840 wie bisher nur die
+Liste. Öffentliche Schnittstelle unverändert; nur die T01-Datei. Bekannte
+Grenze: Ein verborgener Editor mit ungespeicherten Eingaben hält seine
+Rückfrage beim Zurück der Plattform (Android) auch unter 840. *Geänderte
+bestehende Testzeilen:* keine. *Neu:* DS-63 „Zustand bleibt beim Wechsel“
+(1024 → 839 → 1024: Detail verborgen, aber im Baum, ohne Fokus, ohne
+Semantik; Liste behält ihre Suche; Detail behält ungespeicherte Eingaben).
+*Gegenprobe:* ohne `GlobalKey` → DS-63 rot (Eingaben weg); ohne eigenes
+`ExcludeFocus` → rot (Fokus bleibt im verborgenen Feld); danach grün.
+`components.md`, CHANGELOG, 28.11.7 und 28.11.11. Mac: Design 511, Core 468,
+App 12, Widgetbook 10 Tests grün (UI-91 unverändert); `check_architecture`
+Exit 0.
+
+**T03 — Lebensmittel: Liste und Editor (Bildschirm 9/10).** *Umsetzung:*
+`FoodListScreen` baut `ListDetailTemplate` wie T02; Zustand `_selectedId`,
+`_creating` (neues Lebensmittel im Bereich), `_round` (Schlüssel des Editors:
+ein Abschluss lädt ihn frisch) und `_detailDirty`. Ab 840 wählt Tippen aus,
+„Neues Lebensmittel“ (Marker-Knopf, leerer Zustand) öffnet den Editor im
+Bereich; darunter wie bisher `Navigator.push`. `FoodEditorScreen` additiv:
+`onDone` — nach dem Speichern mit der ID (beim Anlegen die neue aus
+`createVariant`, die Liste wählt sie), nach Löschen und Verwerfen mit `null`
+statt `pop` —, `onDirtyChanged` (gemeldet aus `PackageForm.onChanged` und
+beim Verlassen, nie im `build`) und die Rückfrage als
+`FoodEditorScreen.confirmDiscard` (Texte aus 10.0 unverändert; der Editor
+selbst nutzt sie weiter). Die Liste fragt vor jedem Auswahlwechsel und vor
+„Neues Lebensmittel“, solange der Editor Änderungen meldet; „Abbrechen“
+lässt alles stehen. Löschen im Bereich und Wischen-Löschen des gewählten
+Lebensmittels heben die Auswahl ohne Rückfrage auf (wie 1.1b). „Zurück“ der
+Plattform mit Änderungen im Bereich fragt weiter über `PopScope`; nach
+„Verwerfen“ meldet der Editor `onDone(null)` (Auswahl aufgehoben) statt die
+Liste zu schließen (28.11.8). Seite unter 840 unverändert (UI-29–32, UI-43
+grün). *Geänderte bestehende Testzeilen:* keine (Lebensmittel-Liste 8 Tests,
+Editor 8 Tests unverändert grün). *Neu:* UI-92 (1024 × 1366: Auswahl, Editor
+rechts ab 360, keine neue Seite, kein „Zurück“; Speichern lässt den Bereich
+offen, Liste zeigt den neuen Namen; Wechsel ohne Änderungen ohne Rückfrage;
+mit Änderungen Rückfrage — „Abbrechen“ bleibt, „Verwerfen“ wechselt ohne zu
+speichern; „Neues Lebensmittel“ im Bereich, nach dem Anlegen gewählt;
+„Löschen“ im Bereich ohne Rückfrage, Auswahl aufgehoben, eine Meldung, nach
+5 s gelöscht; Eingaben überstehen 844 × 390 → 390 × 844 → zurück).
+*Gegenprobe:* Wechsel ohne Rückfrage → UI-92 rot; ohne `onDone` → zwei UI-92
+rot; danach grün. Goldens: kein Motiv betroffen (`10_lebensmittel_bearbeiten`
+zeigt den Editor als eigene Seite). Nachträge 28.11.7 (ergänzt), 28.11.8;
+`screens.md`. Mac: Design 511, Core 471, App 12, Widgetbook 10 Tests grün;
+`check_architecture` Exit 0.
+
+## 2026-10-24 — Teil 1.4, Etappe 4 (Marke und Abschluss)
+
+**Freigabe Etappe 3 und Entscheidungen (Projektverantwortlicher):** Etappe 3
+geprüft und freigegeben (CI auf `6c81299` grün, Goldens geprüft, nur
+erlaubte Dateien, keine Testprüfung geändert). T01a nachträglich
+freigegeben; die bekannte Grenze (Android-Zurück fragt auch bei verborgenem
+Editor) ist Kandidat für später. Entscheidung 1 aus dem Bericht (Zurück im
+Lebensmittel-Bereich fragt wie bisher, „Verwerfen“ hebt die Auswahl auf)
+freigegeben. Entscheidung 2 („Rezept anlegen“ öffnet ab 840 weiter eine
+eigene Seite) für 1.4 freigegeben; Anlegen im Liste-Detail-Rahmen ist
+Kandidat (braucht `recipe_create_screen.dart`). App-Symbol und Startbild aus
+Figma (Bibliothek `5er28Cr7EMMcPzvusWjNyR`, Seite „Marke“) freigegeben;
+**das Startbild ist bewusst ohne Punktraster, nur Fläche und Symbol** wie in
+`275:75`/`275:79`, weil Android 12 nur Fläche und Symbol erlaubt (auch in
+28.11 festgehalten, mit M02b). Reihenfolge: M00a, M00b (Design), M00c,
+M01, M02a, M02b, M03; Stopp nach M03, kein Merge, keine Tags.
+
+**M00a — Eingefrorene Ansicht gegen Figma `42:2010`.** Figma (nur gelesen,
+nach dem Code neu gebaut): `42:2010` hell, `217:18576` dunkel, Inhalt
+`_Inhalt/Eingefroren · V3` `217:3883`. Vergleich: Bildschirm 3 für die
+eingefrorene V1 der Golden-Fixture lokal mit echten Schriften gerendert
+(vorübergehende Probe, nicht committet) und mit den Figma-Bildern
+verglichen. Übereinstimmend: Hinweis `info` mit Kapitel-22-Text und
+„Kopieren“ (tertiär), `space-l`, Zustandsrahmen `fixed` mit Marke samt
+Siegel und „Eingefroren“, Zutaten als Listeneinträge mit Menge, Schritte nur
+mit Titel. Unterschiede: (1) zwei Linien mit Abstand zwischen Zutaten und
+Schritten statt einer (Figma: `Divider` direkt unter dem letzten Eintrag) —
+behoben in `recipe_editor_frozen_section.dart` (`AppDivider.flush()`, die
+Ausnahme von Plan (c)); (2)–(4) Höhe des Markenkastens, Mitte der
+Kopfzeile, Lage der Hinweis-Aktion, Innenabstand des Rahmens — liegen in den
+Komponenten selbst (vom Projektverantwortlichen in der Bibliothek
+nachgeprüft) → M00b; (5) Titel der Kopfleiste „Rezept bearbeiten“ statt
+„Pizzateig · V3“ → offene Textfrage (Kapitel 22, Entscheidung des
+Projektverantwortlichen), in 1.4 bleibt der Text; `rueckmeldung-figma.md`
+unter B, `screens.md`, Kandidat in `status.md`. *Geänderte bestehende
+Testzeilen:* keine. *Neu:* UI-95 (eine Linie `stroke-hairline` hoch, direkt
+unter dem letzten Zutateneintrag, Schritte direkt darunter). *Gegenprobe:*
+`AppDivider()` → UI-95 rot; danach grün. `rueckmeldung-figma.md`: die
+A-Zeilen zur eingefrorenen Ansicht (Hinweistext, Zustandsrahmen) sind
+erledigt (Figma folgt dem Code) → Abschnitt C. Goldens: kein Motiv zeigt die
+eingefrorene Ansicht.
+
+**M00b — Marke, Rahmen, Hinweis nach den Figma-Komponenten (Design).**
+*Vorgabe (Projektverantwortlicher, in der Bibliothek nachgeprüft):* `Mark`
+(`114:68`, fest `107:48`) Kasten 52 × 24, Text 16 hoch mittig, links und
+rechts 9,5 = `space-s` + `stroke-frame`; `Frame` (`135:55`, fest `135:47`)
+Kopfzeile 24 hoch, Zustandswort mittig zur Marke, Innenabstand 13,5 / 17,5 =
+`space-m`/`space-l` + `stroke-frame`; `Feedback/Notice` (Instanz `42:2034`)
+Aktion oben, 32 hoch, Beschriftung auf Höhe der ersten Zeile. Nur
+`app_mark.dart`, `app_frame.dart`, `app_notice.dart`, `ReflowRow` additiv.
+*Umsetzung:* `AppMark` — die Mindesthöhe `size-mark` sitzt jetzt auf dem
+gezeichneten Kasten (vorher um ihn herum: der Kasten war nur so hoch wie der
+Text), der Inhalt darin senkrecht mittig, das Siegel quer mittig zum Text
+(Figma `counterAxisAlignItems: CENTER`; vorher oben — bei großer Schrift im
+Golden-Lauf sichtbar), waagrecht `space-s` + `stroke-frame`; das äußere
+`Center` bleibt, damit eine kurze Marke als Ziel
+der Fassungsleiste nicht auf die Zielbreite gestreckt wird. Die belegte Höhe
+bleibt max(`size-mark`, Texthöhe) wie vorher. `AppFrame` — Kopfzeile
+`crossAxisAlignment.center`, Innenabstand `space-m`/`space-l` +
+`stroke-frame` (beide Zustände). `AppNotice` mit Aktion — der obere
+Innenabstand sitzt im Text statt um die Zeile, die Aktion steht über
+`ReflowRow.baseline` (neu, additiv, Standard aus) an der ersten Grundlinie des
+Textes; ihr Tippziel (48) ragt dafür in den Innenabstand. Die Beschriftung
+verteilt den Zeilenabstand wie der Text gleichmäßig
+(`DefaultTextHeightBehavior` um die Aktion): Der Text erbt `even` aus dem
+Theme, die Material-Knöpfe nicht — sonst lagen die Zeilen trotz gleicher
+Grundlinie 2 px (Testschrift) versetzt und der Text rückte nach unten (DS-32c
+schlug dann an). Untereinander (große Schrift) und ohne Aktion unverändert
+(DS-32c, DS-72). Gemessen (vorübergehende Probe, gelöscht): Tippziel 0–48,
+Beschriftung und erste Zeile beide ab 12, Höhe des Hinweises unverändert.
+*Geänderte bestehende Testzeilen:* keine; DS-53 und DS-32c unverändert grün.
+*Neu:* DS-70 (Kasten in drei Zuständen bei 100/200 %: Höhe max(`size-mark`,
+Text), belegte Höhe = Kasten, Inhalt mittig, Siegel mittig zum Text, links/rechts `space-s` +
+`stroke-frame`; als Ziel nicht gestreckt, mittig), DS-71 (Zustandswort mittig
+zur Marke, Kasten `size-mark`, Innenabstand mit Kontur in beiden Zuständen,
+`space-s` unter der Kopfzeile), DS-72 (bei 1024 Breite 100/200 %
+nebeneinander: Text `space-m` unter der Kante, Beschriftung auf Höhe der
+ersten Zeile, Tippziel ≥ `size-target` und nicht über der Kante; ohne Aktion
+unverändert). *Gegenprobe:* alte `AppMark` → DS-70 rot; Siegel ohne Querzentrierung →
+DS-70 (200 %) rot; alter `AppFrame` →
+DS-71 rot; alter `AppNotice` → DS-72 (100 %) rot; ohne `baseline` → DS-72
+(200 %) rot; ohne gleichmäßige Verteilung → DS-72 rot; danach grün.
+`rueckmeldung-figma.md`: A3 Tippziel der Hinweis-Aktion 48 statt 32 (bewusst),
+B-Zeile „Aktion im Hinweis in `size-control-small`“ dadurch ersetzt, C drei
+Zeilen erledigt; `components.md` (Regel „Die Kontur zählt zum
+Innenabstand“), CHANGELOG, 28.11.11. Mac: Design 533, Core 472, App 12,
+Widgetbook 10 Tests grün; `check_architecture` Exit 0.
+*Goldens:* Lauf 40068756165 (`goldens/m00b2`; der erste Lauf 40068316746
+zeigte bei 200 % das Siegel oben — daraufhin quer mittig): 32 Bilder
+geändert — GL-01 `marken` (8: Kästen 24 hoch, Kopfzeile mittig, Siegel
+mittig), GL-01 `rueckmeldung` (8: „Kopieren“ auf Höhe der Zeile; der
+einzeilige Hinweis daneben 60 statt 72 hoch; untereinander 1–2 px durch die
+gleichmäßige Verteilung), GL-02 `04_rezeptdetail` und `01_04_liste_detail`
+(je 8: Marken der Fassungsleiste 24 hoch). Alle Bilder angesehen, bei 200 %
+auf Abschneiden und Überlauf geprüft: nichts Neues. Der Streifen unter
+„Erneut versuchen“ und der angeschnittene Knopf der Leerstelle im Motiv
+`rueckmeldung` (Handy 200 %) standen schon vorher im Bild (feste Motivfläche
+des Katalogs, Überlauf ist in Goldens erlaubt).
+
+**M00c — Restliche Namen und IDs aus den Figma-Nachträgen (Doku).** (Im
+ersten Auftrag „M00b“; die Bezeichnung ging an den Design-Commit.)
+`components.md`: `Data/Figure Row`/`Data/Figure` statt `Core/Nutrition
+Header`/`Field` (`142:57`/`142:56`), `Core/Nutrition Header` `272:297` beim
+`NutritionHeader`, `Navigation/Menu Item` `270:284` (Set `state`),
+`Feedback/Tooltip` `273:374` beim `AppIconButton`, Muster „Textauswahl“
+`276:304`, `Brand/Logo` `275:18` (noch nicht im Code) und `Brand/Symbol`
+`275:34` (native Dateien, M02), Tablet-Rahmen samt „ohne Auswahl“ hoch/quer
+beim `ListDetailTemplate`, `_Aktionen/Version · …` beim `VersionTile`, neu
+die Zeile `RecipeEditorFrozenSection` (`217:3883`, `42:2010`).
+`figma-ids.json`: Varianten `Mark` fest `107:48`, `Frame` fest `135:47`,
+Instanzen in `42:2010` (`42:2034`, `217:3994`); alles Übrige stand schon
+darin. `rueckmeldung-figma.md`: Abschnitt A gegen die Nachträge und die
+Dateien geprüft (nur gelesen) — erledigt und nach C: Kennzahlenleiste
+„kcal/Portion“ (`1:607`), Mengenrechner „kcal“ ohne Einheit (`179:392`),
+Versionsvergleich ohne Metadaten (`3:595`), erste Kopfspalte der
+Deklaration leer (`140:116`), Bildschirm 7 wie der Code (`20:1042`,
+Aktionen in der Zeile), Kennzahlenleiste als `Data/Figure Row`, Tippziel
+48 × 48 (`142:18`), Aktion bei großer Schrift darunter (`134:69`, `136:50`),
+„*“ nach der Einheit (`134:179`); aus B nach C: Liste und Detail ab 840
+(T01–T03). Offen bleiben in A: Hinzufügen/Entfernen im Vergleich (nur
+Semantik), `Icon/delete`-Doppel, Größe des Auswahldialogs, Restzeitlinie
+der Meldung, Tippziel der Hinweis-Aktion (M00b), Tokens/Regeln (A4, um die
+Punkte ergänzt, die Figma jetzt zeigt). `screens.md`: Bildschirm 4 ohne
+„bewusst anders“. Keine Code- und Teständerung.
+
+**M01 — App-Name „unsalted“ (F9).** iOS `Info.plist`: `CFBundleDisplayName`
+„Unsalted App“ → „unsalted“, `CFBundleName` „unsalted_app“ → „unsalted“;
+macOS `Info.plist`: `CFBundleName` `$(PRODUCT_NAME)` → „unsalted“, neu
+`CFBundleDisplayName` „unsalted“; Android `android:label` „unsalted_app“ →
+„unsalted“. Unverändert: `PRODUCT_NAME` (`unsalted_app`, macOS
+`AppInfo.xcconfig`; iOS `$(TARGET_NAME)`), Bundle-Kennungen
+(`de.unsalted.unsaltedApp`, Tests `….RunnerTests`), `applicationId`
+(`de.unsalted.unsalted_app`), `MainMenu.xib`. *Neu:* APP-06 (Namen in iOS,
+macOS, Android; Produktname, Kennungen und `applicationId` unverändert).
+*Gegenprobe:* alte Namen → APP-06 rot (3); danach grün. *Geänderte bestehende
+Testzeilen:* keine. Lokal geprüft: `plutil -lint` beider `Info.plist` OK;
+`flutter build ios --no-codesign` und `flutter build macos` (Release)
+erfolgreich, ohne Änderung an eingecheckten Dateien; im gebauten iOS-Bundle
+`CFBundleDisplayName`/`CFBundleName` „unsalted“, Kennung
+`de.unsalted.unsaltedApp`, Programm `Runner`; im macOS-Bundle ebenso
+„unsalted“, Bundle-Datei weiter `unsalted_app.app`. *macOS, nur festgehalten
+(aus dem Bundle abgeleitet, die laufende App nicht angesehen):* Das App-Menü
+in der Menüleiste und das Dock zeigen „unsalted“ (`CFBundleName`); die
+Einträge aus `MainMenu.xib` („About APP_NAME“, „Hide APP_NAME“, „Quit
+APP_NAME“) bleiben englisch, den Platzhalter ersetzt die Flutter-Engine beim
+Start durch den Bundle-Namen („About unsalted“ …; die Engine enthält
+`APP_NAME` und liest `CFBundleName`); der Finder zeigt den Dateinamen
+`unsalted_app.app` (`PRODUCT_NAME`, bleibt nach F9). Deutsches macOS-Menü
+ist Kandidat für später. Auf dem iPhone prüft der Projektverantwortliche den
+Namen unter dem Symbol. Nachtrag 28.11.9. Mac: App 16 Tests grün.
+
+**M02a — App-Symbol aus Figma.** *Lieferung geprüft* (ZIP außerhalb des
+Repos nach `/Users/dalptri/unsalted-marke/` entpackt, nur gelesen; LIESMICH
+gelesen): Master und iOS hell/dunkel 1024² ohne Alphakanal, iOS dunkel
+transparent und getönt (weiß, „u“ ausgespart) mit Alpha, Android Vordergrund
+/ einfarbig 1024² transparent, Hintergrund deckend `#F9F7F1`, Play-Store 512²;
+Maße und Grundfarben gegen Figma (`275:35`–`275:55`, nur gelesen) und Master
+optisch gegen `275:35` verglichen. Gemessen (Skript ohne PIL): Vordergrund
+sichtbar x 291–731, y 372–651 — innerhalb der Schutzzone 66 dp (199–825 px,
+Ecken höchstens 262 px vom Mittelpunkt bei Radius 313); einfarbig genau eine
+deckende Farbe `#FFFFFF`; Farben exakt aus den Tokens. Keine macOS-Fassung im
+ZIP → macOS unverändert, „macOS-Symbol in Figma nachliefern“ offen.
+*Umsetzung:* `flutter_launcher_icons` 0.14.4 als `dev_dependency` der App
+(feste Version, Schlüssel im Pub-Cache geprüft), Konfiguration in
+`pubspec.yaml` nach dem Vorschlag aus dem ZIP plus
+`adaptive_icon_foreground_inset: 0` — die Voreinstellung 16 % hätte die
+Figma-Ebenen, die die Schutzzone schon einhalten, nochmals verkleinert (gilt
+auch für die einfarbige Ebene). Die Quelldateien lagen nur zum Erzeugen unter
+`apps/unsalted_app/assets/brand/` und sind nicht eingecheckt (der Ordner
+gehört nicht zu den erlaubten Dateien); eingecheckt ist das Ergebnis.
+*Geändert:* `pubspec.yaml`, `pubspec.lock`, `ios/Runner/Assets.xcassets/AppIcon.appiconset`
+(49 Einträge: hell, `luminosity: dark`, `tinted`; neu 38/64/68 pt), unter
+`android/app/src/main/res/` die `mipmap-*/ic_launcher.png`, neu
+`mipmap-anydpi-v26/ic_launcher.xml`, `drawable-*/ic_launcher_foreground.png`
+und `ic_launcher_monochrome.png`, `values/colors.xml`. *Zurückgenommen:* Das
+Werkzeug ersetzte in `ios/Runner.xcodeproj/project.pbxproj` jede Zeile mit
+„ASSETCATALOG“ und machte so aus
+`ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES` den
+ungültigen Wert „AppIcon“ (Fehler im Werkzeug; gemeint ist
+`ASSETCATALOG_COMPILER_APPICON_NAME`, das schon „AppIcon“ ist) — Datei
+unverändert gelassen. `AndroidManifest.xml` schrieb es inhaltsgleich neu (kein
+Unterschied). *Neu:* APP-07 (iOS 1024 ohne Alphakanal, dunkel und getönt
+vorhanden; Android `mipmap-anydpi-v26/ic_launcher.xml` mit Hintergrund
+`#F9F7F1`, Vordergrund und einfarbig, `inset` 0, Ebenen in allen fünf Dichten
+auf transparent). *Gegenprobe:* 1024 mit Alpha, `inset` 16 % und ohne
+adaptive Definition → APP-07 rot; danach grün. *Geänderte bestehende
+Testzeilen:* keine. Lokal: `flutter build ios --no-codesign` erfolgreich
+(Bundle mit `AppIcon` in `Assets.car`); `flutter build apk --debug` **nicht
+lokal geprüft** (kein Android-SDK auf dem Mac). Nachtrag 28.11.10. Mac: App 18
+Tests grün.
+
+**M02b — Startbild aus Figma.** *Entscheidung (Projektverantwortlicher):*
+Startbild bewusst ohne Punktraster, nur Fläche und Symbol wie in `275:75`/
+`275:79` — die SplashScreen-API ab Android 12 erlaubt nur Fläche und Symbol,
+und iOS soll gleich aussehen (28.11.10). *Lieferung geprüft:*
+`startbild-symbol-hell/-dunkel.png` 640 × 408 = 160 × 102 pt @4x
+(Figma `275:83`/`275:87` 160 × 102), Marker hell `#FEE545` bzw. dunkel
+`#EDD13D`, Tinte `#141925`, transparent; `startbild-android12-hell/-dunkel.png`
+1152² = 288 dp @4x (`275:91`/`275:95`), Symbol im 768-px-Kreis (Ecken
+höchstens 380 px vom Mittelpunkt, Radius 384). *Umsetzung:*
+`flutter_native_splash` 2.4.8 als `dev_dependency` (feste Version, nur zum
+Erzeugen), Konfiguration aus dem Vorschlag im ZIP, geprüft nach den Regeln:
+`color` Papier, `color_dark` Tinte, Symbol mittig, `android_12` mit den
+288-dp-Dateien und denselben Farben; zusätzlich `web: false` (die App hat
+keinen Web-Ordner). Kein Code in `lib/`, kein `preserve`/`remove`. Quellen
+wie in M02a nur vorübergehend unter `assets/brand/`, danach entfernt.
+*Geändert:* `pubspec.yaml`, `pubspec.lock`;
+`ios/Runner/Base.lproj/LaunchScreen.storyboard` (Hintergrundbild über die
+ganze Fläche, Symbol `contentMode="center"`), `Assets.xcassets/LaunchImage.imageset`
+(160 × 102 @1x–3x, hell und dunkel), neu `LaunchBackground.imageset` (1 × 1
+Papier bzw. Tinte, `luminosity: dark`); unter `android/app/src/main/res/`
+`drawable(-night)(-v21)/launch_background.xml` (Fläche + Symbol mittig), neu
+`background.png` (Papier/Tinte), `splash.png` und `android12splash.png` je
+Dichte und Nachtfassung, `values(-night)/styles.xml` (vier Fenster-Einträge
+des Werkzeugs: `forceDarkAllowed` false, kein Vollbild, Systemleisten,
+Aussparung), neu `values(-night)-v31/styles.xml`
+(`windowSplashScreenBackground` Papier/Tinte, `windowSplashScreenAnimatedIcon`
+`android12splash`). *Zurückgenommen:* `ios/Runner/Info.plist` — das Werkzeug
+schrieb die Datei mit neuer Einrückung neu und ergänzte `UIStatusBarHidden =
+false`, also das Standardverhalten (Statusleiste sichtbar); ohne den Eintrag
+gleich, Datei unverändert gelassen. `AndroidManifest.xml` blieb unberührt
+(keine Ausrichtung gesetzt). *Neu:* APP-08 (iOS: Hintergrund hell/dunkel als
+Fläche, Symbol mittig 160 × 102; Android bis 11 Fläche + Symbol mittig, ab
+12 Farben und 288-dp-Symbol, hell und dunkel; kein Startbild-Code in `lib/`).
+*Gegenprobe:* dunkle Fläche iOS = hell, Android-12-Farbe dunkel falsch, Code
+in `lib/` → APP-08 rot; danach grün. *Geänderte bestehende Testzeilen:*
+keine. Lokal: `flutter build ios --no-codesign` und `flutter build macos`
+erfolgreich (macOS ohne Startbild, Symbol unverändert); `flutter build apk
+--debug` **nicht lokal geprüft** (kein Android-SDK). Mac: App 21 Tests grün.
+Auf dem iPhone zu prüfen: Startbild hell und dunkel (Papier bzw. Tinte, „u“
+auf dem Markerstrich mittig, kein Punktraster), kein Aufblitzen eines
+anderen Grunds vor dem ersten Bild.
+
+**M03 — Abschluss Teil 1.4.** `unsalted_design` Version 0.3.0
+(`pubspec.yaml`; die Lock-Dateien von App und Katalog führen die
+Pfad-Version, Core hat keine eingecheckte), CHANGELOG mit Zusammenfassung
+(Tag `design-v0.3.0` erst nach Freigabe), README des Pakets (Teil 1.4,
+Templates), `docs/design/system/README.md` „freigegeben (design-v0.2.0);
+design-v0.3.0 (Teil 1.4) zur Freigabe“. `design_system.md`: Regel 6 um Liste
+und Detail ab `breakpoint-expanded` ergänzt, neue Regel 10 „Gemessen wird, was
+man sieht“ (Kasten der Marke, Kontur zählt zum Innenabstand). `screens.md`:
+Stand 1.4, neuer Abschnitt 0 Startbild (nativ). `components.md`: Stand 1.4.
+`rueckmeldung-figma.md`: A5 Marke (macOS-Symbol fehlt, Startbild wie Figma).
+Kapitel 28.11 vollständig (28.11.1–28.11.13). `status.md`: Stand nach Etappe
+4 und Kandidaten nach 1.4 — Titel von Bildschirm 3 über einer eingefrorenen
+Fassung (Kapitel 22), Rezept anlegen im Liste-Detail-Rahmen, macOS-Menü auf
+Deutsch, `material_ui` (F3), Fassungsmarke je Rezept in der Liste,
+Quelldateien der Marke im Repo, macOS-Symbol nachliefern, Android-Zurück bei
+verborgenem Editor. Keine Code- und Teständerung außer der Version. Mac:
+Design 533, Core 472, App 21, Widgetbook 10 Tests grün; `check_architecture`
+Exit 0. Kein Merge, keine Tags (Stopp nach M03).
+
+**M03a — Quelldateien der Marke im Repo.** Freigabe Teil 1.4 nach dem
+iPhone-Test (Projektverantwortlicher); vor dem Merge die Quelldateien:
+genau die 9 Dateien, auf die die Konfiguration in `pubspec.yaml` zeigt
+(`flutter_launcher_icons`: Master, iOS dunkel transparent und getönt,
+Android Vordergrund und einfarbig; `flutter_native_splash`: Startbild-Symbol
+hell/dunkel, Android 12 hell/dunkel), plus `LIESMICH.md` aus der
+Figma-Lieferung nach `apps/unsalted_app/assets/brand/` (gleiche Struktur wie
+im ZIP; nicht in `flutter: assets:`, also nicht in der App gebündelt). Beide
+Werkzeuge neu gelaufen: Ergebnis bytegleich (keine Änderung an erzeugten
+Dateien); nur die bekannten Nebenwirkungen zurückgenommen —
+`project.pbxproj` (`ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS`
+→ „AppIcon“) und `ios/Runner/Info.plist` (neu formatiert, `UIStatusBarHidden
+= false`). In `pubspec.yaml` nur die beiden Kommentare berichtigt (Quellen
+jetzt eingecheckt, Nebenwirkungen zurücknehmen); Konfiguration unverändert.
+Kandidat „Quelldateien der Marke ins Repo“ erledigt.

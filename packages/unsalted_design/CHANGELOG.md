@@ -2,7 +2,62 @@
 
 Versionen des Design-Pakets tragen eigene Tags `design-vX.Y.Z`.
 
-## design-v0.2.0 — unveröffentlicht (Teil 1.3, Gestaltung aus Figma)
+## design-v0.3.0 — Teil 1.4, Stabilität, Bedienung, Tablet, Marke
+
+Version in `pubspec.yaml` 0.3.0 (M03); der Tag folgt nach Freigabe.
+Zusammengefasst: Zeilenmenü-Bausteine (Tooltip, ausgegraute Einträge),
+Suchtreffer im Listeneintrag, Textauswahl aus Tokens (30 Farbrollen),
+Umbruch des Listeneintrags bei großer Schrift, Suffix am Feldende, Rahmen
+„Liste und Detail“ ab `breakpoint-expanded`, Marke/Rahmen/Hinweis nach den
+Figma-Komponenten (Regel „Die Kontur zählt zum Innenabstand“). Abhängigkeit
+weiter nur `flutter`. Im Einzelnen:
+
+
+- Marke, Rahmen, Hinweis nach den Figma-Komponenten (M00b; `Mark` `107:48`,
+  `Frame` `135:47`, `Feedback/Notice` `42:2034`): `AppMark` — der gezeichnete
+  Kasten selbst ist mindestens `size-mark` hoch, Inhalt senkrecht mittig,
+  Siegel mittig zum Text, waagrecht `space-s` + `stroke-frame` (belegte Höhe unverändert);
+  `AppFrame` — Marke und Zustandswort senkrecht mittig, Innenabstand
+  `space-m`/`space-l` + `stroke-frame`; `AppNotice` — die Beschriftung der
+  Aktion daneben fluchtet mit der ersten Textzeile, ihr Tippziel ragt in den
+  oberen Innenabstand. Intern `ReflowRow.baseline` (additiv). Regel „Die
+  Kontur zählt zum Innenabstand“. Tests DS-70–72.
+- Liste und Detail (T01, Figma Tablet „01+04“/„09+10“, N3): neu
+  `ListDetailTemplate` (ab `breakpoint-expanded` Liste in `size-list-pane`,
+  Detail mit Haarlinie links; ohne Detail Punktraster ohne Text;
+  `ListDetailTemplate.isSplit`). Test DS-63, GL-01 `template_liste_detail`.
+  T01a: Beim Wechsel über `breakpoint-expanded` behalten Liste und Detail
+  ihren Zustand; darunter bleibt ein gewähltes Detail verborgen (ohne Fokus,
+  ohne Semantik).
+- Suffix im Eingabefeld (T00b, Figma `Input/Text Field` `showSuffix`):
+  `AppTextField.suffix` bündig an der Kontur, der Wert endet `space-m` davor
+  (vorher 4 px). Test DS-69.
+- Umbruch im Listeneintrag (T00a, Figma `List/Item`, Hinweis 4): Mit
+  `trailing` stehen Eintrag und Element hinten in einer `ReflowRow`;
+  passt daneben das Element vorn samt breitestem Wort nicht mehr (minimale
+  Eigenbreite des `ListTile`), steht das Element rechtsbündig darunter, mit
+  `space-m` darunter. `ReflowRow` additiv `stackedGap`, `stackedEndGap`,
+  `centered`, `mainMinIntrinsic`. Test DS-68.
+- Zeilenmenü (B01): `AppOverflowMenu` additiv mit `tooltip` (Tooltip und
+  Semantik des Menüknopfs, Figma `Feedback/Tooltip`); `AppDashedUnderline`
+  zeichnet die Linie `space-xxs` unter dem Inhalt, außerhalb des Layouts
+  (Figma-Hinweis 2); `AppSelect.expand` gilt auch mit Beschriftung. Tests
+  DS-62, DS-64, DS-65.
+- Token-Nachtrag Textauswahl (B05a, Figma N6): neu `color/selection` (hell
+  `marker-400`, dunkel `marker-500`), `color/selection-handle` (hell
+  `neutral-900`, dunkel `neutral-50`), `opacity/selection` (0,40) in beiden
+  Token-Dateien; `AppColorTokens.selection`, `.selectionHandle`,
+  `AppOpacity.selection` generiert. DS-04: 30 Farbrollen.
+- Textauswahl (B05, Figma `Input/Text Selection`, Hinweis 5): Theme mit
+  `TextSelectionThemeData` (Markierung `selection` × `opacity-selection`,
+  Griffe und Cursor `selection-handle`) und `cupertinoOverrideTheme`
+  (`primaryColor` = `selection-handle`); neu `AppSelectableArea`. Test DS-67.
+- Suchtreffer (B04): `AppListItem` additiv mit `match` (Zeichenbereich des
+  Titels; Markerfläche `marker`/`radius-xs`/seitlich `space-xxs` dahinter, Text
+  `text-on-marker`; Klartext und Semantik unverändert; Figma `List/Item`
+  `showMatch`). Test DS-66.
+
+## design-v0.2.0 — Teil 1.3, Gestaltung aus Figma
 
 Version in `pubspec.yaml` 0.2.0 (D18); der Tag folgt nach Freigabe (F14).
 Zusammengefasst: Werte nur aus der Token-Datei aus Figma (Generator, DS-04,
