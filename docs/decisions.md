@@ -3757,3 +3757,45 @@ rot; danach grün. Goldens: kein Motiv betroffen (`10_lebensmittel_bearbeiten`
 zeigt den Editor als eigene Seite). Nachträge 28.11.7 (ergänzt), 28.11.8;
 `screens.md`. Mac: Design 511, Core 471, App 12, Widgetbook 10 Tests grün;
 `check_architecture` Exit 0.
+
+## 2026-10-24 — Teil 1.4, Etappe 4 (Marke und Abschluss)
+
+**Freigabe Etappe 3 und Entscheidungen (Projektverantwortlicher):** Etappe 3
+geprüft und freigegeben (CI auf `6c81299` grün, Goldens geprüft, nur
+erlaubte Dateien, keine Testprüfung geändert). T01a nachträglich
+freigegeben; die bekannte Grenze (Android-Zurück fragt auch bei verborgenem
+Editor) ist Kandidat für später. Entscheidung 1 aus dem Bericht (Zurück im
+Lebensmittel-Bereich fragt wie bisher, „Verwerfen“ hebt die Auswahl auf)
+freigegeben. Entscheidung 2 („Rezept anlegen“ öffnet ab 840 weiter eine
+eigene Seite) für 1.4 freigegeben; Anlegen im Liste-Detail-Rahmen ist
+Kandidat (braucht `recipe_create_screen.dart`). App-Symbol und Startbild aus
+Figma (Bibliothek `5er28Cr7EMMcPzvusWjNyR`, Seite „Marke“) freigegeben;
+**das Startbild ist bewusst ohne Punktraster, nur Fläche und Symbol** wie in
+`275:75`/`275:79`, weil Android 12 nur Fläche und Symbol erlaubt (auch in
+28.11 festgehalten, mit M02b). Reihenfolge: M00a, M00b (Design), M00c,
+M01, M02a, M02b, M03; Stopp nach M03, kein Merge, keine Tags.
+
+**M00a — Eingefrorene Ansicht gegen Figma `42:2010`.** Figma (nur gelesen,
+nach dem Code neu gebaut): `42:2010` hell, `217:18576` dunkel, Inhalt
+`_Inhalt/Eingefroren · V3` `217:3883`. Vergleich: Bildschirm 3 für die
+eingefrorene V1 der Golden-Fixture lokal mit echten Schriften gerendert
+(vorübergehende Probe, nicht committet) und mit den Figma-Bildern
+verglichen. Übereinstimmend: Hinweis `info` mit Kapitel-22-Text und
+„Kopieren“ (tertiär), `space-l`, Zustandsrahmen `fixed` mit Marke samt
+Siegel und „Eingefroren“, Zutaten als Listeneinträge mit Menge, Schritte nur
+mit Titel. Unterschiede: (1) zwei Linien mit Abstand zwischen Zutaten und
+Schritten statt einer (Figma: `Divider` direkt unter dem letzten Eintrag) —
+behoben in `recipe_editor_frozen_section.dart` (`AppDivider.flush()`, die
+Ausnahme von Plan (c)); (2)–(4) Höhe des Markenkastens, Mitte der
+Kopfzeile, Lage der Hinweis-Aktion, Innenabstand des Rahmens — liegen in den
+Komponenten selbst (vom Projektverantwortlichen in der Bibliothek
+nachgeprüft) → M00b; (5) Titel der Kopfleiste „Rezept bearbeiten“ statt
+„Pizzateig · V3“ → offene Textfrage (Kapitel 22, Entscheidung des
+Projektverantwortlichen), in 1.4 bleibt der Text; `rueckmeldung-figma.md`
+unter B, `screens.md`, Kandidat in `status.md`. *Geänderte bestehende
+Testzeilen:* keine. *Neu:* UI-95 (eine Linie `stroke-hairline` hoch, direkt
+unter dem letzten Zutateneintrag, Schritte direkt darunter). *Gegenprobe:*
+`AppDivider()` → UI-95 rot; danach grün. `rueckmeldung-figma.md`: die
+A-Zeilen zur eingefrorenen Ansicht (Hinweistext, Zustandsrahmen) sind
+erledigt (Figma folgt dem Code) → Abschnitt C. Goldens: kein Motiv zeigt die
+eingefrorene Ansicht.

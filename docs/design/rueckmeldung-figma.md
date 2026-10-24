@@ -21,7 +21,6 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 |---|---|---|---|
 | Rezeptdetail, Kennzahlenleiste | „pro Portion“ | „kcal/Portion“ | D15 |
 | Mengenrechner, zweites Feld | Beschriftung „Kalorien“, Einheit „kcal“ im Feld | Beschriftung „kcal“, keine Einheit im Feld (sonst stünde „kcal“ doppelt) | D15 |
-| Rezept bearbeiten, eingefroren (`42:2010`) | „V3 ist eingefroren und kann nicht bearbeitet werden …“ | „Eingefroren — als neuen Entwurf kopieren?“ (Geviertstrich wie in Kapitel 22) | D16 |
 | Versionsvergleich, Abschnitte (`3:595`) | Metadaten „n Änderungen“ neben der Überschrift | keine Metadaten (wäre ein neuer Text) | D14 |
 | Versionsvergleich, Hinzufügen/Entfernen | „neu“ + markiert, „entfernt“ + gestrichen | übernommen; vorgelesen wird der Text aus 28.4.5 („Salz hinzugefügt (5 g)“) | D14 |
 | Deklarationstabelle, erste Kopfspalte | „Nährwerte“ (bei 200 % „je“) | leer — die Tabelle bekommt nur die Köpfe der Wertspalten | D10 |
@@ -38,7 +37,6 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Thema | Figma | Code | Commit |
 |---|---|---|---|
 | Kennzahlenleiste | `Core/Nutrition Header` (`142:57`) und `Core/Nutrition Field` (`142:56`) in der Gruppe Core | fachneutrale Design-Komponente `AppFigureRow` mit `AppFigure` (Beschriftung + Wert); `NutritionHeader` baut daraus. Vorschlag: in Figma als Design-Komponente führen (z. B. `Data/Figure Row`, `Data/Figure`) | D15a |
-| Zustandsrahmen in der eingefrorenen Ansicht | kein Rahmen, nur Hinweis und Abschnitte | Hinweis, darunter der Inhalt in `Frame` (fest) mit `Mark` (Siegel) und dem Wort „Eingefroren“ (Plan 28.10.3) | D16 |
 | Auswahldialog (Lebensmittel verknüpfen) | Breite `size-dialog` | feste Inhaltsgröße `size-dialog` × `size-dialog` (es gibt kein Höhen-Token) | D09 |
 | Fassungsleiste, Tippziel | `Core/Version Target` 48 × 35 | mindestens `size-target` × `size-target` (48 × 48) | D07 |
 | Meldung, Restzeit | Restzeitlinie läuft in 5 s ab | läuft ab dem vollständigen Erscheinen in der Frist ab; bei „Bewegung reduzieren“ still in voller Breite; bei großer Schrift steht „Rückgängig“ unter dem Text | D09b |
@@ -77,6 +75,7 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Auswahlfeld als umrandetes Feld (`Input/Select`) auch ohne Beschriftung | Spalte 2 der Nährwerttabelle | ohne Beschriftung weiter die Material-Auswahl mit Unterstrich; die Einheit der Zutatenzeile hat seit Teil 1.4 B01 die Beschriftung „Einheit“ (wie Figma) | später |
 | Aktion im Hinweis in `size-control-small` | `Feedback/Notice` | Tertiär-Knopf in `size-control` | später |
 | Signaturmomente Einfrieren und Küren | Markenbuch | Zustand im Bildschirm | später |
+| Titel von Bildschirm 3 über einer eingefrorenen Fassung | `42:2010`: „Pizzateig · V3“ | „Rezept bearbeiten“ — offene Textfrage: führt über einer schreibgeschützten Fassung in die Irre; braucht eine Änderung in Kapitel 22 (Entscheidung des Projektverantwortlichen). In Teil 1.4 bleibt der Text | später |
 
 ## C. Erledigt — Figma und Code stimmen wieder überein
 
@@ -88,3 +87,4 @@ Aussehen. Figma verwendet an diesen Stellen andere Wörter.
 | Schrittzeile im Editor | in Figma nicht abgebildet | `_Zeile/Schritt bearbeiten` (`227:4142`): wie die Zutatenzeile, Timer eingerückt darunter | Figma N1, B01 |
 | Master in der Fassungsleiste | Figma: Markerfläche in `Core/Version Switcher`; Code: Leiste kannte den Master nicht | beide mit Markerfläche, „Master“ in der Semantik | Teil 1.4 B02 |
 | Suchtreffer in der Rezeptliste | Figma: Treffer im Titel markiert (`List/Item` `showMatch`); Code: ohne Markierung | Treffer mit Markerfläche hinter dem Text, Klartext unverändert | Teil 1.4 B04 |
+| Eingefrorene Ansicht (`42:2010`, dunkel `217:18576`, Inhalt `217:3883`) | Figma: Hinweis „V3 ist eingefroren …“, kein Rahmen; Code: Text aus Kapitel 22, Zustandsrahmen mit Siegel (D16) | Figma neu gebaut nach dem Code: Hinweis mit Kapitel-22-Text und „Kopieren“, `space-l`, Zustandsrahmen mit Siegel und „Eingefroren“, Zutaten, eine Linie, Schritte; Code zeichnet seit M00a nur noch eine Linie (vorher zwei mit Abstand) | Figma, Teil 1.4 M00a |

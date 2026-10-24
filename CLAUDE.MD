@@ -349,13 +349,14 @@ UI-91), T01a fertig (Rahmen hält den Zustand von Liste und Detail beim
 Wechsel über 840, gewähltes Detail darunter verborgen — sonst gingen
 ungespeicherte Eingaben im Lebensmittel-Editor beim Drehen verloren), T03
 fertig (Lebensmittel: Liste und Editor ab 840, `FoodEditorScreen.onDone`/
-`onDirtyChanged`/`confirmDiscard`, UI-92). Etappe 3 fertig. Für Etappe 4 vorgemerkt: eingefrorene
-Ansicht nach Figma `42:2010`, restliche Namen/IDs in `components.md` und
-`rueckmeldung-figma.md`.
+`onDirtyChanged`/`confirmDiscard`, UI-92). Etappe 3 fertig und freigegeben
+(2026-10-24, samt T01a). Etappe 4: M00a fertig (eingefrorene Ansicht gegen
+Figma `42:2010`: eine Linie zwischen Zutaten und Schritten, UI-95; Titel der
+Kopfleiste als offene Textfrage). Kandidaten nach 1.4 sammelt `status.md`.
 
-**Nächster Schritt:** Prüfung und Freigabe von Etappe 3 durch den
-Projektverantwortlichen (Stopp nach Etappe 3); danach Etappe 4 (M01–M03,
-vorher die vorgemerkten Punkte). Golden-Lauf vor jedem Push.
+**Nächster Schritt:** M00b (Design: Marke, Rahmen, Hinweis nach den
+Figma-Komponenten), dann M00c (Namen und IDs), M01, M02a, M02b, M03; Stopp
+nach M03, kein Merge, keine Tags. Golden-Lauf vor jedem Push.
 
 ---
 

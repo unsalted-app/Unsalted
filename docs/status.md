@@ -330,7 +330,24 @@ Stand nach Etappe 2: Design 491 Tests, Core 461, App 12, Widgetbook 10, alle gr�
 | T03 | Lebensmittel: Liste und Editor ab 840 (Auswahl, „Neues Lebensmittel“ im Bereich, Speichern ohne `pop`, Rückfrage beim Wechsel; `FoodEditorScreen.onDone`/`onDirtyChanged`); UI-92 | fertig |
 
 Stand nach Etappe 3: Design 511 Tests, Core 471, App 12, Widgetbook 10, alle grün; `check_architecture` Exit 0.
-| M01–M03 | Etappe 4: App-Name, ggf. App-Symbol und Startbild, Abschluss | offen |
+
+Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheidungen 1/2 aus dem Bericht nachträglich freigegeben; App-Symbol und Startbild aus Figma freigegeben.
+| M00a | Eingefrorene Ansicht gegen Figma `42:2010` (neu gebaut): übereinstimmend bis auf die Linie zwischen Zutaten und Schritten (jetzt eine, `AppDivider.flush`); Titel der Kopfleiste als offene Textfrage; UI-95 | fertig |
+| M00b | Design: Marke, Rahmen, Hinweis nach den Figma-Komponenten (Kasten der Marke `size-mark`, Kopfzeile mittig, Kontur zählt zum Innenabstand, Aktion des Hinweises fluchtet mit der ersten Zeile) | offen |
+| M00c | Restliche Namen und IDs der Figma-Nachträge in `components.md`, `figma-ids.json`, `rueckmeldung-figma.md` | offen |
+| M01–M03 | App-Name, App-Symbol (M02a) und Startbild (M02b), Abschluss | offen |
+
+**Kandidaten nach Teil 1.4** (gesammelt ab 2026-10-24, nicht umgesetzt):
+
+- Titel von Bildschirm 3 über einer eingefrorenen Fassung: „Rezept
+  bearbeiten“ führt in die Irre; Figma `42:2010` zeigt „Pizzateig · V3“.
+  Braucht eine Änderung in Kapitel 22 (Entscheidung des
+  Projektverantwortlichen); in 1.4 bleibt der Text.
+- Rezept anlegen im Liste-Detail-Rahmen (ab 840 öffnet „Rezept anlegen“
+  weiter eine eigene Seite; braucht `recipe_create_screen.dart`).
+- Android-Zurück bei verborgenem Editor: Unter 840 fragt die Zurück-Taste
+  auch dann „Änderungen verwerfen?“, wenn der Editor mit ungespeicherten
+  Änderungen verborgen ist (T01a).
 
 ## Bekannte offene Lücken (nicht blockierend)
 

@@ -38,6 +38,9 @@
 // UI-94 (Teil 1.4 T00b, Figma `Input/Text Field` `showSuffix`): Die Lupe
 // „Lebensmittel verknüpfen“ sitzt am Ende des Namensfelds, bündig an der
 // Kontur; der Name endet `space-m` davor.
+// UI-95 (Teil 1.4 M00a, Figma `42:2010`): In der eingefrorenen Ansicht trennt
+// genau eine Haarlinie Zutaten und Schritte — direkt unter dem letzten
+// Zutateneintrag, ohne Abstand.
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -556,5 +559,17 @@ void main() {
     expect(button.right, decorator.right, reason: 'bündig an der Kontur');
     expect(button.left - text.right, AppSpacing.m);
   });
-}
 
+  testWidgets('UI-95: eingefrorene Ansicht mit einer Linie zwischen Zutaten und Schritten', (tester) async {
+    await _pump(tester, RecipeEditorFrozenSection(version: _frozenVersion(), onCopy: () {}));
+    final frame = find.byType(AppFrame);
+    final divider = find.descendant(of: frame, matching: find.byType(AppDivider));
+    expect(divider, findsOneWidget);
+    final line = tester.getRect(divider);
+    expect(line.height, AppStroke.hairline, reason: 'ohne Abstand über und unter der Linie');
+    final ingredient = tester.getRect(find.ancestor(of: find.text('Mehl'), matching: find.byType(AppListItem)));
+    final step = tester.getRect(find.ancestor(of: find.text('Kneten'), matching: find.byType(AppListItem)));
+    expect(line.top, ingredient.bottom, reason: 'direkt unter dem letzten Zutateneintrag');
+    expect(step.top, line.bottom, reason: 'Schritte direkt darunter');
+  });
+}
