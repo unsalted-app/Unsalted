@@ -3882,3 +3882,29 @@ Semantik), `Icon/delete`-Doppel, Größe des Auswahldialogs, Restzeitlinie
 der Meldung, Tippziel der Hinweis-Aktion (M00b), Tokens/Regeln (A4, um die
 Punkte ergänzt, die Figma jetzt zeigt). `screens.md`: Bildschirm 4 ohne
 „bewusst anders“. Keine Code- und Teständerung.
+
+**M01 — App-Name „unsalted“ (F9).** iOS `Info.plist`: `CFBundleDisplayName`
+„Unsalted App“ → „unsalted“, `CFBundleName` „unsalted_app“ → „unsalted“;
+macOS `Info.plist`: `CFBundleName` `$(PRODUCT_NAME)` → „unsalted“, neu
+`CFBundleDisplayName` „unsalted“; Android `android:label` „unsalted_app“ →
+„unsalted“. Unverändert: `PRODUCT_NAME` (`unsalted_app`, macOS
+`AppInfo.xcconfig`; iOS `$(TARGET_NAME)`), Bundle-Kennungen
+(`de.unsalted.unsaltedApp`, Tests `….RunnerTests`), `applicationId`
+(`de.unsalted.unsalted_app`), `MainMenu.xib`. *Neu:* APP-06 (Namen in iOS,
+macOS, Android; Produktname, Kennungen und `applicationId` unverändert).
+*Gegenprobe:* alte Namen → APP-06 rot (3); danach grün. *Geänderte bestehende
+Testzeilen:* keine. Lokal geprüft: `plutil -lint` beider `Info.plist` OK;
+`flutter build ios --no-codesign` und `flutter build macos` (Release)
+erfolgreich, ohne Änderung an eingecheckten Dateien; im gebauten iOS-Bundle
+`CFBundleDisplayName`/`CFBundleName` „unsalted“, Kennung
+`de.unsalted.unsaltedApp`, Programm `Runner`; im macOS-Bundle ebenso
+„unsalted“, Bundle-Datei weiter `unsalted_app.app`. *macOS, nur festgehalten
+(aus dem Bundle abgeleitet, die laufende App nicht angesehen):* Das App-Menü
+in der Menüleiste und das Dock zeigen „unsalted“ (`CFBundleName`); die
+Einträge aus `MainMenu.xib` („About APP_NAME“, „Hide APP_NAME“, „Quit
+APP_NAME“) bleiben englisch, den Platzhalter ersetzt die Flutter-Engine beim
+Start durch den Bundle-Namen („About unsalted“ …; die Engine enthält
+`APP_NAME` und liest `CFBundleName`); der Finder zeigt den Dateinamen
+`unsalted_app.app` (`PRODUCT_NAME`, bleibt nach F9). Deutsches macOS-Menü
+ist Kandidat für später. Auf dem iPhone prüft der Projektverantwortliche den
+Namen unter dem Symbol. Nachtrag 28.11.9. Mac: App 16 Tests grün.

@@ -335,7 +335,8 @@ Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheid
 | M00a | Eingefrorene Ansicht gegen Figma `42:2010` (neu gebaut): übereinstimmend bis auf die Linie zwischen Zutaten und Schritten (jetzt eine, `AppDivider.flush`); Titel der Kopfleiste als offene Textfrage; UI-95 | fertig |
 | M00b | Design: Marke, Rahmen, Hinweis nach den Figma-Komponenten (Kasten der Marke `size-mark`, Kopfzeile mittig, Kontur zählt zum Innenabstand, Aktion des Hinweises fluchtet mit der ersten Zeile); DS-70–72 | fertig |
 | M00c | Restliche Namen und IDs der Figma-Nachträge in `components.md`, `figma-ids.json`, `rueckmeldung-figma.md`; Abschnitt A gegen die Nachträge geprüft, neun Punkte erledigt (nach C) | fertig |
-| M01–M03 | App-Name, App-Symbol (M02a) und Startbild (M02b), Abschluss | offen |
+| M01 | App-Name „unsalted“ in iOS, macOS, Android (Produktname, Kennungen, `applicationId` bleiben); APP-06; `flutter build ios --no-codesign` und `flutter build macos` lokal erfolgreich | fertig |
+| M02a, M02b, M03 | App-Symbol, Startbild, Abschluss | offen |
 
 **Kandidaten nach Teil 1.4** (gesammelt ab 2026-10-24, nicht umgesetzt):
 
@@ -345,6 +346,8 @@ Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheid
   Projektverantwortlichen); in 1.4 bleibt der Text.
 - Rezept anlegen im Liste-Detail-Rahmen (ab 840 öffnet „Rezept anlegen“
   weiter eine eigene Seite; braucht `recipe_create_screen.dart`).
+- macOS-Menü auf Deutsch: `MainMenu.xib` zeigt „About/Hide/Quit
+  unsalted“ englisch (M01 hat die Datei nicht geändert).
 - Android-Zurück bei verborgenem Editor: Unter 840 fragt die Zurück-Taste
   auch dann „Änderungen verwerfen?“, wenn der Editor mit ungespeicherten
   Änderungen verborgen ist (T01a).

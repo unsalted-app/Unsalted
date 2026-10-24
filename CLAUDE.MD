@@ -79,7 +79,8 @@ unsalted/
 ├─ apps/
 │  ├─ unsalted_widgetbook/         Komponenten-Katalog (Teil 1.2, C11), Rang 99, nur macOS;
 │  │                               lib/catalog/ je Design-Ordner eine Datei, Tests WB-01–03
-│  └─ unsalted_app/                App-Hülle (Schritt 8.8)
+│  └─ unsalted_app/                App-Hülle (Schritt 8.8); sichtbarer Name „unsalted“
+│     │                            (Teil 1.4 M01, APP-06), Produktname/Kennungen unverändert
 │     ├─ pubspec.yaml              unsalted_core (path-Dependency), drift_flutter,
 │     │                            flutter_riverpod, go_router, flutter_localizations (D17b)
 │     ├─ lib/config/ui_options.dart  einzige Stelle mit den Anzeige-Schaltern (C29)
@@ -358,7 +359,9 @@ Innenabstand, Hinweis-Aktion auf Höhe der ersten Zeile; DS-70–72). M00c
 fertig (Namen und IDs der Figma-Nachträge, `rueckmeldung-figma.md` A gegen
 die Nachträge geprüft). Kandidaten nach 1.4 sammelt `status.md`.
 
-**Nächster Schritt:** M01 (App-Name), M02a, M02b, M03; Stopp
+M01 fertig (App-Name „unsalted“ in iOS, macOS, Android; APP-06).
+
+**Nächster Schritt:** M02a (App-Symbol), M02b (Startbild), M03; Stopp
 nach M03, kein Merge, keine Tags. Golden-Lauf vor jedem Push.
 
 ---
