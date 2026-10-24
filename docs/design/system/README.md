@@ -1,4 +1,4 @@
-> **Status: freigegeben (design-v0.3.0).** Dieses System beschreibt die visuelle Identität von unsalted. Es ist mit Teil 1.3 im Code umgesetzt (`packages/unsalted_design` 0.2.0); bewusste Abweichungen des Codes von Figma stehen in `docs/design/rueckmeldung-figma.md`.
+> **Status: freigegeben (design-v0.3.0).** Dieses System beschreibt die visuelle Identität von unsalted. Es ist mit Teil 1.3 im Code umgesetzt und in Teil 1.4 ergänzt (`packages/unsalted_design` 0.3.0); bewusste Abweichungen des Codes von Figma stehen in `docs/design/rueckmeldung-figma.md`.
 
 Für Figma: Schritt-für-Schritt-Anleitung in Abschnitt 07, Variablen zum Importieren unter Assets → Figma-Startpaket.
 
