@@ -3856,3 +3856,29 @@ auf Abschneiden und Überlauf geprüft: nichts Neues. Der Streifen unter
 „Erneut versuchen“ und der angeschnittene Knopf der Leerstelle im Motiv
 `rueckmeldung` (Handy 200 %) standen schon vorher im Bild (feste Motivfläche
 des Katalogs, Überlauf ist in Goldens erlaubt).
+
+**M00c — Restliche Namen und IDs aus den Figma-Nachträgen (Doku).** (Im
+ersten Auftrag „M00b“; die Bezeichnung ging an den Design-Commit.)
+`components.md`: `Data/Figure Row`/`Data/Figure` statt `Core/Nutrition
+Header`/`Field` (`142:57`/`142:56`), `Core/Nutrition Header` `272:297` beim
+`NutritionHeader`, `Navigation/Menu Item` `270:284` (Set `state`),
+`Feedback/Tooltip` `273:374` beim `AppIconButton`, Muster „Textauswahl“
+`276:304`, `Brand/Logo` `275:18` (noch nicht im Code) und `Brand/Symbol`
+`275:34` (native Dateien, M02), Tablet-Rahmen samt „ohne Auswahl“ hoch/quer
+beim `ListDetailTemplate`, `_Aktionen/Version · …` beim `VersionTile`, neu
+die Zeile `RecipeEditorFrozenSection` (`217:3883`, `42:2010`).
+`figma-ids.json`: Varianten `Mark` fest `107:48`, `Frame` fest `135:47`,
+Instanzen in `42:2010` (`42:2034`, `217:3994`); alles Übrige stand schon
+darin. `rueckmeldung-figma.md`: Abschnitt A gegen die Nachträge und die
+Dateien geprüft (nur gelesen) — erledigt und nach C: Kennzahlenleiste
+„kcal/Portion“ (`1:607`), Mengenrechner „kcal“ ohne Einheit (`179:392`),
+Versionsvergleich ohne Metadaten (`3:595`), erste Kopfspalte der
+Deklaration leer (`140:116`), Bildschirm 7 wie der Code (`20:1042`,
+Aktionen in der Zeile), Kennzahlenleiste als `Data/Figure Row`, Tippziel
+48 × 48 (`142:18`), Aktion bei großer Schrift darunter (`134:69`, `136:50`),
+„*“ nach der Einheit (`134:179`); aus B nach C: Liste und Detail ab 840
+(T01–T03). Offen bleiben in A: Hinzufügen/Entfernen im Vergleich (nur
+Semantik), `Icon/delete`-Doppel, Größe des Auswahldialogs, Restzeitlinie
+der Meldung, Tippziel der Hinweis-Aktion (M00b), Tokens/Regeln (A4, um die
+Punkte ergänzt, die Figma jetzt zeigt). `screens.md`: Bildschirm 4 ohne
+„bewusst anders“. Keine Code- und Teständerung.

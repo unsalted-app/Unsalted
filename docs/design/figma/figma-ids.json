@@ -1,5 +1,5 @@
 {
-  "hinweis": "Node-IDs für den Figma-MCP-Server (get_design_context / get_screenshot mit fileKey + nodeId). Stand 16.10.2026, ergänzt 21.10.2026 (Teil 1.4, docs/design/figma/teil-1.4-figma-nachtraege.md).",
+  "hinweis": "Node-IDs für den Figma-MCP-Server (get_design_context / get_screenshot mit fileKey + nodeId). Stand 16.10.2026, ergänzt 21.10.2026 (Teil 1.4, docs/design/figma/teil-1.4-figma-nachtraege.md); Varianten und Instanzen aus Teil 1.4 M00 ergänzt 24.10.2026.",
   "bibliothek": {
     "name": "unsalted · Design-System",
     "fileKey": "5er28Cr7EMMcPzvusWjNyR",
@@ -128,6 +128,10 @@
       "Icon/upload": "205:22",
       "Icon/download": "205:26",
       "Icon/undo": "205:30"
+    },
+    "varianten_teil_1_4": {
+      "Mark state=fixed": "107:48",
+      "Frame state=fixed": "135:47"
     }
   },
   "app": {
@@ -221,6 +225,10 @@
     "entfernt_teil_1_4": [
       "07 Versionen / Menü (hell und dunkel)"
     ],
-    "zustaende": "Alle Zustände liegen auf der Seite 'Bildschirme' ab y=3400, benannt '<Nr> <Name> / <Zustand> / <Modus> / <Größe>'."
+    "zustaende": "Alle Zustände liegen auf der Seite 'Bildschirme' ab y=3400, benannt '<Nr> <Name> / <Zustand> / <Modus> / <Größe>'.",
+    "instanzen_teil_1_4": {
+      "Feedback/Notice in 03 Eingefroren": "42:2034",
+      "Frame in 03 Eingefroren": "217:3994"
+    }
   }
 }

@@ -334,7 +334,7 @@ Stand nach Etappe 3: Design 511 Tests, Core 471, App 12, Widgetbook 10, alle gr�
 Etappe 3 freigegeben 2026-10-24 (CI auf `6c81299` grün); T01a und die Entscheidungen 1/2 aus dem Bericht nachträglich freigegeben; App-Symbol und Startbild aus Figma freigegeben.
 | M00a | Eingefrorene Ansicht gegen Figma `42:2010` (neu gebaut): übereinstimmend bis auf die Linie zwischen Zutaten und Schritten (jetzt eine, `AppDivider.flush`); Titel der Kopfleiste als offene Textfrage; UI-95 | fertig |
 | M00b | Design: Marke, Rahmen, Hinweis nach den Figma-Komponenten (Kasten der Marke `size-mark`, Kopfzeile mittig, Kontur zählt zum Innenabstand, Aktion des Hinweises fluchtet mit der ersten Zeile); DS-70–72 | fertig |
-| M00c | Restliche Namen und IDs der Figma-Nachträge in `components.md`, `figma-ids.json`, `rueckmeldung-figma.md` | offen |
+| M00c | Restliche Namen und IDs der Figma-Nachträge in `components.md`, `figma-ids.json`, `rueckmeldung-figma.md`; Abschnitt A gegen die Nachträge geprüft, neun Punkte erledigt (nach C) | fertig |
 | M01–M03 | App-Name, App-Symbol (M02a) und Startbild (M02b), Abschluss | offen |
 
 **Kandidaten nach Teil 1.4** (gesammelt ab 2026-10-24, nicht umgesetzt):

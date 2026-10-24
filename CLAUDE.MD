@@ -354,10 +354,11 @@ fertig (Lebensmittel: Liste und Editor ab 840, `FoodEditorScreen.onDone`/
 Figma `42:2010`: eine Linie zwischen Zutaten und Schritten, UI-95; Titel der
 Kopfleiste als offene Textfrage). M00b fertig (Design: Kasten der Marke
 mindestens `size-mark`, Kopfzeile des Rahmens mittig, Kontur zählt zum
-Innenabstand, Hinweis-Aktion auf Höhe der ersten Zeile; DS-70–72). Kandidaten
-nach 1.4 sammelt `status.md`.
+Innenabstand, Hinweis-Aktion auf Höhe der ersten Zeile; DS-70–72). M00c
+fertig (Namen und IDs der Figma-Nachträge, `rueckmeldung-figma.md` A gegen
+die Nachträge geprüft). Kandidaten nach 1.4 sammelt `status.md`.
 
-**Nächster Schritt:** M00c (Namen und IDs), M01, M02a, M02b, M03; Stopp
+**Nächster Schritt:** M01 (App-Name), M02a, M02b, M03; Stopp
 nach M03, kein Merge, keine Tags. Golden-Lauf vor jedem Push.
 
 ---
